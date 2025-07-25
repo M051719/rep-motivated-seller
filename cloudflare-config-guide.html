@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Configuration Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .step {
+            margin-bottom: 30px;
+            border-left: 4px solid #f6821f;
+            padding-left: 15px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cloudflare Configuration Guide for RepMotivatedSeller</h1>
+    
+    <div class="warning">
+        <strong>Important:</strong> This guide helps fix the "too many redirects" error when using Cloudflare with your website.
+    </div>
+    
+    <h2>Optimal Cloudflare Settings</h2>
+    
+    <div class="step">
+        <h3>Step 1: SSL/TLS Settings</h3>
+        <p>Go to <strong>SSL/TLS</strong> > <strong>Overview</strong> and set:</p>
+        <ul>
+            <li>Encryption mode: <code>Full (strict)</code></li>
+        </ul>
+        <p>This ensures proper SSL handling between Cloudflare and your origin server.</p>
+    </div>
+    
+    <div class="step">
+        <h3>Step 2: Page Rules Configuration</h3>
+        <p>Go to <strong>Rules</strong> > <strong>Page Rules</strong> and create these rules:</p>
+        
+        <h4>Rule 1: Main domain redirect</h4>
+        <ul>
+            <li>URL pattern: <code>repmotivatedseller.shoprealestatespace.org/*</code></li>
+            <li>Setting: <code>Always Use HTTPS</code></li>
+            <li>Setting: <code>Cache Level: Standard</code> (NOT Cache Everything)</li>
+        </ul>
+        
+        <h4>Rule 2: Static assets caching</h4>
+        <ul>
+            <li>URL pattern: <code>repmotivatedseller.shoprealestatespace.org/*.js*</code></li>
+            <li>Setting: <code>Cache Level: Cache Everything</code></li>
+            <li>Setting: <code>Edge Cache TTL: 1 week</code></li>
+        </ul>
+        
+        <h4>Rule 3: Static assets caching</h4>
+        <ul>
+            <li>URL pattern: <code>repmotivatedseller.shoprealestatespace.org/*.css*</code></li>
+            <li>Setting: <code>Cache Level: Cache Everything</code></li>
+            <li>Setting: <code>Edge Cache TTL: 1 week</code></li>
+        </ul>
+    </div>
+    
+    <div class="step">
+        <h3>Step 3: Caching Configuration</h3>
+        <p>Go to <strong>Caching</strong> > <strong>Configuration</strong> and set:</p>
+        <ul>
+            <li>Browser Cache TTL: <code>4 hours</code></li>
+            <li>Always Online: <code>Off</code></li>
+            <li>Development Mode: <code>Off</code> (only enable temporarily for testing)</li>
+        </ul>
+    </div>
+    
+    <div class="step">
+        <h3>Step 4: Purge Cache</h3>
+        <p>After making these changes:</p>
+        <ol>
+            <li>Go to <strong>Caching</strong> > <strong>Configuration</strong></li>
+            <li>Click <strong>Purge Everything</strong></li>
+        </ol>
+    </div>
+    
+    <div class="success">
+        <strong>Testing:</strong> After making these changes, try accessing your site in an incognito window to avoid browser cache issues.
+    </div>
+    
+    <h2>Common Mistakes to Avoid</h2>
+    <ul>
+        <li><strong>Don't</strong> use "Cache Everything" for HTML pages</li>
+        <li><strong>Don't</strong> use "Flexible" SSL mode</li>
+        <li><strong>Don't</strong> create conflicting page rules</li>
+        <li><strong>Don't</strong> forget to purge cache after making changes</li>
+    </ul>
+    
+    <h2>Troubleshooting</h2>
+    <p>If you're still experiencing issues:</p>
+    <ol>
+        <li>Temporarily enable Development Mode in Cloudflare</li>
+        <li>Temporarily set Cloudflare to DNS only mode (gray cloud icon)</li>
+        <li>Check your Nginx configuration for redirect issues</li>
+        <li>Clear your browser cache completely</li>
+    </ol>
+    
+    <p>For more detailed instructions, see the <code>CLOUDFLARE_CACHE_REDIRECT_FIX.md</code> file.</p>
+</body>
+</html>

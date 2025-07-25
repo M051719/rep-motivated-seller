@@ -1,0 +1,46 @@
+# Supabase Edge Functions Configuration
+
+# Authentication functions
+[functions.auth-test]
+verify_jwt = true
+
+# Admin functions
+[functions.admin-dashboard]
+verify_jwt = true
+
+# Public webhook endpoints
+[functions.foreclosure-submission]
+verify_jwt = false  # For public webhook access
+
+[functions.notification-dispatcher]
+verify_jwt = false  # For internal service communication
+
+[functions.send-notification-email]
+verify_jwt = false  # For webhook triggers
+
+# Property functions
+[functions.schedule-property-followup]
+verify_jwt = true
+
+[functions.schedule-follow-ups]
+verify_jwt = true
+
+# External integrations
+[functions.external-api-integration]
+verify_jwt = true
+
+# AI voice handling
+[functions.ai-voice-handler]
+verify_jwt = false  # For Twilio webhook access
+
+# Testing functions
+[functions.test-secrets]
+verify_jwt = true
+
+# Weather API example
+[functions.weather-api]
+verify_jwt = false  # For public demo access
+
+# Global edge runtime settings
+[edge_runtime]
+policy = "per_worker"  # For WebSocket connections

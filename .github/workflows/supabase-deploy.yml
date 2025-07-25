@@ -1,0 +1,62 @@
+name: Supabase Deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Link Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase link --project-ref ltxqodqlexvojqqxquew
+      
+      - name: Deploy Edge Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase functions deploy admin-dashboard --no-verify-jwt
+          supabase functions deploy send-notification-email --no-verify-jwt
+          supabase functions deploy schedule-follow-ups --no-verify-jwt
+          supabase functions deploy sms-handler --no-verify-jwt
+          supabase functions deploy ai-voice-handler --no-verify-jwt
+          supabase functions deploy call-analytics --no-verify-jwt
+          supabase functions deploy auth-test --no-verify-jwt
+      
+      - name: Set Supabase secrets
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          supabase secrets set MAILERLITE_API_KEY="$MAILERLITE_API_KEY"
+          supabase secrets set TWILIO_ACCOUNT_SID="$TWILIO_ACCOUNT_SID"
+          supabase secrets set TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN"
+          supabase secrets set OPENAI_API_KEY="$OPENAI_API_KEY"
+          supabase secrets set TWILIO_PHONE_NUMBER="+18778064677"
+          supabase secrets set AGENT_PHONE_NUMBER="+18778064677"
+          supabase secrets set SCHEDULING_PHONE_NUMBER="+18778064677"
+          supabase secrets set OPENAI_MODEL="gpt-3.5-turbo"

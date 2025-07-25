@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9fafb;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .stat-card {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin: 10px 0;
+    }
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    h1, h2 {
+      color: #1e40af;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    th {
+      background-color: #f3f4f6;
+      font-weight: 600;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .controls select, .controls input {
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .controls button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .controls button:hover {
+      background-color: #1d4ed8;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-pre-foreclosure {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    .badge-notice-of-default {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    .badge-auction-scheduled {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    .badge-bank-owned {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+    .chart-container {
+      height: 300px;
+      margin-top: 20px;
+    }
+    .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .error-message {
+      color: #b91c1c;
+      margin-top: 10px;
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #2563eb;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Section -->
+  <div id="login-section" class="login-container">
+    <h1>Admin Dashboard Login</h1>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password">
+    </div>
+    <div id="login-error" class="error-message"></div>
+    <button onclick="login()" style="width: 100%;">Login</button>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div id="dashboard-section" style="display: none;">
+    <h1>Admin Dashboard</h1>
+    
+    <div class="controls">
+      <div>
+        <select id="period-select" onchange="loadPerformanceMetrics()">
+          <option value="week">Last 7 Days</option>
+          <option value="month">Last 30 Days</option>
+          <option value="quarter">Last 90 Days</option>
+        </select>
+        <button onclick="refreshDashboard()">Refresh Data</button>
+      </div>
+      <button onclick="logout()">Logout</button>
+    </div>
+    
+    <!-- Summary Stats -->
+    <div class="container">
+      <div class="card stat-card">
+        <div class="stat-label">Total Submissions</div>
+        <div class="stat-value" id="total-submissions">--</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">New Submissions</div>
+        <div class="stat-value" id="new-submissions">--</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Pending Follow-ups</div>
+        <div class="stat-value" id="pending-followups">--</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Conversion Rate</div>
+        <div class="stat-value" id="conversion-rate">--</div>
+      </div>
+    </div>
+    
+    <!-- Recent Submissions -->
+    <div class="card">
+      <h2>Recent Submissions</h2>
+      <div class="controls">
+        <div>
+          <input type="text" id="submission-search" placeholder="Search...">
+          <select id="status-filter">
+            <option value="">All Statuses</option>
+            <option value="pre_foreclosure">Pre-Foreclosure</option>
+            <option value="notice_of_default">Notice of Default</option>
+            <option value="auction_scheduled">Auction Scheduled</option>
+            <option value="bank_owned">Bank Owned</option>
+          </select>
+          <button onclick="loadRecentSubmissions()">Filter</button>
+        </div>
+      </div>
+      <div id="submissions-loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+      <table id="submissions-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="submissions-body"></tbody>
+      </table>
+    </div>
+    
+    <!-- Upcoming Follow-ups -->
+    <div class="card" style="margin-top: 20px;">
+      <h2>Upcoming Follow-ups</h2>
+      <div id="followups-loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+      <table id="followups-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Contact</th>
+            <th>Scheduled Date</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="followups-body"></tbody>
+      </table>
+    </div>
+    
+    <!-- Performance Metrics -->
+    <div class="card" style="margin-top: 20px;">
+      <h2>Performance Metrics</h2>
+      <div id="metrics-loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+      <div id="metrics-container" style="display: none;">
+        <div id="metrics-summary"></div>
+        <div class="chart-container">
+          <canvas id="metrics-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Supabase configuration
+    const SUPABASE_URL = 'https://ltxqodqlexvojqqxquew.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg';
+    let authToken = localStorage.getItem('supabase_token');
+    
+    // Check if user is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+    });
+    
+    async function checkAuth() {
+      if (!authToken) {
+        showLoginUI();
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          showDashboardUI();
+          loadDashboardData();
+        } else {
+          showLoginUI();
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        showLoginUI();
+      }
+    }
+    
+    function showLoginUI() {
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('dashboard-section').style.display = 'none';
+    }
+    
+    function showDashboardUI() {
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard-section').style.display = 'block';
+    }
+    
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorElement = document.getElementById('login-error');
+      
+      if (!email || !password) {
+        errorElement.textContent = 'Please enter both email and password';
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ email, password })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Invalid credentials');
+        }
+        
+        const data = await response.json();
+        authToken = data.access_token;
+        localStorage.setItem('supabase_token', authToken);
+        
+        showDashboardUI();
+        loadDashboardData();
+        
+      } catch (error) {
+        console.error('Login error:', error);
+        errorElement.textContent = 'Login failed: ' + error.message;
+      }
+    }
+    
+    function logout() {
+      localStorage.removeItem('supabase_token');
+      authToken = null;
+      showLoginUI();
+    }
+    
+    async function loadDashboardData() {
+      loadSummaryData();
+      loadRecentSubmissions();
+      loadUpcomingFollowups();
+      loadPerformanceMetrics();
+    }
+    
+    async function refreshDashboard() {
+      loadDashboardData();
+    }
+    
+    async function loadSummaryData() {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ action: 'summary' })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load summary data');
+        }
+        
+        const data = await response.json();
+        
+        document.getElementById('total-submissions').textContent = data.total_submissions || 0;
+        document.getElementById('new-submissions').textContent = data.new_submissions || 0;
+        document.getElementById('pending-followups').textContent = data.pending_followups || 0;
+        document.getElementById('conversion-rate').textContent = `${data.conversion_rate || 0}%`;
+        
+      } catch (error) {
+        console.error('Error loading summary data:', error);
+      }
+    }
+    
+    async function loadRecentSubmissions() {
+      try {
+        document.getElementById('submissions-loading').style.display = 'flex';
+        document.getElementById('submissions-table').style.display = 'none';
+        
+        const statusFilter = document.getElementById('status-filter').value;
+        const searchQuery = document.getElementById('submission-search').value;
+        
+        const filters = {};
+        if (statusFilter) filters.status = statusFilter;
+        if (searchQuery) filters.search = searchQuery;
+        
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ 
+            action: 'recent_submissions',
+            filters
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load submissions');
+        }
+        
+        const data = await response.json();
+        const submissions = data.submissions || [];
+        
+        const tableBody = document.getElementById('submissions-body');
+        tableBody.innerHTML = '';
+        
+        if (submissions.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="4">No submissions found</td></tr>';
+        } else {
+          submissions.forEach(submission => {
+            const row = document.createElement('tr');
+            
+            // Format the status badge
+            let statusBadge = '';
+            switch (submission.foreclosure_status) {
+              case 'pre_foreclosure':
+                statusBadge = '<span class="badge badge-pre-foreclosure">Pre-Foreclosure</span>';
+                break;
+              case 'notice_of_default':
+                statusBadge = '<span class="badge badge-notice-of-default">Notice of Default</span>';
+                break;
+              case 'auction_scheduled':
+                statusBadge = '<span class="badge badge-auction-scheduled">Auction Scheduled</span>';
+                break;
+              case 'bank_owned':
+                statusBadge = '<span class="badge badge-bank-owned">Bank Owned</span>';
+                break;
+              default:
+                statusBadge = '<span class="badge">' + submission.foreclosure_status + '</span>';
+            }
+            
+            row.innerHTML = `
+              <td>${submission.property_address}<br><small>${submission.city}, ${submission.state}</small></td>
+              <td>${submission.contact_name}<br><small>${submission.contact_phone}</small></td>
+              <td>${statusBadge}</td>
+              <td>${new Date(submission.created_at).toLocaleDateString()}</td>
+            `;
+            
+            tableBody.appendChild(row);
+          });
+        }
+        
+        document.getElementById('submissions-loading').style.display = 'none';
+        document.getElementById('submissions-table').style.display = 'table';
+        
+      } catch (error) {
+        console.error('Error loading submissions:', error);
+        document.getElementById('submissions-loading').style.display = 'none';
+        document.getElementById('submissions-table').style.display = 'table';
+        document.getElementById('submissions-body').innerHTML = '<tr><td colspan="4">Error loading submissions</td></tr>';
+      }
+    }
+    
+    async function loadUpcomingFollowups() {
+      try {
+        document.getElementById('followups-loading').style.display = 'flex';
+        document.getElementById('followups-table').style.display = 'none';
+        
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ action: 'upcoming_followups' })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load followups');
+        }
+        
+        const data = await response.json();
+        const followups = data.followups || [];
+        
+        const tableBody = document.getElementById('followups-body');
+        tableBody.innerHTML = '';
+        
+        if (followups.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="4">No upcoming follow-ups</td></tr>';
+        } else {
+          followups.forEach(followup => {
+            const row = document.createElement('tr');
+            const submission = followup.property_submissions;
+            
+            row.innerHTML = `
+              <td>${submission?.property_address || 'N/A'}</td>
+              <td>${submission?.contact_name || 'N/A'}<br><small>${submission?.contact_phone || 'N/A'}</small></td>
+              <td>${new Date(followup.scheduled_date).toLocaleString()}</td>
+              <td>${followup.notes || 'No notes'}</td>
+            `;
+            
+            tableBody.appendChild(row);
+          });
+        }
+        
+        document.getElementById('followups-loading').style.display = 'none';
+        document.getElementById('followups-table').style.display = 'table';
+        
+      } catch (error) {
+        console.error('Error loading followups:', error);
+        document.getElementById('followups-loading').style.display = 'none';
+        document.getElementById('followups-table').style.display = 'table';
+        document.getElementById('followups-body').innerHTML = '<tr><td colspan="4">Error loading follow-ups</td></tr>';
+      }
+    }
+    
+    async function loadPerformanceMetrics() {
+      try {
+        document.getElementById('metrics-loading').style.display = 'flex';
+        document.getElementById('metrics-container').style.display = 'none';
+        
+        const period = document.getElementById('period-select').value;
+        
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ 
+            action: 'performance_metrics',
+            period
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load metrics');
+        }
+        
+        const data = await response.json();
+        
+        // Update summary
+        const metricsElement = document.getElementById('metrics-summary');
+        metricsElement.innerHTML = `
+          <p><strong>Period:</strong> ${getPeriodLabel(period)}</p>
+          <p><strong>Total Submissions:</strong> ${data.submissions.total}</p>
+          <p><strong>Total Completed Follow-ups:</strong> ${data.followups.total}</p>
+        `;
+        
+        // Create chart
+        createPerformanceChart(data);
+        
+        document.getElementById('metrics-loading').style.display = 'none';
+        document.getElementById('metrics-container').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error loading metrics:', error);
+        document.getElementById('metrics-loading').style.display = 'none';
+        document.getElementById('metrics-container').style.display = 'block';
+        document.getElementById('metrics-summary').innerHTML = '<p>Error loading performance metrics</p>';
+      }
+    }
+    
+    function getPeriodLabel(period) {
+      switch (period) {
+        case 'day': return 'Last 24 Hours';
+        case 'week': return 'Last 7 Days';
+        case 'month': return 'Last 30 Days';
+        case 'quarter': return 'Last 90 Days';
+        default: return 'Custom Period';
+      }
+    }
+    
+    function createPerformanceChart(data) {
+      const ctx = document.getElementById('metrics-chart').getContext('2d');
+      
+      // Get all dates from both datasets
+      const allDates = new Set([
+        ...Object.keys(data.submissions.by_date || {}),
+        ...Object.keys(data.followups.by_date || {})
+      ]);
+      
+      // Sort dates
+      const sortedDates = Array.from(allDates).sort();
+      
+      // Prepare datasets
+      const submissionsData = sortedDates.map(date => 
+        data.submissions.by_date?.[date] || 0
+      );
+      
+      const followupsData = sortedDates.map(date => 
+        data.followups.by_date?.[date] || 0
+      );
+      
+      // Format dates for display
+      const formattedDates = sortedDates.map(date => {
+        const d = new Date(date);
+        return `${d.getMonth() + 1}/${d.getDate()}`;
+      });
+      
+      // Destroy existing chart if it exists
+      if (window.performanceChart) {
+        window.performanceChart.destroy();
+      }
+      
+      // Create new chart
+      window.performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: formattedDates,
+          datasets: [
+            {
+              label: 'Submissions',
+              data: submissionsData,
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              tension: 0.1,
+              fill: true
+            },
+            {
+              label: 'Completed Follow-ups',
+              data: followupsData,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.1,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
