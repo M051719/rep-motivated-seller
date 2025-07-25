@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button { padding: 8px 12px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Cloudflare Connection Test</h1>
+    
+    <div id="status">
+        <p>This page tests your connection through Cloudflare to diagnose redirect issues.</p>
+        <p>Current URL: <span id="currentUrl"></span></p>
+        <p>Page loaded successfully without redirect loops.</p>
+    </div>
+
+    <div>
+        <h2>Connection Information</h2>
+        <div id="connectionInfo">Loading...</div>
+    </div>
+
+    <div>
+        <h2>Test Supabase Connection</h2>
+        <button id="testSupabase">Test Supabase Connection</button>
+        <div id="supabaseResult"></div>
+    </div>
+
+    <div>
+        <h2>Cloudflare Status</h2>
+        <button id="checkCloudflare">Check Cloudflare Status</button>
+        <div id="cloudflareResult"></div>
+    </div>
+
+    <script>
+        // Display current URL
+        document.getElementById('currentUrl').textContent = window.location.href;
+
+        // Connection info
+        function getConnectionInfo() {
+            const infoDiv = document.getElementById('connectionInfo');
+            const info = {
+                protocol: window.location.protocol,
+                host: window.location.host,
+                pathname: window.location.pathname,
+                userAgent: navigator.userAgent,
+                referrer: document.referrer || 'None',
+                cookies: document.cookie ? 'Present' : 'None'
+            };
+            
+            let html = '<ul>';
+            for (const [key, value] of Object.entries(info)) {
+                html += `<li><strong>${key}:</strong> ${value}</li>`;
+            }
+            html += '</ul>';
+            infoDiv.innerHTML = html;
+        }
+        getConnectionInfo();
+
+        // Test Supabase connection
+        document.getElementById('testSupabase').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('supabaseResult');
+            resultDiv.innerHTML = 'Testing connection to Supabase...';
+            
+            try {
+                const response = await fetch('https://ltxqodqlexvojqqxquew.supabase.co/rest/v1/health', {
+                    method: 'GET',
+                    headers: {
+                        'apikey': 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `<p class="success">Connection successful!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">Connection failed with status: ${response.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Check Cloudflare
+        document.getElementById('checkCloudflare').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('cloudflareResult');
+            resultDiv.innerHTML = 'Checking Cloudflare status...';
+            
+            try {
+                // Check if site is behind Cloudflare
+                const cfRay = document.querySelector('meta[name="cf-ray"]');
+                const cfHeaders = {};
+                
+                // Try to detect Cloudflare headers
+                const isCloudflare = cfRay || 
+                    document.querySelector('meta[name="cf-cache-status"]') ||
+                    navigator.userAgent.includes('CloudFlare');
+                
+                if (isCloudflare) {
+                    resultDiv.innerHTML = `
+                        <p class="success">Site appears to be served through Cloudflare.</p>
+                        <p>CF-Ray: ${cfRay ? cfRay.content : 'Not detected in meta tags'}</p>
+                        <p class="info">Recommendations:</p>
+                        <ul>
+                            <li>Check Cloudflare SSL/TLS mode (should be Full or Full Strict)</li>
+                            <li>Verify Page Rules for any conflicting redirects</li>
+                            <li>Purge Cloudflare cache</li>
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="error">Site does not appear to be served through Cloudflare.</p>
+                        <p class="info">This could mean:</p>
+                        <ul>
+                            <li>Cloudflare is in DNS-only mode (gray cloud)</li>
+                            <li>Cloudflare is not properly configured</li>
+                            <li>You're accessing the origin server directly</li>
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error checking Cloudflare status: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

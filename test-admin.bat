@@ -1,0 +1,4 @@
+@echo off
+echo Testing admin-dashboard function...
+curl -X POST "https://ltxqodqlexvojqqxquew.supabase.co/functions/v1/admin-dashboard" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0eHFvZHFsZXh2b2pxcXhxdWV3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4OTk3NTc1MCwiZXhwIjoyMDA1NTUxNzUwfQ.Rl_0RZCnxQHvGFzQVxXdYgHWtgdTxj-Ot-uf-XnEkwE" -H "Content-Type: application/json" -d "{\"action\":\"summary\"}"
+pause

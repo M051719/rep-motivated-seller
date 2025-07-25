@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSP Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        button { padding: 8px 12px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Content Security Policy Test</h1>
+    
+    <div id="status">
+        <p>This page tests if your Content Security Policy is working correctly.</p>
+    </div>
+
+    <div>
+        <h2>CSP Detection</h2>
+        <div id="cspResult">Checking CSP...</div>
+    </div>
+
+    <div>
+        <h2>Resource Loading Test</h2>
+        <button id="testResources">Test Resource Loading</button>
+        <div id="resourceResult"></div>
+    </div>
+
+    <script>
+        // Check if CSP is present
+        function checkCSP() {
+            const resultDiv = document.getElementById('cspResult');
+            
+            // Try to detect CSP
+            fetch('/non-existent-page')
+                .catch(error => {
+                    const headers = error.headers;
+                    if (headers && headers.get('Content-Security-Policy')) {
+                        resultDiv.innerHTML = `<p class="success">CSP detected!</p>
+                            <pre>${headers.get('Content-Security-Policy')}</pre>`;
+                    } else {
+                        // Alternative detection method
+                        const metaCSP = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+                        if (metaCSP) {
+                            resultDiv.innerHTML = `<p class="success">CSP detected in meta tag!</p>
+                                <pre>${metaCSP.content}</pre>`;
+                        } else {
+                            resultDiv.innerHTML = `<p class="error">No CSP detected. This could indicate:</p>
+                                <ul>
+                                    <li>No CSP is configured</li>
+                                    <li>CSP is configured at the server level but not visible to JavaScript</li>
+                                </ul>
+                                <p>Check browser developer tools (Network tab) to see if CSP headers are present.</p>`;
+                        }
+                    }
+                });
+        }
+        
+        // Test loading various resources
+        document.getElementById('testResources').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('resourceResult');
+            resultDiv.innerHTML = 'Testing resource loading...';
+            
+            const results = [];
+            
+            // Test image loading
+            try {
+                const img = new Image();
+                img.src = 'https://www.cloudflare.com/favicon.ico';
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    setTimeout(resolve, 3000); // Timeout after 3 seconds
+                });
+                results.push('✅ External image loaded successfully');
+            } catch (error) {
+                results.push('❌ External image failed to load');
+            }
+            
+            // Test script loading
+            try {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+                document.body.appendChild(script);
+                await new Promise((resolve) => {
+                    script.onload = resolve;
+                    script.onerror = () => {
+                        results.push('❌ External script failed to load');
+                        resolve();
+                    };
+                    setTimeout(resolve, 3000); // Timeout after 3 seconds
+                });
+                if (window.marked) {
+                    results.push('✅ External script loaded successfully');
+                } else {
+                    results.push('❌ External script loaded but not working');
+                }
+            } catch (error) {
+                results.push('❌ External script failed to load');
+            }
+            
+            // Test inline script
+            try {
+                const testFunc = new Function('return "test";');
+                const result = testFunc();
+                if (result === 'test') {
+                    results.push('✅ Inline script executed successfully');
+                } else {
+                    results.push('❌ Inline script failed');
+                }
+            } catch (error) {
+                results.push('❌ Inline script blocked by CSP');
+            }
+            
+            // Display results
+            resultDiv.innerHTML = results.join('<br>');
+        });
+        
+        // Run CSP check on page load
+        checkCSP();
+    </script>
+</body>
+</html>

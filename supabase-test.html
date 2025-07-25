@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>Supabase Test</h1>
+  <button onclick="testSupabase()">Test Connection</button>
+  <button onclick="testFunction()">Test Edge Function</button>
+  <pre id="result" style="background:#f0f0f0; padding:10px; margin-top:20px;"></pre>
+
+  <script>
+    // Initialize Supabase client
+    const supabaseUrl = 'https://ltxqodqlexvojqqxquew.supabase.co';
+    const supabaseKey = 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // Test Supabase connection
+    async function testSupabase() {
+      const resultElement = document.getElementById('result');
+      resultElement.textContent = 'Testing connection...';
+      
+      try {
+        const { data, error } = await supabase
+          .from('foreclosure_responses')
+          .select('id, name, property_address')
+          .limit(5);
+        
+        if (error) throw error;
+        
+        resultElement.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        resultElement.textContent = 'Error: ' + error.message;
+      }
+    }
+    
+    // Test Edge Function
+    async function testFunction() {
+      const resultElement = document.getElementById('result');
+      resultElement.textContent = 'Testing Edge Function...';
+      
+      try {
+        const { data, error } = await supabase.functions.invoke('admin-dashboard', {
+          body: { action: 'summary' }
+        });
+        
+        if (error) throw error;
+        
+        resultElement.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        resultElement.textContent = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepMotivatedSeller - Foreclosure Assistance</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9fafb;
+    }
+    .container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-top: 30px;
+    }
+    h1 {
+      color: #2563eb;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #1e40af;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    button:disabled {
+      background-color: #93c5fd;
+      cursor: not-allowed;
+    }
+    .progress-bar {
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #2563eb;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .step-indicator {
+      text-align: right;
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 5px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    .button-prev {
+      background-color: #e5e7eb;
+      color: #374151;
+    }
+    .button-prev:hover {
+      background-color: #d1d5db;
+    }
+    .success-message {
+      background-color: #ecfdf5;
+      border: 1px solid #10b981;
+      color: #047857;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    .error-message {
+      background-color: #fef2f2;
+      border: 1px solid #ef4444;
+      color: #b91c1c;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>RepMotivatedSeller - Foreclosure Assistance</h1>
+    
+    <div class="progress-bar">
+      <div class="progress-bar-fill" style="width: 20%"></div>
+    </div>
+    <div class="step-indicator">Step 1 of 5</div>
+    
+    <div id="step1" class="step">
+      <h2>Contact Information</h2>
+      
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required>
+      </div>
+      
+      <div class="button-group">
+        <div></div>
+        <button onclick="nextStep(1)">Next</button>
+      </div>
+    </div>
+    
+    <div id="step2" class="step" style="display: none;">
+      <h2>Situation Assessment</h2>
+      
+      <div class="form-group">
+        <label for="property_address">Property Address</label>
+        <input type="text" id="property_address" name="property_address">
+      </div>
+      
+      <div class="form-group">
+        <label for="property_value">Estimated Property Value ($)</label>
+        <input type="number" id="property_value" name="property_value">
+      </div>
+      
+      <div class="form-group">
+        <label for="mortgage_balance">Mortgage Balance ($)</label>
+        <input type="number" id="mortgage_balance" name="mortgage_balance">
+      </div>
+      
+      <div class="form-group">
+        <label for="missed_payments">Number of Missed Payments</label>
+        <input type="number" id="missed_payments" name="missed_payments">
+      </div>
+      
+      <div class="form-group">
+        <input type="checkbox" id="received_nod" name="received_nod" style="width: auto;">
+        <label for="received_nod" style="display: inline;">Have you received a Notice of Default (NOD)?</label>
+      </div>
+      
+      <div class="button-group">
+        <button class="button-prev" onclick="prevStep(2)">Previous</button>
+        <button onclick="nextStep(2)">Next</button>
+      </div>
+    </div>
+    
+    <div id="step3" class="step" style="display: none;">
+      <h2>Problem Identification</h2>
+      
+      <div class="form-group">
+        <label for="challenges">What challenges are you facing with your mortgage?</label>
+        <textarea id="challenges" name="challenges" rows="3"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="difficulties">What difficulties have you encountered when trying to resolve this situation?</label>
+        <textarea id="difficulties" name="difficulties" rows="3"></textarea>
+      </div>
+      
+      <div class="button-group">
+        <button class="button-prev" onclick="prevStep(3)">Previous</button>
+        <button onclick="nextStep(3)">Next</button>
+      </div>
+    </div>
+    
+    <div id="step4" class="step" style="display: none;">
+      <h2>Impact Analysis</h2>
+      
+      <div class="form-group">
+        <label for="family_impact">How is this situation affecting you and your family?</label>
+        <textarea id="family_impact" name="family_impact" rows="3"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="financial_impact">What financial impact has this had on your situation?</label>
+        <textarea id="financial_impact" name="financial_impact" rows="3"></textarea>
+      </div>
+      
+      <div class="button-group">
+        <button class="button-prev" onclick="prevStep(4)">Previous</button>
+        <button onclick="nextStep(4)">Next</button>
+      </div>
+    </div>
+    
+    <div id="step5" class="step" style="display: none;">
+      <h2>Solution Planning</h2>
+      
+      <div class="form-group">
+        <label for="preferred_solution">What solution would you prefer for your situation?</label>
+        <select id="preferred_solution" name="preferred_solution">
+          <option value="">Select an option</option>
+          <option value="loan_modification">Loan Modification</option>
+          <option value="refinance">Refinance</option>
+          <option value="sell_property">Sell the Property</option>
+          <option value="short_sale">Short Sale</option>
+          <option value="deed_in_lieu">Deed in Lieu of Foreclosure</option>
+          <option value="bankruptcy">Bankruptcy</option>
+          <option value="not_sure">Not Sure / Need Advice</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="openness_to_options">How open are you to exploring different options?</label>
+        <textarea id="openness_to_options" name="openness_to_options" rows="3"></textarea>
+      </div>
+      
+      <div id="error-message" class="error-message" style="display: none;"></div>
+      
+      <div class="button-group">
+        <button class="button-prev" onclick="prevStep(5)">Previous</button>
+        <button id="submit-button" onclick="submitForm()">Submit</button>
+      </div>
+    </div>
+    
+    <div id="success" class="step" style="display: none;">
+      <div class="success-message">
+        <h2>Thank You!</h2>
+        <p>Your information has been submitted successfully. One of our foreclosure specialists will contact you shortly.</p>
+        <p>If you have any urgent questions, please call us at <strong>555-123-4567</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase configuration
+    const SUPABASE_URL = 'https://ltxqodqlexvojqqxquew.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg';
+    
+    let currentStep = 1;
+    const totalSteps = 5;
+    
+    function nextStep(step) {
+      document.getElementById(`step${step}`).style.display = 'none';
+      document.getElementById(`step${step + 1}`).style.display = 'block';
+      currentStep = step + 1;
+      updateProgressBar();
+    }
+    
+    function prevStep(step) {
+      document.getElementById(`step${step}`).style.display = 'none';
+      document.getElementById(`step${step - 1}`).style.display = 'block';
+      currentStep = step - 1;
+      updateProgressBar();
+    }
+    
+    function updateProgressBar() {
+      const progressPercent = (currentStep / totalSteps) * 100;
+      document.querySelector('.progress-bar-fill').style.width = `${progressPercent}%`;
+      document.querySelector('.step-indicator').textContent = `Step ${currentStep} of ${totalSteps}`;
+    }
+    
+    async function submitForm() {
+      // Show loading state
+      const submitButton = document.getElementById('submit-button');
+      const errorMessage = document.getElementById('error-message');
+      
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Submitting... <span class="spinner"></span>';
+      errorMessage.style.display = 'none';
+      
+      // Collect form data
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        property_address: document.getElementById('property_address').value,
+        property_value: parseFloat(document.getElementById('property_value').value) || 0,
+        mortgage_balance: parseFloat(document.getElementById('mortgage_balance').value) || 0,
+        missed_payments: parseInt(document.getElementById('missed_payments').value) || 0,
+        received_nod: document.getElementById('received_nod').checked,
+        challenges: document.getElementById('challenges').value,
+        difficulties: document.getElementById('difficulties').value,
+        family_impact: document.getElementById('family_impact').value,
+        financial_impact: document.getElementById('financial_impact').value,
+        preferred_solution: document.getElementById('preferred_solution').value,
+        openness_to_options: document.getElementById('openness_to_options').value,
+        status: 'new'
+      };
+      
+      try {
+        // Submit to Supabase
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/foreclosure_responses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to submit form');
+        }
+        
+        // Trigger the follow-up scheduler
+        try {
+          await fetch(`${SUPABASE_URL}/functions/v1/schedule-follow-ups`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          });
+        } catch (error) {
+          console.error('Error triggering follow-up scheduler:', error);
+          // Continue even if this fails
+        }
+        
+        // Show success message
+        document.getElementById('step5').style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+        document.querySelector('.progress-bar-fill').style.width = '100%';
+        document.querySelector('.step-indicator').textContent = 'Complete';
+        
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        errorMessage.textContent = 'There was an error submitting your information. Please try again.';
+        errorMessage.style.display = 'block';
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit';
+      }
+    }
+  </script>
+</body>
+</html>

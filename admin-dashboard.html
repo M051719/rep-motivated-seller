@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepMotivatedSeller - Admin Dashboard</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #1e40af;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar h1 {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+    }
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .nav-item {
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 5px;
+      transition: background-color 0.2s;
+    }
+    .nav-item:hover, .nav-item.active {
+      background-color: #2563eb;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      margin: 0;
+      color: #1e40af;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    th {
+      background-color: #f3f4f6;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #f9fafb;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-new {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    .badge-processing {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    .badge-contacted {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+    .badge-closed {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    .button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .button:hover {
+      background-color: #1d4ed8;
+    }
+    .button-secondary {
+      background-color: #6b7280;
+    }
+    .button-secondary:hover {
+      background-color: #4b5563;
+    }
+    .button-danger {
+      background-color: #ef4444;
+    }
+    .button-danger:hover {
+      background-color: #dc2626;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: black;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom: 2px solid #2563eb;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .alert {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .alert-success {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+    .alert-error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e40af;
+      margin: 10px 0;
+    }
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h1>RepMotivatedSeller</h1>
+      <div class="nav-item active" onclick="showSection('dashboard')">Dashboard</div>
+      <div class="nav-item" onclick="showSection('submissions')">Submissions</div>
+      <div class="nav-item" onclick="showSection('follow-ups')">Follow-ups</div>
+      <div class="nav-item" onclick="showSection('notifications')">Notifications</div>
+      <div class="nav-item" onclick="showSection('users')">User Management</div>
+      <div class="nav-item" onclick="showSection('settings')">Settings</div>
+      <div class="nav-item" onclick="logout()">Logout</div>
+    </div>
+    
+    <div class="main-content">
+      <!-- Auth Section -->
+      <div id="auth-section" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Login</h2>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
+          </div>
+          
+          <div id="auth-error" class="alert alert-error" style="display: none;"></div>
+          
+          <button class="button" onclick="login()">Login</button>
+        </div>
+      </div>
+      
+      <!-- Dashboard Section -->
+      <div id="dashboard-section" class="section">
+        <h2>Dashboard</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Submissions</div>
+            <div class="stat-value" id="total-submissions">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">New Submissions</div>
+            <div class="stat-value" id="new-submissions">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Follow-ups Today</div>
+            <div class="stat-value" id="followups-today">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Conversion Rate</div>
+            <div class="stat-value" id="conversion-rate">--</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Recent Submissions</h3>
+            <button class="button" onclick="showSection('submissions')">View All</button>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Property Address</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recent-submissions-table">
+              <tr>
+                <td colspan="5">Loading submissions...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Upcoming Follow-ups</h3>
+            <button class="button" onclick="showSection('follow-ups')">View All</button>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Contact</th>
+                <th>Type</th>
+                <th>Scheduled Date</th>
+                <th>Assigned To</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="upcoming-followups-table">
+              <tr>
+                <td colspan="5">Loading follow-ups...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Submissions Section -->
+      <div id="submissions-section" class="section" style="display: none;">
+        <h2>Foreclosure Submissions</h2>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <input type="text" placeholder="Search submissions..." id="submission-search" style="width: 300px;">
+            </div>
+            <div>
+              <select id="status-filter">
+                <option value="">All Statuses</option>
+                <option value="new">New</option>
+                <option value="processing">Processing</option>
+                <option value="contacted">Contacted</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Property Address</th>
+                <th>Phone</th>
+                <th>Missed Payments</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="submissions-table">
+              <tr>
+                <td colspan="7">Loading submissions...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Follow-ups Section -->
+      <div id="follow-ups-section" class="section" style="display: none;">
+        <h2>Follow-up Management</h2>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <input type="text" placeholder="Search follow-ups..." id="followup-search" style="width: 300px;">
+            </div>
+            <div>
+              <button class="button" onclick="openCreateFollowupModal()">Create Follow-up</button>
+            </div>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Contact</th>
+                <th>Type</th>
+                <th>Scheduled Date</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="followups-table">
+              <tr>
+                <td colspan="6">Loading follow-ups...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Notifications Section -->
+      <div id="notifications-section" class="section" style="display: none;">
+        <h2>Notification Management</h2>
+        
+        <div class="card">
+          <div class="tabs">
+            <div class="tab active" onclick="showTab('email-tab')">Email Notifications</div>
+            <div class="tab" onclick="showTab('sms-tab')">SMS Notifications</div>
+            <div class="tab" onclick="showTab('settings-tab')">Notification Settings</div>
+          </div>
+          
+          <div id="email-tab" class="tab-content active">
+            <div class="form-group">
+              <label for="email-subject">Email Subject</label>
+              <input type="text" id="email-subject" value="Important Update Regarding Your Foreclosure Assistance">
+            </div>
+            
+            <div class="form-group">
+              <label for="email-content">Email Content</label>
+              <textarea id="email-content" rows="6">Dear {{name}},
+
+We wanted to follow up regarding your foreclosure assistance request for the property at {{property_address}}.
+
+Our team has reviewed your situation and would like to discuss potential solutions. Please call us at your earliest convenience at 555-123-4567.
+
+Best regards,
+RepMotivatedSeller Team</textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="email-recipients">Recipients</label>
+              <select id="email-recipients">
+                <option value="all">All Submissions</option>
+                <option value="new">New Submissions Only</option>
+                <option value="processing">Processing Submissions Only</option>
+                <option value="custom">Custom Selection</option>
+              </select>
+            </div>
+            
+            <button class="button" onclick="sendEmailNotification()">Send Email Notification</button>
+          </div>
+          
+          <div id="sms-tab" class="tab-content">
+            <div class="form-group">
+              <label for="sms-content">SMS Content</label>
+              <textarea id="sms-content" rows="4">Hi {{name}}, this is RepMotivatedSeller. We've reviewed your foreclosure assistance request and would like to help. Please call us at 555-123-4567 to discuss options.</textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="sms-recipients">Recipients</label>
+              <select id="sms-recipients">
+                <option value="all">All Submissions</option>
+                <option value="new">New Submissions Only</option>
+                <option value="processing">Processing Submissions Only</option>
+                <option value="custom">Custom Selection</option>
+              </select>
+            </div>
+            
+            <button class="button" onclick="sendSmsNotification()">Send SMS Notification</button>
+          </div>
+          
+          <div id="settings-tab" class="tab-content">
+            <div class="form-group">
+              <label for="auto-email">Automatic Email Notifications</label>
+              <select id="auto-email">
+                <option value="enabled">Enabled</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="auto-sms">Automatic SMS Notifications</label>
+              <select id="auto-sms">
+                <option value="enabled">Enabled</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="follow-up-frequency">Default Follow-up Frequency</label>
+              <select id="follow-up-frequency">
+                <option value="daily">Daily</option>
+                <option value="weekly" selected>Weekly</option>
+                <option value="biweekly">Bi-weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            
+            <button class="button" onclick="saveNotificationSettings()">Save Settings</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- User Management Section -->
+      <div id="users-section" class="section" style="display: none;">
+        <h2>User Management</h2>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Admin Users</h3>
+            <button class="button" onclick="openCreateUserModal()">Add User</button>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table">
+              <tr>
+                <td colspan="4">Loading users...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Settings Section -->
+      <div id="settings-section" class="section" style="display: none;">
+        <h2>System Settings</h2>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">General Settings</h3>
+          </div>
+          
+          <div class="form-group">
+            <label for="company-name">Company Name</label>
+            <input type="text" id="company-name" value="RepMotivatedSeller">
+          </div>
+          
+          <div class="form-group">
+            <label for="contact-email">Contact Email</label>
+            <input type="email" id="contact-email" value="contact@repmotivatedseller.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="contact-phone">Contact Phone</label>
+            <input type="tel" id="contact-phone" value="555-123-4567">
+          </div>
+          
+          <button class="button" onclick="saveGeneralSettings()">Save Settings</button>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Integration Settings</h3>
+          </div>
+          
+          <div class="form-group">
+            <label for="twilio-sid">Twilio Account SID</label>
+            <input type="text" id="twilio-sid" value="AC********************************">
+          </div>
+          
+          <div class="form-group">
+            <label for="twilio-token">Twilio Auth Token</label>
+            <input type="password" id="twilio-token" value="********************************">
+          </div>
+          
+          <div class="form-group">
+            <label for="mailerlite-key">MailerLite API Key</label>
+            <input type="password" id="mailerlite-key" value="********************************">
+          </div>
+          
+          <button class="button" onclick="saveIntegrationSettings()">Save Integration Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Create Follow-up Modal -->
+  <div id="create-followup-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('create-followup-modal')">&times;</span>
+      <h2>Create Follow-up</h2>
+      
+      <div class="form-group">
+        <label for="followup-submission">Submission</label>
+        <select id="followup-submission"></select>
+      </div>
+      
+      <div class="form-group">
+        <label for="followup-type">Type</label>
+        <select id="followup-type">
+          <option value="call">Phone Call</option>
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+          <option value="meeting">In-person Meeting</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="followup-date">Scheduled Date</label>
+        <input type="datetime-local" id="followup-date">
+      </div>
+      
+      <div class="form-group">
+        <label for="followup-notes">Notes</label>
+        <textarea id="followup-notes" rows="3"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="followup-assigned">Assigned To</label>
+        <select id="followup-assigned"></select>
+      </div>
+      
+      <button class="button" onclick="createFollowup()">Create Follow-up</button>
+    </div>
+  </div>
+  
+  <!-- Create User Modal -->
+  <div id="create-user-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('create-user-modal')">&times;</span>
+      <h2>Add User</h2>
+      
+      <div class="form-group">
+        <label for="new-user-email">Email</label>
+        <input type="email" id="new-user-email">
+      </div>
+      
+      <div class="form-group">
+        <label for="new-user-password">Password</label>
+        <input type="password" id="new-user-password">
+      </div>
+      
+      <div class="form-group">
+        <label for="new-user-role">Role</label>
+        <select id="new-user-role">
+          <option value="admin">Admin</option>
+          <option value="agent">Agent</option>
+          <option value="support">Support</option>
+        </select>
+      </div>
+      
+      <button class="button" onclick="createUser()">Create User</button>
+    </div>
+  </div>
+  
+  <!-- View Submission Modal -->
+  <div id="view-submission-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('view-submission-modal')">&times;</span>
+      <h2>Submission Details</h2>
+      
+      <div id="submission-details"></div>
+      
+      <div class="form-group">
+        <label for="submission-status">Status</label>
+        <select id="submission-status">
+          <option value="new">New</option>
+          <option value="processing">Processing</option>
+          <option value="contacted">Contacted</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="submission-notes">Admin Notes</label>
+        <textarea id="submission-notes" rows="3"></textarea>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button class="button" onclick="updateSubmission()">Update</button>
+        <button class="button button-secondary" onclick="sendSingleSms()">Send SMS</button>
+        <button class="button button-secondary" onclick="scheduleFollowup()">Schedule Follow-up</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase configuration
+    const SUPABASE_URL = 'https://ltxqodqlexvojqqxquew.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg';
+    
+    let currentUser = null;
+    let currentSubmissionId = null;
+    
+    // Check if user is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+    });
+    
+    async function checkAuth() {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('supabase_token')}`
+          }
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          currentUser = userData;
+          showAuthenticatedUI();
+          loadDashboardData();
+        } else {
+          showLoginUI();
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        showLoginUI();
+      }
+    }
+    
+    function showLoginUI() {
+      document.getElementById('auth-section').style.display = 'block';
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+      });
+    }
+    
+    function showAuthenticatedUI() {
+      document.getElementById('auth-section').style.display = 'none';
+      showSection('dashboard');
+    }
+    
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorElement = document.getElementById('auth-error');
+      
+      if (!email || !password) {
+        errorElement.textContent = 'Please enter both email and password';
+        errorElement.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ email, password })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Invalid credentials');
+        }
+        
+        const data = await response.json();
+        localStorage.setItem('supabase_token', data.access_token);
+        
+        // Check if user has admin role
+        await checkUserRole(data.access_token);
+        
+      } catch (error) {
+        console.error('Login error:', error);
+        errorElement.textContent = 'Login failed: ' + error.message;
+        errorElement.style.display = 'block';
+      }
+    }
+    
+    async function checkUserRole(token) {
+      try {
+        // Get user data
+        const userResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!userResponse.ok) {
+          throw new Error('Failed to get user data');
+        }
+        
+        const userData = await userResponse.json();
+        currentUser = userData;
+        
+        // Check if user has admin profile
+        const profileResponse = await fetch(`${SUPABASE_URL}/rest/v1/admin_profiles?user_id=eq.${userData.id}`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!profileResponse.ok) {
+          throw new Error('Failed to check user role');
+        }
+        
+        const profiles = await profileResponse.json();
+        
+        if (profiles.length === 0) {
+          throw new Error('You do not have admin access');
+        }
+        
+        // User has admin access, show the dashboard
+        showAuthenticatedUI();
+        loadDashboardData();
+        
+      } catch (error) {
+        console.error('Role check error:', error);
+        document.getElementById('auth-error').textContent = error.message;
+        document.getElementById('auth-error').style.display = 'block';
+        localStorage.removeItem('supabase_token');
+      }
+    }
+    
+    function logout() {
+      localStorage.removeItem('supabase_token');
+      currentUser = null;
+      showLoginUI();
+    }
+    
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+      });
+      document.getElementById(`${sectionId}-section`).style.display = 'block';
+      
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      document.querySelector(`.nav-item[onclick="showSection('${sectionId}')"]`).classList.add('active');
+      
+      // Load section data
+      switch(sectionId) {
+        case 'dashboard':
+          loadDashboardData();
+          break;
+        case 'submissions':
+          loadSubmissions();
+          break;
+        case 'follow-ups':
+          loadFollowUps();
+          break;
+        case 'users':
+          loadUsers();
+          break;
+      }
+    }
+    
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+      
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+    
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'block';
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+    
+    async function loadDashboardData() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        // Call the dashboard-data Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/dashboard-data`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ action: 'get' })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load dashboard data');
+        }
+        
+        const data = await response.json();
+        
+        // Update dashboard stats
+        document.getElementById('total-submissions').textContent = data.stats.totalSubmissions;
+        document.getElementById('new-submissions').textContent = data.stats.newSubmissions;
+        document.getElementById('followups-today').textContent = data.stats.followupsToday;
+        document.getElementById('conversion-rate').textContent = data.stats.conversionRate + '%';
+        
+        // Update recent submissions table
+        const recentSubmissionsTable = document.getElementById('recent-submissions-table');
+        recentSubmissionsTable.innerHTML = '';
+        
+        data.recentSubmissions.forEach(submission => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${submission.name}</td>
+            <td>${submission.property_address}</td>
+            <td>${new Date(submission.created_at).toLocaleDateString()}</td>
+            <td><span class="badge badge-${submission.status}">${submission.status}</span></td>
+            <td>
+              <button class="button" onclick="viewSubmission('${submission.id}')">View</button>
+            </td>
+          `;
+          recentSubmissionsTable.appendChild(row);
+        });
+        
+        // Update upcoming follow-ups table
+        const upcomingFollowupsTable = document.getElementById('upcoming-followups-table');
+        upcomingFollowupsTable.innerHTML = '';
+        
+        data.upcomingFollowups.forEach(followup => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${followup.contact_name}</td>
+            <td>${followup.contact_type}</td>
+            <td>${new Date(followup.contact_date).toLocaleString()}</td>
+            <td>${followup.assigned_to}</td>
+            <td>
+              <button class="button" onclick="completeFollowup('${followup.id}')">Complete</button>
+            </td>
+          `;
+          upcomingFollowupsTable.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+    
+    async function loadSubmissions() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const statusFilter = document.getElementById('status-filter').value;
+        const searchQuery = document.getElementById('submission-search').value;
+        
+        let url = `${SUPABASE_URL}/rest/v1/admin_dashboard_view`;
+        const params = [];
+        
+        if (statusFilter) {
+          params.push(`status=eq.${statusFilter}`);
+        }
+        
+        if (searchQuery) {
+          params.push(`or=(name.ilike.%${searchQuery}%,property_address.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%)`);
+        }
+        
+        if (params.length > 0) {
+          url += '?' + params.join('&');
+        }
+        
+        const response = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load submissions');
+        }
+        
+        const submissions = await response.json();
+        
+        const submissionsTable = document.getElementById('submissions-table');
+        submissionsTable.innerHTML = '';
+        
+        if (submissions.length === 0) {
+          submissionsTable.innerHTML = '<tr><td colspan="7">No submissions found</td></tr>';
+          return;
+        }
+        
+        submissions.forEach(submission => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${submission.contact_name}</td>
+            <td>${submission.property_address}</td>
+            <td>${submission.contact_phone}</td>
+            <td>${submission.missed_payments || 0}</td>
+            <td>${new Date(submission.created_at).toLocaleDateString()}</td>
+            <td><span class="badge badge-${submission.status}">${submission.status}</span></td>
+            <td>
+              <button class="button" onclick="viewSubmission('${submission.id}')">View</button>
+              <button class="button button-secondary" onclick="sendSingleSms('${submission.id}')">SMS</button>
+            </td>
+          `;
+          submissionsTable.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error('Error loading submissions:', error);
+      }
+    }
+    
+    async function loadFollowUps() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const searchQuery = document.getElementById('followup-search').value;
+        
+        let url = `${SUPABASE_URL}/rest/v1/follow_up_logs?select=*,foreclosure_responses(name,property_address,phone)`;
+        
+        if (searchQuery) {
+          url += `&or=(notes.ilike.%${searchQuery}%,foreclosure_responses.name.ilike.%${searchQuery}%)`;
+        }
+        
+        const response = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load follow-ups');
+        }
+        
+        const followups = await response.json();
+        
+        const followupsTable = document.getElementById('followups-table');
+        followupsTable.innerHTML = '';
+        
+        if (followups.length === 0) {
+          followupsTable.innerHTML = '<tr><td colspan="6">No follow-ups found</td></tr>';
+          return;
+        }
+        
+        followups.forEach(followup => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${followup.foreclosure_responses?.name || 'Unknown'}</td>
+            <td>${followup.contact_type}</td>
+            <td>${new Date(followup.contact_date).toLocaleString()}</td>
+            <td>${followup.status}</td>
+            <td>${followup.assigned_to}</td>
+            <td>
+              <button class="button" onclick="viewFollowup('${followup.id}')">View</button>
+              ${followup.status !== 'completed' ? `<button class="button button-secondary" onclick="completeFollowup('${followup.id}')">Complete</button>` : ''}
+            </td>
+          `;
+          followupsTable.appendChild(row);
+        });
+        
+        // Also load submissions for the create follow-up modal
+        await loadSubmissionsForFollowup();
+        await loadUsersForAssignment();
+        
+      } catch (error) {
+        console.error('Error loading follow-ups:', error);
+      }
+    }
+    
+    async function loadSubmissionsForFollowup() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/foreclosure_responses?select=id,name,property_address`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load submissions');
+        }
+        
+        const submissions = await response.json();
+        
+        const submissionSelect = document.getElementById('followup-submission');
+        submissionSelect.innerHTML = '';
+        
+        submissions.forEach(submission => {
+          const option = document.createElement('option');
+          option.value = submission.id;
+          option.textContent = `${submission.name} - ${submission.property_address}`;
+          submissionSelect.appendChild(option);
+        });
+        
+      } catch (error) {
+        console.error('Error loading submissions for follow-up:', error);
+      }
+    }
+    
+    async function loadUsersForAssignment() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/admin_profiles?select=user_id,auth.users!inner(email)`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load users');
+        }
+        
+        const users = await response.json();
+        
+        const userSelect = document.getElementById('followup-assigned');
+        userSelect.innerHTML = '';
+        
+        users.forEach(user => {
+          const option = document.createElement('option');
+          option.value = user.user_id;
+          option.textContent = user.users.email;
+          userSelect.appendChild(option);
+        });
+        
+      } catch (error) {
+        console.error('Error loading users for assignment:', error);
+      }
+    }
+    
+    async function loadUsers() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/admin_profiles?select=*,auth.users!inner(email)`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load users');
+        }
+        
+        const users = await response.json();
+        
+        const usersTable = document.getElementById('users-table');
+        usersTable.innerHTML = '';
+        
+        if (users.length === 0) {
+          usersTable.innerHTML = '<tr><td colspan="4">No users found</td></tr>';
+          return;
+        }
+        
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.users.email}</td>
+            <td>${user.role}</td>
+            <td>${new Date(user.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="button" onclick="editUser('${user.user_id}')">Edit</button>
+              <button class="button button-danger" onclick="deleteUser('${user.user_id}')">Delete</button>
+            </td>
+          `;
+          usersTable.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+    
+    async function viewSubmission(id) {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/foreclosure_responses?id=eq.${id}`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load submission details');
+        }
+        
+        const submissions = await response.json();
+        
+        if (submissions.length === 0) {
+          alert('Submission not found');
+          return;
+        }
+        
+        const submission = submissions[0];
+        currentSubmissionId = submission.id;
+        
+        // Format submission details
+        const detailsHtml = `
+          <div style="margin-bottom: 20px;">
+            <p><strong>Name:</strong> ${submission.name}</p>
+            <p><strong>Email:</strong> ${submission.email}</p>
+            <p><strong>Phone:</strong> ${submission.phone}</p>
+            <p><strong>Property Address:</strong> ${submission.property_address}</p>
+            <p><strong>Property Value:</strong> $${submission.property_value?.toLocaleString() || 'N/A'}</p>
+            <p><strong>Mortgage Balance:</strong> $${submission.mortgage_balance?.toLocaleString() || 'N/A'}</p>
+            <p><strong>Missed Payments:</strong> ${submission.missed_payments || 'N/A'}</p>
+            <p><strong>Received NOD:</strong> ${submission.received_nod ? 'Yes' : 'No'}</p>
+            <p><strong>Challenges:</strong> ${submission.challenges || 'N/A'}</p>
+            <p><strong>Difficulties:</strong> ${submission.difficulties || 'N/A'}</p>
+            <p><strong>Family Impact:</strong> ${submission.family_impact || 'N/A'}</p>
+            <p><strong>Financial Impact:</strong> ${submission.financial_impact || 'N/A'}</p>
+            <p><strong>Preferred Solution:</strong> ${submission.preferred_solution || 'N/A'}</p>
+            <p><strong>Openness to Options:</strong> ${submission.openness_to_options || 'N/A'}</p>
+            <p><strong>Submitted:</strong> ${new Date(submission.created_at).toLocaleString()}</p>
+          </div>
+        `;
+        
+        document.getElementById('submission-details').innerHTML = detailsHtml;
+        document.getElementById('submission-status').value = submission.status;
+        document.getElementById('submission-notes').value = submission.admin_notes || '';
+        
+        openModal('view-submission-modal');
+        
+      } catch (error) {
+        console.error('Error viewing submission:', error);
+        alert('Failed to load submission details');
+      }
+    }
+    
+    async function updateSubmission() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const status = document.getElementById('submission-status').value;
+        const notes = document.getElementById('submission-notes').value;
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/foreclosure_responses?id=eq.${currentSubmissionId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            status,
+            admin_notes: notes,
+            updated_at: new Date().toISOString()
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update submission');
+        }
+        
+        closeModal('view-submission-modal');
+        loadSubmissions();
+        loadDashboardData();
+        
+      } catch (error) {
+        console.error('Error updating submission:', error);
+        alert('Failed to update submission');
+      }
+    }
+    
+    async function sendSingleSms(id = null) {
+      try {
+        const submissionId = id || currentSubmissionId;
+        
+        if (!submissionId) {
+          alert('No submission selected');
+          return;
+        }
+        
+        const token = localStorage.getItem('supabase_token');
+        
+        // Get submission details first
+        const submissionResponse = await fetch(`${SUPABASE_URL}/rest/v1/foreclosure_responses?id=eq.${submissionId}&select=name,phone`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!submissionResponse.ok) {
+          throw new Error('Failed to get submission details');
+        }
+        
+        const submissions = await submissionResponse.json();
+        
+        if (submissions.length === 0) {
+          alert('Submission not found');
+          return;
+        }
+        
+        const submission = submissions[0];
+        
+        // Confirm before sending
+        if (!confirm(`Send SMS to ${submission.name} at ${submission.phone}?`)) {
+          return;
+        }
+        
+        // Call the send-sms-notification Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-sms-notification`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            to: submission.phone,
+            name: submission.name,
+            submissionId: submissionId,
+            message: `Hi ${submission.name}, this is RepMotivatedSeller. We've reviewed your foreclosure assistance request and would like to help. Please call us at 555-123-4567 to discuss options.`
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to send SMS');
+        }
+        
+        alert('SMS sent successfully');
+        
+      } catch (error) {
+        console.error('Error sending SMS:', error);
+        alert('Failed to send SMS: ' + error.message);
+      }
+    }
+    
+    async function sendSmsNotification() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const recipients = document.getElementById('sms-recipients').value;
+        const content = document.getElementById('sms-content').value;
+        
+        if (!content) {
+          alert('Please enter SMS content');
+          return;
+        }
+        
+        // Confirm before sending
+        if (!confirm('Send SMS notifications to selected recipients?')) {
+          return;
+        }
+        
+        // Call the send-sms-notification Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-sms-notification`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            recipients: recipients,
+            message: content,
+            bulkSend: true
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to send SMS notifications');
+        }
+        
+        const result = await response.json();
+        alert(`SMS notifications sent: ${result.sent} successful, ${result.failed} failed`);
+        
+      } catch (error) {
+        console.error('Error sending SMS notifications:', error);
+        alert('Failed to send SMS notifications: ' + error.message);
+      }
+    }
+    
+    async function sendEmailNotification() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const recipients = document.getElementById('email-recipients').value;
+        const subject = document.getElementById('email-subject').value;
+        const content = document.getElementById('email-content').value;
+        
+        if (!subject || !content) {
+          alert('Please enter both subject and content');
+          return;
+        }
+        
+        // Confirm before sending
+        if (!confirm('Send email notifications to selected recipients?')) {
+          return;
+        }
+        
+        // Call the send-notification-email Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            recipients: recipients,
+            subject: subject,
+            content: content,
+            bulkSend: true
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to send email notifications');
+        }
+        
+        const result = await response.json();
+        alert(`Email notifications sent: ${result.sent} successful, ${result.failed} failed`);
+        
+      } catch (error) {
+        console.error('Error sending email notifications:', error);
+        alert('Failed to send email notifications: ' + error.message);
+      }
+    }
+    
+    async function saveNotificationSettings() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const autoEmail = document.getElementById('auto-email').value === 'enabled';
+        const autoSms = document.getElementById('auto-sms').value === 'enabled';
+        const followUpFrequency = document.getElementById('follow-up-frequency').value;
+        
+        // Get user's notification settings or create if not exists
+        const settingsResponse = await fetch(`${SUPABASE_URL}/rest/v1/notification_settings?user_id=eq.${currentUser.id}`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!settingsResponse.ok) {
+          throw new Error('Failed to get notification settings');
+        }
+        
+        const settings = await settingsResponse.json();
+        
+        if (settings.length === 0) {
+          // Create new settings
+          await fetch(`${SUPABASE_URL}/rest/v1/notification_settings`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              user_id: currentUser.id,
+              email_notifications: autoEmail,
+              sms_notifications: autoSms,
+              follow_up_frequency: followUpFrequency
+            })
+          });
+        } else {
+          // Update existing settings
+          await fetch(`${SUPABASE_URL}/rest/v1/notification_settings?user_id=eq.${currentUser.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              email_notifications: autoEmail,
+              sms_notifications: autoSms,
+              follow_up_frequency: followUpFrequency,
+              updated_at: new Date().toISOString()
+            })
+          });
+        }
+        
+        alert('Notification settings saved successfully');
+        
+      } catch (error) {
+        console.error('Error saving notification settings:', error);
+        alert('Failed to save notification settings');
+      }
+    }
+    
+    async function saveGeneralSettings() {
+      alert('General settings saved successfully');
+    }
+    
+    async function saveIntegrationSettings() {
+      alert('Integration settings saved successfully');
+    }
+    
+    function openCreateFollowupModal() {
+      document.getElementById('followup-date').value = new Date().toISOString().slice(0, 16);
+      openModal('create-followup-modal');
+    }
+    
+    async function createFollowup() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const submissionId = document.getElementById('followup-submission').value;
+        const type = document.getElementById('followup-type').value;
+        const date = document.getElementById('followup-date').value;
+        const notes = document.getElementById('followup-notes').value;
+        const assignedTo = document.getElementById('followup-assigned').value;
+        
+        if (!submissionId || !type || !date) {
+          alert('Please fill in all required fields');
+          return;
+        }
+        
+        // Call the follow-up-manager Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/follow-up-manager`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            submissionId: submissionId,
+            action: 'create',
+            followUp: {
+              contact_type: type,
+              contact_date: new Date(date).toISOString(),
+              notes: notes,
+              assigned_to: assignedTo,
+              assigned_by: currentUser.id,
+              status: 'scheduled'
+            }
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create follow-up');
+        }
+        
+        closeModal('create-followup-modal');
+        loadFollowUps();
+        loadDashboardData();
+        
+      } catch (error) {
+        console.error('Error creating follow-up:', error);
+        alert('Failed to create follow-up');
+      }
+    }
+    
+    async function completeFollowup(id) {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        // Confirm before completing
+        if (!confirm('Mark this follow-up as completed?')) {
+          return;
+        }
+        
+        // Call the follow-up-manager Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/follow-up-manager`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            followUpId: id,
+            action: 'complete',
+            notes: 'Completed via admin dashboard'
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to complete follow-up');
+        }
+        
+        loadFollowUps();
+        loadDashboardData();
+        
+      } catch (error) {
+        console.error('Error completing follow-up:', error);
+        alert('Failed to complete follow-up');
+      }
+    }
+    
+    function openCreateUserModal() {
+      openModal('create-user-modal');
+    }
+    
+    async function createUser() {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        const email = document.getElementById('new-user-email').value;
+        const password = document.getElementById('new-user-password').value;
+        const role = document.getElementById('new-user-role').value;
+        
+        if (!email || !password || !role) {
+          alert('Please fill in all fields');
+          return;
+        }
+        
+        // Call the auth-management Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/auth-management`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            action: 'create',
+            user: {
+              email: email,
+              password: password,
+              role: role
+            }
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create user');
+        }
+        
+        closeModal('create-user-modal');
+        loadUsers();
+        
+      } catch (error) {
+        console.error('Error creating user:', error);
+        alert('Failed to create user: ' + error.message);
+      }
+    }
+    
+    async function deleteUser(userId) {
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        // Confirm before deleting
+        if (!confirm('Are you sure you want to delete this user?')) {
+          return;
+        }
+        
+        // Call the auth-management Edge Function
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/auth-management`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            action: 'delete',
+            userId: userId
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete user');
+        }
+        
+        loadUsers();
+        
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user: ' + error.message);
+      }
+    }
+    
+    // Add event listeners for search and filter
+    document.getElementById('submission-search').addEventListener('input', function() {
+      loadSubmissions();
+    });
+    
+    document.getElementById('status-filter').addEventListener('change', function() {
+      loadSubmissions();
+    });
+    
+    document.getElementById('followup-search').addEventListener('input', function() {
+      loadFollowUps();
+    });
+  </script>
+</body>
+</html>

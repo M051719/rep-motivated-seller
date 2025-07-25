@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepMotivatedSeller Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>RepMotivatedSeller Test Page</h1>
+    
+    <div class="container">
+        <h2>Site Status</h2>
+        <p class="success">✓ Page loaded successfully!</p>
+        <p>Current URL: <span id="currentUrl"></span></p>
+        <p>Page loaded at: <span id="loadTime"></span></p>
+    </div>
+
+    <div class="container">
+        <h2>Security Headers</h2>
+        <button onclick="checkSecurityHeaders()">Check Security Headers</button>
+        <div id="securityResult">Click the button to check security headers...</div>
+    </div>
+
+    <div class="container">
+        <h2>Supabase Connection</h2>
+        <button onclick="testSupabase()">Test Supabase Connection</button>
+        <div id="supabaseResult">Click the button to test connection...</div>
+    </div>
+
+    <script>
+        // Display current URL and load time
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('loadTime').textContent = new Date().toLocaleString();
+
+        // Check security headers
+        function checkSecurityHeaders() {
+            const resultDiv = document.getElementById('securityResult');
+            resultDiv.innerHTML = 'Checking security headers...';
+            
+            fetch(window.location.href)
+                .then(response => {
+                    const headers = {};
+                    response.headers.forEach((value, name) => {
+                        headers[name] = value;
+                    });
+                    
+                    let html = '<ul>';
+                    const securityHeaders = [
+                        'content-security-policy',
+                        'strict-transport-security',
+                        'x-content-type-options',
+                        'x-frame-options',
+                        'x-xss-protection',
+                        'referrer-policy'
+                    ];
+                    
+                    securityHeaders.forEach(header => {
+                        if (headers[header]) {
+                            html += `<li><strong>${header}:</strong> <span class="success">✓ Present</span></li>`;
+                        } else {
+                            html += `<li><strong>${header}:</strong> ✗ Missing</li>`;
+                        }
+                    });
+                    
+                    html += '</ul>';
+                    resultDiv.innerHTML = html;
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `Error checking headers: ${error.message}`;
+                });
+        }
+
+        // Test Supabase connection
+        function testSupabase() {
+            const resultDiv = document.getElementById('supabaseResult');
+            resultDiv.innerHTML = 'Testing connection to Supabase...';
+            
+            fetch('https://ltxqodqlexvojqqxquew.supabase.co/rest/v1/health', {
+                method: 'GET',
+                headers: {
+                    'apikey': 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(data => {
+                        resultDiv.innerHTML = `<p class="success">Connection successful!</p>`;
+                    });
+                } else {
+                    resultDiv.innerHTML = `Connection failed with status: ${response.status}`;
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            });
+        }
+    </script>
+</body>
+</html>
