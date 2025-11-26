@@ -1,25 +1,52 @@
+# Environment Variables - CRITICAL
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# API Keys, Secrets, Credentials
+*secret*
+*SECRET*
+*token*
+*TOKEN*
+*key*
+*KEY*
+*credential*
+*CREDENTIAL*
+*password*
+*PASSWORD*
+*api-key*
+*apikey*
+!package-lock.json
+!yarn.lock
+
 # Dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.production
+pnpm-debug.log*
 
 # Build outputs
 dist/
 build/
 out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# Testing
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+playwright-report/
 
 # Logs
 *.log
 logs/
+*.log.*
 
 # Runtime data
 pids/
@@ -27,71 +54,10 @@ pids/
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-
-# Gatsby files
-.cache/
-public
-
-# Vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless/
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Supabase
-.supabase/
+# Databases
+*.db
+*.sqlite
+*.sqlite3
 
 # SSL Certificates
 *.crt
@@ -100,51 +66,119 @@ public
 *.p12
 *.pfx
 *.csr
+!**/mock/*.crt
+!**/test/*.key
 
-# API Keys and Tokens
-*token*
-*key*
-*secret*
-*credential*
+# Supabase
+.supabase/
+supabase/.temp/
 
-# Windows
+# Cache
+.cache/
+.npm/
+.eslintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon
-._*
-
-# Linux
-*~
-
-# Temporary files
+# Temporary
 *.tmp
 *.temp
-*.swp
-*.swo
-
-# IDE files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# Backup files
 *.backup
 *.bak
 *_backup/
 
-# Nginx logs
+# Nginx
 nginx/logs/
 C:/nginx/logs/
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# Git Secrets specific patterns
+*_rsa
+*_dsa
+*_ed25519
+*_ecdsa
+*.ppk
+.ssh/
+
+
+# Certificate files
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+!cloudflare_origin.pem.example
+
+# Text files containing secrets
+*secret*.txt
+*credential*.txt
+*password*.txt
+*token*.txt
+*auth*.txt
+
+# Additional environment files
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+*.env.production
+
+# Secret directories
+.secrets/
+secrets/
+certs/
+certificates/
+private/
+
+# Batch/Script files with secrets
+*secret*.bat
+*secret*.ps1
+*credential*.bat
+*credential*.ps1
+set-ai-secrets.bat
+remove-secrets.ps1
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_dsa
+id_dsa.pub
+id_ecdsa
+id_ecdsa.pub
+id_ed25519
+id_ed25519.pub
+
+nul
+0)
+1800
+'full_name'
+'full_name')
+'version'
+Start-Process
+npm
+rep-motivated-seller@0.1.0
+
+# Large installer files
+*.exe
+*.msi

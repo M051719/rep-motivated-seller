@@ -1,0 +1,291 @@
+
+-- Insert sample profiles for testing
+insert into auth.users (
+    id,
+    instance_id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    created_at,
+    updated_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    is_super_admin,
+    confirmation_token,
+    email_change,
+    email_change_token_new,
+    recovery_token
+) values (
+    '550e8400-e29b-41d4-a716-446655440001',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'admin@example.com',
+    '$2a$10$tQPxJ1MjgQhNmJBlkTTdyeR8lCGBx5B3z0X1LxWgGm0q8K9z2T3gS',
+    now(),
+    now(),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Admin User"}',
+    false,
+    '',
+    '',
+    '',
+    ''
+), (
+    '550e8400-e29b-41d4-a716-446655440002',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'user@example.com',
+    '$2a$10$tQPxJ1MjgQhNmJBlkTTdyeR8lCGBx5B3z0X1LxWgGm0q8K9z2T3gS',
+    now(),
+    now(),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Regular User"}',
+    false,
+    '',
+    '',
+    '',
+    ''
+), (
+    '550e8400-e29b-41d4-a716-446655440003',
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'agent@example.com',
+    '$2a$10$tQPxJ1MjgQhNmJBlkTTdyeR8lCGBx5B3z0X1LxWgGm0q8K9z2T3gS',
+    now(),
+    now(),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Real Estate Agent"}',
+    false,
+    '',
+    '',
+    '',
+    ''
+);
+
+-- Insert corresponding profiles
+insert into public.profiles (id, user_id, email, full_name, role, phone, bio) values
+    (
+        '550e8400-e29b-41d4-a716-446655440001', 
+        '550e8400-e29b-41d4-a716-446655440001', 
+        'admin@example.com', 
+        'Admin User', 
+        'admin',
+        '+1-555-0101',
+        'System administrator with full access to manage the platform.'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440002', 
+        '550e8400-e29b-41d4-a716-446655440002', 
+        'user@example.com', 
+        'Regular User', 
+        'user',
+        '+1-555-0102',
+        'Regular user looking for the perfect home.'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440003', 
+        '550e8400-e29b-41d4-a716-446655440003', 
+        'agent@example.com', 
+        'Real Estate Agent', 
+        'user',
+        '+1-555-0103',
+        'Licensed real estate agent with 10+ years experience.'
+    )
+on conflict (email) do nothing;
+
+-- Insert sample properties
+insert into public.properties (
+    owner_id, title, description, property_type, address, city, state, zip_code,
+    latitude, longitude, price, bedrooms, bathrooms, square_feet, lot_size, 
+    year_built, status, amenities, features
+) values
+    (
+        '550e8400-e29b-41d4-a716-446655440003',
+        'Stunning Modern Family Home',
+        'This beautiful 3-bedroom, 2.5-bathroom home features an open floor plan, updated kitchen with granite countertops, hardwood floors throughout, and a private backyard perfect for entertaining.',
+        'house',
+        '123 Maple Street',
+        'Springfield',
+        'CA',
+        '90210',
+        34.0522,
+        -118.2437,
+        750000.00,
+        3,
+        2.5,
+        2200,
+        0.25,
+        2018,
+        'active',
+        ARRAY['Two-car garage', 'Central air conditioning', 'Dishwasher', 'Fireplace', 'Walk-in closets'],
+        ARRAY['Open floor plan', 'Updated kitchen', 'Hardwood floors', 'Private backyard', 'Master suite']
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440003',
+        'Cozy Downtown Condo',
+        'Perfect starter home! This 2-bedroom, 2-bathroom condo is located in the heart of downtown with easy access to public transportation, restaurants, and entertainment.',
+        'condo',
+        '456 Main Street, Unit 304',
+        'Springfield',
+        'CA',
+        '90211',
+        34.0523,
+        -118.2438,
+        450000.00,
+        2,
+        2.0,
+        1100,
+        NULL,
+        2020,
+        'active',
+        ARRAY['Concierge service', 'Fitness center', 'Rooftop deck', 'In-unit laundry'],
+        ARRAY['City views', 'Modern finishes', 'Stainless steel appliances', 'Floor-to-ceiling windows']
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440003',
+        'Charming Victorian Townhouse',
+        'Historic 4-bedroom, 3-bathroom Victorian townhouse with original architectural details, updated systems, and a beautiful garden. Perfect for families who appreciate character and charm.',
+        'townhouse',
+        '789 Oak Avenue',
+        'Springfield',
+        'CA',
+        '90212',
+        34.0524,
+        -118.2439,
+        890000.00,
+        4,
+        3.0,
+        2800,
+        0.15,
+        1895,
+        'active',
+        ARRAY['Original hardwood floors', 'Clawfoot tubs', 'Bay windows', 'Garden', 'Wine cellar'],
+        ARRAY['Historic charm', 'Updated electrical', 'New plumbing', 'Restored details', 'Private garden']
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440003',
+        'Luxury Penthouse Suite',
+        'Breathtaking penthouse with panoramic city views, 3 bedrooms, 3 bathrooms, chef\'s kitchen, and private terrace. The epitome of luxury living.',
+        'apartment',
+        '321 Skyline Boulevard, Penthouse A',
+        'Springfield',
+        'CA',
+        '90213',
+        34.0525,
+        -118.2440,
+        1250000.00,
+        3,
+        3.0,
+        2500,
+        NULL,
+        2022,
+        'active',
+        ARRAY['Private elevator', 'Concierge', 'Valet parking', 'Infinity pool', 'Spa facilities'],
+        ARRAY['Panoramic views', 'Chef kitchen', 'Private terrace', 'Smart home technology', 'Premium finishes']
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440002',
+        'Investment Opportunity - Duplex',
+        'Great investment property! This duplex features two 2-bedroom, 1-bathroom units with separate entrances. Currently rented with stable tenants.',
+        'house',
+        '654 Pine Street',
+        'Springfield',
+        'CA',
+        '90214',
+        34.0526,
+        -118.2441,
+        650000.00,
+        4,
+        2.0,
+        1800,
+        0.20,
+        1960,
+        'active',
+        ARRAY['Separate utilities', 'Off-street parking', 'Storage units', 'Laundry hookups'],
+        ARRAY['Rental income', 'Separate entrances', 'Stable tenants', 'Good neighborhood', 'Potential for appreciation']
+    )
+on conflict do nothing;
+
+-- Insert sample property images
+insert into public.property_images (property_id, url, caption, alt_text, sort_order, is_primary) 
+select 
+    p.id,
+    'https://images.unsplash.com/photo-' || 
+    case 
+        when row_number() over (partition by p.id) = 1 then '1568605114456-8f4c5f4e6dbb'
+        when row_number() over (partition by p.id) = 2 then '1570129477492-45c003edd2be'
+        when row_number() over (partition by p.id) = 3 then '1586023492125-27b2c045d58b'
+        else '1583608805892-70715d82d007'
+    end || '?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    case 
+        when row_number() over (partition by p.id) = 1 then 'Front exterior view'
+        when row_number() over (partition by p.id) = 2 then 'Living room interior'
+        when row_number() over (partition by p.id) = 3 then 'Kitchen area'
+        else 'Additional view'
+    end,
+    case 
+        when row_number() over (partition by p.id) = 1 then 'Exterior view of ' || p.title
+        when row_number() over (partition by p.id) = 2 then 'Living room of ' || p.title
+        when row_number() over (partition by p.id) = 3 then 'Kitchen of ' || p.title
+        else 'Interior view of ' || p.title
+    end,
+    row_number() over (partition by p.id),
+    row_number() over (partition by p.id) = 1
+from public.properties p,
+     generate_series(1, 3) as image_num;
+
+-- Insert sample favorites
+insert into public.favorites (user_id, property_id)
+select 
+    '550e8400-e29b-41d4-a716-446655440002',
+    id
+from public.properties 
+where title in ('Stunning Modern Family Home', 'Luxury Penthouse Suite')
+on conflict (user_id, property_id) do nothing;
+
+-- Insert sample property views
+insert into public.property_views (property_id, viewer_id, ip_address, user_agent, viewed_at)
+select 
+    p.id,
+    case when random() > 0.5 then '550e8400-e29b-41d4-a716-446655440002' else null end,
+    ('192.168.1.' || floor(random() * 255)::int)::inet,
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    now() - (random() * interval '30 days')
+from public.properties p,
+     generate_series(1, floor(random() * 20 + 5)::int);
+
+-- Insert sample search history
+insert into public.search_history (user_id, search_query, results_count, searched_at)
+values
+    (
+        '550e8400-e29b-41d4-a716-446655440002',
+        '{"location": "Springfield, CA", "min_price": 400000, "max_price": 800000, "bedrooms": 3}',
+        2,
+        now() - interval '2 days'
+    ),
+    (
+        '550e8400-e29b-41d4-a716-446655440002',
+        '{"location": "Springfield, CA", "property_type": "condo", "max_price": 500000}',
+        1,
+        now() - interval '5 days'
+    );
+
+-- Update property counts after inserting data
+update public.properties 
+set 
+    views_count = (select count(*) from public.property_views where property_id = properties.id),
+    favorites_count = (select count(*) from public.favorites where property_id = properties.id);
+
+-- Create sample admin user session (for testing authentication)
+select 'Database seeded successfully!' as message,
+       count(*) as total_properties,
+       (select count(*) from public.profiles) as total_profiles
+from public.properties;

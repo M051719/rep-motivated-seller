@@ -1,0 +1,21 @@
+{
+  "name": "Supabase Development Setup",
+  "description": "Complete development environment startup",
+  "steps": [
+    {
+      "type": "docker",
+      "action": "compose_up", 
+      "args": ["supabase/docker-compose.yml"]
+    },
+    {
+      "type": "docker",
+      "action": "exec",
+      "container": "supabase_db",
+      "command": ["psql", "-U", "postgres", "-c", "SELECT version();"]
+    },
+    {
+      "type": "log",
+      "message": "Supabase development environment ready!"
+    }
+  ]
+}

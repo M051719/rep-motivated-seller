@@ -1,0 +1,3 @@
+Now just copy and paste this command into a terminal session on your server. Your CSR will be written to star_repmotivatedseller_shoprealestatespace_org.csr.
+
+openssl req -new -newkey rsa:2048 -nodes -out star_repmotivatedseller_shoprealestatespace_org.csr -keyout star_repmotivatedseller_shoprealestatespace_org.key -subj "/C=US/ST=California/L=VAN NUYS/O=melvin evans/CN=*.repmotivatedseller.shoprealestatespace.org"

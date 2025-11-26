@@ -1,0 +1,204 @@
+# stackhawk.yml - StackHawk Configuration for RepMotivatedSeller
+app:
+  applicationId: ${STACKHAWK_APP_ID}
+  env: ${STACKHAWK_ENVIRONMENT:development}
+  host: ${STACKHAWK_HOST:http://localhost:5173}
+  
+  # Application metadata
+  name: "RepMotivatedSeller Platform"
+  description: "Foreclosure prevention and real estate education platform"
+  
+  # Define application type and technology stack
+  context:
+    technology:
+      - React
+      - TypeScript
+      - Vite
+      - Supabase
+      - Node.js
+    
+    # Risk level assessment
+    riskLevel: HIGH  # Due to financial data and PII handling
+
+# Authentication configuration
+auth:
+  # Test user credentials for authenticated scans
+  testUser:
+    type: FORM
+    loginUrl: /auth
+    usernameSelector: input[type="email"]
+    passwordSelector: input[type="password"]
+    username: ${STACKHAWK_TEST_EMAIL}
+    password: ${STACKHAWK_TEST_PASSWORD}
+    loginSuccessIndicator: "dashboard|profile|education"
+  
+  # Additional auth configurations
+  loggedInIndicator:
+    - text: "Sign Out"
+    - text: "Dashboard"
+    - text: "My Profile"
+
+# Scan configuration
+hawk:
+  # Spider configuration for crawling
+  spider:
+    maxDuration: 10  # minutes
+    maxDepth: 10
+    maxChildren: 100
+    
+    # Include/exclude paths
+    includePaths:
+      - /
+      - /auth
+      - /education.*
+      - /foreclosure-help
+      - /marketing.*
+      - /profile
+      - /contact
+      - /book-consultation
+      - /membership
+      - /api.*
+    
+    excludePaths:
+      - /admin.*
+      - /test.*
+      - .*logout.*
+      - .*signout.*
+      - /unsubscribe
+  
+  # Scan tuning
+  scanner:
+    # OWASP ZAP scanner rules
+    rules:
+      # Enable critical security checks
+      - rule: "10010"  # Cookie No HttpOnly Flag
+        enabled: true
+      - rule: "10011"  # Cookie Without Secure Flag  
+        enabled: true
+      - rule: "10015"  # Incomplete or No Cache-control Header Set
+        enabled: true
+      - rule: "10016"  # Web Browser XSS Protection Not Enabled
+        enabled: true
+      - rule: "10017"  # Cross-Domain JavaScript Source File Inclusion
+        enabled: true
+      - rule: "10020"  # X-Frame-Options Header
+        enabled: true
+      - rule: "10021"  # X-Content-Type-Options Header Missing
+        enabled: true
+      - rule: "90001"  # Insecure JSF ViewState
+        enabled: false  # Not applicable for React
+      - rule: "90011"  # Charset Mismatch
+        enabled: true
+      - rule: "90020"  # Missing Anti-clickjacking Header
+        enabled: true
+      
+      # SQL Injection tests
+      - rule: "40018"  # SQL Injection
+        enabled: true
+      - rule: "40019"  # SQL Injection - PostgreSQL
+        enabled: true
+      - rule: "40020"  # SQL Injection - MySQL
+        enabled: true
+      
+      # XSS tests
+      - rule: "40012"  # Cross Site Scripting (Reflected)
+        enabled: true
+      - rule: "40014"  # Cross Site Scripting (Persistent)
+        enabled: true
+      - rule: "40016"  # Cross Site Scripting (Persistent) - Prime
+        enabled: true
+      - rule: "40017"  # Cross Site Scripting (Persistent) - Spider
+        enabled: true
+    
+    # Custom payloads for financial application testing
+    customPayloads:
+      - name: "financial_data_test"
+        payload: "ssn=123-45-6789&account=123456789&routing=987654321"
+      - name: "pci_test"
+        payload: "cc=4111111111111111&exp=12/25&cvv=123"
+    
+    # Performance tuning
+    maxDuration: 30  # minutes
+    delayInMs: 1000  # delay between requests
+    maxAlertsPerRule: 10
+
+# API endpoints testing
+apis:
+  - name: "Supabase Functions"
+    baseUrl: "https://ltxqodqlexvojqqxquew.supabase.co/functions/v1"
+    paths:
+      - path: "/payment-webhook"
+        method: POST
+      - path: "/paypal-webhook" 
+        method: POST
+      - path: "/email-sender"
+        method: POST
+      - path: "/direct-mail-sender"
+        method: POST
+    
+    # API security headers to check
+    securityHeaders:
+      - "Authorization"
+      - "Content-Type"
+      - "X-API-Key"
+
+# Reporting configuration
+reporting:
+  # Report formats
+  formats:
+    - JSON
+    - HTML
+    - SARIF  # For GitHub integration
+  
+  # Vulnerability thresholds
+  thresholds:
+    high: 0      # Fail build on any high severity issues
+    medium: 5    # Allow up to 5 medium severity issues
+    low: 10      # Allow up to 10 low severity issues
+  
+  # Custom report settings
+  custom:
+    includeRequestResponse: true
+    includeEvidence: true
+    includeSolution: true
+
+# Integration settings
+integrations:
+  # GitHub integration (if using GitHub Actions)
+  github:
+    enabled: true
+    uploadSarif: true
+    
+  # Slack notifications (optional)
+  slack:
+    enabled: false
+    webhook: ${STACKHAWK_SLACK_WEBHOOK}
+    channel: "#security-alerts"
+
+# Environment-specific configurations
+environments:
+  development:
+    host: http://localhost:5173
+    spider:
+      maxDuration: 5
+    scanner:
+      maxDuration: 15
+  
+  staging:
+    host: ${STAGING_URL}
+    spider:
+      maxDuration: 10
+    scanner:
+      maxDuration: 30
+  
+  production:
+    host: ${PRODUCTION_URL}
+    spider:
+      maxDuration: 15
+    scanner:
+      maxDuration: 45
+    # More comprehensive scanning for production
+    scanner:
+      rules:
+        - rule: "90033"  # Loosely Scoped Cookie
+          enabled: true

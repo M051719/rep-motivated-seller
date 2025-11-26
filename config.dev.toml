@@ -1,0 +1,12 @@
+# Development-specific overrides
+[auth]
+site_url = "http://localhost:5173"
+enable_signup = true
+
+[functions]
+# More permissive CORS for development
+cors_origin = "*"
+
+[db]
+# Enable more detailed logging
+log_statement = "all"

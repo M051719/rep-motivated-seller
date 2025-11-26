@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2",
+    "@std/http": "jsr:@std/http@1.0.8",
+    "@std/uuid": "jsr:@std/uuid@1.0.4",
+    "@std/crypto": "jsr:@std/crypto@1.0.3"
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true
+  }
+}

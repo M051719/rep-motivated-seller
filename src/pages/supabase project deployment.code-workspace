@@ -1,0 +1,45 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../digicert certificate csr"
+		},
+		{
+			"path": "../../../../CLOUDFLARE FOLDER"
+		},
+		{
+			"path": "../../../../Amazon Web Service"
+		},
+		{
+			"path": "../../../../GITHUB FOLDER"
+		},
+		{
+			"path": "../../../../mailerlite api token webhook"
+		}
+	],
+	"settings": {
+		"terminal.integrated.sendKeybindingsToShell": true,
+		"terminal.integrated.commandsToSkipShell": [
+			"editor.action.accessibilityHelp",
+			"editor.action.toggleTabFocusMode",
+			"notification.acceptPrimaryAction",
+			"notifications.hideList",
+			"notifications.hideToasts",
+			"runCommands [...]"
+		],
+		"github.copilot.chat.notebook.followCellExecution.enabled": true,
+		"github.copilot.chat.languageContext.typescript.enabled": true,
+		"github.copilot.chat.languageContext.inline.typescript.enabled": true,
+		"github.copilot.chat.languageContext.fix.typescript.enabled": true,
+		"github.copilot.chat.generateTests.codeLens": true,
+		"github.copilot.chat.edits.temporalContext.enabled": true,
+		"github.copilot.chat.editor.temporalContext.enabled": true,
+		"github.copilot.chat.agent.thinkingTool": true,
+		"github.copilot.chat.codesearch.enabled": true,
+		"github.copilot.nextEditSuggestions.enabled": true,
+		"github.copilot.chat.scopeSelection": true,
+		"chat.checkpoints.showFileChanges": true
+	}
+}

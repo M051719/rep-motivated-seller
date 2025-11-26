@@ -1,0 +1,15 @@
+
+{
+  "imports": {
+    "supabase": "npm:@supabase/supabase-js@2.45.4",
+    "hono": "npm:hono@4.6.11",
+    "std/path": "jsr:@std/path@1.0.8"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.ns", "dom", "es2022"],
+    "types": ["npm:@types/node@20"]
+  },
+  "fmt": { "useTabs": false, "lineWidth": 100 },
+  "lint": { "rules": { "tags": ["recommended"] } }
+}

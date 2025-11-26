@@ -1,0 +1,54 @@
+# Supabase configuration file
+
+project_id = "your-project-id"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[database]
+major_version = 17
+port = 54322
+shadow_port = 54320
+
+[database.settings]
+# Fix worker process issues
+max_worker_processes = "8"
+max_parallel_workers = "4"
+max_parallel_workers_per_gather = "2"
+max_parallel_maintenance_workers = "2"
+
+# Memory settings
+shared_buffers = "256MB"
+effective_cache_size = "1GB"
+work_mem = "16MB"
+
+# Connection settings
+max_connections = "100"
+idle_in_transaction_session_timeout = "60s"
+statement_timeout = "30s"
+
+# Logging settings
+log_statement = "ddl"
+log_min_duration_statement = "1000"
+
+[auth]
+enabled = true
+port = 54324
+site_url = "http://localhost:3000"
+
+[storage]
+enabled = true
+port = 54325
+file_size_limit = "50MB"
+image_transformation = true
+
+[edge_functions]
+enabled = true
+port = 54326
+
+[analytics]
+enabled = false

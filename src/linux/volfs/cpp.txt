@@ -1,0 +1,8 @@
+// Metadata stored in NTFS Extended Attributes
+struct WslFileMetadata {
+    mode_t mode;        // File type and permissions
+    uid_t owner;        // User ID
+    gid_t group;        // Group ID
+    dev_t device_id;    // For device files
+    struct timespec times[3]; // Access, modify, change times
+};

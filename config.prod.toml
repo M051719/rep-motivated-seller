@@ -1,0 +1,12 @@
+# Production-specific overrides
+[auth]
+site_url = "https://repmotivatedseller.org"
+enable_signup = false  # Controlled signup
+
+[functions]
+# Strict CORS for production
+cors_origin = "https://repmotivatedseller.org"
+
+[db]
+# Minimal logging for performance
+log_statement = "none"
