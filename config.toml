@@ -1,0 +1,54 @@
+project_id = "ltxqodqlexvojqqxquew"
+
+[api]
+enabled = true
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+enabled = true
+major_version = 15
+
+[db.pooler]
+enabled = true
+pool_mode = "transaction"
+default_pool_size = 10
+max_client_conn = 50
+
+[db.settings]
+max_worker_processes = 8
+max_parallel_workers = 4
+shared_buffers = "256MB"
+effective_cache_size = "1GB"
+
+[studio]
+enabled = true
+api_url = "http://127.0.0.1:54321"
+
+[auth]
+enabled = true
+site_url = "https://repmotivatedseller.shoprealestatespace.org"
+additional_redirect_urls = [
+  "https://app.repmotivatedseller.shoprealestatespace.org",
+  "http://localhost:5173",
+  "http://localhost:3000"
+]
+jwt_expiry = 900
+enable_refresh_token_rotation = true
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+[storage]
+enabled = true
+file_size_limit = "10MiB"
+
+[realtime]
+enabled = true
+
+[inbucket]
+enabled = true

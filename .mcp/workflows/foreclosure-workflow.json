@@ -1,0 +1,21 @@
+{
+  "name": "Complete Foreclosure Processing",
+  "description": "End-to-end foreclosure response handling",
+  "steps": [
+    {
+      "type": "database",
+      "action": "query",
+      "sql": "SELECT * FROM foreclosure_responses WHERE status = 'new'"
+    },
+    {
+      "type": "ai",
+      "action": "analyze",
+      "prompt": "Analyze urgency levels and recommend actions"
+    },
+    {
+      "type": "email",
+      "action": "send_follow_up",
+      "template": "initial_response"
+    }
+  ]
+}

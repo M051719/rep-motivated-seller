@@ -1,0 +1,41 @@
+{
+  "debug": false,
+  "log-level": "info",
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "50m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2",
+  "data-root": "./docker-data",
+  "features": {
+    "buildkit": true
+  },
+  "builder": {
+    "gc": {
+      "enabled": true,
+      "defaultKeepStorage": "5GB"
+    }
+  },
+  "registry-mirrors": [],
+  "insecure-registries": [
+    "localhost:5000"
+  ],
+  "dns": ["8.8.8.8", "8.8.4.4"],
+  "labels": [
+    "project=rep-motivated-seller",
+    "environment=development"
+  ],
+  "default-ulimits": {
+    "nofile": {
+      "Hard": 32768,
+      "Name": "nofile",
+      "Soft": 32768
+    }
+  },
+  "default-network-opts": {
+    "bridge": "default"
+  },
+  "ip-forward": true,
+  "iptables": true
+}

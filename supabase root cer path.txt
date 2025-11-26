@@ -1,0 +1,1 @@
+c:/users/monte/documents/cert api token keys ids/supabase project development/supabase my-supabase-project.evn/prod-ca.crt

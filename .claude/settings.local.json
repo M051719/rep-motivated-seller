@@ -1,0 +1,11 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "MCP_DOCKER"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(psql:*)"
+    ]
+  }
+}

@@ -1,0 +1,527 @@
+
+-- HubSpot Integration for RepMotivatedSeller
+-- Complete database setup for HubSpot CRM sync
+
+-- Step 1: Enable Required Extensions
+CREATE EXTENSION IF NOT EXISTS wrappers CASCADE;
+CREATE EXTENSION IF NOT EXISTS supabase_vault CASCADE;
+
+-- -- Step 2: Create Foreign Server for HubSpot
+-- Note: Access token must be set via Supabase Vault before creating server
+OPTIONS (
+  fdw_package_url 'https://github.com/supabase/wrappers/releases/download/wasm_hubspot_fdw_v0.1.0/hubspot_fdw.wasm',
+  fdw_package_name 'supabase:hubspot-fdw',  
+  fdw_package_version '0.1.0',
+  api_url 'https://api.hubapi.com/crm/v3'
+); (COMMENTED OUT - wasm_fdw not available)
+
+-- -- Step 3: Create User Mapping
+-- This uses the access_token stored in Supabase Vault
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_user_mappings 
+    WHERE srvname = 'hubspot_repmotivatedseller_server' 
+    AND usename = 'postgres'
+  ) THEN
+    EXECUTE format(
+      'CREATE USER MAPPING FOR postgres SERVER hubspot_repmotivatedseller_server OPTIONS (access_token %L)',
+      (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'hubspot_access_token')
+    );
+  END IF;
+END $$;
+
+
+-- HubSpot Contacts Foreign Table
+DROP FOREIGN TABLE IF EXISTS hubspot_contacts CASCADE;
+  id text,
+  createdate timestamp,
+  lastmodifieddate timestamp,
+  email text,
+  firstname text,
+  lastname text,
+  phone text,
+  address text,
+  city text,
+  state text,
+  zip text,
+  -- Custom properties for foreclosure data
+  property_value text,
+  mortgage_balance text,
+  monthly_payment text,
+  missed_payments text,
+  foreclosure_date text,
+  urgency_level text,
+  lead_source text,
+  property_address text
+)
+SERVER hubspot_repmotivatedseller_server
+OPTIONS (
+  object 'contacts'
+); (COMMENTED OUT - requires foreign server)
+
+-- HubSpot Deals Foreign Table
+DROP FOREIGN TABLE IF EXISTS hubspot_deals CASCADE;
+  id text,
+  createdate timestamp,
+  lastmodifieddate timestamp,
+  dealname text,
+  dealstage text,
+  pipeline text,
+  amount text,
+  closedate timestamp,
+  hubspot_owner_id text,
+  -- Custom deal properties
+  property_address text,
+  deal_type text,
+  solution_type text,
+  urgency_level text,
+  foreclosure_date text
+)
+SERVER hubspot_repmotivatedseller_server
+OPTIONS (
+  object 'deals'
+);
+
+-- Step 5: Enhance Submissions Table with HubSpot Tracking
+ALTER TABLE public.submissions 
+  ADD COLUMN IF NOT EXISTS synced_to_hubspot boolean DEFAULT false,
+  ADD COLUMN IF NOT EXISTS hubspot_sync_date timestamp with time zone,
+  ADD COLUMN IF NOT EXISTS hubspot_contact_id text,
+  ADD COLUMN IF NOT EXISTS hubspot_deal_id text,
+  ADD COLUMN IF NOT EXISTS sync_attempts integer DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS last_sync_error text;
+
+-- Create indexes for performance (including columns used in RLS policies and sync queries)
+CREATE INDEX IF NOT EXISTS idx_submissions_synced ON public.submissions(synced_to_hubspot);
+CREATE INDEX IF NOT EXISTS idx_submissions_sync_attempts ON public.submissions(sync_attempts) WHERE synced_to_hubspot = false;
+CREATE INDEX IF NOT EXISTS idx_submissions_hubspot_contact ON public.submissions(hubspot_contact_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_hubspot_deal ON public.submissions(hubspot_deal_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_created_unsynced ON public.submissions(created_at DESC) WHERE synced_to_hubspot = false;
+
+-- Step 6: Create Sync Error Tracking Table
+DROP TABLE IF EXISTS public.sync_errors CASCADE;
+CREATE TABLE public.sync_errors (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  table_name text NOT NULL,
+  record_id text NOT NULL,
+  error_message text NOT NULL,
+  error_details jsonb,
+  created_at timestamp with time zone DEFAULT now(),
+  resolved boolean DEFAULT false,
+  resolved_at timestamp with time zone,
+  resolved_by text,
+  retry_count integer DEFAULT 0,
+  notes text
+);
+
+-- Indexes for sync_errors
+CREATE INDEX idx_sync_errors_resolved ON public.sync_errors(resolved, created_at);
+CREATE INDEX idx_sync_errors_table_record ON public.sync_errors(table_name, record_id);
+CREATE INDEX idx_sync_errors_created ON public.sync_errors(created_at DESC);
+
+-- Index for RLS policy performance (user_roles.user_id lookup)
+CREATE INDEX IF NOT EXISTS idx_user_roles_user_id_admin ON public.user_roles(user_id) WHERE is_admin = true;
+
+-- Enable RLS
+ALTER TABLE public.sync_errors ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for sync_errors (Admin only access)
+CREATE POLICY "Admin users can view all sync errors"
+  ON public.sync_errors 
+  FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.user_roles
+      WHERE user_roles.user_id = auth.uid()
+      AND user_roles.is_admin = true
+    )
+  );
+
+CREATE POLICY "Admin users can update sync errors"
+  ON public.sync_errors 
+  FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.user_roles
+      WHERE user_roles.user_id = auth.uid()
+      AND user_roles.is_admin = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.user_roles
+      WHERE user_roles.user_id = auth.uid()
+      AND user_roles.is_admin = true
+    )
+  );
+
+-- System-only insert policy (service_role bypasses RLS)
+-- Regular authenticated users cannot insert sync errors
+CREATE POLICY "Service role can insert sync errors"
+  ON public.sync_errors 
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (false);  -- Deny all authenticated inserts; only service_role can insert
+
+-- Step 7: Main Sync Function
+-- SECURITY DEFINER allows service-level operations while maintaining RLS
+-- Only admins should call this function via RPC
+CREATE OR REPLACE FUNCTION public.sync_submission_to_hubspot(submission_id uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  submission_data record;
+  contact_email text;
+  contact_firstname text;
+  contact_lastname text;
+  contact_phone text;
+  contact_address text;
+  prop_value text;
+  mort_balance text;
+  monthly_pay text;
+  missed_pay text;
+  foreclosure_dt text;
+  urgency text;
+BEGIN
+  -- Get submission data
+  SELECT * INTO submission_data
+  FROM public.submissions
+  WHERE id = submission_id;
+  
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Submission not found: %', submission_id;
+  END IF;
+  
+  -- Increment sync attempts
+  UPDATE public.submissions 
+  SET sync_attempts = COALESCE(sync_attempts, 0) + 1
+  WHERE id = submission_id;
+  
+  -- Extract data from JSONB fields
+  contact_email := submission_data.contact_info->>'email';
+  contact_firstname := split_part(submission_data.contact_info->>'name', ' ', 1);
+  contact_lastname := NULLIF(substring(submission_data.contact_info->>'name' from position(' ' in submission_data.contact_info->>'name') + 1), '');
+  contact_phone := submission_data.contact_info->>'phone';
+  contact_address := submission_data.contact_info->>'address';
+  prop_value := submission_data.situation->>'property_value';
+  mort_balance := submission_data.situation->>'mortgage_balance';
+  monthly_pay := submission_data.situation->>'monthly_payment';
+  missed_pay := submission_data.situation->>'missed_payments';
+  foreclosure_dt := submission_data.situation->>'foreclosure_date';
+  urgency := submission_data.urgency_level;
+  
+  BEGIN
+    -- Insert contact into HubSpot
+    INSERT INTO hubspot_contacts (
+      email, 
+      firstname, 
+      lastname, 
+      phone, 
+      property_address,
+      property_value, 
+      mortgage_balance, 
+      monthly_payment, 
+      missed_payments, 
+      foreclosure_date, 
+      urgency_level, 
+      lead_source
+    ) VALUES (
+      contact_email,
+      contact_firstname,
+      COALESCE(contact_lastname, ''),
+      contact_phone,
+      contact_address,
+      prop_value,
+      mort_balance,
+      monthly_pay,
+      missed_pay,
+      foreclosure_dt,
+      urgency,
+      'RepMotivatedSeller Website'
+    );
+    
+    -- Create deal for high urgency cases
+    IF urgency = 'high' THEN
+      INSERT INTO hubspot_deals (
+        dealname,
+        dealstage,
+        pipeline,
+        amount,
+        property_address,
+        deal_type,
+        urgency_level,
+        foreclosure_date
+      ) VALUES (
+        COALESCE(submission_data.contact_info->>'name', 'Unknown') || ' - Foreclosure Assistance',
+        'appointmentscheduled',
+        'default',
+        COALESCE((prop_value::numeric * 0.05)::text, '0'),
+        contact_address,
+        'Foreclosure Assistance',
+        urgency,
+        foreclosure_dt
+      );
+    END IF;
+    
+    -- Update submission with sync success
+    UPDATE public.submissions 
+    SET 
+      synced_to_hubspot = true,
+      hubspot_sync_date = NOW(),
+      last_sync_error = NULL
+    WHERE id = submission_id;
+    
+    RETURN jsonb_build_object(
+      'success', true,
+      'message', 'Successfully synced to HubSpot',
+      'submission_id', submission_id,
+      'contact_email', contact_email
+    );
+    
+  EXCEPTION
+    WHEN OTHERS THEN
+      -- Log error
+      INSERT INTO public.sync_errors (table_name, record_id, error_message, error_details)
+      VALUES (
+        'submissions', 
+        submission_id::text, 
+        SQLERRM,
+        jsonb_build_object(
+          'email', contact_email,
+          'name', submission_data.contact_info->>'name',
+          'sql_state', SQLSTATE,
+          'context', 'sync_submission_to_hubspot'
+        )
+      );
+      
+      -- Update submission with error
+      UPDATE public.submissions 
+      SET last_sync_error = SQLERRM
+      WHERE id = submission_id;
+      
+      RETURN jsonb_build_object(
+        'success', false,
+        'error', SQLERRM,
+        'submission_id', submission_id
+      );
+  END;
+END;
+$$;
+
+-- Step 8: Bulk Sync Function
+-- SECURITY DEFINER for service-level access
+-- Only admins should call this via RPC
+CREATE OR REPLACE FUNCTION public.bulk_sync_to_hubspot(limit_count integer DEFAULT 10)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  sync_count integer := 0;
+  error_count integer := 0;
+  submission_record record;
+  sync_result jsonb;
+  results jsonb[] := '{}';
+BEGIN
+  FOR submission_record IN 
+    SELECT id, contact_info->>'name' as name
+    FROM public.submissions 
+    WHERE synced_to_hubspot = false 
+    AND (sync_attempts IS NULL OR sync_attempts < 3)
+    ORDER BY created_at DESC
+    LIMIT limit_count
+  LOOP
+    sync_result := public.sync_submission_to_hubspot(submission_record.id);
+    results := array_append(results, sync_result);
+    
+    IF (sync_result->>'success')::boolean THEN
+      sync_count := sync_count + 1;
+    ELSE
+      error_count := error_count + 1;
+    END IF;
+    
+    -- Small delay to avoid rate limits
+    PERFORM pg_sleep(0.5);
+  END LOOP;
+  
+  RETURN jsonb_build_object(
+    'total_processed', sync_count + error_count,
+    'successful_syncs', sync_count,
+    'errors', error_count,
+    'details', results
+  );
+END;
+$$;
+
+-- Step 9: Validation Function
+-- SECURITY DEFINER to test system-level connections
+-- Accessible to admins only
+CREATE OR REPLACE FUNCTION public.validate_hubspot_connection()
+RETURNS table(test_name text, status text, details text)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  contact_count integer;
+  deal_count integer;
+BEGIN
+  -- Test contact table access
+  BEGIN
+    SELECT COUNT(*) INTO contact_count FROM hubspot_contacts LIMIT 1;
+    RETURN QUERY SELECT 
+      'Contact Table Access'::text,
+      'PASS'::text,
+      ('Successfully connected to HubSpot contacts. Count: ' || contact_count)::text;
+  EXCEPTION
+    WHEN OTHERS THEN
+      RETURN QUERY SELECT 
+        'Contact Table Access'::text,
+        'FAIL'::text,
+        ('Connection failed: ' || SQLERRM)::text;
+  END;
+  
+  -- Test deal table access
+  BEGIN
+    SELECT COUNT(*) INTO deal_count FROM hubspot_deals LIMIT 1;
+    RETURN QUERY SELECT 
+      'Deal Table Access'::text,
+      'PASS'::text,
+      ('Successfully connected to HubSpot deals. Count: ' || deal_count)::text;
+  EXCEPTION
+    WHEN OTHERS THEN
+      RETURN QUERY SELECT 
+        'Deal Table Access'::text,
+        'FAIL'::text,
+        ('Connection failed: ' || SQLERRM)::text;
+  END;
+  
+  -- Check vault secret
+  BEGIN
+    IF EXISTS (SELECT 1 FROM vault.decrypted_secrets WHERE name = 'hubspot_access_token') THEN
+      RETURN QUERY SELECT 
+        'Vault Secret'::text,
+        'PASS'::text,
+        'HubSpot access token found in vault'::text;
+    ELSE
+      RETURN QUERY SELECT 
+        'Vault Secret'::text,
+        'FAIL'::text,
+        'HubSpot access token not found in vault'::text;
+    END IF;
+  EXCEPTION
+    WHEN OTHERS THEN
+      RETURN QUERY SELECT 
+        'Vault Secret'::text,
+        'FAIL'::text,
+        ('Vault check failed: ' || SQLERRM)::text;
+  END;
+  
+  -- Check sync status
+  RETURN QUERY
+  SELECT 
+    'Sync Status'::text,
+    'INFO'::text,
+    CONCAT(
+      'Total: ', COUNT(*),
+      ', Synced: ', COUNT(*) FILTER (WHERE synced_to_hubspot = true),
+      ', Pending: ', COUNT(*) FILTER (WHERE synced_to_hubspot = false OR synced_to_hubspot IS NULL),
+      ', Errors: ', COUNT(*) FILTER (WHERE last_sync_error IS NOT NULL)
+    )::text
+  FROM public.submissions;
+END;
+$$;
+
+-- Step 10: Automated Triggers
+
+-- Trigger function for new submissions
+CREATE OR REPLACE FUNCTION public.trigger_hubspot_sync()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Queue sync job via notification
+  PERFORM pg_notify('hubspot_sync_queue', NEW.id::text);
+  RETURN NEW;
+END;
+$$;
+
+-- Create trigger for new submissions
+DROP TRIGGER IF EXISTS auto_sync_hubspot_trigger ON public.submissions;
+CREATE TRIGGER auto_sync_hubspot_trigger
+  AFTER INSERT ON public.submissions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.trigger_hubspot_sync();
+
+-- Trigger function for status updates
+CREATE OR REPLACE FUNCTION public.trigger_status_sync()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF OLD.status IS DISTINCT FROM NEW.status AND NEW.synced_to_hubspot = true THEN
+    PERFORM pg_notify('hubspot_status_update', 
+      jsonb_build_object(
+        'submission_id', NEW.id,
+        'email', NEW.contact_info->>'email',
+        'old_status', OLD.status,
+        'new_status', NEW.status
+      )::text
+    );
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+-- Create trigger for status updates
+DROP TRIGGER IF EXISTS auto_status_sync_trigger ON public.submissions;
+CREATE TRIGGER auto_status_sync_trigger
+  AFTER UPDATE ON public.submissions
+  FOR EACH ROW
+  EXECUTE FUNCTION public.trigger_status_sync();
+
+-- Step 11: Grant Execute Permissions (Admin Only)
+-- Revoke public execute access, grant only to authenticated users
+-- Admin check happens in client-side service layer
+REVOKE EXECUTE ON FUNCTION public.sync_submission_to_hubspot FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.bulk_sync_to_hubspot FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.validate_hubspot_connection FROM PUBLIC;
+
+GRANT EXECUTE ON FUNCTION public.sync_submission_to_hubspot TO authenticated;
+GRANT EXECUTE ON FUNCTION public.bulk_sync_to_hubspot TO authenticated;
+GRANT EXECUTE ON FUNCTION public.validate_hubspot_connection TO authenticated;
+
+-- Note: Client applications should verify admin status before calling these functions
+-- Frontend services should check user_roles.is_admin before invoking RPCs
+
+-- Comments for documentation
+COMMENT ON FUNCTION public.sync_submission_to_hubspot IS 'Syncs a single submission to HubSpot CRM (Admin only - check in client)';
+COMMENT ON FUNCTION public.bulk_sync_to_hubspot IS 'Syncs multiple unsynced submissions to HubSpot (Admin only - check in client)';
+COMMENT ON FUNCTION public.validate_hubspot_connection IS 'Tests HubSpot API connection and returns status (Admin only - check in client)';
+COMMENT ON TABLE public.sync_errors IS 'Tracks HubSpot sync errors for troubleshooting (Admin view only via RLS)';
+
+-- Step 12: Create Helper Function for Admin Check
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.user_roles
+    WHERE user_id = auth.uid()
+    AND is_admin = true
+  );
+$$;
+
+GRANT EXECUTE ON FUNCTION public.is_admin TO authenticated;
+
+COMMENT ON FUNCTION public.is_admin IS 'Returns true if current user is an admin';
+

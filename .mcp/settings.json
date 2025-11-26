@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "stackhawk": {
+      "command": "uvx stackhawk-mcp",
+      "env": {
+        "STACKHAWK_API_KEY": "${env:STACKHAWK_API_KEY}"
+      }
+    }
+  }
+}

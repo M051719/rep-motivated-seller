@@ -1,202 +1,103 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables. Check your .env file.');
+  throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
+  },
+  global: {
+    headers: {
+      'x-application-name': 'RepMotivatedSeller'
+    }
+  }
+});
 
-// Types for database tables
-export interface ForeclosureResponse {
-  id: string;
+// Enhanced connection test with timeout and better error isolation
+export const testConnection = async (timeoutMs: number = 5000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   
-  // Contact Information
-  name: string;
-  email: string;
-  phone: string;
-  
-  // Situation Assessment
-  property_address?: string;
-  property_value?: number;
-  mortgage_balance?: number;
-  missed_payments?: number;
-  received_nod?: boolean;
-  
-  // Problem Identification
-  challenges?: string;
-  difficulties?: string;
-  
-  // Impact Analysis
-  family_impact?: string;
-  financial_impact?: string;
-  
-  // Solution Planning
-  preferred_solution?: string;
-  openness_to_options?: string;
-  
-  // Status Tracking
-  status: 'new' | 'in_progress' | 'contacted' | 'resolved' | 'closed';
-  notes?: string;
-  assigned_to?: string;
-  
-  // Metadata
-  created_at: string;
-  updated_at: string;
-  urgency_level: 'low' | 'medium' | 'high';
-  crm_sync_status: 'pending' | 'synced' | 'failed';
-  crm_id?: string;
-}
+  try {
+    console.log('🔄 Testing Supabase connection...');
+    
+    // Step 1: Test auth session (fast metadata probe)
+    console.log('1️⃣ Checking auth session...');
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.warn('⚠️ Session check failed:', sessionError.message);
+    } else {
+      console.log('✅ Auth system responsive:', sessionData.session ? 'Authenticated' : 'Anonymous');
+    }
 
-export interface NotificationSettings {
-  id: string;
-  user_id: string;
-  email_notifications: boolean;
-  sms_notifications: boolean;
-  slack_notifications: boolean;
-  follow_up_days: number[];
-  created_at: string;
-  updated_at: string;
-}
-
-// Helper functions for common database operations
-export async function getForeclosureResponses(options?: {
-  status?: string;
-  urgency?: string;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  page?: number;
-  limit?: number;
-}) {
-  let query = supabase.from('foreclosure_responses').select('*');
-  
-  // Apply filters
-  if (options?.status) {
-    query = query.eq('status', options.status);
-  }
-  
-  if (options?.urgency) {
-    query = query.eq('urgency_level', options.urgency);
-  }
-  
-  if (options?.search) {
-    query = query.or(`name.ilike.%${options.search}%,email.ilike.%${options.search}%,phone.ilike.%${options.search}%`);
-  }
-  
-  // Apply sorting
-  if (options?.sortBy) {
-    query = query.order(options.sortBy, { ascending: options.sortOrder === 'asc' });
-  } else {
-    // Default sort by created_at desc
-    query = query.order('created_at', { ascending: false });
-  }
-  
-  // Apply pagination
-  if (options?.page && options?.limit) {
-    const from = (options.page - 1) * options.limit;
-    const to = from + options.limit - 1;
-    query = query.range(from, to);
-  }
-  
-  const { data, error, count } = await query;
-  
-  if (error) {
-    console.error('Error fetching foreclosure responses:', error);
-    throw error;
-  }
-  
-  return { data, count };
-}
-
-export async function getForeclosureResponseById(id: string) {
-  const { data, error } = await supabase
-    .from('foreclosure_responses')
-    .select('*')
-    .eq('id', id)
-    .single();
-  
-  if (error) {
-    console.error('Error fetching foreclosure response:', error);
-    throw error;
-  }
-  
-  return data;
-}
-
-export async function updateForeclosureResponse(id: string, updates: Partial<ForeclosureResponse>) {
-  const { data, error } = await supabase
-    .from('foreclosure_responses')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-  
-  if (error) {
-    console.error('Error updating foreclosure response:', error);
-    throw error;
-  }
-  
-  return data;
-}
-
-export async function getNotificationSettings() {
-  const { data, error } = await supabase
-    .from('notification_settings')
-    .select('*')
-    .limit(1)
-    .single();
-  
-  if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
-    console.error('Error fetching notification settings:', error);
-    throw error;
-  }
-  
-  return data;
-}
-
-export async function updateNotificationSettings(updates: Partial<NotificationSettings>) {
-  const { data: existingSettings } = await supabase
-    .from('notification_settings')
-    .select('id')
-    .limit(1)
-    .single();
-  
-  let result;
-  
-  if (existingSettings) {
-    // Update existing settings
+    // Step 2: Test basic database connectivity with timeout
+    console.log('2️⃣ Testing database connection...');
     const { data, error } = await supabase
-      .from('notification_settings')
-      .update(updates)
-      .eq('id', existingSettings.id)
-      .select()
-      .single();
+      .from('health_check')
+      .select('*')
+      .limit(1)
+      .abortSignal(controller.signal);
     
     if (error) {
-      console.error('Error updating notification settings:', error);
-      throw error;
+      console.error('❌ Database query failed:', error.message);
+      
+      // Differentiate between auth failures and RLS
+      if (error.code === 'PGRST301') {
+        console.log('🔍 RLS blocking access (this might be expected)');
+      } else if (error.code === '401') {
+        console.log('🔍 Authentication required');
+      } else {
+        console.log('🔍 Other database error:', error.code);
+      }
+      
+      return false;
     }
     
-    result = data;
-  } else {
-    // Create new settings
-    const { data, error } = await supabase
-      .from('notification_settings')
-      .insert([updates])
-      .select()
-      .single();
+    console.log('✅ Database connection successful');
+    return true;
     
-    if (error) {
-      console.error('Error creating notification settings:', error);
-      throw error;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error(`❌ Connection test timed out after ${timeoutMs}ms`);
+    } else {
+      console.error('❌ Connection test failed:', error.message);
     }
-    
-    result = data;
+    return false;
+  } finally {
+    clearTimeout(timeoutId);
   }
+};
+
+// Separate auth-only test for faster debugging
+export const testAuth = async (timeoutMs: number = 3000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   
-  return result;
-}
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) throw error;
+    
+    console.log('✅ Auth test successful:', session ? 'Authenticated' : 'Anonymous');
+    return { success: true, authenticated: !!session, user: session?.user || null };
+    
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error(`❌ Auth test timed out after ${timeoutMs}ms`);
+    } else {
+      console.error('❌ Auth test failed:', error.message);
+    }
+    return { success: false, authenticated: false, user: null };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};

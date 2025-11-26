@@ -1,0 +1,20 @@
+$wslConfigContent = @'
+[wsl2]
+memory=8GB
+processors=4
+swap=2GB
+localhostForwarding=true
+networkingMode=NAT
+firewall=true
+dnsTunneling=true
+autoProxy=true
+guiApplications=true
+nestedVirtualization=true
+vmIdleTimeout=60000
+debugConsole=false
+safeMode=false
+pageReporting=true
+'@
+
+Set-Content -Path "$env:USERPROFILE\.wslconfig" -Value $wslConfigContent
+Write-Host "Created .wslconfig file at: $env:USERPROFILE\.wslconfig"

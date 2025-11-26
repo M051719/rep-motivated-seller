@@ -1,0 +1,14 @@
+-- Fix PostgreSQL worker process configuration
+-- This should be applied before other migrations
+
+-- Update PostgreSQL settings
+ALTER SYSTEM SET max_worker_processes = 8;
+ALTER SYSTEM SET max_parallel_workers = 4;
+ALTER SYSTEM SET max_parallel_workers_per_gather = 2;
+ALTER SYSTEM SET max_parallel_maintenance_workers = 2;
+
+-- Reload configuration
+SELECT pg_reload_conf();
+
+-- Comment for tracking
+COMMENT ON DATABASE postgres IS 'Worker processes configured for Supabase';

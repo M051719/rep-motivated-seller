@@ -1,46 +1,50 @@
-# Supabase Edge Functions Configuration
+project_id = "ltxqodqlexvojqqxquew"
 
-# Authentication functions
-[functions.auth-test]
-verify_jwt = true
+[api]
+enabled = true
+port = 54421  # Changed from default 54321 to avoid conflicts
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
 
-# Admin functions
-[functions.admin-dashboard]
-verify_jwt = true
+[db]
+major_version = 15
+port = 54422  # Changed from default 54322 to avoid conflicts
 
-# Public webhook endpoints
-[functions.foreclosure-submission]
-verify_jwt = false  # For public webhook access
+[db.pooler]
+enabled = true
+pool_mode = "transaction"
+default_pool_size = 10
+max_client_conn = 50
 
-[functions.notification-dispatcher]
-verify_jwt = false  # For internal service communication
+[studio]
+enabled = true
+port = 54423  # Changed from default 54323
+api_url = "http://127.0.0.1:54421"
 
-[functions.send-notification-email]
-verify_jwt = false  # For webhook triggers
+[auth]
+enabled = true
+site_url = "https://repmotivatedseller.shoprealestatespace.org"
+additional_redirect_urls = [
+  "https://app.repmotivatedseller.shoprealestatespace.org",
+  "http://localhost:5173",
+  "http://localhost:3000"
+]
+jwt_expiry = 900
+enable_refresh_token_rotation = true
+enable_signup = true
 
-# Property functions
-[functions.schedule-property-followup]
-verify_jwt = true
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
 
-[functions.schedule-follow-ups]
-verify_jwt = true
+[storage]
+enabled = true
+file_size_limit = "10MiB"
 
-# External integrations
-[functions.external-api-integration]
-verify_jwt = true
+[realtime]
+enabled = true
 
-# AI voice handling
-[functions.ai-voice-handler]
-verify_jwt = false  # For Twilio webhook access
-
-# Testing functions
-[functions.test-secrets]
-verify_jwt = true
-
-# Weather API example
-[functions.weather-api]
-verify_jwt = false  # For public demo access
-
-# Global edge runtime settings
-[edge_runtime]
-policy = "per_worker"  # For WebSocket connections
+[inbucket]
+enabled = true

@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  db:
+    environment:
+      - POSTGRES_INITDB_ARGS=--max-worker-processes=8
+    command: >
+      postgres
+      -c max_worker_processes=8
+      -c max_parallel_workers=4
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB

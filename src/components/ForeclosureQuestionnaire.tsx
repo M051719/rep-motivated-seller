@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { createClient } from '@supabase/supabase-js';
+import SMSConsentCheckbox from './SMSConsentCheckbox';
+import BackButton from './ui/BackButton';
 
 // Initialize Supabase client
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -12,22 +14,22 @@ type FormData = {
   name: string;
   email: string;
   phone: string;
-  
+
   // Situation Assessment
   property_address: string;
   property_value: number;
   mortgage_balance: number;
   missed_payments: number;
   received_nod: boolean;
-  
+
   // Problem Identification
   challenges: string;
   difficulties: string;
-  
+
   // Impact Analysis
   family_impact: string;
   financial_impact: string;
-  
+
   // Solution Planning
   preferred_solution: string;
   openness_to_options: string;
@@ -38,8 +40,16 @@ const ForeclosureQuestionnaire = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const [smsConsent, setSmsConsent] = useState(false);
+
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<FormData>();
+
+  // Watch phone number for SMS consent component
+  const phoneNumber = useWatch({
+    control,
+    name: 'phone',
+    defaultValue: ''
+  });
   
   const totalSteps = 5;
   
@@ -49,15 +59,33 @@ const ForeclosureQuestionnaire = () => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitError('');
-    
+
     try {
-      // Insert data into Supabase
-      const { error } = await supabase
+      // Insert foreclosure response data
+      const { data: responseData, error: responseError } = await supabase
         .from('foreclosure_responses')
-        .insert([data]);
-      
-      if (error) throw error;
-      
+        .insert([data])
+        .select()
+        .single();
+
+      if (responseError) throw responseError;
+
+      // If user consented to SMS, record their consent
+      if (smsConsent && data.phone) {
+        const { error: consentError } = await supabase
+          .rpc('record_sms_opt_in', {
+            p_phone_number: data.phone,
+            p_method: 'web_form',
+            p_ip_address: null, // Client IP not available in browser
+            p_user_agent: navigator.userAgent
+          });
+
+        if (consentError) {
+          console.error('Error recording SMS consent:', consentError);
+          // Don't fail the entire submission if consent recording fails
+        }
+      }
+
       setSubmitSuccess(true);
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -83,6 +111,9 @@ const ForeclosureQuestionnaire = () => {
   
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-4">
+        <BackButton label="← Back to Home" fallbackPath="/" />
+      </div>
       <h1 className="text-2xl font-bold mb-6">Foreclosure Assistance Questionnaire</h1>
       
       {/* Progress Bar */}
@@ -137,7 +168,16 @@ const ForeclosureQuestionnaire = () => {
               />
               {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
             </div>
-            
+
+            {/* SMS Consent - Optional */}
+            {phoneNumber && (
+              <SMSConsentCheckbox
+                phoneNumber={phoneNumber}
+                onConsentChange={setSmsConsent}
+                defaultChecked={false}
+              />
+            )}
+
             <div className="pt-4">
               <button
                 type="button"
@@ -191,19 +231,40 @@ const ForeclosureQuestionnaire = () => {
               />
             </div>
             
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="received_nod"
-                {...register('received_nod')}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="received_nod" className="ml-2 block text-sm text-gray-700">
-                Have you received a Notice of Default (NOD)?
-              </label>
-            </div>
-            
-            <div className="pt-4 flex justify-between">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Have you received a Notice of Default (NOD)?
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Yes Option */}
+                  <button
+                    type="button"
+                    onClick={() => setValue('received_nod', true)}
+                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                      watch('received_nod') === true
+                        ? 'border-blue-600 bg-blue-50 text-blue-700 font-semibold'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-blue-400'
+                    }`}
+                  >
+                    <div className="text-lg mb-1">✓</div>
+                    <div>Yes</div>
+                  </button>
+                  
+                  {/* No Option */}
+                  <button
+                    type="button"
+                    onClick={() => setValue('received_nod', false)}
+                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                      watch('received_nod') === false
+                        ? 'border-blue-600 bg-blue-50 text-blue-700 font-semibold'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-blue-400'
+                    }`}
+                  >
+                    <div className="text-lg mb-1">✗</div>
+                    <div>No</div>
+                  </button>
+                </div>
+              </div>            <div className="pt-4 flex justify-between">
               <button
                 type="button"
                 onClick={prevStep}

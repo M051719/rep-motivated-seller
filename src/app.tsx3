@@ -1,0 +1,105 @@
+import React, { Suspense, lazy, useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { supabase } from './lib/supabase';
+import Navigation from './components/Navigation'; // Your existing navigation
+import LoadingSpinner from './components/ui/LoadingSpinner';
+
+// Your existing components
+import AdminDashboard from './components/AdminDashboard';
+import ForeclosureQuestionnaire from './components/ForeclosureQuestionnaire';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Enhanced AI Assistant (new addition)
+import AIAssistant from './components/ai/AIAssistant';
+
+// Lazy load new education enhancements
+const EnhancedEducationDashboard = lazy(() => import('./components/education/EnhancedDashboard'));
+const VideoLearningPlayer = lazy(() => import('./components/education/VideoPlayer'));
+const LearningAnalytics = lazy(() => import('./components/education/analytics/LearningAnalytics'));
+
+// Enhanced marketing components
+const EnhancedDirectMail = lazy(() => import('./components/marketing/EnhancedDirectMail'));
+const MarketingAnalytics = lazy(() => import('./components/marketing/MarketingAnalytics'));
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Your existing auth logic + enhancements
+    initializeApp();
+  }, []);
+
+  const initializeApp = async () => {
+    try {
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+
+      // Listen for auth changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          setUser(session?.user ?? null);
+        }
+      );
+
+      return () => subscription.unsubscribe();
+    } catch (error) {
+      console.error('App initialization error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <Router>
+      <div className="App min-h-screen bg-gray-50">
+        {/* Your existing Navigation component enhanced */}
+        <Navigation user={user} />
+        
+        <main className="flex-1">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* Your existing routes - keeping all of them */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/foreclosure-questionnaire" element={<ForeclosureQuestionnaire />} />
+              
+              {/* Enhanced admin routes */}
+              <Route path="/admin" element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              
+              {/* Enhanced education routes - building on your existing */}
+              <Route path="/education" element={<EnhancedEducationDashboard />} />
+              <Route path="/education/video/:lessonId" element={<VideoLearningPlayer />} />
+              <Route path="/education/analytics" element={<LearningAnalytics />} />
+              
+              {/* Enhanced marketing routes */}
+              <Route path="/marketing/direct-mail" element={<EnhancedDirectMail />} />
+              <Route path="/marketing/analytics" element={<MarketingAnalytics />} />
+
+              {/* Your other existing routes... */}
+              
+            </Routes>
+          </Suspense>
+        </main>
+        
+        {/* NEW: AI Assistant - Always available */}
+        <AIAssistant />
+        
+        {/* Your existing toast notifications */}
+        <Toaster position="bottom-right" />
+      </div>
+    </Router>
+  );
+}
+
+export default App;
