@@ -85,7 +85,7 @@ const Footer: React.FC = () => {
             <a href="https://www.pinterest.com/repmotivatedseller/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors" aria-label="Pinterest">
               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0a12 12 0 0 0-4.37 23.17c-.05-1.18 0-2.6.38-3.88l2.67-11.34s-.66-1.33-.66-3.3c0-3.1 1.8-5.42 4.04-5.42 1.9 0 2.82 1.43 2.82 3.15 0 1.92-1.22 4.78-1.85 7.43-.52 2.22 1.11 4.03 3.3 4.03 3.96 0 6.62-5.08 6.62-11.1 0-4.57-3.08-7.99-8.67-7.99-6.3 0-10.15 4.72-10.15 9.98 0 1.82.54 3.1 1.38 4.09.38.45.44.63.3 1.15-.1.37-.32 1.28-.41 1.64-.14.5-.55.68-1.02.5-2.83-1.15-4.15-4.23-4.15-7.69 0-5.71 4.82-12.57 14.37-12.57 7.66 0 12.72 5.54 12.72 11.54 0 7.9-4.4 13.86-10.88 13.86-2.18 0-4.23-1.17-4.93-2.5l-1.34 5.29c-.48 1.84-1.42 3.69-2.32 5.18A12 12 0 1 0 12 0z"/></svg>
             </a>
-            <a href="https://join.slack.com/t/repmotivatedseller/shared_invite/zt-..." target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors" aria-label="Slack Community">
+            <a href="https://join.slack.com/t/repmotivatedseller/shared_invite/zt-2y7rxz7xg-B_8fOFjcHYZkZLqR0RqA0A" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors" aria-label="Slack Community">
               <MessageCircle className="w-6 h-6" />
             </a>
           </div>

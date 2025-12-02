@@ -32,7 +32,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Deal Analysis Software',
       description: 'Comprehensive real estate deal analyzer for evaluating investment opportunities',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '📊',
       link: '/downloads/Deal Analysis Software.xlsx'
     },
@@ -41,7 +41,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Deal Analyzer for Flips',
       description: 'Specialized analyzer for flip properties with ROI calculations and profit projections',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '🏘️',
       link: '/downloads/Deal+Analyzer+for+Flips.xlsx'
     },
@@ -50,7 +50,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Deal Analyzer for Rentals (Basic)',
       description: 'Basic rental property analyzer with cash flow and ROI calculations',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '🏠',
       link: '/downloads/Deal+Analyzer+for+Rentals+BASIC.xlsx'
     },
@@ -59,7 +59,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Deal Analyzer for Rentals (Full)',
       description: 'Full-featured rental property analyzer with advanced metrics and projections',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '🏢',
       link: '/downloads/Deal+Analyzer+for+Rentals+FULL.xlsx'
     },
@@ -68,7 +68,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Flip or Rent Calculator',
       description: 'Decision tool to determine whether to flip or rent a property based on market conditions',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '⚖️',
       link: '/downloads/Flip-Or-Rent-Calculator-from-Rehab-Valuator-1.xlsx'
     },
@@ -77,7 +77,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Underwriting Deal Analysis Software',
       description: 'Professional underwriting analysis tool for detailed property evaluation',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '📋',
       link: '/downloads/underwriting Deal Analysis Software.xlsx'
     },
@@ -88,7 +88,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Amortization Table',
       description: 'Loan amortization calculator with payment schedules and interest breakdowns',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '🧮',
       link: '/downloads/Amortization Table.xls'
     },
@@ -117,7 +117,7 @@ const ResourcesPage: React.FC = () => {
       title: 'Repair Estimator Worksheet',
       description: 'Detailed repair cost estimation tool for renovation projects',
       category: 'tools',
-      type: 'download',
+      type: 'tool',
       icon: '🔧',
       link: '/downloads/Repair+Estimator+Worksheet.xlsx'
     },
@@ -256,7 +256,10 @@ const ResourcesPage: React.FC = () => {
                       {resource.title}
                     </h3>
                     <p className="text-gray-600 mb-4">{resource.description}</p>
-                    <button className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
+                    <button 
+                      onClick={() => resource.link && window.open(resource.link, '_blank')}
+                      className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center cursor-pointer"
+                    >
                       {getTypeLabel(resource.type)}
                     </button>
                   </div>

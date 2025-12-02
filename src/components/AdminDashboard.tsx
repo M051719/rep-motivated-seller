@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
 
 interface Submission {
   id: string;
@@ -22,10 +21,17 @@ interface Submission {
 }
 
 const AdminDashboard: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const [user, setUser] = useState<any>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    // Get current user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  }, []);
 
   useEffect(() => {
     fetchSubmissions();
@@ -79,7 +85,7 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Welcome, {user?.email}</span>
               <button
-                onClick={signOut}
+                onClick={() => supabase.auth.signOut()}
                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
               >
                 Sign Out
