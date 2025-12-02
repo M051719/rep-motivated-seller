@@ -1,162 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Download, Search, Filter, BookOpen } from 'lucide-react';
+import { FileText, Download, Search, Filter, BookOpen, Plus } from 'lucide-react';
 import { BackButton } from '../components/ui/BackButton';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import FavoriteButton from '../components/FavoriteButton';
+import toast from 'react-hot-toast';
 
 interface ContractDocument {
+  id: string;
   name: string;
-  filename: string;
-  category: string;
   description: string;
+  category: string;
+  subcategory: string;
+  file_url: string;
+  file_name: string;
+  file_type: string;
+  download_count: number;
+  is_featured: boolean;
+  favorite_count?: number;
 }
 
-const contracts: ContractDocument[] = [
-  {
-    name: '100 Point List - Best Practices',
-    filename: '100_POINT_LIST_-_BEST_PRACTICES.pdf',
-    category: 'Education',
-    description: 'Comprehensive checklist for real estate investment best practices'
-  },
-  {
-    name: 'Affidavit of Equitable Interest',
-    filename: 'Affidavit-of-Equitable-Interest.pdf',
-    category: 'Legal',
-    description: 'Legal document establishing equitable interest in property'
-  },
-  {
-    name: 'Assignment Agreement Contract',
-    filename: 'Assignment_Agreement_Template.pdf',
-    category: 'Wholesale',
-    description: 'Standard assignment agreement for wholesale transactions'
-  },
-  {
-    name: 'Assignment of Purchase and Sale Agreement',
-    filename: 'Assignment+of+Purchase+and+Sale+Ageement.docx',
-    category: 'Wholesale',
-    description: 'Complete assignment of purchase and sale agreement template'
-  },
-  {
-    name: 'Benefits of Owner Financing',
-    filename: 'BENEFITS OF OWNER FINANCING.docx',
-    category: 'Education',
-    description: 'Guide to owner financing benefits and strategies'
-  },
-  {
-    name: 'Blank Option Agreement',
-    filename: 'Blank-Option-Agreement.pdf',
-    category: 'Options',
-    description: 'Blank option agreement template for lease options'
-  },
-  {
-    name: 'Buyer Assignment Agreement',
-    filename: 'Buyer Assignment Agreement.pdf',
-    category: 'Wholesale',
-    description: 'Agreement for assigning contracts to end buyers'
-  },
-  {
-    name: 'Confidentiality Agreement',
-    filename: 'Confidentiality-agreement-template.pdf',
-    category: 'Legal',
-    description: 'Non-disclosure agreement for protecting confidential information'
-  },
-  {
-    name: 'Confidentiality Non-Circumvent Agreement',
-    filename: 'Confidentiality - Non-Circumvent Agreement.doc',
-    category: 'Legal',
-    description: 'Protects parties from being bypassed in transactions'
-  },
-  {
-    name: 'Cover Letter for Private Lender Credibility',
-    filename: 'Cover+Letter+for+Private+Lender+Credibility+Package.pdf',
-    category: 'Financing',
-    description: 'Professional cover letter template for private lender packages'
-  },
-  {
-    name: 'Credit Repair eBook',
-    filename: 'Credit-Repair-ebook.pdf',
-    category: 'Education',
-    description: 'Comprehensive guide to credit repair strategies'
-  },
-  {
-    name: 'Deed of Trust Equity',
-    filename: 'Deed-of-Trust-Equity-PDF-1.pdf',
-    category: 'Legal',
-    description: 'Deed of trust document for equity transactions'
-  },
-  {
-    name: 'Executive Summary Template - Wholesale',
-    filename: 'Executive Summary template - Wholesale.pdf',
-    category: 'Marketing',
-    description: 'Professional executive summary for wholesale deals'
-  },
-  {
-    name: 'Exit Strategies as Investors',
-    filename: 'Exit+Strategies+as+Investors.pdf',
-    category: 'Education',
-    description: 'Guide to various exit strategies for real estate investors'
-  },
-  {
-    name: 'JV Agreement',
-    filename: 'JV-Agreement-PDF-1.pdf',
-    category: 'Partnership',
-    description: 'Joint venture agreement template for partnerships'
-  },
-  {
-    name: 'Letter of Intent Template',
-    filename: 'LOI_2template.pdf',
-    category: 'Negotiation',
-    description: 'Standard letter of intent for property purchases'
-  },
-  {
-    name: 'LOI Multi-Family Template',
-    filename: 'LOI-Multi-Family-Template-my0cim.pdf',
-    category: 'Negotiation',
-    description: 'Specialized LOI template for multi-family properties'
-  },
-  {
-    name: 'Limited Partnership Agreement (WA)',
-    filename: 'Limited-Partnership-Agreement-Template-WA-Fillable.pdf',
-    category: 'Partnership',
-    description: 'Washington state limited partnership agreement'
-  },
-  {
-    name: 'Own Nothing Control Everything',
-    filename: 'Letter_of_Intent-Own_Nothing_Control_Everything.pdf',
-    category: 'Strategy',
-    description: 'Asset protection strategy documentation'
-  },
-  {
-    name: 'Purchase and Sale Agreement',
-    filename: 'Purchase-and-Sale-Agreement-Template-v1.0-uam30m.pdf',
-    category: 'Contract',
-    description: 'Standard purchase and sale agreement template'
-  }
-];
-
-const categories = ['All', 'Wholesale', 'Legal', 'Education', 'Financing', 'Partnership', 'Negotiation', 'Marketing', 'Options', 'Strategy', 'Contract'];
+// Keep existing categories for backwards compatibility
+const categories = ['All', 'Legal', 'Wholesale', 'Options', 'Financing', 'Marketing', 'Education'];
 
 const ContractsLibraryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [contracts, setContracts] = useState<ContractDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetchContracts();
+    checkAdminStatus();
+  }, []);
+
+  const checkAdminStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!error && data?.role === 'admin') {
+        setIsAdmin(true);
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+    }
+  };
+
+  const fetchContracts = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('templates_forms')
+        .select('*')
+        .in('category', ['contract', 'form'])
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setContracts(data || []);
+    } catch (error: any) {
+      console.error('Error fetching contracts:', error);
+      toast.error('Failed to load contracts');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredContracts = contracts.filter(contract => {
     const matchesSearch = contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         contract.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || contract.category === selectedCategory;
+                         contract.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || contract.subcategory === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const handleDownload = (filename: string, name: string) => {
-    const link = document.createElement('a');
-    link.href = `/contracts/${filename}`;
-    link.download = filename;
-    link.click();
+  const handleDownload = async (contract: ContractDocument) => {
+    try {
+      // Open file in new tab
+      window.open(contract.file_url, '_blank');
+      
+      // Increment download count
+      await supabase.rpc('increment_template_download', {
+        template_id: contract.id
+      });
+
+      // Update local state
+      setContracts(prev => prev.map(c => 
+        c.id === contract.id 
+          ? { ...c, download_count: c.download_count + 1 }
+          : c
+      ));
+
+      toast.success('Opening document...');
+    } catch (error: any) {
+      console.error('Error downloading:', error);
+      toast.error('Failed to download document');
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton />
+        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -174,6 +132,19 @@ const ContractsLibraryPage: React.FC = () => {
             Professional real estate contracts, agreements, and educational resources for investors
           </p>
         </motion.div>
+
+        {/* Admin Upload Button */}
+        {isAdmin && (
+          <div className="mb-8 text-center">
+            <Link
+              to="/admin/template-upload"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg"
+            >
+              <Plus className="w-5 h-5" />
+              Manage Contracts
+            </Link>
+          </div>
+        )}
 
         {/* Search and Filter */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -210,63 +181,103 @@ const ContractsLibraryPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Contracts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredContracts.map((contract, index) => (
-            <motion.div
-              key={contract.filename}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
-            >
-              <div className="p-6">
-                {/* Category Badge */}
-                <div className="mb-3">
-                  <span className="inline-block px-3 py-1 text-xs font-semibold text-primary-700 bg-primary-100 rounded-full">
-                    {contract.category}
-                  </span>
-                </div>
-
-                {/* Icon */}
-                <div className="mb-4">
-                  <FileText className="w-12 h-12 text-primary-600" />
-                </div>
-
-                {/* Title */}
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  {contract.name}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                  {contract.description}
-                </p>
-
-                {/* Download Button */}
-                <button
-                  onClick={() => handleDownload(contract.filename, contract.name)}
-                  className="w-full inline-flex items-center justify-center bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* No Results */}
-        {filteredContracts.length === 0 && (
+        {/* Loading State */}
+        {loading ? (
           <div className="text-center py-12">
-            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No contracts found
-            </h3>
-            <p className="text-gray-600">
-              Try adjusting your search or filter criteria
-            </p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading contracts...</p>
           </div>
+        ) : (
+          <>
+            {/* Contracts Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredContracts.map((contract, index) => (
+                <motion.div
+                  key={contract.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+                >
+                  <div className="p-6">
+                    {/* Category Badge */}
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="inline-block px-3 py-1 text-xs font-semibold text-primary-700 bg-primary-100 rounded-full">
+                        {contract.subcategory || contract.category}
+                      </span>
+                      {contract.is_featured && (
+                        <span className="inline-block px-3 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">
+                          ⭐ Featured
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Icon */}
+                    <div className="mb-4">
+                      <FileText className="w-12 h-12 text-primary-600" />
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      {contract.name}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                      {contract.description || 'No description available'}
+                    </p>
+
+                    {/* Stats */}
+                    {contract.download_count > 0 && (
+                      <p className="text-xs text-gray-500 mb-4">
+                        📥 {contract.download_count} downloads
+                      </p>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <FavoriteButton 
+                        templateId={contract.id}
+                        initialFavorited={false}
+                        showCount={true}
+                        count={contract.favorite_count || 0}
+                        className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      />
+                      <button
+                        onClick={() => handleDownload(contract)}
+                        className="flex-1 inline-flex items-center justify-center bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* No Results */}
+            {filteredContracts.length === 0 && (
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No contracts found
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Try adjusting your search or filter criteria
+                </p>
+                {isAdmin && (
+                  <Link
+                    to="/admin/template-upload"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Contracts
+                  </Link>
+                )}
+              </div>
+            )}
+          </>
         )}
 
         {/* Disclaimer */}

@@ -48,6 +48,9 @@ import CanvaTemplatesPage from './pages/CanvaTemplatesPage'
 import AdminSMSDashboard from './pages/AdminSMSDashboardSimple'
 import AdminBlogManagement from './pages/AdminBlogManagement'
 import AdminCommentModeration from './components/AdminCommentModeration'
+import AdminTemplateUpload from './pages/AdminTemplateUpload'
+import TemplateAnalyticsDashboard from './pages/TemplateAnalyticsDashboard'
+import UserFavoritesPage from './pages/UserFavoritesPage'
 import TestPage from './pages/TestPage'
 
 // State management
@@ -191,7 +194,8 @@ function App() {
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <ScrollToTop />
           <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Header />          <main className="flex-grow">
+            <Header />
+            <main className="flex-grow pt-16">
             <Routes>
               {/* Home - redirect based on auth */}
               <Route
@@ -262,6 +266,21 @@ function App() {
                 path="/admin/comments"
                 element={isAuthenticated ? <AdminCommentModeration /> : <Navigate to="/auth" />}
               />
+              <Route
+                path="/admin/template-upload"
+                element={isAuthenticated ? <AdminTemplateUpload /> : <Navigate to="/auth" />}
+              />
+              <Route
+                path="/admin/analytics"
+                element={isAuthenticated ? <TemplateAnalyticsDashboard /> : <Navigate to="/auth" />}
+              />
+              
+              {/* User Routes */}
+              <Route
+                path="/favorites"
+                element={isAuthenticated ? <UserFavoritesPage /> : <Navigate to="/auth" />}
+              />
+
               {/* Temporary test route - no auth required */}
               <Route
                 path="/test-sms"

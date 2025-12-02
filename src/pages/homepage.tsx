@@ -39,50 +39,39 @@ const HomePage: React.FC = () => {
 
   const [stats, setStats] = useState<Stats>(initialStats);
 
-  const loadStats = useCallback(async () => {
-    try {
-      // Only query profiles table (the only one that exists currently)
-      // course_enrollments and certificates tables will be added in future education feature
-      const { data: usersData, error: usersError } = await supabase
-        .from('profiles')
-        .select('id');
-
-      if (usersError) {
-        console.warn('Error loading user count:', usersError);
-      } else if (usersData) {
-        setStats(prev => ({
-          ...prev,
-          activeStudents: usersData.length
-        }));
-      }
-    } catch (error) {
-      console.error('Error loading stats:', error);
-      // Silently fail - we have fallback stats
-    }
-  }, []);
-
   useEffect(() => {
     const initializePage = async () => {
       try {
         // Get current user (non-blocking)
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
-        
+
         if (user) {
           // Check if user is admin
           const { data: profile } = await supabase
             .from('profiles')
             .select('is_admin')
             .eq('id', user.id)
-                .single();
-              setIsAdmin(profile?.is_admin || false);
-            }
-          })
-          .catch(err => console.warn('Could not load user:', err));
+            .single();
+          setIsAdmin(profile?.is_admin || false);
+        }
 
-        // Load stats (non-blocking)
-        loadStats().catch(err => console.warn('Could not load stats:', err));
+        // Load stats inline (non-blocking) - moved inline to avoid useCallback dependency issues
+        try {
+          const { data: usersData, error: usersError } = await supabase
+            .from('profiles')
+            .select('id');
 
+          if (!usersError && usersData) {
+            setStats(prev => ({
+              ...prev,
+              activeStudents: usersData.length
+            }));
+          }
+        } catch (err) {
+          console.warn('Could not load stats:', err);
+        }
+        
         // Track page view (non-blocking)
         try {
           trackPageView('Homepage');
@@ -99,9 +88,7 @@ const HomePage: React.FC = () => {
     };
 
     initializePage();
-  }, [loadStats]);
-
-  const handleCTAClick = useCallback((ctaType: string) => {
+  }, []);  const handleCTAClick = useCallback((ctaType: string) => {
     trackEvent('CTA_Click', { 
       type: ctaType, 
       page: 'homepage',
@@ -676,6 +663,7 @@ const LoanApplicationCTA = memo<{ onCTAClick: (type: string) => void }>(({ onCTA
 ));
 
 export default HomePage;
+
 
 
 

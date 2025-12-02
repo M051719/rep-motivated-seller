@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { BackButton } from '../components/ui/BackButton';
+import MortgageModificationTemplate from '../components/MortgageModificationTemplate';
 
 interface Article {
   id: number;
@@ -15,6 +16,7 @@ interface Article {
 const KnowledgeBasePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showTemplate, setShowTemplate] = useState<boolean>(false);
 
   const categories = [
     { value: 'all', label: 'All Topics', icon: '📚' },
@@ -24,46 +26,76 @@ const KnowledgeBasePage: React.FC = () => {
     { value: 'resources', label: 'Resources', icon: '📋' }
   ];
 
+  const ebookUrl = 'https://app.designrr.io/projectHtml/2543416?token=92d72d9af682795d175d98257208710f&mode=nice_preview';
+
   const articles: Article[] = [
     {
       id: 1,
-      title: 'What is Foreclosure?',
-      description: 'Understanding the foreclosure process from start to finish',
+      title: 'What is Pre-Foreclosure?',
+      description: 'Pre-foreclosure is a critical stage before property is taken back by the lender. Learn about this wake-up call period and available options.',
       category: 'foreclosure',
       icon: '🏠'
     },
     {
       id: 2,
-      title: 'Your Legal Rights During Foreclosure',
-      description: 'Know your rights and protections under state and federal law',
-      category: 'legal',
-      icon: '⚖️'
+      title: 'Financial Counseling for Homeowners',
+      description: 'Professional guidance and support during challenging times, including mortgage modifications and refinancing solutions.',
+      category: 'financial',
+      icon: '💼'
     },
     {
       id: 3,
-      title: 'Loan Modification Options',
-      description: 'How to modify your mortgage to make payments affordable',
+      title: 'Mortgage Modification & Refinancing',
+      description: 'Adjust your loan terms to create manageable payments and prevent foreclosure through modification or refinancing.',
       category: 'financial',
       icon: '💰'
     },
     {
       id: 4,
-      title: 'Short Sale Process',
-      description: 'When and how to pursue a short sale as an alternative',
+      title: 'Pre-Foreclosure Assistance for Seniors',
+      description: 'Unique challenges for senior homeowners and specialized resources tailored to their needs.',
+      category: 'resources',
+      icon: '👴'
+    },
+    {
+      id: 5,
+      title: 'Short Sale Strategies',
+      description: 'Sell your property for less than mortgage balance with lender approval to avoid foreclosure.',
       category: 'financial',
       icon: '🤝'
     },
     {
-      id: 5,
-      title: 'Foreclosure Timeline by State',
-      description: 'State-specific foreclosure processes and timelines',
-      category: 'foreclosure',
-      icon: '📅'
+      id: 6,
+      title: 'Real Estate Investment Opportunities',
+      description: 'Identify investment opportunities and strategies for pre-foreclosure properties.',
+      category: 'resources',
+      icon: '📊'
     },
     {
-      id: 6,
+      id: 7,
+      title: 'Building a Support System',
+      description: 'Community support, local resources, and the importance of connecting with others facing similar challenges.',
+      category: 'resources',
+      icon: '🤲'
+    },
+    {
+      id: 8,
+      title: 'Taking Action & Moving Forward',
+      description: 'Create a personal action plan, stay motivated through challenges, and celebrate small wins along the way.',
+      category: 'resources',
+      icon: '🎯'
+    },
+    {
+      id: 9,
+      title: 'Your Legal Rights During Foreclosure',
+      description: 'Know your rights and protections under state and federal law during the foreclosure process.',
+      category: 'legal',
+      icon: '⚖️'
+    },
+    {
+      id: 10,
       title: 'Government Assistance Programs',
-      description: 'Federal and state programs that can help homeowners',
+      description: 'Federal and state programs including HUD foreclosure help and CFPB resources.',
       category: 'resources',
       icon: '🏛️'
     }
@@ -75,6 +107,33 @@ const KnowledgeBasePage: React.FC = () => {
                           article.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  // If template is shown, render it instead of the knowledge base
+  if (showTemplate) {
+    return (
+      <>
+        <Helmet>
+          <title>Chapter 3: Mortgage Modification Research Template | RepMotivatedSeller</title>
+          <meta name="description" content="Interactive research template to help you organize information for your mortgage modification application." />
+        </Helmet>
+
+        <div className="min-h-screen bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 pt-8">
+            <button
+              onClick={() => setShowTemplate(false)}
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold mb-4 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Knowledge Base
+            </button>
+          </div>
+          <MortgageModificationTemplate />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -134,6 +193,97 @@ const KnowledgeBasePage: React.FC = () => {
           </div>
         </section>
 
+        {/* Featured: Chapter Templates */}
+        <section className="py-12 bg-gradient-to-br from-purple-50 to-indigo-50">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Interactive Research Templates</h2>
+              <p className="text-lg text-gray-600">Step-by-step guides to organize your information</p>
+            </div>
+
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-2xl overflow-hidden cursor-pointer"
+                onClick={() => setShowTemplate(true)}
+              >
+                <div className="p-8 text-white">
+                  <div className="flex items-start gap-6">
+                    <div className="text-6xl">📝</div>
+                    <div className="flex-1">
+                      <div className="inline-block bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-bold mb-3">
+                        NEW - Interactive Template
+                      </div>
+                      <h3 className="text-3xl font-bold mb-3">
+                        Chapter 3: Mortgage Modification Research Template
+                      </h3>
+                      <p className="text-lg text-blue-100 mb-4">
+                        A comprehensive, interactive form to help you organize all the information needed for your mortgage modification application. Save your progress, export to PDF, and ensure you have everything ready before contacting your lender.
+                      </p>
+                      <div className="flex flex-wrap gap-3 mb-4">
+                        <span className="px-3 py-1 bg-white/20 rounded-full text-sm">7 Detailed Sections</span>
+                        <span className="px-3 py-1 bg-white/20 rounded-full text-sm">Auto-Save Feature</span>
+                        <span className="px-3 py-1 bg-white/20 rounded-full text-sm">Document Checklist</span>
+                        <span className="px-3 py-1 bg-white/20 rounded-full text-sm">Financial Calculators</span>
+                        <span className="px-3 py-1 bg-white/20 rounded-full text-sm">Export & Print</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xl font-bold">
+                        <span>Launch Template</span>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/10 px-8 py-4 border-t border-white/20">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-6">
+                      <span className="flex items-center gap-2">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                        </svg>
+                        20-30 minutes to complete
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                        </svg>
+                        Save & resume anytime
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Coming Soon Templates */}
+              <div className="grid md:grid-cols-2 gap-4 mt-6">
+                <div className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 opacity-60">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-3xl">🏠</span>
+                    <div>
+                      <div className="text-xs text-gray-500 font-semibold">COMING SOON</div>
+                      <h4 className="font-bold text-gray-700">Chapter 1: Understanding Foreclosure</h4>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">Timeline tracker and options explorer</p>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 opacity-60">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-3xl">💼</span>
+                    <div>
+                      <div className="text-xs text-gray-500 font-semibold">COMING SOON</div>
+                      <h4 className="font-bold text-gray-700">Chapter 2: Financial Assessment</h4>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">Budget calculator and hardship analyzer</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Articles Grid */}
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4">
@@ -151,12 +301,17 @@ const KnowledgeBasePage: React.FC = () => {
                     {article.title}
                   </h3>
                   <p className="text-gray-600 mb-4">{article.description}</p>
-                  <button className="text-blue-600 font-semibold hover:text-blue-700 flex items-center">
-                    Read More
+                  <a
+                    href={ebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 font-semibold hover:text-blue-700 flex items-center"
+                  >
+                    Read Full Chapter
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
-                  </button>
+                  </a>
                 </motion.div>
               ))}
             </div>
