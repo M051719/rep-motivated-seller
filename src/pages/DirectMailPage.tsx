@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Mail, MapPin, CreditCard, Send, CheckCircle } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import { toast } from 'react-hot-toast';
+import React, { useState } from "react";
+import { Mail, MapPin, CreditCard, Send, CheckCircle } from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import { toast } from "react-hot-toast";
 
 interface MailingAddress {
   name: string;
@@ -17,77 +17,81 @@ interface MailTemplate {
   name: string;
   description: string;
   thumbnail: string;
-  type: 'postcard' | 'letter';
+  type: "postcard" | "letter";
   size: string;
 }
 
 const DirectMailPage: React.FC = () => {
-  const [step, setStep] = useState<'template' | 'address' | 'preview' | 'success'>('template');
-  const [selectedTemplate, setSelectedTemplate] = useState<MailTemplate | null>(null);
+  const [step, setStep] = useState<
+    "template" | "address" | "preview" | "success"
+  >("template");
+  const [selectedTemplate, setSelectedTemplate] = useState<MailTemplate | null>(
+    null,
+  );
   const [recipient, setRecipient] = useState<MailingAddress>({
-    name: '',
-    address_line1: '',
-    address_line2: '',
-    address_city: '',
-    address_state: '',
-    address_zip: '',
+    name: "",
+    address_line1: "",
+    address_line2: "",
+    address_city: "",
+    address_state: "",
+    address_zip: "",
   });
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
 
   const templates: MailTemplate[] = [
     {
-      id: 'postcard_intro',
-      name: 'Introduction Postcard',
-      description: 'Introduce your services to property owners',
-      thumbnail: '📬',
-      type: 'postcard',
-      size: '6x9',
+      id: "postcard_intro",
+      name: "Introduction Postcard",
+      description: "Introduce your services to property owners",
+      thumbnail: "📬",
+      type: "postcard",
+      size: "6x9",
     },
     {
-      id: 'postcard_followup',
-      name: 'Follow-up Postcard',
-      description: 'Follow up with potential leads',
-      thumbnail: '📮',
-      type: 'postcard',
-      size: '6x9',
+      id: "postcard_followup",
+      name: "Follow-up Postcard",
+      description: "Follow up with potential leads",
+      thumbnail: "📮",
+      type: "postcard",
+      size: "6x9",
     },
     {
-      id: 'letter_offer',
-      name: 'Property Offer Letter',
-      description: 'Professional offer letter for properties',
-      thumbnail: '✉️',
-      type: 'letter',
-      size: '8.5x11',
+      id: "letter_offer",
+      name: "Property Offer Letter",
+      description: "Professional offer letter for properties",
+      thumbnail: "✉️",
+      type: "letter",
+      size: "8.5x11",
     },
     {
-      id: 'postcard_foreclosure',
-      name: 'Foreclosure Assistance',
-      description: 'Offer help to homeowners facing foreclosure',
-      thumbnail: '🏠',
-      type: 'postcard',
-      size: '6x9',
+      id: "postcard_foreclosure",
+      name: "Foreclosure Assistance",
+      description: "Offer help to homeowners facing foreclosure",
+      thumbnail: "🏠",
+      type: "postcard",
+      size: "6x9",
     },
   ];
 
   const handleTemplateSelect = (template: MailTemplate) => {
     setSelectedTemplate(template);
-    setStep('address');
+    setStep("address");
   };
 
   const handleAddressSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStep('preview');
+    setStep("preview");
   };
 
   const handleSendMail = async () => {
     setSending(true);
     try {
       // Call LOB API through your backend
-      const response = await fetch('/api/send-mail', {
-        method: 'POST',
+      const response = await fetch("/api/send-mail", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           template: selectedTemplate?.id,
@@ -96,30 +100,30 @@ const DirectMailPage: React.FC = () => {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to send mail');
+      if (!response.ok) throw new Error("Failed to send mail");
 
-      setStep('success');
-      toast.success('Mail sent successfully!');
+      setStep("success");
+      toast.success("Mail sent successfully!");
     } catch (error) {
-      console.error('Error sending mail:', error);
-      toast.error('Failed to send mail. Please try again.');
+      console.error("Error sending mail:", error);
+      toast.error("Failed to send mail. Please try again.");
     } finally {
       setSending(false);
     }
   };
 
   const resetForm = () => {
-    setStep('template');
+    setStep("template");
     setSelectedTemplate(null);
     setRecipient({
-      name: '',
-      address_line1: '',
-      address_line2: '',
-      address_city: '',
-      address_state: '',
-      address_zip: '',
+      name: "",
+      address_line1: "",
+      address_line2: "",
+      address_city: "",
+      address_state: "",
+      address_zip: "",
     });
-    setMessage('');
+    setMessage("");
   };
 
   return (
@@ -139,22 +143,34 @@ const DirectMailPage: React.FC = () => {
         {/* Progress Steps */}
         <div className="mb-12">
           <div className="flex items-center justify-center space-x-4">
-            <div className={`flex items-center ${step === 'template' ? 'text-blue-600' : 'text-gray-400'}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 'template' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+            <div
+              className={`flex items-center ${step === "template" ? "text-blue-600" : "text-gray-400"}`}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "template" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
                 1
               </div>
               <span className="ml-2 font-medium">Template</span>
             </div>
             <div className="w-16 h-1 bg-gray-200"></div>
-            <div className={`flex items-center ${step === 'address' ? 'text-blue-600' : 'text-gray-400'}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 'address' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+            <div
+              className={`flex items-center ${step === "address" ? "text-blue-600" : "text-gray-400"}`}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "address" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
                 2
               </div>
               <span className="ml-2 font-medium">Address</span>
             </div>
             <div className="w-16 h-1 bg-gray-200"></div>
-            <div className={`flex items-center ${step === 'preview' ? 'text-blue-600' : 'text-gray-400'}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 'preview' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+            <div
+              className={`flex items-center ${step === "preview" ? "text-blue-600" : "text-gray-400"}`}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "preview" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              >
                 3
               </div>
               <span className="ml-2 font-medium">Preview & Send</span>
@@ -163,7 +179,7 @@ const DirectMailPage: React.FC = () => {
         </div>
 
         {/* Step 1: Template Selection */}
-        {step === 'template' && (
+        {step === "template" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {templates.map((template) => (
               <div
@@ -171,11 +187,15 @@ const DirectMailPage: React.FC = () => {
                 onClick={() => handleTemplateSelect(template)}
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer p-6 border-2 border-transparent hover:border-blue-500"
               >
-                <div className="text-6xl mb-4 text-center">{template.thumbnail}</div>
+                <div className="text-6xl mb-4 text-center">
+                  {template.thumbnail}
+                </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {template.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">{template.description}</p>
+                <p className="text-gray-600 text-sm mb-4">
+                  {template.description}
+                </p>
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
                     {template.type}
@@ -188,7 +208,7 @@ const DirectMailPage: React.FC = () => {
         )}
 
         {/* Step 2: Address Form */}
-        {step === 'address' && (
+        {step === "address" && (
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Recipient Information
@@ -202,7 +222,9 @@ const DirectMailPage: React.FC = () => {
                   type="text"
                   required
                   value={recipient.name}
-                  onChange={(e) => setRecipient({ ...recipient, name: e.target.value })}
+                  onChange={(e) =>
+                    setRecipient({ ...recipient, name: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="John Smith"
                 />
@@ -216,7 +238,12 @@ const DirectMailPage: React.FC = () => {
                   type="text"
                   required
                   value={recipient.address_line1}
-                  onChange={(e) => setRecipient({ ...recipient, address_line1: e.target.value })}
+                  onChange={(e) =>
+                    setRecipient({
+                      ...recipient,
+                      address_line1: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="123 Main Street"
                 />
@@ -229,7 +256,12 @@ const DirectMailPage: React.FC = () => {
                 <input
                   type="text"
                   value={recipient.address_line2}
-                  onChange={(e) => setRecipient({ ...recipient, address_line2: e.target.value })}
+                  onChange={(e) =>
+                    setRecipient({
+                      ...recipient,
+                      address_line2: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Apt 4B"
                 />
@@ -244,7 +276,12 @@ const DirectMailPage: React.FC = () => {
                     type="text"
                     required
                     value={recipient.address_city}
-                    onChange={(e) => setRecipient({ ...recipient, address_city: e.target.value })}
+                    onChange={(e) =>
+                      setRecipient({
+                        ...recipient,
+                        address_city: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="San Francisco"
                   />
@@ -258,7 +295,12 @@ const DirectMailPage: React.FC = () => {
                     type="text"
                     required
                     value={recipient.address_state}
-                    onChange={(e) => setRecipient({ ...recipient, address_state: e.target.value })}
+                    onChange={(e) =>
+                      setRecipient({
+                        ...recipient,
+                        address_state: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="CA"
                     maxLength={2}
@@ -273,7 +315,12 @@ const DirectMailPage: React.FC = () => {
                     type="text"
                     required
                     value={recipient.address_zip}
-                    onChange={(e) => setRecipient({ ...recipient, address_zip: e.target.value })}
+                    onChange={(e) =>
+                      setRecipient({
+                        ...recipient,
+                        address_zip: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="94102"
                   />
@@ -296,7 +343,7 @@ const DirectMailPage: React.FC = () => {
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={() => setStep('template')}
+                  onClick={() => setStep("template")}
                   className="flex-1 px-6 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Back
@@ -313,7 +360,7 @@ const DirectMailPage: React.FC = () => {
         )}
 
         {/* Step 3: Preview & Send */}
-        {step === 'preview' && (
+        {step === "preview" && (
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Review & Send
@@ -325,7 +372,9 @@ const DirectMailPage: React.FC = () => {
                 <span className="text-4xl">{selectedTemplate?.thumbnail}</span>
                 <div>
                   <p className="font-medium">{selectedTemplate?.name}</p>
-                  <p className="text-sm text-gray-600">{selectedTemplate?.size} {selectedTemplate?.type}</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedTemplate?.size} {selectedTemplate?.type}
+                  </p>
                 </div>
               </div>
             </div>
@@ -339,26 +388,32 @@ const DirectMailPage: React.FC = () => {
                 <p className="font-medium">{recipient.name}</p>
                 <p>{recipient.address_line1}</p>
                 {recipient.address_line2 && <p>{recipient.address_line2}</p>}
-                <p>{recipient.address_city}, {recipient.address_state} {recipient.address_zip}</p>
+                <p>
+                  {recipient.address_city}, {recipient.address_state}{" "}
+                  {recipient.address_zip}
+                </p>
               </div>
             </div>
 
             {message && (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Personal Message</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">
+                  Personal Message
+                </h3>
                 <p className="text-gray-700 italic">{message}</p>
               </div>
             )}
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
               <p className="text-sm text-yellow-800">
-                <strong>Estimated Cost:</strong> $0.75 - $2.50 per piece depending on type and quantity
+                <strong>Estimated Cost:</strong> $0.75 - $2.50 per piece
+                depending on type and quantity
               </p>
             </div>
 
             <div className="flex gap-4">
               <button
-                onClick={() => setStep('address')}
+                onClick={() => setStep("address")}
                 className="flex-1 px-6 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Edit
@@ -385,7 +440,7 @@ const DirectMailPage: React.FC = () => {
         )}
 
         {/* Success State */}
-        {step === 'success' && (
+        {step === "success" && (
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
             <div className="mb-6">
               <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
@@ -394,7 +449,8 @@ const DirectMailPage: React.FC = () => {
               Mail Sent Successfully!
             </h2>
             <p className="text-gray-600 mb-8">
-              Your {selectedTemplate?.type} will be printed and mailed within 1-2 business days.
+              Your {selectedTemplate?.type} will be printed and mailed within
+              1-2 business days.
             </p>
             <div className="flex gap-4 justify-center">
               <button

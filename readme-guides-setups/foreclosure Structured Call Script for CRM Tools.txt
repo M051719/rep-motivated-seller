@@ -1,0 +1,74 @@
+CRM Script Version (Structured Call Script for CRM Tools)
+You can copy/paste this into any CRM (e.g., Podio, GoHighLevel, REsimpli, Salesforce) as fields and prompts for reps to follow during calls.
+
+🎯 Lead Type
+☐ Pre-Foreclosure
+☐ Foreclosure
+☐ Loan Modification
+☐ Selling to Avoid Foreclosure
+
+
+
+| Question                                                     | Answer                       |
+| ------------------------------------------------------------ | ---------------------------- |
+| How long have you lived in your current home?                | *\[Text Field]*              |
+| When did you start having difficulty with mortgage payments? | *\[Date Field]*              |
+| Who is your mortgage lender?                                 | *\[Text Field]*              |
+| Are you currently behind or anticipating future difficulty?  | ☐ Behind ☐ Future Difficulty |
+| How many payments have you missed?                           | *\[Number Field]*            |
+| Have you received a Notice of Default (NOD)?                 | ☐ Yes ☐ No                   |
+| Is the property your primary residence or investment?        | ☐ Primary ☐ Investment       |
+| Have you contacted the lender for relief options?            | ☐ Yes ☐ No                   |
+| Estimated property value?                                    | *\[Currency Field]*          |
+| Current mortgage balance?                                    | *\[Currency Field]*          |
+| Any second mortgages or liens?                               | ☐ Yes ☐ No                   |
+
+
+
+
+
+| Question                                           | Answer                            |
+| -------------------------------------------------- | --------------------------------- |
+| What’s been your biggest challenge in catching up? | *\[Text Field]*                   |
+| Any trouble getting assistance from the lender?    | ☐ Yes ☐ No                        |
+| Emotional or financial impact of this situation?   | *\[Long Text Field]*              |
+| Do you feel your options are narrowing?            | ☐ Yes ☐ No                        |
+| Worked with attorneys, realtors, or others?        | ☐ Yes ☐ No — Who: *\[Text Field]* |
+| Feeling overwhelmed or uncertain?                  | ☐ Yes ☐ No                        |
+
+
+
+
+| Question                                          | Answer          |
+| ------------------------------------------------- | --------------- |
+| How might this affect your credit/future housing? | *\[Text Field]* |
+| What would losing the home mean for your family?  | *\[Text Field]* |
+| If foreclosed, how long can you stay in the home? | *\[Text Field]* |
+| Concerned about tax/legal consequences?           | ☐ Yes ☐ No      |
+| Impact on future buying or renting?               | *\[Text Field]* |
+| Risk to job, savings, or long-term security?      | *\[Text Field]* |
+
+
+
+
+
+
+
+| Question                                                            | Answer                  |
+| ------------------------------------------------------------------- | ----------------------- |
+| Would you be interested in a solution that stops foreclosure?       | ☐ Yes ☐ No              |
+| Would help negotiating with the lender be useful?                   | ☐ Yes ☐ No              |
+| If you could sell and walk away stress-free, how would that feel?   | *\[Text Field]*         |
+| How important is protecting your credit?                            | ☐ Not ☐ Somewhat ☐ Very |
+| If this was resolved in 30–60 days, would that bring peace of mind? | ☐ Yes ☐ No              |
+| Are you open to reviewing options tailored for you?                 | ☐ Yes ☐ No              |
+
+
+
+
+
+
+📌 Notes & Follow-up
+Urgency Level: ☐ High ☐ Medium ☐ Low
+
+Next Steps: [Follow-up actions, assigned agent, timeline]

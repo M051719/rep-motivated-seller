@@ -1,14 +1,14 @@
-import { create } from 'zustand';
-import { supabase } from '../lib/supabase';
+import { create } from "zustand";
+import { supabase } from "../lib/supabase";
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  membershipTier: 'free' | 'pro' | 'enterprise';
+  membershipTier: "free" | "pro" | "enterprise";
   stripeCustomerId?: string;
   subscriptionId?: string;
-  subscriptionStatus?: 'active' | 'canceled' | 'past_due' | 'incomplete';
+  subscriptionStatus?: "active" | "canceled" | "past_due" | "incomplete";
 }
 
 interface AuthState {
@@ -27,8 +27,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user, isAuthenticated: true });
   },
 
-  logout: async () => {
-    await supabase.auth.signOut();
+  logout: () => {
+    // Only clear state - don't call signOut() to avoid infinite loop
+    // The actual signOut() is called from Navigation component
     set({ user: null, isAuthenticated: false });
   },
 
@@ -40,16 +41,18 @@ export const useAuthStore = create<AuthState>((set) => ({
 }));
 
 // Helper function to fetch user profile from database
-export const fetchUserProfile = async (userId: string): Promise<User | null> => {
+export const fetchUserProfile = async (
+  userId: string,
+): Promise<User | null> => {
   try {
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
       .single();
 
     if (error) {
-      console.error('Error fetching user profile:', error);
+      console.error("Error fetching user profile:", error);
       return null;
     }
 
@@ -60,14 +63,14 @@ export const fetchUserProfile = async (userId: string): Promise<User | null> => 
     return {
       id: data.id,
       email: data.email,
-      name: data.name || data.email?.split('@')[0] || 'User',
-      membershipTier: data.membership_tier || 'free',
+      name: data.name || data.email?.split("@")[0] || "User",
+      membershipTier: data.membership_tier || "free",
       stripeCustomerId: data.stripe_customer_id,
       subscriptionId: data.subscription_id,
       subscriptionStatus: data.subscription_status,
     };
   } catch (error) {
-    console.error('Unexpected error fetching user profile:', error);
+    console.error("Unexpected error fetching user profile:", error);
     return null;
   }
 };

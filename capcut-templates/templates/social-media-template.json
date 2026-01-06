@@ -1,0 +1,282 @@
+{
+  "templateName": "Social Media Post - RepMotivatedSeller",
+  "version": "1.0.0",
+  "description": "Standard template for Instagram, Facebook, and LinkedIn posts",
+  "aspectRatio": "1:1",
+  "resolution": {
+    "width": 1080,
+    "height": 1080
+  },
+  "duration": "30-60s",
+  "frameRate": 30,
+
+  "structure": {
+    "intro": {
+      "duration": "2-3s",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 135,
+            "colors": ["#2563eb", "#4338ca"]
+          }
+        },
+        {
+          "type": "logo",
+          "file": "assets/logos/RepMotivatedSeller_Logo_White.png",
+          "position": "center",
+          "size": "40%",
+          "animation": {
+            "type": "fade-scale",
+            "duration": "1s",
+            "easing": "ease-out"
+          }
+        },
+        {
+          "type": "text",
+          "content": "RepMotivatedSeller",
+          "font": "Inter",
+          "weight": 800,
+          "size": 48,
+          "color": "#ffffff",
+          "position": "bottom-center",
+          "offset": 120,
+          "animation": {
+            "type": "fade-up",
+            "duration": "0.8s",
+            "delay": "0.5s"
+          }
+        }
+      ]
+    },
+
+    "hook": {
+      "duration": "3-5s",
+      "elements": [
+        {
+          "type": "background",
+          "file": "assets/backgrounds/gradient-blue-purple.png",
+          "overlay": {
+            "color": "#000000",
+            "opacity": 0.3
+          }
+        },
+        {
+          "type": "text",
+          "content": "[ATTENTION-GRABBING QUESTION]",
+          "font": "Inter",
+          "weight": 800,
+          "size": 64,
+          "color": "#ffffff",
+          "position": "center",
+          "textAlign": "center",
+          "maxWidth": "80%",
+          "textShadow": "0px 4px 20px rgba(0,0,0,0.5)",
+          "animation": {
+            "type": "scale-fade",
+            "duration": "0.8s",
+            "scale": {
+              "from": 0.8,
+              "to": 1.0
+            }
+          }
+        }
+      ]
+    },
+
+    "content": {
+      "duration": "30-45s",
+      "slides": [
+        {
+          "type": "point",
+          "layout": "icon-text",
+          "elements": [
+            {
+              "type": "background",
+              "color": "#ffffff"
+            },
+            {
+              "type": "icon",
+              "file": "assets/icons/[ICON_NAME].png",
+              "position": "top-center",
+              "offset": 150,
+              "size": 120
+            },
+            {
+              "type": "text",
+              "layer": "title",
+              "content": "[POINT TITLE]",
+              "font": "Inter",
+              "weight": 700,
+              "size": 52,
+              "color": "#1e3a8a",
+              "position": "center",
+              "textAlign": "center"
+            },
+            {
+              "type": "text",
+              "layer": "description",
+              "content": "[POINT DESCRIPTION]",
+              "font": "Inter",
+              "weight": 500,
+              "size": 32,
+              "color": "#6b7280",
+              "position": "bottom-center",
+              "offset": 180,
+              "textAlign": "center",
+              "maxWidth": "85%"
+            }
+          ],
+          "duration": "4-6s",
+          "transition": {
+            "in": "fade",
+            "out": "slide-left",
+            "duration": "0.5s"
+          }
+        }
+      ]
+    },
+
+    "cta": {
+      "duration": "5-8s",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 90,
+            "colors": ["#1e3a8a", "#3730a3", "#5b21b6"]
+          }
+        },
+        {
+          "type": "text",
+          "layer": "headline",
+          "content": "Ready to Save Your Home?",
+          "font": "Inter",
+          "weight": 800,
+          "size": 56,
+          "color": "#ffffff",
+          "position": "top-center",
+          "offset": 200,
+          "textAlign": "center",
+          "animation": {
+            "type": "fade-up",
+            "duration": "0.6s"
+          }
+        },
+        {
+          "type": "button",
+          "content": "Get Help Now",
+          "font": "Inter",
+          "weight": 700,
+          "size": 40,
+          "color": "#1e3a8a",
+          "backgroundColor": "#ffffff",
+          "position": "center",
+          "padding": {
+            "horizontal": 60,
+            "vertical": 24
+          },
+          "borderRadius": 12,
+          "animation": {
+            "type": "scale-bounce",
+            "duration": "0.8s",
+            "delay": "0.5s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "contact",
+          "content": "www.RepMotivatedSeller.com",
+          "font": "Inter",
+          "weight": 600,
+          "size": 32,
+          "color": "#ffffff",
+          "opacity": 0.9,
+          "position": "bottom-center",
+          "offset": 150,
+          "textAlign": "center"
+        }
+      ]
+    },
+
+    "outro": {
+      "duration": "2-3s",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 135,
+            "colors": ["#2563eb", "#4338ca"]
+          }
+        },
+        {
+          "type": "logo",
+          "file": "assets/logos/RepMotivatedSeller_Logo_White.png",
+          "position": "center",
+          "size": "50%"
+        },
+        {
+          "type": "text",
+          "content": "Helping Homeowners Save Their Homes",
+          "font": "Inter",
+          "weight": 600,
+          "size": 28,
+          "color": "#ffffff",
+          "opacity": 0.9,
+          "position": "bottom-center",
+          "offset": 100,
+          "textAlign": "center"
+        }
+      ]
+    }
+  },
+
+  "audio": {
+    "music": {
+      "file": "assets/music/upbeat-corporate-[TRACK].mp3",
+      "volume": -18,
+      "fadeIn": "1s",
+      "fadeOut": "2s"
+    },
+    "soundEffects": [
+      {
+        "type": "whoosh",
+        "file": "assets/sfx/whoosh-transition.mp3",
+        "timing": "on-transition",
+        "volume": -24
+      }
+    ]
+  },
+
+  "exports": {
+    "instagram": {
+      "format": "MP4",
+      "codec": "H.264",
+      "resolution": "1080x1080",
+      "frameRate": 30,
+      "bitrate": "10Mbps",
+      "audioCodec": "AAC",
+      "audioBitrate": "192kbps"
+    },
+    "facebook": {
+      "format": "MP4",
+      "codec": "H.264",
+      "resolution": "1080x1080",
+      "frameRate": 30,
+      "bitrate": "8Mbps",
+      "audioCodec": "AAC",
+      "audioBitrate": "192kbps"
+    }
+  },
+
+  "notes": [
+    "Replace [ATTENTION-GRABBING QUESTION] with specific hook",
+    "Use 3-5 content slides maximum for optimal engagement",
+    "Add captions for accessibility (85% of social media watched without sound)",
+    "Test CTA button visibility on mobile devices",
+    "Keep text on screen minimum 3 seconds for readability"
+  ]
+}

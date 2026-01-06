@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../GITHUB FOLDER/GitHub/mcp-api-gateway"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"chat.mcp.discovery.enabled": {
+			"cursor-workspace": true,
+			"cursor-global": true,
+			"claude-desktop": true
+		}
+	}
+}

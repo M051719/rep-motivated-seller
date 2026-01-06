@@ -1,5 +1,5 @@
 // Contract types
-export type ContractType = 'wholesale' | 'fix-flip' | 'cashout-refi';
+export type ContractType = "wholesale" | "fix-flip" | "cashout-refi";
 
 export interface ContractData {
   id: string;
@@ -7,7 +7,7 @@ export interface ContractData {
   type: ContractType;
   data: WholesaleContractData | FixFlipFormData | CashoutRefiFormData;
   generatedHtml?: string;
-  status: 'draft' | 'generated' | 'downloaded' | 'signed';
+  status: "draft" | "generated" | "downloaded" | "signed";
   createdAt: string;
   updatedAt: string;
 }

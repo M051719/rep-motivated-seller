@@ -1,3 +1,30 @@
+// Nonce injection plugin for CSP compliance
+import { defineConfig, Plugin } from 'vite';
+
+function noncePlugin(): Plugin {
+  return {
+    name: 'vite-nonce-injector',
+    transformIndexHtml(html) {
+      // Generate a random nonce for each dev server start
+      const nonce = Math.random().toString(36).substring(2, 18);
+      // Inject the nonce into all inline script/style tags
+      return html
+        .replace(/<script(?![^>]*src=)/g, `<script nonce="${nonce}"`)
+        .replace(/<style/g, `<style nonce="${nonce}"`)
+        // Optionally, inject the nonce into a meta tag for CSP
+        .replace(
+          '</head>',
+          `<meta name="csp-nonce" content="${nonce}"></head>`
+        );
+    },
+  };
+}
+
+// ...existing config...
+export default defineConfig({
+  plugins: [noncePlugin()],
+  // ...other Vite config options...
+});
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'

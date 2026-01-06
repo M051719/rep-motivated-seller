@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { CalculatorModal } from '../components/CalculatorModal';
-import { Calculator, DollarSign, Home, TrendingUp, Download } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import React, { useState } from "react";
+import { CalculatorModal } from "../components/CalculatorModal";
+import {
+  Calculator,
+  DollarSign,
+  Home,
+  TrendingUp,
+  Download,
+} from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 interface AmortizationRow {
   payment: number;
@@ -15,20 +21,24 @@ interface AmortizationRow {
 
 const ToolsCalculatorsPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCalculator, setSelectedCalculator] = useState<'flip' | 'rental' | 'mortgage' | 'roi'>('flip');
+  const [selectedCalculator, setSelectedCalculator] = useState<
+    "flip" | "rental" | "mortgage" | "roi"
+  >("flip");
 
-  const openCalculator = (type: 'flip' | 'rental' | 'mortgage' | 'roi') => {
+  const openCalculator = (type: "flip" | "rental" | "mortgage" | "roi") => {
     setSelectedCalculator(type);
     setModalOpen(true);
   };
-  const [activeCalculator, setActiveCalculator] = useState<string>('mortgage');
+  const [activeCalculator, setActiveCalculator] = useState<string>("mortgage");
 
   // Mortgage Calculator State
   const [loanAmount, setLoanAmount] = useState<number>(200000);
   const [interestRate, setInterestRate] = useState<number>(6.5);
   const [loanTerm, setLoanTerm] = useState<number>(30);
   const [monthlyPayment, setMonthlyPayment] = useState<number>(0);
-  const [amortizationSchedule, setAmortizationSchedule] = useState<AmortizationRow[]>([]);
+  const [amortizationSchedule, setAmortizationSchedule] = useState<
+    AmortizationRow[]
+  >([]);
 
   // Deal Analyzer State
   const [purchasePrice, setPurchasePrice] = useState<number>(150000);
@@ -49,8 +59,10 @@ const ToolsCalculatorsPage: React.FC = () => {
     const numberOfPayments = loanTerm * 12;
 
     // Calculate monthly payment using amortization formula
-    const payment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-                    (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    const payment =
+      (loanAmount *
+        (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) /
+      (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 
     setMonthlyPayment(payment);
 
@@ -67,7 +79,7 @@ const ToolsCalculatorsPage: React.FC = () => {
         payment: i,
         principal: principalPayment,
         interest: interestPayment,
-        balance: Math.max(0, balance)
+        balance: Math.max(0, balance),
       });
     }
 
@@ -95,7 +107,14 @@ const ToolsCalculatorsPage: React.FC = () => {
       holdingCosts,
       netProfit,
       netROI,
-      dealGrade: netROI > 20 ? 'Excellent' : netROI > 15 ? 'Good' : netROI > 10 ? 'Fair' : 'Poor'
+      dealGrade:
+        netROI > 20
+          ? "Excellent"
+          : netROI > 15
+            ? "Good"
+            : netROI > 10
+              ? "Fair"
+              : "Poor",
     });
   };
 
@@ -110,42 +129,45 @@ const ToolsCalculatorsPage: React.FC = () => {
       profit,
       roi,
       monthlyROI,
-      annualROI
+      annualROI,
     });
   };
 
   // Export to Excel (CSV format)
   const exportAmortizationToCSV = () => {
     if (amortizationSchedule.length === 0) {
-      alert('Please calculate mortgage first!');
+      alert("Please calculate mortgage first!");
       return;
     }
 
-    let csv = 'Payment #,Principal,Interest,Balance\n';
-    amortizationSchedule.forEach(row => {
+    let csv = "Payment #,Principal,Interest,Balance\n";
+    amortizationSchedule.forEach((row) => {
       csv += `${row.payment},${row.principal.toFixed(2)},${row.interest.toFixed(2)},${row.balance.toFixed(2)}\n`;
     });
 
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `amortization_schedule_${Date.now()}.csv`;
     a.click();
   };
 
   const calculators = [
-    { id: 'mortgage', name: 'Mortgage Calculator', icon: '🏠' },
-    { id: 'deal', name: 'Deal Analyzer', icon: '📊' },
-    { id: 'roi', name: 'ROI Calculator', icon: '💰' },
-    { id: 'cash-flow', name: 'Cash Flow Calculator', icon: '💵' }
+    { id: "mortgage", name: "Mortgage Calculator", icon: "🏠" },
+    { id: "deal", name: "Deal Analyzer", icon: "📊" },
+    { id: "roi", name: "ROI Calculator", icon: "💰" },
+    { id: "cash-flow", name: "Cash Flow Calculator", icon: "💵" },
   ];
 
   return (
     <>
       <Helmet>
         <title>Real Estate Calculators & Tools | RepMotivatedSeller</title>
-        <meta name="description" content="Free mortgage calculator, deal analyzer, ROI calculator and more professional real estate investment tools." />
+        <meta
+          name="description"
+          content="Free mortgage calculator, deal analyzer, ROI calculator and more professional real estate investment tools."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -169,8 +191,8 @@ const ToolsCalculatorsPage: React.FC = () => {
                   onClick={() => setActiveCalculator(calc.id)}
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     activeCalculator === calc.id
-                      ? 'bg-green-600 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-green-600 text-white shadow-lg"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {calc.icon} {calc.name}
@@ -184,7 +206,7 @@ const ToolsCalculatorsPage: React.FC = () => {
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4">
             {/* Mortgage Calculator */}
-            {activeCalculator === 'mortgage' && (
+            {activeCalculator === "mortgage" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -194,7 +216,8 @@ const ToolsCalculatorsPage: React.FC = () => {
                   🏠 Mortgage Payment Calculator
                 </h2>
                 <p className="text-gray-600 mb-8">
-                  Calculate your monthly mortgage payment and view a complete amortization schedule
+                  Calculate your monthly mortgage payment and view a complete
+                  amortization schedule
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -205,11 +228,15 @@ const ToolsCalculatorsPage: React.FC = () => {
                         Loan Amount
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-3 text-gray-500">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           value={loanAmount}
-                          onChange={(e) => setLoanAmount(Number(e.target.value))}
+                          onChange={(e) =>
+                            setLoanAmount(Number(e.target.value))
+                          }
                           className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         />
                       </div>
@@ -223,7 +250,9 @@ const ToolsCalculatorsPage: React.FC = () => {
                         type="number"
                         step="0.1"
                         value={interestRate}
-                        onChange={(e) => setInterestRate(Number(e.target.value))}
+                        onChange={(e) =>
+                          setInterestRate(Number(e.target.value))
+                        }
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                     </div>
@@ -253,12 +282,16 @@ const ToolsCalculatorsPage: React.FC = () => {
 
                   {/* Results Section */}
                   <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Results</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Results
+                    </h3>
 
                     {monthlyPayment > 0 ? (
                       <div className="space-y-4">
                         <div className="bg-white rounded-lg p-4">
-                          <p className="text-sm text-gray-600">Monthly Payment</p>
+                          <p className="text-sm text-gray-600">
+                            Monthly Payment
+                          </p>
                           <p className="text-3xl font-bold text-green-600">
                             ${monthlyPayment.toFixed(2)}
                           </p>
@@ -272,9 +305,15 @@ const ToolsCalculatorsPage: React.FC = () => {
                             </p>
                           </div>
                           <div className="bg-white rounded-lg p-4">
-                            <p className="text-sm text-gray-600">Total Interest</p>
+                            <p className="text-sm text-gray-600">
+                              Total Interest
+                            </p>
                             <p className="text-xl font-bold text-gray-900">
-                              ${((monthlyPayment * loanTerm * 12) - loanAmount).toFixed(2)}
+                              $
+                              {(
+                                monthlyPayment * loanTerm * 12 -
+                                loanAmount
+                              ).toFixed(2)}
                             </p>
                           </div>
                         </div>
@@ -304,26 +343,44 @@ const ToolsCalculatorsPage: React.FC = () => {
                       <table className="w-full border-collapse">
                         <thead>
                           <tr className="bg-gray-100">
-                            <th className="px-4 py-3 text-left font-semibold text-gray-700">Payment #</th>
-                            <th className="px-4 py-3 text-right font-semibold text-gray-700">Principal</th>
-                            <th className="px-4 py-3 text-right font-semibold text-gray-700">Interest</th>
-                            <th className="px-4 py-3 text-right font-semibold text-gray-700">Balance</th>
+                            <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                              Payment #
+                            </th>
+                            <th className="px-4 py-3 text-right font-semibold text-gray-700">
+                              Principal
+                            </th>
+                            <th className="px-4 py-3 text-right font-semibold text-gray-700">
+                              Interest
+                            </th>
+                            <th className="px-4 py-3 text-right font-semibold text-gray-700">
+                              Balance
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {amortizationSchedule.slice(0, 12).map((row) => (
-                            <tr key={row.payment} className="border-b hover:bg-gray-50">
+                            <tr
+                              key={row.payment}
+                              className="border-b hover:bg-gray-50"
+                            >
                               <td className="px-4 py-3">{row.payment}</td>
-                              <td className="px-4 py-3 text-right">${row.principal.toFixed(2)}</td>
-                              <td className="px-4 py-3 text-right">${row.interest.toFixed(2)}</td>
-                              <td className="px-4 py-3 text-right font-semibold">${row.balance.toFixed(2)}</td>
+                              <td className="px-4 py-3 text-right">
+                                ${row.principal.toFixed(2)}
+                              </td>
+                              <td className="px-4 py-3 text-right">
+                                ${row.interest.toFixed(2)}
+                              </td>
+                              <td className="px-4 py-3 text-right font-semibold">
+                                ${row.balance.toFixed(2)}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
                     <p className="text-sm text-gray-600 mt-4 text-center">
-                      Showing first 12 months. Download full schedule for all {loanTerm * 12} payments.
+                      Showing first 12 months. Download full schedule for all{" "}
+                      {loanTerm * 12} payments.
                     </p>
                   </div>
                 )}
@@ -331,7 +388,7 @@ const ToolsCalculatorsPage: React.FC = () => {
             )}
 
             {/* Deal Analyzer */}
-            {activeCalculator === 'deal' && (
+            {activeCalculator === "deal" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -341,7 +398,8 @@ const ToolsCalculatorsPage: React.FC = () => {
                   📊 Real Estate Deal Analyzer
                 </h2>
                 <p className="text-gray-600 mb-8">
-                  Analyze your fix-and-flip or wholesale deals to determine profitability
+                  Analyze your fix-and-flip or wholesale deals to determine
+                  profitability
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -352,11 +410,15 @@ const ToolsCalculatorsPage: React.FC = () => {
                         Purchase Price
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-3 text-gray-500">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           value={purchasePrice}
-                          onChange={(e) => setPurchasePrice(Number(e.target.value))}
+                          onChange={(e) =>
+                            setPurchasePrice(Number(e.target.value))
+                          }
                           className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                         />
                       </div>
@@ -367,7 +429,9 @@ const ToolsCalculatorsPage: React.FC = () => {
                         Rehab/Repair Costs
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-3 text-gray-500">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           value={rehabCost}
@@ -382,11 +446,15 @@ const ToolsCalculatorsPage: React.FC = () => {
                         After Repair Value (ARV)
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-3 text-gray-500">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           value={afterRepairValue}
-                          onChange={(e) => setAfterRepairValue(Number(e.target.value))}
+                          onChange={(e) =>
+                            setAfterRepairValue(Number(e.target.value))
+                          }
                           className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                         />
                       </div>
@@ -414,35 +482,50 @@ const ToolsCalculatorsPage: React.FC = () => {
 
                   {/* Results Section */}
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Deal Analysis</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Deal Analysis
+                    </h3>
 
                     {dealMetrics ? (
                       <div className="space-y-4">
-                        <div className={`rounded-lg p-4 text-center ${
-                          dealMetrics.dealGrade === 'Excellent' ? 'bg-green-500' :
-                          dealMetrics.dealGrade === 'Good' ? 'bg-blue-500' :
-                          dealMetrics.dealGrade === 'Fair' ? 'bg-yellow-500' :
-                          'bg-red-500'
-                        } text-white`}>
+                        <div
+                          className={`rounded-lg p-4 text-center ${
+                            dealMetrics.dealGrade === "Excellent"
+                              ? "bg-green-500"
+                              : dealMetrics.dealGrade === "Good"
+                                ? "bg-blue-500"
+                                : dealMetrics.dealGrade === "Fair"
+                                  ? "bg-yellow-500"
+                                  : "bg-red-500"
+                          } text-white`}
+                        >
                           <p className="text-sm">Deal Grade</p>
-                          <p className="text-3xl font-bold">{dealMetrics.dealGrade}</p>
+                          <p className="text-3xl font-bold">
+                            {dealMetrics.dealGrade}
+                          </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                           <div className="bg-white rounded-lg p-4">
-                            <p className="text-sm text-gray-600">Total Investment</p>
+                            <p className="text-sm text-gray-600">
+                              Total Investment
+                            </p>
                             <p className="text-lg font-bold text-gray-900">
                               ${dealMetrics.totalInvestment.toLocaleString()}
                             </p>
                           </div>
                           <div className="bg-white rounded-lg p-4">
-                            <p className="text-sm text-gray-600">Gross Profit</p>
+                            <p className="text-sm text-gray-600">
+                              Gross Profit
+                            </p>
                             <p className="text-lg font-bold text-green-600">
                               ${dealMetrics.profit.toLocaleString()}
                             </p>
                           </div>
                           <div className="bg-white rounded-lg p-4">
-                            <p className="text-sm text-gray-600">Holding Costs</p>
+                            <p className="text-sm text-gray-600">
+                              Holding Costs
+                            </p>
                             <p className="text-lg font-bold text-red-600">
                               -${dealMetrics.holdingCosts.toLocaleString()}
                             </p>
@@ -456,7 +539,9 @@ const ToolsCalculatorsPage: React.FC = () => {
                         </div>
 
                         <div className="bg-white rounded-lg p-4">
-                          <p className="text-sm text-gray-600 mb-2">Return on Investment</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            Return on Investment
+                          </p>
                           <div className="flex items-baseline justify-between">
                             <div>
                               <p className="text-2xl font-bold text-green-600">
@@ -468,7 +553,9 @@ const ToolsCalculatorsPage: React.FC = () => {
                               <p className="text-xl font-bold text-blue-600">
                                 {dealMetrics.annualROI.toFixed(2)}%
                               </p>
-                              <p className="text-xs text-gray-500">Annualized</p>
+                              <p className="text-xs text-gray-500">
+                                Annualized
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -484,7 +571,7 @@ const ToolsCalculatorsPage: React.FC = () => {
             )}
 
             {/* ROI Calculator */}
-            {activeCalculator === 'roi' && (
+            {activeCalculator === "roi" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -504,11 +591,15 @@ const ToolsCalculatorsPage: React.FC = () => {
                         Initial Investment
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-3 text-gray-500">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           value={investment}
-                          onChange={(e) => setInvestment(Number(e.target.value))}
+                          onChange={(e) =>
+                            setInvestment(Number(e.target.value))
+                          }
                           className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                         />
                       </div>
@@ -519,11 +610,15 @@ const ToolsCalculatorsPage: React.FC = () => {
                         Return Amount
                       </label>
                       <div className="relative">
-                        <span className="absolute left-4 top-3 text-gray-500">$</span>
+                        <span className="absolute left-4 top-3 text-gray-500">
+                          $
+                        </span>
                         <input
                           type="number"
                           value={returnAmount}
-                          onChange={(e) => setReturnAmount(Number(e.target.value))}
+                          onChange={(e) =>
+                            setReturnAmount(Number(e.target.value))
+                          }
                           className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                         />
                       </div>
@@ -550,12 +645,16 @@ const ToolsCalculatorsPage: React.FC = () => {
                   </div>
 
                   <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Results</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Results
+                    </h3>
 
                     {roiResult ? (
                       <div className="space-y-4">
                         <div className="bg-white rounded-lg p-6 text-center">
-                          <p className="text-sm text-gray-600 mb-2">Total ROI</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            Total ROI
+                          </p>
                           <p className="text-4xl font-bold text-green-600">
                             {roiResult.roi.toFixed(2)}%
                           </p>
@@ -569,7 +668,9 @@ const ToolsCalculatorsPage: React.FC = () => {
                             </p>
                           </div>
                           <div className="bg-white rounded-lg p-4">
-                            <p className="text-sm text-gray-600">Annualized ROI</p>
+                            <p className="text-sm text-gray-600">
+                              Annualized ROI
+                            </p>
                             <p className="text-xl font-bold text-blue-600">
                               {roiResult.annualROI.toFixed(2)}%
                             </p>
@@ -587,7 +688,7 @@ const ToolsCalculatorsPage: React.FC = () => {
             )}
 
             {/* Cash Flow Calculator - Coming Soon */}
-            {activeCalculator === 'cash-flow' && (
+            {activeCalculator === "cash-flow" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -614,9 +715,12 @@ const ToolsCalculatorsPage: React.FC = () => {
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-green-600 to-teal-600 text-white">
           <div className="max-w-4xl mx-auto text-center px-4">
-            <h2 className="text-3xl font-bold mb-6">Need More Advanced Tools?</h2>
+            <h2 className="text-3xl font-bold mb-6">
+              Need More Advanced Tools?
+            </h2>
             <p className="text-xl mb-8">
-              Upgrade to access premium calculators, direct mail tools, and CRM integration
+              Upgrade to access premium calculators, direct mail tools, and CRM
+              integration
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -636,34 +740,54 @@ const ToolsCalculatorsPage: React.FC = () => {
         </section>
       </div>
 
-        {/* Additional Tools */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Additional Tools</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Link to="/canva-templates" className="block p-6 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">🎨</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Canva Templates</h3>
-                <p className="text-gray-600">Professional marketing designs powered by Canva</p>
-              </Link>
-              <Link to="/direct-mail" className="block p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">📬</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Direct Mail</h3>
-                <p className="text-gray-600">Send postcards and letters to motivated sellers</p>
-              </Link>
-              <Link to="/reports" className="block p-6 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">📊</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Property Reports</h3>
-                <p className="text-gray-600">Generate professional investment analysis reports</p>
-              </Link>
-            </div>
+      {/* Additional Tools */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Additional Tools
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Link
+              to="/canva-templates"
+              className="block p-6 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg hover:shadow-lg transition-all"
+            >
+              <div className="text-4xl mb-3">🎨</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Canva Templates
+              </h3>
+              <p className="text-gray-600">
+                Professional marketing designs powered by Canva
+              </p>
+            </Link>
+            <Link
+              to="/direct-mail"
+              className="block p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg hover:shadow-lg transition-all"
+            >
+              <div className="text-4xl mb-3">📬</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Direct Mail
+              </h3>
+              <p className="text-gray-600">
+                Send postcards and letters to motivated sellers
+              </p>
+            </Link>
+            <Link
+              to="/reports"
+              className="block p-6 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg hover:shadow-lg transition-all"
+            >
+              <div className="text-4xl mb-3">📊</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Property Reports
+              </h3>
+              <p className="text-gray-600">
+                Generate professional investment analysis reports
+              </p>
+            </Link>
           </div>
-        </section>
-
+        </div>
+      </section>
     </>
   );
 };
 
 export default ToolsCalculatorsPage;
-
-

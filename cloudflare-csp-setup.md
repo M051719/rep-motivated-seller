@@ -38,22 +38,52 @@
 
 ### Alternative Method: Using Cloudflare API
 
-If you prefer using the API, you can use this curl command:
 
-```bash
-curl -X PUT "https://api.cloudflare.com/client/v4/zones/157eb99a0e69547a4d7d77ec08d35d24/settings/security_header" \
-  -H "X-Auth-Email: melvin@sofiesentrepreneurialgroup.org" \
-  -H "X-Auth-Key: 7b8246e2cb13f6a24e2e7b8d4ddb4305.access" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "value": {
-      "content-security-policy": {
-        "value": "default-src '\''self'\'' https: data: '\''unsafe-inline'\'' '\''unsafe-eval'\''; connect-src '\''self'\'' https: wss:; font-src '\''self'\'' https: data:; img-src '\''self'\'' https: data:; script-src '\''self'\'' https: '\''unsafe-inline'\'' '\''unsafe-eval'\''; style-src '\''self'\'' https: '\''unsafe-inline'\''",
-        "enabled": true
-      }
+If you prefer using the API, use the Cloudflare Rulesets API to set a custom Content-Security-Policy header. Example:
+
+1. Save this JSON as `ruleset.json`:
+```json
+{
+  "rules": [
+    {
+      "action": "set_http_response_header",
+      "expression": "http.request.uri.path matches \".*\"",
+      "action_parameters": {
+        "headers": [
+          {
+            "name": "Content-Security-Policy",
+            "operation": "set",
+            "value": "default-src 'self'; script-src 'self' https://js.stripe.com https://m.stripe.network 'nonce-<DEV_NONCE>'; style-src 'self' https://fonts.googleapis.com https://api.mapbox.com https://assets.calendly.com https://m.stripe.network 'nonce-<DEV_NONCE>' 'unsafe-hashes'; img-src 'self' data: https://*.stripe.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://js.stripe.com https://m.stripe.network ws://localhost:5173 http://localhost:5173; frame-src 'self' https://js.stripe.com https://m.stripe.network https://calendly.com; media-src 'self' data:; base-uri 'self'; form-action 'self';"
+          }
+        ]
+      },
+      "description": "Set CSP header for all responses",
+      "enabled": true
     }
-  }'
+  ]
+}
 ```
+
+2. Apply the ruleset with (must be a single line, no backslashes):
+```sh
+export CF_API_EMAIL="your-cloudflare-email@example.com"
+export CF_API_KEY="your-cloudflare-api-key"
+curl -X PUT "https://api.cloudflare.com/client/v4/zones/157eb99a0e69547a4d7d77ec08d35d24/rulesets/phases/http_response_headers/entrypoint" \
+  -H "X-Auth-Email: $CF_API_EMAIL" \
+  -H "X-Auth-Key: $CF_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data-binary @ruleset.json
+
+> **Security Reminder:**
+> - Never commit or share your Cloudflare API key or email in documentation or source code.
+> - Use environment variables or a secrets manager to keep credentials safe.
+> - Ensure your ruleset.json contains the latest CSP as designed for Stripe, Supabase, and your integrations.
+
+> **Security Warning:** Never commit or share your Cloudflare API key or email in documentation or source code. Use environment variables or a secrets manager to keep credentials safe.
+```
+
+> **Warning:**
+> Do **not** use the `/settings/security_header` endpoint for Content-Security-Policy. It does **not** support custom CSP and will always return an error. Only use the `/rulesets/phases/http_response_headers/entrypoint` endpoint as shown above.
 
 ### 6. Troubleshooting
 - If CSP header is not showing up, try purging the Cloudflare cache

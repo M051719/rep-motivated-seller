@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { TrendingUp, BarChart3, Download, Star, FileText, PieChart } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import {
+  TrendingUp,
+  BarChart3,
+  Download,
+  Star,
+  FileText,
+  PieChart,
+} from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 interface TrendingTemplate {
   id: string;
@@ -24,7 +31,9 @@ interface CategoryStat {
 
 const TemplateAnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [trendingTemplates, setTrendingTemplates] = useState<TrendingTemplate[]>([]);
+  const [trendingTemplates, setTrendingTemplates] = useState<
+    TrendingTemplate[]
+  >([]);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
   const [totalTemplates, setTotalTemplates] = useState(0);
   const [totalDownloads, setTotalDownloads] = useState(0);
@@ -39,45 +48,47 @@ const TemplateAnalyticsDashboard: React.FC = () => {
       setLoading(true);
 
       // Fetch trending templates
-      const { data: trending, error: trendingError } = await supabase
-        .rpc('get_trending_templates', { days_back: 30, limit_count: 10 });
+      const { data: trending, error: trendingError } = await supabase.rpc(
+        "get_trending_templates",
+        { days_back: 30, limit_count: 10 },
+      );
 
       if (trendingError) throw trendingError;
       setTrendingTemplates(trending || []);
 
       // Fetch category stats
-      const { data: catStats, error: catError } = await supabase
-        .rpc('get_category_stats');
+      const { data: catStats, error: catError } =
+        await supabase.rpc("get_category_stats");
 
       if (catError) throw catError;
       setCategoryStats(catStats || []);
 
       // Calculate totals
       const { data: templates, error: templatesError } = await supabase
-        .from('templates_forms')
-        .select('download_count')
-        .eq('is_active', true);
+        .from("templates_forms")
+        .select("download_count")
+        .eq("is_active", true);
 
       if (templatesError) throw templatesError;
 
       setTotalTemplates(templates?.length || 0);
-      const totalDL = templates?.reduce((sum, t) => sum + (t.download_count || 0), 0) || 0;
+      const totalDL =
+        templates?.reduce((sum, t) => sum + (t.download_count || 0), 0) || 0;
       setTotalDownloads(totalDL);
 
       // Get most popular template
       const { data: popular, error: popularError } = await supabase
-        .from('templates_forms')
-        .select('name, download_count, category')
-        .eq('is_active', true)
-        .order('download_count', { ascending: false })
+        .from("templates_forms")
+        .select("name, download_count, category")
+        .eq("is_active", true)
+        .order("download_count", { ascending: false })
         .limit(1)
         .single();
 
       if (!popularError) setMostPopular(popular);
-
     } catch (error: any) {
-      console.error('Error fetching analytics:', error);
-      toast.error('Failed to load analytics');
+      console.error("Error fetching analytics:", error);
+      toast.error("Failed to load analytics");
     } finally {
       setLoading(false);
     }
@@ -94,7 +105,9 @@ const TemplateAnalyticsDashboard: React.FC = () => {
           <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
           <p className="text-3xl font-bold text-gray-900">{value}</p>
         </div>
-        <div className={`p-4 rounded-full bg-opacity-10 ${color.replace('border', 'bg')}`}>
+        <div
+          className={`p-4 rounded-full bg-opacity-10 ${color.replace("border", "bg")}`}
+        >
           <Icon className="w-8 h-8" />
         </div>
       </div>
@@ -149,7 +162,7 @@ const TemplateAnalyticsDashboard: React.FC = () => {
               <StatCard
                 icon={Star}
                 label="Most Popular"
-                value={mostPopular?.name.substring(0, 15) + '...' || 'N/A'}
+                value={mostPopular?.name.substring(0, 15) + "..." || "N/A"}
                 color="border-yellow-500"
               />
             </div>
@@ -204,7 +217,9 @@ const TemplateAnalyticsDashboard: React.FC = () => {
                             <div>
                               <p className="font-medium">{template.category}</p>
                               {template.subcategory && (
-                                <p className="text-xs text-gray-500">{template.subcategory}</p>
+                                <p className="text-xs text-gray-500">
+                                  {template.subcategory}
+                                </p>
                               )}
                             </div>
                           </td>
@@ -248,7 +263,9 @@ const TemplateAnalyticsDashboard: React.FC = () => {
                           {stat.category}
                         </h3>
                         {stat.subcategory && (
-                          <p className="text-sm text-gray-600">{stat.subcategory}</p>
+                          <p className="text-sm text-gray-600">
+                            {stat.subcategory}
+                          </p>
                         )}
                       </div>
                       <div className="text-right">
@@ -258,16 +275,20 @@ const TemplateAnalyticsDashboard: React.FC = () => {
                         <p className="text-xs text-gray-500">templates</p>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Total Downloads</p>
+                        <p className="text-xs text-gray-500 mb-1">
+                          Total Downloads
+                        </p>
                         <p className="text-lg font-semibold text-gray-900">
                           {Number(stat.total_downloads).toLocaleString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Avg Downloads</p>
+                        <p className="text-xs text-gray-500 mb-1">
+                          Avg Downloads
+                        </p>
                         <p className="text-lg font-semibold text-gray-900">
                           {Number(stat.avg_downloads).toFixed(1)}
                         </p>

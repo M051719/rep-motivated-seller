@@ -1,4 +1,3 @@
-```typescript
 // src/components/marketing/direct-mail/MailCampaignManager.tsx
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
@@ -395,4 +394,3 @@ const MailCampaignManager: React.FC = () => {
 };
 
 export default MailCampaignManager;
-```

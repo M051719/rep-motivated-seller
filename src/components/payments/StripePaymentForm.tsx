@@ -1,168 +1,179 @@
-import React, { useState, useEffect } from 'react'
-import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js'
+import React, { useState, useEffect } from "react";
+import { loadStripe, Stripe, StripeElements } from "@stripe/stripe-js";
 import {
   Elements,
   CardElement,
   useStripe,
-  useElements
-} from '@stripe/react-stripe-js'
-import { motion } from 'framer-motion'
-import { supabase } from '../../lib/supabase'
-import toast from 'react-hot-toast'
+  useElements,
+} from "@stripe/react-stripe-js";
+import { motion } from "framer-motion";
+import { supabase } from "../../lib/supabase";
+import toast from "react-hot-toast";
 
 // Load Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '')
+const stripePromise = loadStripe(
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "",
+);
 
 interface MembershipTier {
-  id: string
-  name: string
-  price: number
-  interval: 'month' | 'year'
-  features: string[]
-  popular?: boolean
-  stripeProductId: string
-  stripePriceId: string
+  id: string;
+  name: string;
+  price: number;
+  interval: "month" | "year";
+  features: string[];
+  popular?: boolean;
+  stripeProductId: string;
+  stripePriceId: string;
 }
 
 const membershipTiers: MembershipTier[] = [
   {
-    id: 'basic',
-    name: '🌟 Basic Membership',
+    id: "basic",
+    name: "🌟 Basic Membership",
     price: 29,
-    interval: 'month',
-    stripeProductId: 'prod_basic',
-    stripePriceId: 'price_basic_monthly',
+    interval: "month",
+    stripeProductId: "prod_basic",
+    stripePriceId: "price_basic_monthly",
     features: [
-      'Access to all educational content',
-      'Monthly webinars',
-      'Email support',
-      'Basic foreclosure tools',
-      'Community forum access'
-    ]
+      "Access to all educational content",
+      "Monthly webinars",
+      "Email support",
+      "Basic foreclosure tools",
+      "Community forum access",
+    ],
   },
   {
-    id: 'premium',
-    name: '⭐ Premium Membership',
+    id: "premium",
+    name: "⭐ Premium Membership",
     price: 49,
-    interval: 'month',
+    interval: "month",
     popular: true,
-    stripeProductId: 'prod_premium',
-    stripePriceId: 'price_premium_monthly',
+    stripeProductId: "prod_premium",
+    stripePriceId: "price_premium_monthly",
     features: [
-      'Everything in Basic',
-      'One-on-one consultations (2/month)',
-      'Priority support',
-      'Advanced analytics',
-      'Personalized action plans',
-      'Direct lender connections'
-    ]
+      "Everything in Basic",
+      "One-on-one consultations (2/month)",
+      "Priority support",
+      "Advanced analytics",
+      "Personalized action plans",
+      "Direct lender connections",
+    ],
   },
   {
-    id: 'vip',
-    name: '💎 VIP Membership',
+    id: "vip",
+    name: "💎 VIP Membership",
     price: 97,
-    interval: 'month',
-    stripeProductId: 'prod_vip',
-    stripePriceId: 'price_vip_monthly',
+    interval: "month",
+    stripeProductId: "prod_vip",
+    stripePriceId: "price_vip_monthly",
     features: [
-      'Everything in Premium',
-      'Unlimited consultations',
-      'White-glove service',
-      'Legal document reviews',
-      'Direct phone line',
-      'Investment opportunities access'
-    ]
-  }
-]
+      "Everything in Premium",
+      "Unlimited consultations",
+      "White-glove service",
+      "Legal document reviews",
+      "Direct phone line",
+      "Investment opportunities access",
+    ],
+  },
+];
 
 // Payment form component
 const CheckoutForm: React.FC<{
-  selectedTier: MembershipTier
-  onSuccess: () => void
+  selectedTier: MembershipTier;
+  onSuccess: () => void;
 }> = ({ selectedTier, onSuccess }) => {
-  const stripe = useStripe()
-  const elements = useElements()
-  const [loading, setLoading] = useState(false)
-  const [clientSecret, setClientSecret] = useState<string>('')
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string>("");
 
   useEffect(() => {
     // Create payment intent on component mount
-    createPaymentIntent()
-  }, [selectedTier])
+    createPaymentIntent();
+  }, [selectedTier]);
 
   const createPaymentIntent = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
+      const response = await fetch("/api/create-payment-intent", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           amount: selectedTier.price * 100, // Convert to cents
-          currency: 'usd',
+          currency: "usd",
           membership_tier: selectedTier.id,
-          user_id: user.id
+          user_id: user.id,
         }),
-      })
+      });
 
-      const data = await response.json()
-      setClientSecret(data.client_secret)
+      const data = await response.json();
+      setClientSecret(data.client_secret);
     } catch (error) {
-      console.error('Error creating payment intent:', error)
-      toast.error('Failed to initialize payment')
+      console.error("Error creating payment intent:", error);
+      toast.error("Failed to initialize payment");
     }
-  }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (!stripe || !elements || !clientSecret) {
-      return
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    const card = elements.getElement(CardElement)
-    if (!card) return
+    const card = elements.getElement(CardElement);
+    if (!card) return;
 
     try {
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: card,
-        }
-      })
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: card,
+          },
+        },
+      );
 
       if (error) {
-        toast.error(error.message || 'Payment failed')
-      } else if (paymentIntent.status === 'succeeded') {
+        toast.error(error.message || "Payment failed");
+      } else if (paymentIntent.status === "succeeded") {
         // Save subscription to database
-        const { data: { user } } = await supabase.auth.getUser()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
-          await supabase.from('subscriptions').insert({
+          await supabase.from("subscriptions").insert({
             user_id: user.id,
             membership_tier: selectedTier.id,
             payment_intent_id: paymentIntent.id,
             amount: selectedTier.price,
             interval: selectedTier.interval,
-            status: 'active',
+            status: "active",
             current_period_start: new Date().toISOString(),
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
-          })
+            current_period_end: new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000,
+            ).toISOString(), // 30 days
+          });
         }
 
-        toast.success('🎉 Payment successful! Welcome to your membership!')
-        onSuccess()
+        toast.success("🎉 Payment successful! Welcome to your membership!");
+        onSuccess();
       }
     } catch (error) {
-      console.error('Payment error:', error)
-      toast.error('Payment processing failed')
+      console.error("Payment error:", error);
+      toast.error("Payment processing failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -172,14 +183,14 @@ const CheckoutForm: React.FC<{
           options={{
             style: {
               base: {
-                fontSize: '16px',
-                color: '#424770',
-                '::placeholder': {
-                  color: '#aab7c4',
+                fontSize: "16px",
+                color: "#424770",
+                "::placeholder": {
+                  color: "#aab7c4",
                 },
               },
               invalid: {
-                color: '#9e2146',
+                color: "#9e2146",
               },
             },
           }}
@@ -190,7 +201,8 @@ const CheckoutForm: React.FC<{
       <div className="flex items-center space-x-2 text-sm text-gray-600">
         <span className="text-green-500">🔒</span>
         <span>
-          Your payment information is secured with 256-bit SSL encryption and PCI DSS compliance
+          Your payment information is secured with 256-bit SSL encryption and
+          PCI DSS compliance
         </span>
       </div>
 
@@ -226,26 +238,28 @@ const CheckoutForm: React.FC<{
         </span>
       </div>
     </form>
-  )
-}
+  );
+};
 
 // Main component
 const StripePaymentForm: React.FC = () => {
-  const [selectedTier, setSelectedTier] = useState<MembershipTier>(membershipTiers[1])
-  const [showPayment, setShowPayment] = useState(false)
-  const [user, setUser] = useState<any>(null)
+  const [selectedTier, setSelectedTier] = useState<MembershipTier>(
+    membershipTiers[1],
+  );
+  const [showPayment, setShowPayment] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-    })
-  }, [])
+      setUser(user);
+    });
+  }, []);
 
   const handleSuccess = () => {
-    setShowPayment(false)
+    setShowPayment(false);
     // Redirect to dashboard or success page
-    window.location.href = '/education/dashboard'
-  }
+    window.location.href = "/education/dashboard";
+  };
 
   if (!user) {
     return (
@@ -263,7 +277,7 @@ const StripePaymentForm: React.FC = () => {
           Sign In
         </a>
       </div>
-    )
+    );
   }
 
   if (showPayment) {
@@ -275,7 +289,9 @@ const StripePaymentForm: React.FC = () => {
               Complete Your Membership
             </h2>
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900">{selectedTier.name}</h3>
+              <h3 className="font-semibold text-blue-900">
+                {selectedTier.name}
+              </h3>
               <p className="text-2xl font-bold text-blue-600">
                 ${selectedTier.price}/{selectedTier.interval}
               </p>
@@ -299,7 +315,7 @@ const StripePaymentForm: React.FC = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -314,7 +330,8 @@ const StripePaymentForm: React.FC = () => {
           💎 Choose Your Membership
         </h1>
         <p className="text-xl text-gray-600">
-          Get unlimited access to our foreclosure prevention tools and expert support
+          Get unlimited access to our foreclosure prevention tools and expert
+          support
         </p>
       </motion.div>
 
@@ -327,7 +344,7 @@ const StripePaymentForm: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             className={`relative bg-white rounded-lg shadow-lg p-8 ${
-              tier.popular ? 'ring-2 ring-blue-500' : ''
+              tier.popular ? "ring-2 ring-blue-500" : ""
             }`}
           >
             {tier.popular && (
@@ -359,16 +376,16 @@ const StripePaymentForm: React.FC = () => {
 
             <button
               onClick={() => {
-                setSelectedTier(tier)
-                setShowPayment(true)
+                setSelectedTier(tier);
+                setShowPayment(true);
               }}
               className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
                 tier.popular
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
             >
-              Choose {tier.name.split(' ')[1]}
+              Choose {tier.name.split(" ")[1]}
             </button>
           </motion.div>
         ))}
@@ -390,7 +407,9 @@ const StripePaymentForm: React.FC = () => {
         <div className="grid md:grid-cols-3 gap-6">
           <div className="text-center">
             <div className="text-4xl mb-3">🛡️</div>
-            <h4 className="font-semibold text-green-900 mb-2">PCI DSS Compliant</h4>
+            <h4 className="font-semibold text-green-900 mb-2">
+              PCI DSS Compliant
+            </h4>
             <p className="text-green-700 text-sm">
               We meet the highest standards for payment card data security
             </p>
@@ -398,7 +417,9 @@ const StripePaymentForm: React.FC = () => {
 
           <div className="text-center">
             <div className="text-4xl mb-3">🔐</div>
-            <h4 className="font-semibold text-green-900 mb-2">256-bit SSL Encryption</h4>
+            <h4 className="font-semibold text-green-900 mb-2">
+              256-bit SSL Encryption
+            </h4>
             <p className="text-green-700 text-sm">
               Your data is encrypted with bank-level security protocols
             </p>
@@ -406,7 +427,9 @@ const StripePaymentForm: React.FC = () => {
 
           <div className="text-center">
             <div className="text-4xl mb-3">💳</div>
-            <h4 className="font-semibold text-green-900 mb-2">Stripe Secure Processing</h4>
+            <h4 className="font-semibold text-green-900 mb-2">
+              Stripe Secure Processing
+            </h4>
             <p className="text-green-700 text-sm">
               Powered by Stripe, trusted by millions of businesses worldwide
             </p>
@@ -415,12 +438,13 @@ const StripePaymentForm: React.FC = () => {
 
         <div className="text-center mt-8">
           <p className="text-green-700 text-sm">
-            <strong>Money-back guarantee:</strong> Cancel anytime within 30 days for a full refund
+            <strong>Money-back guarantee:</strong> Cancel anytime within 30 days
+            for a full refund
           </p>
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default StripePaymentForm
+export default StripePaymentForm;

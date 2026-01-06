@@ -1,35 +1,35 @@
-import { supabase } from '../lib/supabase';
-import { HUBSPOT_CONFIG, CUSTOM_PROPERTIES } from '../config/hubspot';
-import { 
-  HubSpotContact, 
-  HubSpotDeal, 
-  SyncResult, 
-  ConnectionValidation 
-} from '../types/hubspot';
+import { supabase } from "../lib/supabase";
+import { HUBSPOT_CONFIG, CUSTOM_PROPERTIES } from "../config/hubspot";
+import {
+  HubSpotContact,
+  HubSpotDeal,
+  SyncResult,
+  ConnectionValidation,
+} from "../types/hubspot";
 
 class HubSpotServiceClass {
   private accessToken: string;
   private baseUrl: string;
 
   constructor() {
-    this.accessToken = process.env.HUBSPOT_ACCESS_TOKEN || '';
+    this.accessToken = process.env.HUBSPOT_ACCESS_TOKEN || "";
     this.baseUrl = HUBSPOT_CONFIG.baseUrl;
-    
+
     if (!this.accessToken) {
-      console.warn('HubSpot access token not found in environment variables');
+      console.warn("HubSpot access token not found in environment variables");
     }
   }
 
   private async makeRequest(
-    endpoint: string, 
-    method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'GET',
-    body?: any
+    endpoint: string,
+    method: "GET" | "POST" | "PATCH" | "DELETE" = "GET",
+    body?: any,
   ): Promise<any> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${this.accessToken}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.accessToken}`,
+      "Content-Type": "application/json",
     };
 
     try {
@@ -54,16 +54,17 @@ class HubSpotServiceClass {
   async validateConnection(): Promise<ConnectionValidation> {
     try {
       const response = await this.makeRequest(HUBSPOT_CONFIG.endpoints.account);
-      
+
       return {
         isValid: true,
         portalId: response.portalId?.toString(),
-        accountName: response.accountName || 'Unknown'
+        accountName: response.accountName || "Unknown",
       };
     } catch (error) {
       return {
         isValid: false,
-        error: error instanceof Error ? error.message : 'Unknown connection error'
+        error:
+          error instanceof Error ? error.message : "Unknown connection error",
       };
     }
   }
@@ -72,26 +73,29 @@ class HubSpotServiceClass {
     try {
       const response = await this.makeRequest(
         HUBSPOT_CONFIG.endpoints.contacts,
-        'POST',
-        contactData
+        "POST",
+        contactData,
       );
       return response;
     } catch (error) {
-      console.error('Error creating HubSpot contact:', error);
+      console.error("Error creating HubSpot contact:", error);
       throw error;
     }
   }
 
-  async updateContact(contactId: string, contactData: Partial<HubSpotContact>): Promise<any> {
+  async updateContact(
+    contactId: string,
+    contactData: Partial<HubSpotContact>,
+  ): Promise<any> {
     try {
       const response = await this.makeRequest(
         `${HUBSPOT_CONFIG.endpoints.contacts}/${contactId}`,
-        'PATCH',
-        contactData
+        "PATCH",
+        contactData,
       );
       return response;
     } catch (error) {
-      console.error('Error updating HubSpot contact:', error);
+      console.error("Error updating HubSpot contact:", error);
       throw error;
     }
   }
@@ -100,12 +104,12 @@ class HubSpotServiceClass {
     try {
       const response = await this.makeRequest(
         HUBSPOT_CONFIG.endpoints.deals,
-        'POST',
-        dealData
+        "POST",
+        dealData,
       );
       return response;
     } catch (error) {
-      console.error('Error creating HubSpot deal:', error);
+      console.error("Error creating HubSpot deal:", error);
       throw error;
     }
   }
@@ -114,19 +118,27 @@ class HubSpotServiceClass {
     try {
       const searchEndpoint = `${HUBSPOT_CONFIG.endpoints.contacts}/search`;
       const searchBody = {
-        filterGroups: [{
-          filters: [{
-            propertyName: 'email',
-            operator: 'EQ',
-            value: email
-          }]
-        }]
+        filterGroups: [
+          {
+            filters: [
+              {
+                propertyName: "email",
+                operator: "EQ",
+                value: email,
+              },
+            ],
+          },
+        ],
       };
 
-      const response = await this.makeRequest(searchEndpoint, 'POST', searchBody);
+      const response = await this.makeRequest(
+        searchEndpoint,
+        "POST",
+        searchBody,
+      );
       return response.results?.[0] || null;
     } catch (error) {
-      console.error('Error searching HubSpot contact:', error);
+      console.error("Error searching HubSpot contact:", error);
       throw error;
     }
   }
@@ -135,9 +147,9 @@ class HubSpotServiceClass {
     try {
       // Fetch leads from your Supabase database
       const { data: leads, error } = await supabase
-        .from('leads') // Adjust table name as needed
-        .select('*')
-        .is('hubspot_contact_id', null) // Only sync leads not yet in HubSpot
+        .from("leads") // Adjust table name as needed
+        .select("*")
+        .is("hubspot_contact_id", null) // Only sync leads not yet in HubSpot
         .limit(limit);
 
       if (error) {
@@ -145,7 +157,7 @@ class HubSpotServiceClass {
       }
 
       if (!leads || leads.length === 0) {
-        console.log('No leads to sync');
+        console.log("No leads to sync");
         return 0;
       }
 
@@ -156,7 +168,7 @@ class HubSpotServiceClass {
         recordsCreated: 0,
         recordsUpdated: 0,
         recordsFailed: 0,
-        errors: []
+        errors: [],
       };
 
       for (const lead of leads) {
@@ -170,20 +182,22 @@ class HubSpotServiceClass {
           const contactData: HubSpotContact = {
             properties: {
               email: lead.email,
-              firstname: lead.first_name || '',
-              lastname: lead.last_name || '',
-              phone: lead.phone || '',
-              company: lead.company || '',
-              lead_source: lead.source || 'Website',
-              property_interest: lead.property_type || '',
-              investment_budget: lead.budget?.toString() || '',
-              location_preference: lead.location || ''
-            }
+              firstname: lead.first_name || "",
+              lastname: lead.last_name || "",
+              phone: lead.phone || "",
+              company: lead.company || "",
+              lead_source: lead.source || "Website",
+              property_interest: lead.property_type || "",
+              investment_budget: lead.budget?.toString() || "",
+              location_preference: lead.location || "",
+            },
           };
 
           if (hubspotContact) {
             // Update existing contact
-            hubspotContact = await this.updateContact(hubspotContact.id, { properties: contactData.properties });
+            hubspotContact = await this.updateContact(hubspotContact.id, {
+              properties: contactData.properties,
+            });
             results.recordsUpdated++;
           } else {
             // Create new contact
@@ -193,33 +207,33 @@ class HubSpotServiceClass {
 
           // Update your database with HubSpot contact ID
           await supabase
-            .from('leads')
-            .update({ 
+            .from("leads")
+            .update({
               hubspot_contact_id: hubspotContact.id,
-              synced_at: new Date().toISOString()
+              synced_at: new Date().toISOString(),
             })
-            .eq('id', lead.id);
+            .eq("id", lead.id);
 
           syncedCount++;
-
         } catch (error) {
           console.error(`Failed to sync lead ${lead.id}:`, error);
           results.recordsFailed++;
-          results.errors.push(`Lead ${lead.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          results.errors.push(
+            `Lead ${lead.id}: ${error instanceof Error ? error.message : "Unknown error"}`,
+          );
         }
       }
 
-      console.log('Bulk sync results:', results);
+      console.log("Bulk sync results:", results);
       return syncedCount;
-
     } catch (error) {
-      console.error('Bulk sync failed:', error);
+      console.error("Bulk sync failed:", error);
       throw error;
     }
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

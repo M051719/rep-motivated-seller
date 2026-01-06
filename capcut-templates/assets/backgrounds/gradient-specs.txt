@@ -1,0 +1,146 @@
+BACKGROUND GRADIENT SPECIFICATIONS
+RepMotivatedSeller - CapCut Templates
+
+===========================================
+GRADIENT 1: PRIMARY (Blue → Indigo)
+===========================================
+File Name: gradient-blue-indigo.png
+Dimensions: 1920 x 1080 pixels
+Type: Linear gradient
+Angle: 90° (left to right)
+
+Color Stop 1: #2563eb (RGB: 37, 99, 235) - Position: 0%
+Color Stop 2: #4338ca (RGB: 67, 56, 202) - Position: 100%
+
+Use: Hero sections, CTAs, primary backgrounds
+
+
+===========================================
+GRADIENT 2: SECONDARY (Blue → Indigo → Purple)
+===========================================
+File Name: gradient-blue-purple-multi.png
+Dimensions: 1920 x 1080 pixels
+Type: Linear gradient
+Angle: 135° (diagonal)
+
+Color Stop 1: #1e3a8a (RGB: 30, 58, 138) - Position: 0%
+Color Stop 2: #3730a3 (RGB: 55, 48, 163) - Position: 50%
+Color Stop 3: #5b21b6 (RGB: 91, 33, 182) - Position: 100%
+
+Use: Video backgrounds, overlays, dramatic sections
+
+
+===========================================
+GRADIENT 3: ACCENT (Purple Light)
+===========================================
+File Name: gradient-purple-light.png
+Dimensions: 1920 x 1080 pixels
+Type: Linear gradient
+Angle: 180° (top to bottom)
+
+Color Stop 1: #faf5ff (RGB: 250, 245, 255) - Position: 0%
+Color Stop 2: #eef2ff (RGB: 238, 242, 255) - Position: 100%
+
+Use: Light backgrounds, subtle sections
+
+
+===========================================
+SOLID COLORS
+===========================================
+
+1. bg-blue-600.png (1920x1080)
+   Color: #2563eb (RGB: 37, 99, 235)
+   Use: Primary blue background
+
+2. bg-indigo-700.png (1920x1080)
+   Color: #4338ca (RGB: 67, 56, 202)
+   Use: Secondary background
+
+3. bg-purple-600.png (1920x1080)
+   Color: #7c3aed (RGB: 124, 58, 237)
+   Use: Accent background
+
+4. bg-white.png (1920x1080)
+   Color: #ffffff (RGB: 255, 255, 255)
+   Use: Clean, minimal background
+
+5. bg-gray-900.png (1920x1080)
+   Color: #111827 (RGB: 17, 24, 39)
+   Use: Dark background, dramatic effect
+
+
+===========================================
+HOW TO CREATE IN CANVA (Free):
+===========================================
+
+1. Go to: canva.com
+2. Click "Create a design" → "Custom size"
+3. Enter: 1920 x 1080 pixels
+4. Click "Create new design"
+
+FOR GRADIENTS:
+5. Click "Elements" → Search "gradient background"
+6. Or click background → "Color" → "Gradient"
+7. Click gradient editor
+8. Set colors using hex codes above
+9. Adjust angle using the rotation handle
+10. Download: File → Download → PNG
+
+FOR SOLID COLORS:
+5. Click background
+6. Click "Color"
+7. Click "+" to add custom color
+8. Enter hex code (e.g., #2563eb)
+9. Download: File → Download → PNG
+
+
+===========================================
+HOW TO CREATE IN PHOTOSHOP:
+===========================================
+
+1. File → New
+2. Width: 1920px, Height: 1080px
+3. Resolution: 72 ppi
+4. Color Mode: RGB
+
+FOR GRADIENTS:
+5. Select Gradient Tool (G)
+6. Click gradient preview in top toolbar
+7. Click color stops, enter hex codes
+8. Set angle in top toolbar
+9. Click and drag to apply
+10. File → Export → Export As → PNG
+
+FOR SOLID COLORS:
+5. Edit → Fill
+6. Select "Color"
+7. Enter hex code
+8. File → Export → Export As → PNG
+
+
+===========================================
+HOW TO CREATE ONLINE (Easiest):
+===========================================
+
+Use: https://cssgradient.io/
+1. Select "Linear Gradient"
+2. Set angle
+3. Add color stops with hex codes
+4. Click "Copy CSS"
+5. Then use https://www.gradient-animator.com/
+   - Paste CSS
+   - Export as image (1920x1080)
+
+Or use: https://www.canva.com/ (recommended for beginners)
+
+
+===========================================
+QUALITY CHECKLIST:
+===========================================
+☐ Correct dimensions (1920x1080)
+☐ Correct file format (PNG)
+☐ Exact hex colors used
+☐ Smooth gradient (no banding)
+☐ File size under 5MB
+☐ Proper file naming
+☐ Saved in /assets/backgrounds/ folder

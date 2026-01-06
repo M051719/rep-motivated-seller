@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Scatter, Bar, Line } from 'react-chartjs-2';
-import { FreePropertyDataService } from '../../services/FreePropertyDataService';
-import { FreePropertyIntelligence } from '../../services/FreePropertyIntelligence';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Scatter, Bar, Line } from "react-chartjs-2";
+import FreePropertyDataService from "../../services/FreePropertyDataService";
+import FreePropertyIntelligence from "../../services/FreePropertyIntelligence";
 
 const PropertyIntelligenceDashboard: React.FC = () => {
   const [propertyData, setPropertyData] = useState<any>(null);
   const [marketAnalysis, setMarketAnalysis] = useState<any>(null);
   const [foreclosureRisk, setForeclosureRisk] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedZipCode, setSelectedZipCode] = useState<string>('');
+  const [selectedZipCode, setSelectedZipCode] = useState<string>("");
 
   const propertyService = new FreePropertyDataService();
   const intelligenceService = new FreePropertyIntelligence();
@@ -21,21 +21,21 @@ const PropertyIntelligenceDashboard: React.FC = () => {
   const loadPropertyIntelligence = async () => {
     try {
       setLoading(true);
-      
+
       const [properties, market, risk] = await Promise.all([
-        propertyService.searchProperties({ 
+        propertyService.searchProperties({
           zipCode: selectedZipCode || undefined,
-          limit: 100 
+          limit: 100,
         }),
         intelligenceService.getMarketAnalysis(selectedZipCode || undefined),
-        intelligenceService.getForeclosureRisk(selectedZipCode || undefined)
+        intelligenceService.getForeclosureRisk(selectedZipCode || undefined),
       ]);
 
       setPropertyData(properties);
       setMarketAnalysis(market);
       setForeclosureRisk(risk);
     } catch (error) {
-      console.error('Error loading property intelligence:', error);
+      console.error("Error loading property intelligence:", error);
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,9 @@ const PropertyIntelligenceDashboard: React.FC = () => {
 
         {/* Zip Code Filter */}
         <div className="flex items-center space-x-4 mb-6">
-          <label className="text-sm font-medium text-gray-700">Target Area:</label>
+          <label className="text-sm font-medium text-gray-700">
+            Target Area:
+          </label>
           <input
             type="text"
             value={selectedZipCode}
@@ -126,7 +128,7 @@ const PropertyIntelligenceDashboard: React.FC = () => {
             <div>
               <p className="text-sm text-gray-500">Avg Property Value</p>
               <p className="text-2xl font-bold text-green-600">
-                ${marketAnalysis?.averageValue?.toLocaleString() || '0'}
+                ${marketAnalysis?.averageValue?.toLocaleString() || "0"}
               </p>
             </div>
           </div>
@@ -143,7 +145,7 @@ const PropertyIntelligenceDashboard: React.FC = () => {
             <div>
               <p className="text-sm text-gray-500">Market Trend</p>
               <p className="text-2xl font-bold text-purple-600">
-                {marketAnalysis?.trend || 'Stable'}
+                {marketAnalysis?.trend || "Stable"}
               </p>
             </div>
           </div>
@@ -157,18 +159,21 @@ const PropertyIntelligenceDashboard: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Property Value vs Foreclosure Risk
           </h3>
-          <div style={{ height: '300px' }}>
+          <div style={{ height: "300px" }}>
             <Scatter
               data={{
-                datasets: [{
-                  label: 'Properties',
-                  data: propertyData?.map((p: any) => ({
-                    x: p.estimatedValue || 0,
-                    y: p.riskScore || 0
-                  })) || [],
-                  backgroundColor: 'rgba(59, 130, 246, 0.6)',
-                  borderColor: 'rgba(59, 130, 246, 1)',
-                }]
+                datasets: [
+                  {
+                    label: "Properties",
+                    data:
+                      propertyData?.map((p: any) => ({
+                        x: p.estimatedValue || 0,
+                        y: p.riskScore || 0,
+                      })) || [],
+                    backgroundColor: "rgba(59, 130, 246, 0.6)",
+                    borderColor: "rgba(59, 130, 246, 1)",
+                  },
+                ],
               }}
               options={{
                 responsive: true,
@@ -177,21 +182,21 @@ const PropertyIntelligenceDashboard: React.FC = () => {
                   x: {
                     title: {
                       display: true,
-                      text: 'Property Value ($)'
-                    }
+                      text: "Property Value ($)",
+                    },
                   },
                   y: {
                     title: {
                       display: true,
-                      text: 'Risk Score'
-                    }
-                  }
+                      text: "Risk Score",
+                    },
+                  },
                 },
                 plugins: {
                   legend: {
-                    position: 'top' as const,
+                    position: "top" as const,
                   },
-                }
+                },
               }}
             />
           </div>
@@ -204,7 +209,9 @@ const PropertyIntelligenceDashboard: React.FC = () => {
           </h3>
           <div className="space-y-4">
             <div className="bg-blue-50 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-900 mb-2">Market Strength</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">
+                Market Strength
+              </h4>
               <div className="flex items-center">
                 <div className="flex-1 bg-gray-200 rounded-full h-2 mr-3">
                   <div
@@ -219,12 +226,16 @@ const PropertyIntelligenceDashboard: React.FC = () => {
             </div>
 
             <div className="bg-green-50 rounded-lg p-4">
-              <h4 className="font-semibold text-green-900 mb-2">Investment Potential</h4>
+              <h4 className="font-semibold text-green-900 mb-2">
+                Investment Potential
+              </h4>
               <div className="flex items-center">
                 <div className="flex-1 bg-gray-200 rounded-full h-2 mr-3">
                   <div
                     className="bg-green-600 h-2 rounded-full"
-                    style={{ width: `${marketAnalysis?.investmentScore || 65}%` }}
+                    style={{
+                      width: `${marketAnalysis?.investmentScore || 65}%`,
+                    }}
                   ></div>
                 </div>
                 <span className="text-sm font-medium text-green-900">
@@ -234,7 +245,9 @@ const PropertyIntelligenceDashboard: React.FC = () => {
             </div>
 
             <div className="bg-red-50 rounded-lg p-4">
-              <h4 className="font-semibold text-red-900 mb-2">Foreclosure Risk</h4>
+              <h4 className="font-semibold text-red-900 mb-2">
+                Foreclosure Risk
+              </h4>
               <div className="flex items-center">
                 <div className="flex-1 bg-gray-200 rounded-full h-2 mr-3">
                   <div
@@ -256,10 +269,12 @@ const PropertyIntelligenceDashboard: React.FC = () => {
         <h3 className="text-lg font-semibold text-gray-900 mb-6">
           🤖 AI-Generated Property Intelligence Report
         </h3>
-        
+
         <div className="grid md:grid-cols-3 gap-6">
           <div className="bg-yellow-50 rounded-lg p-4">
-            <h4 className="font-semibold text-yellow-900 mb-3">Key Opportunities</h4>
+            <h4 className="font-semibold text-yellow-900 mb-3">
+              Key Opportunities
+            </h4>
             <ul className="text-sm text-yellow-800 space-y-1">
               <li>• High-equity distressed properties identified</li>
               <li>• Below-market value opportunities in target area</li>
@@ -279,7 +294,9 @@ const PropertyIntelligenceDashboard: React.FC = () => {
           </div>
 
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-semibold text-green-900 mb-3">Recommendations</h4>
+            <h4 className="font-semibold text-green-900 mb-3">
+              Recommendations
+            </h4>
             <ul className="text-sm text-green-800 space-y-1">
               <li>• Focus on properties with 15-30% equity</li>
               <li>• Target homeowners 90+ days behind</li>

@@ -1,8 +1,3 @@
-
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.REACT_APP_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
-        
+// This file is deprecated - use src/lib/supabase.ts instead
+// Re-export the single supabase client to maintain backward compatibility
+export { supabase, testConnection, testAuth } from '../lib/supabase';

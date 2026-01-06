@@ -1,19 +1,19 @@
 // src/components/ProtectedRoute.tsx
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import SubscriptionService from '../services/SubscriptionService';
+import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import SubscriptionService from "../services/SubscriptionService";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredTier?: 'free' | 'professional' | 'enterprise';
+  requiredTier?: "free" | "professional" | "enterprise";
   feature?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  requiredTier = 'free',
-  feature 
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requiredTier = "free",
+  feature,
 }) => {
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,8 +23,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }, []);
 
   const checkAccess = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       setHasAccess(false);
       setLoading(false);
@@ -32,14 +34,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     if (feature) {
-      const canAccess = await SubscriptionService.checkFeatureAccess(user.id, feature);
+      const canAccess = await SubscriptionService.checkFeatureAccess(
+        user.id,
+        feature,
+      );
       setHasAccess(canAccess);
     } else {
-      const subscription = await SubscriptionService.getUserSubscription(user.id);
+      const subscription = await SubscriptionService.getUserSubscription(
+        user.id,
+      );
       const tierLevels = { free: 0, professional: 1, enterprise: 2 };
       setHasAccess(tierLevels[subscription.tier] >= tierLevels[requiredTier]);
     }
-    
+
     setLoading(false);
   };
 

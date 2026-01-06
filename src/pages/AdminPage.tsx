@@ -1,6 +1,6 @@
-import React from 'react';
-import AdminDashboard from '../components/AdminDashboard';
-import { BackButton } from '../components/ui/BackButton';
+import React from "react";
+import AdminDashboard from "../components/AdminDashboard";
+import { BackButton } from "../components/ui/BackButton";
 
 export const AdminPage: React.FC = () => {
   return (

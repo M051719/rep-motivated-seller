@@ -1,13 +1,40 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
-import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig, Plugin } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import crypto from 'crypto';
 
-// Enhanced Vite configuration with bundle analysis
+function cspNoncePlugin(): Plugin {
+  return {
+    name: 'vite-csp-nonce',
+    transformIndexHtml(html) {
+      // Generate cryptographically secure nonce (128-bit)
+      const nonce = crypto.randomBytes(16).toString('base64');
+      
+      // Replace nonce placeholder in CSP meta tag
+      let transformed = html.replace(/{{NONCE}}/g, nonce);
+      
+      // Add nonce to inline scripts (but NOT external scripts with src="...")
+      transformed = transformed.replace(
+        /<script(?![^>]*\ssrc=)([^>]*)>/gi,
+        `<script nonce="${nonce}"$1>`
+      );
+      
+      // Add nonce to inline styles (but NOT external stylesheets with href="...")
+      transformed = transformed.replace(
+        /<style([^>]*)>/gi,
+        `<style nonce="${nonce}"$1>`
+      );
+      
+      return transformed;
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
+    cspNoncePlugin(),
     react(),
-    // Bundle analyzer - only in analyze mode
     process.env.ANALYZE && visualizer({
       filename: 'dist/stats.html',
       open: true,
@@ -15,9 +42,7 @@ export default defineConfig({
       brotliSize: true,
       template: 'treemap'
     })
-  ],
-  
-  // Enhanced path resolution
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
@@ -33,28 +58,24 @@ export default defineConfig({
       '@store': resolve(__dirname, './src/store')
     }
   },
-
-  // Enhanced build optimization
   build: {
     outDir: 'dist',
     target: 'es2020',
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html')
+      },
       output: {
         manualChunks: {
-          // Core vendor chunks
           vendor: ['react', 'react-dom'],
-          // Supabase and authentication
           supabase: ['@supabase/supabase-js'],
-          // UI libraries
           ui: ['framer-motion', 'react-hot-toast'],
-          // Routing
           routing: ['react-router-dom']
         }
       }
     },
     chunkSizeWarningLimit: 1000,
     sourcemap: process.env.NODE_ENV === 'development',
-    // Production optimizations
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -63,15 +84,12 @@ export default defineConfig({
       }
     }
   },
-
-  // Enhanced development server
   server: {
     host: '0.0.0.0',
     port: 5173,
     open: true,
     cors: true,
     proxy: {
-      // Supabase local proxy
       '/api': {
         target: 'http://localhost:54321',
         changeOrigin: true,
@@ -79,8 +97,6 @@ export default defineConfig({
       }
     }
   },
-
-  // Enhanced optimization
   optimizeDeps: {
     include: [
       'react',
@@ -88,12 +104,11 @@ export default defineConfig({
       'react-router-dom',
       '@supabase/supabase-js',
       'framer-motion',
-      'react-hot-toast'
+      'react-hot-toast',
+      'react-quill'
     ],
     exclude: ['@vite/client', '@vite/env']
   },
-
-  // Enhanced environment variables
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
     __BUILD_DATE__: JSON.stringify(new Date().toISOString()),

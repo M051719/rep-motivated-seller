@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import { 
-  Home, 
-  DollarSign, 
-  Calendar, 
-  FileText, 
-  Download, 
-  Printer, 
-  CheckCircle, 
+import React, { useState } from "react";
+import {
+  Home,
+  DollarSign,
+  Calendar,
+  FileText,
+  Download,
+  Printer,
+  CheckCircle,
   AlertTriangle,
   User,
   MapPin,
   Wrench,
   TrendingUp,
   Shield,
-  Clock
-} from 'lucide-react';
+  Clock,
+} from "lucide-react";
 
 interface FixFlipFormData {
   // Property Information
@@ -28,14 +28,14 @@ interface FixFlipFormData {
   bathrooms: string;
   lotSize: string;
   zoning: string;
-  
+
   // Seller Information
   sellerName: string;
   sellerAddress: string;
   sellerPhone: string;
   sellerEmail: string;
   sellerEntityType: string;
-  
+
   // Buyer/Flipper Information
   buyerName: string;
   buyerAddress: string;
@@ -43,7 +43,7 @@ interface FixFlipFormData {
   buyerEmail: string;
   buyerEntityType: string;
   buyerLicense: string;
-  
+
   // Financial Terms
   purchasePrice: string;
   earnestMoney: string;
@@ -52,31 +52,31 @@ interface FixFlipFormData {
   loanAmount: string;
   interestRate: string;
   loanTerm: string;
-  
+
   // Renovation Details
   estimatedRehabCost: string;
   rehabTimeline: string;
   contractorLicense: string;
   permitRequired: string;
   renovationScope: string;
-  
+
   // Market Analysis
   afterRepairValue: string;
   comparableSales: string;
   marketConditions: string;
   holdingPeriod: string;
-  
+
   // Contingencies
   inspectionPeriod: string;
   financingContingency: string;
   appraisalContingency: string;
   titleContingency: string;
-  
+
   // Closing Details
   closingDate: string;
   closingLocation: string;
   titleCompany: string;
-  
+
   // Legal Protections
   disclosures: string[];
   warranties: string[];
@@ -84,90 +84,101 @@ interface FixFlipFormData {
 }
 
 const initialFormData: FixFlipFormData = {
-  propertyAddress: '',
-  legalDescription: '',
-  parcelNumber: '',
-  propertyType: 'single-family',
-  yearBuilt: '',
-  squareFootage: '',
-  bedrooms: '',
-  bathrooms: '',
-  lotSize: '',
-  zoning: '',
-  sellerName: '',
-  sellerAddress: '',
-  sellerPhone: '',
-  sellerEmail: '',
-  sellerEntityType: 'individual',
-  buyerName: '',
-  buyerAddress: '',
-  buyerPhone: '',
-  buyerEmail: '',
-  buyerEntityType: 'individual',
-  buyerLicense: '',
-  purchasePrice: '',
-  earnestMoney: '',
-  downPayment: '',
-  financingType: 'conventional',
-  loanAmount: '',
-  interestRate: '',
-  loanTerm: '',
-  estimatedRehabCost: '',
-  rehabTimeline: '',
-  contractorLicense: '',
-  permitRequired: 'yes',
-  renovationScope: '',
-  afterRepairValue: '',
-  comparableSales: '',
-  marketConditions: 'stable',
-  holdingPeriod: '',
-  inspectionPeriod: '10',
-  financingContingency: '30',
-  appraisalContingency: '21',
-  titleContingency: '30',
-  closingDate: '',
-  closingLocation: '',
-  titleCompany: '',
+  propertyAddress: "",
+  legalDescription: "",
+  parcelNumber: "",
+  propertyType: "single-family",
+  yearBuilt: "",
+  squareFootage: "",
+  bedrooms: "",
+  bathrooms: "",
+  lotSize: "",
+  zoning: "",
+  sellerName: "",
+  sellerAddress: "",
+  sellerPhone: "",
+  sellerEmail: "",
+  sellerEntityType: "individual",
+  buyerName: "",
+  buyerAddress: "",
+  buyerPhone: "",
+  buyerEmail: "",
+  buyerEntityType: "individual",
+  buyerLicense: "",
+  purchasePrice: "",
+  earnestMoney: "",
+  downPayment: "",
+  financingType: "conventional",
+  loanAmount: "",
+  interestRate: "",
+  loanTerm: "",
+  estimatedRehabCost: "",
+  rehabTimeline: "",
+  contractorLicense: "",
+  permitRequired: "yes",
+  renovationScope: "",
+  afterRepairValue: "",
+  comparableSales: "",
+  marketConditions: "stable",
+  holdingPeriod: "",
+  inspectionPeriod: "10",
+  financingContingency: "30",
+  appraisalContingency: "21",
+  titleContingency: "30",
+  closingDate: "",
+  closingLocation: "",
+  titleCompany: "",
   disclosures: [],
   warranties: [],
-  defaultRemedies: []
+  defaultRemedies: [],
 };
 
 export const FixFlipContractForm: React.FC = () => {
   const [formData, setFormData] = useState<FixFlipFormData>(initialFormData);
   const [currentSection, setCurrentSection] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContract, setGeneratedContract] = useState<string | null>(null);
+  const [generatedContract, setGeneratedContract] = useState<string | null>(
+    null,
+  );
 
   const sections = [
-    { title: 'Property Details', icon: Home, color: 'blue' },
-    { title: 'Party Information', icon: User, color: 'green' },
-    { title: 'Financial Terms', icon: DollarSign, color: 'yellow' },
-    { title: 'Renovation Plan', icon: Wrench, color: 'purple' },
-    { title: 'Market Analysis', icon: TrendingUp, color: 'indigo' },
-    { title: 'Contingencies & Closing', icon: Shield, color: 'red' },
+    { title: "Property Details", icon: Home, color: "blue" },
+    { title: "Party Information", icon: User, color: "green" },
+    { title: "Financial Terms", icon: DollarSign, color: "yellow" },
+    { title: "Renovation Plan", icon: Wrench, color: "purple" },
+    { title: "Market Analysis", icon: TrendingUp, color: "indigo" },
+    { title: "Contingencies & Closing", icon: Shield, color: "red" },
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckboxChange = (field: keyof FixFlipFormData, value: string) => {
-    setFormData(prev => ({
+  const handleCheckboxChange = (
+    field: keyof FixFlipFormData,
+    value: string,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: prev[field as keyof FixFlipFormData].includes(value)
-        ? (prev[field as keyof FixFlipFormData] as string[]).filter(item => item !== value)
-        : [...(prev[field as keyof FixFlipFormData] as string[]), value]
+        ? (prev[field as keyof FixFlipFormData] as string[]).filter(
+            (item) => item !== value,
+          )
+        : [...(prev[field as keyof FixFlipFormData] as string[]), value],
     }));
   };
 
   const generateContract = async () => {
     setIsGenerating(true);
-    
+
     // Simulate contract generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     const contract = generateFixFlipContract(formData);
     setGeneratedContract(contract);
     setIsGenerating(false);
@@ -175,20 +186,20 @@ export const FixFlipContractForm: React.FC = () => {
 
   const downloadContract = () => {
     if (!generatedContract) return;
-    
-    const blob = new Blob([generatedContract], { type: 'text/html' });
+
+    const blob = new Blob([generatedContract], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `fix-flip-contract-${formData.propertyAddress.replace(/\s+/g, '-').toLowerCase()}.html`;
+    a.download = `fix-flip-contract-${formData.propertyAddress.replace(/\s+/g, "-").toLowerCase()}.html`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const printContract = () => {
     if (!generatedContract) return;
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(generatedContract);
       printWindow.document.close();
@@ -210,12 +221,12 @@ export const FixFlipContractForm: React.FC = () => {
 
   const getSectionColor = (color: string) => {
     const colors = {
-      blue: 'bg-blue-500',
-      green: 'bg-green-500',
-      yellow: 'bg-yellow-500',
-      purple: 'bg-purple-500',
-      indigo: 'bg-indigo-500',
-      red: 'bg-red-500',
+      blue: "bg-blue-500",
+      green: "bg-green-500",
+      yellow: "bg-yellow-500",
+      purple: "bg-purple-500",
+      indigo: "bg-indigo-500",
+      red: "bg-red-500",
     };
     return colors[color as keyof typeof colors];
   };
@@ -229,8 +240,13 @@ export const FixFlipContractForm: React.FC = () => {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Contract Generated Successfully!</h2>
-              <p className="text-gray-600">Your fix-and-flip purchase agreement is ready for review and execution.</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Contract Generated Successfully!
+              </h2>
+              <p className="text-gray-600">
+                Your fix-and-flip purchase agreement is ready for review and
+                execution.
+              </p>
             </div>
 
             <div className="flex justify-center space-x-4 mb-8">
@@ -275,7 +291,8 @@ export const FixFlipContractForm: React.FC = () => {
             Fix-and-Flip Purchase Agreement Generator
           </h1>
           <p className="text-xl text-gray-600">
-            Professional real estate contracts with renovation and resale protections
+            Professional real estate contracts with renovation and resale
+            protections
           </p>
         </div>
 
@@ -286,7 +303,7 @@ export const FixFlipContractForm: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div
@@ -294,8 +311,8 @@ export const FixFlipContractForm: React.FC = () => {
                       isActive
                         ? `${getSectionColor(section.color)} text-white shadow-lg scale-110`
                         : isCompleted
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-200 text-gray-500'
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-200 text-gray-500"
                     }`}
                   >
                     <Icon className="w-6 h-6" />
@@ -303,7 +320,7 @@ export const FixFlipContractForm: React.FC = () => {
                   {index < sections.length - 1 && (
                     <div
                       className={`h-1 w-16 mx-2 transition-all duration-300 ${
-                        isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                        isCompleted ? "bg-green-500" : "bg-gray-200"
                       }`}
                     />
                   )}
@@ -388,7 +405,9 @@ export const FixFlipContractForm: React.FC = () => {
                     <option value="townhouse">Townhouse</option>
                     <option value="condo">Condominium</option>
                     <option value="duplex">Duplex</option>
-                    <option value="multi-family">Multi-Family (3-4 units)</option>
+                    <option value="multi-family">
+                      Multi-Family (3-4 units)
+                    </option>
                   </select>
                 </div>
 
@@ -806,9 +825,13 @@ export const FixFlipContractForm: React.FC = () => {
                 <div className="flex items-start">
                   <AlertTriangle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-yellow-900">Financial Terms Notice</h4>
+                    <h4 className="font-medium text-yellow-900">
+                      Financial Terms Notice
+                    </h4>
                     <p className="text-yellow-800 text-sm mt-1">
-                      All financial terms are subject to loan approval and appraisal. Hard money and private lending terms may vary significantly from conventional financing.
+                      All financial terms are subject to loan approval and
+                      appraisal. Hard money and private lending terms may vary
+                      significantly from conventional financing.
                     </p>
                   </div>
                 </div>
@@ -908,9 +931,14 @@ export const FixFlipContractForm: React.FC = () => {
                 <div className="flex items-start">
                   <Wrench className="w-5 h-5 text-purple-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-purple-900">Renovation Planning Notice</h4>
+                    <h4 className="font-medium text-purple-900">
+                      Renovation Planning Notice
+                    </h4>
                     <p className="text-purple-800 text-sm mt-1">
-                      All renovation costs are estimates. Actual costs may vary based on unforeseen conditions, permit requirements, and material price fluctuations. Consider adding 10-20% contingency to your budget.
+                      All renovation costs are estimates. Actual costs may vary
+                      based on unforeseen conditions, permit requirements, and
+                      material price fluctuations. Consider adding 10-20%
+                      contingency to your budget.
                     </p>
                   </div>
                 </div>
@@ -950,7 +978,9 @@ export const FixFlipContractForm: React.FC = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
                   >
-                    <option value="strong-seller">Strong Seller's Market</option>
+                    <option value="strong-seller">
+                      Strong Seller's Market
+                    </option>
                     <option value="seller">Seller's Market</option>
                     <option value="balanced">Balanced Market</option>
                     <option value="buyer">Buyer's Market</option>
@@ -992,9 +1022,14 @@ export const FixFlipContractForm: React.FC = () => {
                 <div className="flex items-start">
                   <TrendingUp className="w-5 h-5 text-indigo-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-indigo-900">Market Analysis Notice</h4>
+                    <h4 className="font-medium text-indigo-900">
+                      Market Analysis Notice
+                    </h4>
                     <p className="text-indigo-800 text-sm mt-1">
-                      ARV estimates should be based on recent comparable sales of similar properties in similar condition. Market conditions can significantly impact sale timeline and final sale price.
+                      ARV estimates should be based on recent comparable sales
+                      of similar properties in similar condition. Market
+                      conditions can significantly impact sale timeline and
+                      final sale price.
                     </p>
                   </div>
                 </div>
@@ -1126,9 +1161,14 @@ export const FixFlipContractForm: React.FC = () => {
                 <div className="flex items-start">
                   <AlertTriangle className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-red-900">Important Legal Notice</h4>
+                    <h4 className="font-medium text-red-900">
+                      Important Legal Notice
+                    </h4>
                     <p className="text-red-800 text-sm mt-1">
-                      This contract includes standard real estate contingencies and protections. All dates are calendar days unless otherwise specified. Time is of the essence for all deadlines.
+                      This contract includes standard real estate contingencies
+                      and protections. All dates are calendar days unless
+                      otherwise specified. Time is of the essence for all
+                      deadlines.
                     </p>
                   </div>
                 </div>
@@ -1162,7 +1202,7 @@ export const FixFlipContractForm: React.FC = () => {
                 disabled={isGenerating}
                 className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isGenerating ? 'Generating Contract...' : 'Generate Contract'}
+                {isGenerating ? "Generating Contract..." : "Generate Contract"}
               </button>
             )}
           </div>
@@ -1179,7 +1219,10 @@ function generateFixFlipContract(data: FixFlipFormData): string {
   const arv = parseFloat(data.afterRepairValue) || 0;
   const totalInvestment = purchasePrice + rehabCost;
   const projectedProfit = arv - totalInvestment;
-  const roi = totalInvestment > 0 ? ((projectedProfit / totalInvestment) * 100).toFixed(2) : '0';
+  const roi =
+    totalInvestment > 0
+      ? ((projectedProfit / totalInvestment) * 100).toFixed(2)
+      : "0";
 
   return `
 <!DOCTYPE html>
@@ -1236,7 +1279,7 @@ function generateFixFlipContract(data: FixFlipFormData): string {
                 Address: ${data.buyerAddress}<br>
                 Phone: ${data.buyerPhone}<br>
                 Email: ${data.buyerEmail}<br>
-                ${data.buyerLicense ? `License: ${data.buyerLicense}` : ''}
+                ${data.buyerLicense ? `License: ${data.buyerLicense}` : ""}
             </div>
         </div>
     </div>
@@ -1249,18 +1292,18 @@ function generateFixFlipContract(data: FixFlipFormData): string {
         </div>
         <div class="clause">
             <div class="clause-title">Legal Description:</div>
-            ${data.legalDescription || 'To be provided by title company'}
+            ${data.legalDescription || "To be provided by title company"}
         </div>
         <table>
             <tr><th>Property Details</th><th>Information</th></tr>
-            <tr><td>Parcel Number</td><td>${data.parcelNumber || 'TBD'}</td></tr>
+            <tr><td>Parcel Number</td><td>${data.parcelNumber || "TBD"}</td></tr>
             <tr><td>Property Type</td><td>${data.propertyType}</td></tr>
-            <tr><td>Year Built</td><td>${data.yearBuilt || 'TBD'}</td></tr>
-            <tr><td>Square Footage</td><td>${data.squareFootage || 'TBD'}</td></tr>
-            <tr><td>Bedrooms</td><td>${data.bedrooms || 'TBD'}</td></tr>
-            <tr><td>Bathrooms</td><td>${data.bathrooms || 'TBD'}</td></tr>
-            <tr><td>Lot Size</td><td>${data.lotSize || 'TBD'} sq ft</td></tr>
-            <tr><td>Zoning</td><td>${data.zoning || 'TBD'}</td></tr>
+            <tr><td>Year Built</td><td>${data.yearBuilt || "TBD"}</td></tr>
+            <tr><td>Square Footage</td><td>${data.squareFootage || "TBD"}</td></tr>
+            <tr><td>Bedrooms</td><td>${data.bedrooms || "TBD"}</td></tr>
+            <tr><td>Bathrooms</td><td>${data.bathrooms || "TBD"}</td></tr>
+            <tr><td>Lot Size</td><td>${data.lotSize || "TBD"} sq ft</td></tr>
+            <tr><td>Zoning</td><td>${data.zoning || "TBD"}</td></tr>
         </table>
     </div>
 
@@ -1270,12 +1313,12 @@ function generateFixFlipContract(data: FixFlipFormData): string {
             <table>
                 <tr><th>Financial Component</th><th>Amount</th></tr>
                 <tr><td><strong>Purchase Price</strong></td><td><strong>$${purchasePrice.toLocaleString()}</strong></td></tr>
-                <tr><td>Earnest Money Deposit</td><td>$${parseFloat(data.earnestMoney || '0').toLocaleString()}</td></tr>
-                <tr><td>Down Payment</td><td>$${parseFloat(data.downPayment || '0').toLocaleString()}</td></tr>
-                <tr><td>Loan Amount</td><td>$${parseFloat(data.loanAmount || '0').toLocaleString()}</td></tr>
+                <tr><td>Earnest Money Deposit</td><td>$${parseFloat(data.earnestMoney || "0").toLocaleString()}</td></tr>
+                <tr><td>Down Payment</td><td>$${parseFloat(data.downPayment || "0").toLocaleString()}</td></tr>
+                <tr><td>Loan Amount</td><td>$${parseFloat(data.loanAmount || "0").toLocaleString()}</td></tr>
                 <tr><td>Financing Type</td><td>${data.financingType}</td></tr>
-                ${data.interestRate ? `<tr><td>Interest Rate</td><td>${data.interestRate}%</td></tr>` : ''}
-                ${data.loanTerm ? `<tr><td>Loan Term</td><td>${data.loanTerm} months</td></tr>` : ''}
+                ${data.interestRate ? `<tr><td>Interest Rate</td><td>${data.interestRate}%</td></tr>` : ""}
+                ${data.loanTerm ? `<tr><td>Loan Term</td><td>${data.loanTerm} months</td></tr>` : ""}
             </table>
         </div>
         <div class="clause">
@@ -1301,7 +1344,7 @@ function generateFixFlipContract(data: FixFlipFormData): string {
             <div class="clause-title">Renovation Details:</div>
             <strong>Timeline:</strong> ${data.rehabTimeline} months<br>
             <strong>Permits Required:</strong> ${data.permitRequired}<br>
-            ${data.contractorLicense ? `<strong>Contractor License:</strong> ${data.contractorLicense}<br>` : ''}
+            ${data.contractorLicense ? `<strong>Contractor License:</strong> ${data.contractorLicense}<br>` : ""}
             <strong>Scope of Work:</strong> ${data.renovationScope}
         </div>
         <div class="important">
@@ -1319,11 +1362,11 @@ function generateFixFlipContract(data: FixFlipFormData): string {
         </div>
         <div class="clause">
             <div class="clause-title">B. Financing Contingency:</div>
-            ${data.financingContingency ? `This agreement is contingent upon Buyer obtaining financing within ${data.financingContingency} calendar days. If financing is not obtained, Buyer may terminate this agreement and receive a full refund of earnest money.` : 'This is a cash purchase with no financing contingency.'}
+            ${data.financingContingency ? `This agreement is contingent upon Buyer obtaining financing within ${data.financingContingency} calendar days. If financing is not obtained, Buyer may terminate this agreement and receive a full refund of earnest money.` : "This is a cash purchase with no financing contingency."}
         </div>
         <div class="clause">
             <div class="clause-title">C. Appraisal Contingency:</div>
-            ${data.appraisalContingency ? `If the property appraises for less than the purchase price, Buyer may terminate this agreement within ${data.appraisalContingency} calendar days of receiving the appraisal report.` : 'No appraisal contingency applies to this transaction.'}
+            ${data.appraisalContingency ? `If the property appraises for less than the purchase price, Buyer may terminate this agreement within ${data.appraisalContingency} calendar days of receiving the appraisal report.` : "No appraisal contingency applies to this transaction."}
         </div>
         <div class="clause">
             <div class="clause-title">D. Title Contingency:</div>
@@ -1335,15 +1378,15 @@ function generateFixFlipContract(data: FixFlipFormData): string {
         <div class="section-title">6. CLOSING PROVISIONS</div>
         <div class="clause">
             <div class="clause-title">Closing Date:</div>
-            ${data.closingDate ? new Date(data.closingDate).toLocaleDateString() : 'To be determined'}
+            ${data.closingDate ? new Date(data.closingDate).toLocaleDateString() : "To be determined"}
         </div>
         <div class="clause">
             <div class="clause-title">Closing Location:</div>
-            ${data.closingLocation || 'To be determined by title company'}
+            ${data.closingLocation || "To be determined by title company"}
         </div>
         <div class="clause">
             <div class="clause-title">Title Company:</div>
-            ${data.titleCompany || 'To be selected by mutual agreement'}
+            ${data.titleCompany || "To be selected by mutual agreement"}
         </div>
         <div class="clause">
             <div class="clause-title">Closing Costs:</div>
@@ -1375,9 +1418,11 @@ function generateFixFlipContract(data: FixFlipFormData): string {
         </div>
         <div class="clause">
             <div class="clause-title">Lead-Based Paint Disclosure:</div>
-            ${data.yearBuilt && parseInt(data.yearBuilt) < 1978 ? 
-                'Property was built before 1978. Federal law requires disclosure of known lead-based paint hazards. Seller has provided required disclosures and Buyer acknowledges receipt.' : 
-                'Property was built in 1978 or later; lead-based paint disclosure not required.'}
+            ${
+              data.yearBuilt && parseInt(data.yearBuilt) < 1978
+                ? "Property was built before 1978. Federal law requires disclosure of known lead-based paint hazards. Seller has provided required disclosures and Buyer acknowledges receipt."
+                : "Property was built in 1978 or later; lead-based paint disclosure not required."
+            }
         </div>
         <div class="clause">
             <div class="clause-title">Investment Property Disclosure:</div>

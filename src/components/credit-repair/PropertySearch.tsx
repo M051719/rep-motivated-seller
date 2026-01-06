@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface PropertySearchProps {
-  userTier?: 'FREE' | 'PREMIUM' | 'ELITE';
+  userTier?: "FREE" | "PREMIUM" | "ELITE";
   showMap?: boolean;
 }
 
@@ -22,15 +22,15 @@ interface Property {
 }
 
 const PropertySearch: React.FC<PropertySearchProps> = ({
-  userTier = 'FREE',
-  showMap = false
+  userTier = "FREE",
+  showMap = false,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
-    type: '',
-    status: '',
-    minPrice: '',
-    maxPrice: ''
+    type: "",
+    status: "",
+    minPrice: "",
+    maxPrice: "",
   });
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,7 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
   const searchLimits = {
     FREE: 10,
     PREMIUM: 100,
-    ELITE: Infinity
+    ELITE: Infinity,
   };
 
   const handleSearch = async () => {
@@ -49,48 +49,49 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
     try {
       const params = new URLSearchParams({
         query: searchQuery,
-        ...filters
+        ...filters,
       });
 
       const response = await fetch(`/api/property/search?${params}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       const result = await response.json();
       if (result.success) {
         setProperties(result.data.properties);
-        setSearchCount(prev => prev + 1);
+        setSearchCount((prev) => prev + 1);
       }
     } catch (error) {
-      console.error('Error searching properties:', error);
+      console.error("Error searching properties:", error);
       // Fallback data
       setProperties([
         {
-          id: '1',
-          address: '1234 Main Street',
-          city: 'Phoenix',
-          state: 'AZ',
-          zip: '85001',
-          type: 'Single Family',
-          status: 'Pre-Foreclosure',
+          id: "1",
+          address: "1234 Main Street",
+          city: "Phoenix",
+          state: "AZ",
+          zip: "85001",
+          type: "Single Family",
+          status: "Pre-Foreclosure",
           bedrooms: 3,
           bathrooms: 2,
           sqft: 1800,
           estimatedValue: 245000,
           arv: 285000,
-          roi: 16.3
-        }
+          roi: 16.3,
+        },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const remainingSearches = userTier === 'ELITE' 
-    ? 'Unlimited' 
-    : `${searchLimits[userTier] - searchCount}/${searchLimits[userTier]}`;
+  const remainingSearches =
+    userTier === "ELITE"
+      ? "Unlimited"
+      : `${searchLimits[userTier] - searchCount}/${searchLimits[userTier]}`;
 
   return (
     <div className="property-search-component">
@@ -103,25 +104,28 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
 
       <div className="search-form">
         <div className="search-row">
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Enter address, city, state, or ZIP code"
             className="search-input"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            onKeyPress={(e) => e.key === "Enter" && handleSearch()}
           />
-          <button 
+          <button
             className="btn btn-primary"
             onClick={handleSearch}
-            disabled={loading || (userTier !== 'ELITE' && searchCount >= searchLimits[userTier])}
+            disabled={
+              loading ||
+              (userTier !== "ELITE" && searchCount >= searchLimits[userTier])
+            }
           >
             🔍 Search
           </button>
         </div>
 
         <div className="filter-row">
-          <select 
+          <select
             className="filter-select"
             value={filters.type}
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
@@ -133,7 +137,7 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
             <option value="townhouse">Townhouse</option>
           </select>
 
-          <select 
+          <select
             className="filter-select"
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -144,25 +148,31 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
             <option value="bank-owned">Bank Owned</option>
           </select>
 
-          <input 
-            type="number" 
+          <input
+            type="number"
             placeholder="Min Price"
             className="filter-input"
             value={filters.minPrice}
-            onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, minPrice: e.target.value })
+            }
           />
 
-          <input 
-            type="number" 
+          <input
+            type="number"
             placeholder="Max Price"
             className="filter-input"
             value={filters.maxPrice}
-            onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, maxPrice: e.target.value })
+            }
           />
 
-          <button 
+          <button
             className="btn btn-outline"
-            onClick={() => setFilters({ type: '', status: '', minPrice: '', maxPrice: '' })}
+            onClick={() =>
+              setFilters({ type: "", status: "", minPrice: "", maxPrice: "" })
+            }
           >
             Clear
           </button>
@@ -178,36 +188,49 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
             {properties.map((property) => (
               <div key={property.id} className="property-card">
                 <div className="property-image">
-                  <img src="/images/property-placeholder.jpg" alt={property.address} />
-                  <span className={`property-badge ${property.status.toLowerCase().replace(' ', '-')}`}>
+                  <img
+                    src="/images/property-placeholder.jpg"
+                    alt={property.address}
+                  />
+                  <span
+                    className={`property-badge ${property.status.toLowerCase().replace(" ", "-")}`}
+                  >
                     {property.status}
                   </span>
                 </div>
                 <div className="property-info">
                   <h4>{property.address}</h4>
-                  <p className="property-location">{property.city}, {property.state} {property.zip}</p>
+                  <p className="property-location">
+                    {property.city}, {property.state} {property.zip}
+                  </p>
                   <div className="property-details">
-                    {property.bedrooms} bed • {property.bathrooms} bath • {property.sqft.toLocaleString()} sqft
+                    {property.bedrooms} bed • {property.bathrooms} bath •{" "}
+                    {property.sqft.toLocaleString()} sqft
                   </div>
                   <div className="property-price">
                     <strong>${property.estimatedValue.toLocaleString()}</strong>
                   </div>
                   {property.roi && (
                     <div className="property-roi">
-                      Potential ROI: <span className="positive">{property.roi}%</span>
+                      Potential ROI:{" "}
+                      <span className="positive">{property.roi}%</span>
                     </div>
                   )}
                   <div className="property-actions">
-                    <button 
+                    <button
                       className="btn btn-primary btn-sm"
-                      onClick={() => window.location.href = `/property/${property.id}`}
+                      onClick={() =>
+                        (window.location.href = `/property/${property.id}`)
+                      }
                     >
                       View Details
                     </button>
-                    {userTier !== 'FREE' && (
-                      <button 
+                    {userTier !== "FREE" && (
+                      <button
                         className="btn btn-outline btn-sm"
-                        onClick={() => window.location.href = `/property/${property.id}/analyze`}
+                        onClick={() =>
+                          (window.location.href = `/property/${property.id}/analyze`)
+                        }
                       >
                         Analyze
                       </button>
@@ -224,10 +247,12 @@ const PropertySearch: React.FC<PropertySearchProps> = ({
         </div>
       )}
 
-      {userTier === 'FREE' && (
+      {userTier === "FREE" && (
         <div className="upgrade-prompt">
           <p>🏠 Upgrade for more searches and advanced features!</p>
-          <a href="/credit-repair/pricing" className="btn btn-primary">View Plans</a>
+          <a href="/credit-repair/pricing" className="btn btn-primary">
+            View Plans
+          </a>
         </div>
       )}
     </div>

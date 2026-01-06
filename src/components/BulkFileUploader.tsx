@@ -1,13 +1,22 @@
-import React, { useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
-import { Upload, X, FileText, Loader, CheckCircle, AlertCircle } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState, useCallback } from "react";
+import { supabase } from "../lib/supabase";
+import {
+  Upload,
+  X,
+  FileText,
+  Loader,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 interface FileUploaderProps {
   currentFile?: string;
   onFileUploaded: (url: string, fileName: string, fileSize: number) => void;
   onFileRemoved: () => void;
-  onBulkFilesUploaded?: (files: Array<{ url: string; fileName: string; fileSize: number }>) => void;
+  onBulkFilesUploaded?: (
+    files: Array<{ url: string; fileName: string; fileSize: number }>,
+  ) => void;
   bucket?: string;
   folder?: string;
   maxSizeMB?: number;
@@ -18,7 +27,7 @@ interface FileUploaderProps {
 
 interface UploadStatus {
   fileName: string;
-  status: 'uploading' | 'success' | 'error';
+  status: "uploading" | "success" | "error";
   progress: number;
   error?: string;
   url?: string;
@@ -30,21 +39,21 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
   onFileUploaded,
   onFileRemoved,
   onBulkFilesUploaded,
-  bucket = 'templates-forms',
-  folder = 'uploads',
+  bucket = "templates-forms",
+  folder = "uploads",
   maxSizeMB = 10,
   acceptedTypes = [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'image/jpeg',
-    'image/png',
-    'image/gif'
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "image/jpeg",
+    "image/png",
+    "image/gif",
   ],
-  label = 'Upload File',
-  allowMultiple = false
+  label = "Upload File",
+  allowMultiple = false,
 }) => {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -53,29 +62,34 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   }, []);
 
   const getFileExtension = (filename: string): string => {
-    return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
   };
 
   const validateFile = (file: File): boolean => {
     // Check file type
     if (!acceptedTypes.includes(file.type)) {
-      const acceptedExtensions = acceptedTypes.map(type => {
-        if (type.includes('pdf')) return 'PDF';
-        if (type.includes('word')) return 'DOC/DOCX';
-        if (type.includes('excel')) return 'XLS/XLSX';
-        if (type.includes('image')) return 'Images';
-        return '';
-      }).filter(Boolean).join(', ');
-      
-      toast.error(`${file.name}: Invalid file type. Accepted: ${acceptedExtensions}`);
+      const acceptedExtensions = acceptedTypes
+        .map((type) => {
+          if (type.includes("pdf")) return "PDF";
+          if (type.includes("word")) return "DOC/DOCX";
+          if (type.includes("excel")) return "XLS/XLSX";
+          if (type.includes("image")) return "Images";
+          return "";
+        })
+        .filter(Boolean)
+        .join(", ");
+
+      toast.error(
+        `${file.name}: Invalid file type. Accepted: ${acceptedExtensions}`,
+      );
       return false;
     }
 
@@ -89,19 +103,34 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
     return true;
   };
 
-  const uploadSingleFile = async (file: File, index: number): Promise<{ url: string; fileName: string; fileSize: number } | null> => {
+  const uploadSingleFile = async (
+    file: File,
+    index: number,
+  ): Promise<{ url: string; fileName: string; fileSize: number } | null> => {
     if (!validateFile(file)) {
-      setUploadStatuses(prev => prev.map((status, i) => 
-        i === index ? { ...status, status: 'error' as const, error: 'Validation failed' } : status
-      ));
+      setUploadStatuses((prev) =>
+        prev.map((status, i) =>
+          i === index
+            ? {
+                ...status,
+                status: "error" as const,
+                error: "Validation failed",
+              }
+            : status,
+        ),
+      );
       return null;
     }
 
     try {
       // Update status to uploading
-      setUploadStatuses(prev => prev.map((status, i) => 
-        i === index ? { ...status, status: 'uploading' as const, progress: 0 } : status
-      ));
+      setUploadStatuses((prev) =>
+        prev.map((status, i) =>
+          i === index
+            ? { ...status, status: "uploading" as const, progress: 0 }
+            : status,
+        ),
+      );
 
       // Generate unique filename
       const fileExt = getFileExtension(file.name);
@@ -111,20 +140,25 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
 
       // Simulate progress
       const progressInterval = setInterval(() => {
-        setUploadStatuses(prev => prev.map((status, i) => {
-          if (i === index && status.progress < 90) {
-            return { ...status, progress: Math.min(status.progress + 10, 90) };
-          }
-          return status;
-        }));
+        setUploadStatuses((prev) =>
+          prev.map((status, i) => {
+            if (i === index && status.progress < 90) {
+              return {
+                ...status,
+                progress: Math.min(status.progress + 10, 90),
+              };
+            }
+            return status;
+          }),
+        );
       }, 200);
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
         .from(bucket)
         .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
+          cacheControl: "3600",
+          upsert: false,
         });
 
       clearInterval(progressInterval);
@@ -132,54 +166,69 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
       if (error) throw error;
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from(bucket).getPublicUrl(fileName);
 
       // Update status to success
-      setUploadStatuses(prev => prev.map((status, i) => 
-        i === index 
-          ? { ...status, status: 'success' as const, progress: 100, url: publicUrl, size: file.size } 
-          : status
-      ));
+      setUploadStatuses((prev) =>
+        prev.map((status, i) =>
+          i === index
+            ? {
+                ...status,
+                status: "success" as const,
+                progress: 100,
+                url: publicUrl,
+                size: file.size,
+              }
+            : status,
+        ),
+      );
 
       return { url: publicUrl, fileName: file.name, fileSize: file.size };
     } catch (error: any) {
-      console.error('Upload error:', error);
-      setUploadStatuses(prev => prev.map((status, i) => 
-        i === index 
-          ? { ...status, status: 'error' as const, error: error.message } 
-          : status
-      ));
+      console.error("Upload error:", error);
+      setUploadStatuses((prev) =>
+        prev.map((status, i) =>
+          i === index
+            ? { ...status, status: "error" as const, error: error.message }
+            : status,
+        ),
+      );
       return null;
     }
   };
 
   const uploadFiles = async (files: FileList) => {
     setUploading(true);
-    
+
     // Initialize upload statuses
-    const initialStatuses: UploadStatus[] = Array.from(files).map(file => ({
+    const initialStatuses: UploadStatus[] = Array.from(files).map((file) => ({
       fileName: file.name,
-      status: 'uploading' as const,
-      progress: 0
+      status: "uploading" as const,
+      progress: 0,
     }));
     setUploadStatuses(initialStatuses);
 
     if (allowMultiple && files.length > 1) {
       // Bulk upload
-      const uploadPromises = Array.from(files).map((file, index) => 
-        uploadSingleFile(file, index)
+      const uploadPromises = Array.from(files).map((file, index) =>
+        uploadSingleFile(file, index),
       );
-      
+
       const results = await Promise.all(uploadPromises);
-      const successfulUploads = results.filter((r): r is { url: string; fileName: string; fileSize: number } => r !== null);
-      
+      const successfulUploads = results.filter(
+        (r): r is { url: string; fileName: string; fileSize: number } =>
+          r !== null,
+      );
+
       if (successfulUploads.length > 0 && onBulkFilesUploaded) {
         onBulkFilesUploaded(successfulUploads);
-        toast.success(`Successfully uploaded ${successfulUploads.length} of ${files.length} files!`);
+        toast.success(
+          `Successfully uploaded ${successfulUploads.length} of ${files.length} files!`,
+        );
       }
-      
+
       if (successfulUploads.length < files.length) {
         const failedCount = files.length - successfulUploads.length;
         toast.error(`${failedCount} file(s) failed to upload`);
@@ -189,7 +238,7 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
       const result = await uploadSingleFile(files[0], 0);
       if (result) {
         onFileUploaded(result.url, result.fileName, result.fileSize);
-        toast.success('File uploaded successfully!');
+        toast.success("File uploaded successfully!");
       }
     }
 
@@ -201,15 +250,18 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
     }, 2000);
   };
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      uploadFiles(e.dataTransfer.files);
-    }
-  }, [allowMultiple]);
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        uploadFiles(e.dataTransfer.files);
+      }
+    },
+    [allowMultiple],
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -223,20 +275,18 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
 
     try {
       const url = new URL(currentFile);
-      const pathParts = url.pathname.split('/');
-      const filePath = pathParts.slice(pathParts.indexOf(bucket) + 1).join('/');
+      const pathParts = url.pathname.split("/");
+      const filePath = pathParts.slice(pathParts.indexOf(bucket) + 1).join("/");
 
-      const { error } = await supabase.storage
-        .from(bucket)
-        .remove([filePath]);
+      const { error } = await supabase.storage.from(bucket).remove([filePath]);
 
       if (error) throw error;
 
       onFileRemoved();
-      toast.success('File removed successfully');
+      toast.success("File removed successfully");
     } catch (error: any) {
-      console.error('Remove error:', error);
-      toast.error('Failed to remove file');
+      console.error("Remove error:", error);
+      toast.error("Failed to remove file");
     }
   };
 
@@ -247,7 +297,7 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
   return (
     <div className="w-full">
       <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label} {allowMultiple && '(Multiple files supported)'}
+        {label} {allowMultiple && "(Multiple files supported)"}
       </label>
 
       {currentFile && !allowMultiple ? (
@@ -256,7 +306,9 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
             <div className="flex items-center gap-3">
               <CheckCircle className="w-8 h-8 text-green-600" />
               <div>
-                <p className="text-sm font-medium text-gray-900">File uploaded</p>
+                <p className="text-sm font-medium text-gray-900">
+                  File uploaded
+                </p>
                 <a
                   href={currentFile}
                   target="_blank"
@@ -285,14 +337,14 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
             onDrop={handleDrop}
             className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all ${
               dragActive
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
-            } ${uploading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100"
+            } ${uploading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <input
               type="file"
               onChange={handleChange}
-              accept={acceptedTypes.join(',')}
+              accept={acceptedTypes.join(",")}
               disabled={uploading}
               multiple={allowMultiple}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -304,10 +356,12 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900 mb-1">
-                  Drop {allowMultiple ? 'files' : 'file'} here, or click to browse
+                  Drop {allowMultiple ? "files" : "file"} here, or click to
+                  browse
                 </p>
                 <p className="text-xs text-gray-500">
-                  Maximum file size: {maxSizeMB}MB {allowMultiple && '• Multiple files allowed'}
+                  Maximum file size: {maxSizeMB}MB{" "}
+                  {allowMultiple && "• Multiple files allowed"}
                 </p>
               </div>
             </div>
@@ -318,7 +372,9 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
             <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-medium text-gray-700">
-                  Upload Progress ({uploadStatuses.filter(s => s.status === 'success').length}/{uploadStatuses.length})
+                  Upload Progress (
+                  {uploadStatuses.filter((s) => s.status === "success").length}/
+                  {uploadStatuses.length})
                 </p>
                 {!uploading && (
                   <button
@@ -336,13 +392,13 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                      {status.status === 'uploading' && (
+                      {status.status === "uploading" && (
                         <Loader className="w-4 h-4 text-blue-600 animate-spin flex-shrink-0" />
                       )}
-                      {status.status === 'success' && (
+                      {status.status === "success" && (
                         <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
                       )}
-                      {status.status === 'error' && (
+                      {status.status === "error" && (
                         <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                       )}
                       <p className="text-sm text-gray-900 truncate flex-1">
@@ -356,9 +412,11 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
                   <div className="w-full bg-gray-200 rounded-full h-1.5">
                     <div
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        status.status === 'success' ? 'bg-green-600' :
-                        status.status === 'error' ? 'bg-red-600' :
-                        'bg-blue-600'
+                        status.status === "success"
+                          ? "bg-green-600"
+                          : status.status === "error"
+                            ? "bg-red-600"
+                            : "bg-blue-600"
                       }`}
                       style={{ width: `${status.progress}%` }}
                     />

@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface BackButtonProps {
   label?: string;
@@ -8,9 +8,9 @@ interface BackButtonProps {
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
-  label = 'Back',
-  fallbackPath = '/',
-  className = ''
+  label = "Back",
+  fallbackPath = "/",
+  className = "",
 }) => {
   const navigate = useNavigate();
   const location = useLocation();

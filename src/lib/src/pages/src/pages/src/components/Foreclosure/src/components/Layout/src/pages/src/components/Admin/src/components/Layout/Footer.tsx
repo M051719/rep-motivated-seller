@@ -1,6 +1,15 @@
-import React from 'react';
-import { Building2, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import {
+  Building2,
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -16,20 +25,33 @@ export const Footer: React.FC = () => {
               <span className="text-xl font-bold">RepMotivatedSeller</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Professional real estate analysis tools and foreclosure assistance services. 
-              Helping property investors and homeowners make informed decisions.
+              Professional real estate analysis tools and foreclosure assistance
+              services. Helping property investors and homeowners make informed
+              decisions.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Instagram className="w-5 h-5" />
               </a>
             </div>
@@ -40,27 +62,42 @@ export const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-white">Services</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/foreclosure" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <Link
+                  to="/foreclosure"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Foreclosure Assistance
                 </Link>
               </li>
               <li>
-                <Link to="/contracts" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <Link
+                  to="/contracts"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Wholesale Contracts
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Property Analysis
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Investment Tools
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Market Reports
                 </a>
               </li>
@@ -72,27 +109,42 @@ export const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-white">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Help Center
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Documentation
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Video Tutorials
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors text-sm">
+                <a
+                  href="#"
+                  className="text-gray-300 hover:text-blue-400 transition-colors text-sm"
+                >
                   Case Studies
                 </a>
               </li>
@@ -114,8 +166,10 @@ export const Footer: React.FC = () => {
               <div className="flex items-start text-gray-300">
                 <MapPin className="w-4 h-4 mr-3 mt-1 text-blue-400" />
                 <div className="text-sm">
-                  123 Main Street<br />
-                  Suite 100<br />
+                  123 Main Street
+                  <br />
+                  Suite 100
+                  <br />
                   Your City, State 12345
                 </div>
               </div>
@@ -131,7 +185,8 @@ export const Footer: React.FC = () => {
                 🏦 Private Money Financing Available
               </h3>
               <p className="text-blue-100 mb-4">
-                Residential & Multifamily Investment Properties • Non-Owner Occupied • Borrower Entity Required
+                Residential & Multifamily Investment Properties • Non-Owner
+                Occupied • Borrower Entity Required
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div className="bg-white/10 rounded p-2">
@@ -152,7 +207,8 @@ export const Footer: React.FC = () => {
                 </div>
               </div>
               <p className="text-xs text-blue-200 mt-3">
-                Available in 36 states • Excludes: MN, NV, SD, UT, VT • Broker fees subject to underwriting
+                Available in 36 states • Excludes: MN, NV, SD, UT, VT • Broker
+                fees subject to underwriting
               </p>
             </div>
           </div>
@@ -162,32 +218,32 @@ export const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex flex-wrap justify-center md:justify-start space-x-6">
-              <Link 
-                to="/privacy-policy" 
+              <Link
+                to="/privacy-policy"
                 className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
                 Privacy Policy
               </Link>
-              <Link 
-                to="/terms-of-service" 
+              <Link
+                to="/terms-of-service"
                 className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
                 Terms of Service
               </Link>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
                 Cookie Policy
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
                 Accessibility
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="text-gray-400 hover:text-blue-400 transition-colors text-sm"
               >
                 Sitemap
@@ -203,12 +259,14 @@ export const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-6 pt-6">
           <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4">
             <p className="text-yellow-200 text-xs leading-relaxed">
-              <strong>Legal Disclaimer:</strong> RepMotivatedSeller provides informational tools and services. 
-              Our contract templates, analysis tools, and foreclosure assistance information are for educational 
-              purposes only and do not constitute legal, financial, or professional advice. Laws vary by state 
-              and locality. Always consult with qualified attorneys, financial advisors, and real estate 
-              professionals before making important decisions. We assume no liability for the use of our services 
-              or templates.
+              <strong>Legal Disclaimer:</strong> RepMotivatedSeller provides
+              informational tools and services. Our contract templates, analysis
+              tools, and foreclosure assistance information are for educational
+              purposes only and do not constitute legal, financial, or
+              professional advice. Laws vary by state and locality. Always
+              consult with qualified attorneys, financial advisors, and real
+              estate professionals before making important decisions. We assume
+              no liability for the use of our services or templates.
             </p>
           </div>
         </div>
@@ -216,4 +274,3 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
-

@@ -1,0 +1,553 @@
+{
+  "templateName": "Educational Content - RepMotivatedSeller",
+  "version": "1.0.0",
+  "description": "Template for tutorials, foreclosure education, and how-to guides",
+  "aspectRatio": "16:9",
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "duration": "2-10 minutes",
+  "frameRate": 30,
+
+  "structure": {
+    "intro": {
+      "duration": "5-8s",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 135,
+            "colors": ["#1e3a8a", "#3730a3", "#5b21b6"]
+          },
+          "overlay": {
+            "type": "particles",
+            "file": "assets/overlays/subtle-particles.mp4",
+            "opacity": 0.3
+          }
+        },
+        {
+          "type": "logo",
+          "file": "assets/logos/RepMotivatedSeller_Logo_White.png",
+          "position": "top-left",
+          "offset": {
+            "x": 60,
+            "y": 60
+          },
+          "size": "15%",
+          "animation": {
+            "type": "fade-in",
+            "duration": "1s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "series",
+          "content": "Foreclosure Prevention Series",
+          "font": "Inter",
+          "weight": 600,
+          "size": 32,
+          "color": "#ffffff",
+          "opacity": 0.8,
+          "position": "custom",
+          "coordinates": {
+            "x": "center",
+            "y": 300
+          },
+          "textAlign": "center",
+          "animation": {
+            "type": "fade-up",
+            "duration": "0.8s",
+            "delay": "0.5s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "title",
+          "content": "[VIDEO TITLE]",
+          "font": "Inter",
+          "weight": 800,
+          "size": 72,
+          "color": "#ffffff",
+          "position": "center",
+          "textAlign": "center",
+          "maxWidth": "80%",
+          "textShadow": "0px 4px 30px rgba(0,0,0,0.4)",
+          "animation": {
+            "type": "scale-fade",
+            "duration": "1s",
+            "delay": "1s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "chapter",
+          "content": "Chapter [X]: [Chapter Name]",
+          "font": "Inter",
+          "weight": 600,
+          "size": 36,
+          "color": "#ffffff",
+          "opacity": 0.9,
+          "position": "custom",
+          "coordinates": {
+            "x": "center",
+            "y": 700
+          },
+          "textAlign": "center",
+          "animation": {
+            "type": "fade-in",
+            "duration": "0.6s",
+            "delay": "1.5s"
+          }
+        }
+      ]
+    },
+
+    "lowerThird": {
+      "presenter": {
+        "position": {
+          "x": 60,
+          "y": 750
+        },
+        "dimensions": {
+          "width": 600,
+          "height": 120
+        },
+        "background": {
+          "gradient": {
+            "type": "linear",
+            "angle": 90,
+            "colors": ["#2563eb", "#4338ca"]
+          },
+          "opacity": 0.95
+        },
+        "borderRadius": 8,
+        "elements": [
+          {
+            "type": "text",
+            "layer": "name",
+            "content": "[Presenter Name]",
+            "font": "Inter",
+            "weight": 700,
+            "size": 32,
+            "color": "#ffffff",
+            "position": "custom",
+            "offset": {
+              "x": 24,
+              "y": 30
+            }
+          },
+          {
+            "type": "text",
+            "layer": "title",
+            "content": "[Title/Role]",
+            "font": "Inter",
+            "weight": 500,
+            "size": 24,
+            "color": "#ffffff",
+            "opacity": 0.85,
+            "position": "custom",
+            "offset": {
+              "x": 24,
+              "y": 70
+            }
+          }
+        ],
+        "animation": {
+          "in": {
+            "type": "slide-fade",
+            "direction": "left",
+            "duration": "0.6s"
+          },
+          "out": {
+            "type": "fade",
+            "duration": "0.4s"
+          },
+          "showDuration": "6s"
+        }
+      }
+    },
+
+    "chapterMarker": {
+      "position": "top-left",
+      "offset": {
+        "x": 60,
+        "y": 60
+      },
+      "background": {
+        "color": "#7c3aed",
+        "opacity": 0.9
+      },
+      "padding": {
+        "horizontal": 24,
+        "vertical": 12
+      },
+      "borderRadius": 6,
+      "elements": [
+        {
+          "type": "icon",
+          "content": "📚",
+          "size": 28,
+          "position": "left"
+        },
+        {
+          "type": "text",
+          "content": "Chapter [X]: [Title]",
+          "font": "Inter",
+          "weight": 600,
+          "size": 28,
+          "color": "#ffffff"
+        }
+      ],
+      "animation": {
+        "in": {
+          "type": "slide-down",
+          "duration": "0.5s"
+        },
+        "out": {
+          "type": "slide-up",
+          "duration": "0.5s"
+        },
+        "showDuration": "5s"
+      }
+    },
+
+    "statisticCallout": {
+      "type": "box",
+      "position": "right-center",
+      "offset": {
+        "x": -120,
+        "y": 0
+      },
+      "dimensions": {
+        "width": 400,
+        "height": 280
+      },
+      "background": {
+        "color": "#ffffff"
+      },
+      "border": {
+        "width": 2,
+        "color": "#60a5fa"
+      },
+      "borderRadius": 12,
+      "boxShadow": "0px 4px 20px rgba(0,0,0,0.15)",
+      "elements": [
+        {
+          "type": "icon",
+          "file": "assets/icons/[stat-icon].png",
+          "position": "top-center",
+          "offset": {
+            "y": 40
+          },
+          "size": 80
+        },
+        {
+          "type": "text",
+          "layer": "number",
+          "content": "[NUMBER]",
+          "font": "Inter",
+          "weight": 800,
+          "size": 64,
+          "color": "#2563eb",
+          "position": "center",
+          "textAlign": "center",
+          "animation": {
+            "type": "count-up",
+            "duration": "1.5s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "label",
+          "content": "[DESCRIPTION]",
+          "font": "Inter",
+          "weight": 500,
+          "size": 24,
+          "color": "#6b7280",
+          "position": "bottom-center",
+          "offset": {
+            "y": -40
+          },
+          "textAlign": "center",
+          "maxWidth": "85%"
+        }
+      ],
+      "animation": {
+        "in": {
+          "type": "scale-fade",
+          "duration": "0.8s"
+        },
+        "out": {
+          "type": "fade",
+          "duration": "0.5s"
+        },
+        "showDuration": "6s"
+      }
+    },
+
+    "keyPoint": {
+      "type": "banner",
+      "position": "bottom-center",
+      "offset": {
+        "y": -150
+      },
+      "dimensions": {
+        "width": 1600,
+        "height": 100
+      },
+      "background": {
+        "gradient": {
+          "type": "linear",
+          "angle": 90,
+          "colors": ["#4f46e5", "#7c3aed"]
+        },
+        "opacity": 0.95
+      },
+      "borderRadius": 8,
+      "elements": [
+        {
+          "type": "text",
+          "content": "✓ [KEY TAKEAWAY]",
+          "font": "Inter",
+          "weight": 700,
+          "size": 36,
+          "color": "#ffffff",
+          "position": "center-left",
+          "offset": {
+            "x": 60
+          }
+        }
+      ],
+      "animation": {
+        "in": {
+          "type": "slide-up",
+          "duration": "0.6s"
+        },
+        "out": {
+          "type": "slide-down",
+          "duration": "0.5s"
+        },
+        "showDuration": "5s"
+      }
+    },
+
+    "outro": {
+      "duration": "8-10s",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 135,
+            "colors": ["#1e3a8a", "#3730a3", "#5b21b6"]
+          }
+        },
+        {
+          "type": "logo",
+          "file": "assets/logos/RepMotivatedSeller_Logo_White.png",
+          "position": "top-center",
+          "offset": {
+            "y": 150
+          },
+          "size": "25%",
+          "animation": {
+            "type": "fade-scale",
+            "duration": "1s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "summary",
+          "content": "Key Takeaways:",
+          "font": "Inter",
+          "weight": 700,
+          "size": 42,
+          "color": "#ffffff",
+          "position": "custom",
+          "coordinates": {
+            "x": 200,
+            "y": 450
+          },
+          "animation": {
+            "type": "fade-in",
+            "duration": "0.6s",
+            "delay": "1s"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            "• [Takeaway 1]",
+            "• [Takeaway 2]",
+            "• [Takeaway 3]"
+          ],
+          "font": "Inter",
+          "weight": 500,
+          "size": 32,
+          "color": "#ffffff",
+          "lineHeight": 1.6,
+          "position": "custom",
+          "coordinates": {
+            "x": 220,
+            "y": 520
+          },
+          "animation": {
+            "type": "fade-up-stagger",
+            "duration": "0.5s",
+            "delay": "1.5s",
+            "stagger": "0.3s"
+          }
+        },
+        {
+          "type": "box",
+          "position": "bottom-center",
+          "offset": {
+            "y": -100
+          },
+          "dimensions": {
+            "width": 1200,
+            "height": 100
+          },
+          "background": {
+            "color": "#ffffff",
+            "opacity": 0.15
+          },
+          "borderRadius": 8,
+          "elements": [
+            {
+              "type": "text",
+              "content": "📚 Next: Chapter [X+1] - [Next Topic]",
+              "font": "Inter",
+              "weight": 600,
+              "size": 32,
+              "color": "#ffffff",
+              "position": "center"
+            }
+          ],
+          "animation": {
+            "type": "fade-in",
+            "duration": "0.6s",
+            "delay": "3s"
+          }
+        },
+        {
+          "type": "text",
+          "content": "Subscribe for more foreclosure prevention tips",
+          "font": "Inter",
+          "weight": 500,
+          "size": 24,
+          "color": "#ffffff",
+          "opacity": 0.8,
+          "position": "bottom-center",
+          "offset": {
+            "y": -40
+          },
+          "textAlign": "center"
+        }
+      ]
+    }
+  },
+
+  "bRollSettings": {
+    "overlay": {
+      "opacity": 0.7,
+      "blendMode": "multiply"
+    },
+    "transition": {
+      "type": "cross-dissolve",
+      "duration": "0.8s"
+    },
+    "animation": {
+      "type": "slow-zoom",
+      "scale": {
+        "from": 1.0,
+        "to": 1.1
+      },
+      "duration": "5s",
+      "easing": "linear"
+    }
+  },
+
+  "audio": {
+    "music": {
+      "file": "assets/music/soft-corporate-[TRACK].mp3",
+      "volume": -24,
+      "fadeIn": "2s",
+      "fadeOut": "3s"
+    },
+    "voiceOver": {
+      "volume": 0,
+      "compression": {
+        "ratio": "3:1",
+        "threshold": "-10dB"
+      },
+      "eq": {
+        "lowCut": "100Hz",
+        "presenceBoost": "3dB at 3kHz"
+      }
+    }
+  },
+
+  "captions": {
+    "enabled": true,
+    "style": {
+      "font": "Inter",
+      "weight": 700,
+      "size": 48,
+      "color": "#ffffff",
+      "backgroundColor": "#000000",
+      "backgroundOpacity": 0.7,
+      "padding": {
+        "horizontal": 20,
+        "vertical": 10
+      },
+      "borderRadius": 4,
+      "position": "bottom-center",
+      "offset": {
+        "y": -120
+      },
+      "maxWidth": "80%",
+      "textAlign": "center"
+    },
+    "animation": {
+      "type": "word-by-word",
+      "highlight": {
+        "color": "#60a5fa"
+      }
+    }
+  },
+
+  "exports": {
+    "youtube": {
+      "format": "MP4",
+      "codec": "H.264",
+      "resolution": "1920x1080",
+      "frameRate": 30,
+      "bitrate": "18Mbps",
+      "audioCodec": "AAC",
+      "audioBitrate": "256kbps"
+    },
+    "website": {
+      "format": "MP4",
+      "codec": "H.264",
+      "resolution": "1920x1080",
+      "frameRate": 30,
+      "bitrate": "12Mbps",
+      "audioCodec": "AAC",
+      "audioBitrate": "192kbps"
+    }
+  },
+
+  "notes": [
+    "Add captions for entire video for accessibility",
+    "Use lower thirds when introducing new speakers",
+    "Chapter markers should appear at major topic transitions",
+    "Keep statistics on screen for minimum 6 seconds",
+    "Use B-roll to illustrate concepts, not just fill space",
+    "Maintain consistent audio levels throughout",
+    "Export with chapter markers for YouTube",
+    "Consider adding clickable timestamps in description"
+  ]
+}

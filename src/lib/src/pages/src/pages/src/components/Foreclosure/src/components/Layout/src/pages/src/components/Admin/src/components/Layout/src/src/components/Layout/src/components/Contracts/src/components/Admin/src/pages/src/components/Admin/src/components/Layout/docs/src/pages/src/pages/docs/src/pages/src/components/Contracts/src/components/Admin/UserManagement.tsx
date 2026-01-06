@@ -1,15 +1,15 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { supabase } from '../lib/supabase';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { supabase } from "../lib/supabase";
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  membershipTier: 'free' | 'pro' | 'enterprise';
+  membershipTier: "free" | "pro" | "enterprise";
   stripeCustomerId?: string;
   subscriptionId?: string;
-  subscriptionStatus?: 'active' | 'canceled' | 'past_due' | 'incomplete';
+  subscriptionStatus?: "active" | "canceled" | "past_due" | "incomplete";
 }
 
 interface AuthState {
@@ -18,7 +18,10 @@ interface AuthState {
   login: (user: User) => void;
   logout: () => void;
   updateProfile: (profile: Partial<User>) => Promise<void>;
-  updateMembership: (tier: 'free' | 'pro' | 'enterprise', subscriptionData?: any) => void;
+  updateMembership: (
+    tier: "free" | "pro" | "enterprise",
+    subscriptionData?: any,
+  ) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -40,12 +43,12 @@ export const useAuthStore = create<AuthState>()(
         try {
           // Update the profile in Supabase
           const { error } = await supabase
-            .from('profiles')
+            .from("profiles")
             .update({
               name: profile.name,
               // Add other fields as needed
             })
-            .eq('id', user.id);
+            .eq("id", user.id);
 
           if (error) throw error;
 
@@ -57,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
             },
           });
         } catch (error) {
-          console.error('Error updating profile:', error);
+          console.error("Error updating profile:", error);
           throw error;
         }
       },
@@ -73,18 +76,20 @@ export const useAuthStore = create<AuthState>()(
         })),
     }),
     {
-      name: 'auth-storage',
-    }
-  )
+      name: "auth-storage",
+    },
+  ),
 );
 
 // Helper function to fetch user profile
-export const fetchUserProfile = async (userId: string): Promise<User | null> => {
+export const fetchUserProfile = async (
+  userId: string,
+): Promise<User | null> => {
   try {
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
       .single();
 
     if (error) throw error;
@@ -102,25 +107,25 @@ export const fetchUserProfile = async (userId: string): Promise<User | null> => 
     }
     return null;
   } catch (error) {
-    console.error('Error fetching user profile:', error);
+    console.error("Error fetching user profile:", error);
     return null;
   }
 };
 
 // Listen for auth state changes
 supabase.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session?.user) {
+  if (event === "SIGNED_IN" && session?.user) {
     try {
       // Fetch user profile from profiles table
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== "PGRST116") {
         // PGRST116 is "no rows returned" error, which we handle below
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error);
       }
 
       if (data) {
@@ -139,20 +144,18 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         const metadata = session.user.user_metadata;
         useAuthStore.getState().login({
           id: session.user.id,
-          email: session.user.email || '',
-          name: metadata?.name || session.user.email?.split('@')[0] || 'User',
-          membershipTier: metadata?.membershipTier || 'free',
+          email: session.user.email || "",
+          name: metadata?.name || session.user.email?.split("@")[0] || "User",
+          membershipTier: metadata?.membershipTier || "free",
           stripeCustomerId: metadata?.stripeCustomerId,
           subscriptionId: metadata?.subscriptionId,
           subscriptionStatus: metadata?.subscriptionStatus,
         });
       }
     } catch (error) {
-      console.error('Error in auth state change handler:', error);
+      console.error("Error in auth state change handler:", error);
     }
-  } else if (event === 'SIGNED_OUT') {
+  } else if (event === "SIGNED_OUT") {
     useAuthStore.getState().logout();
   }
 });
-
-

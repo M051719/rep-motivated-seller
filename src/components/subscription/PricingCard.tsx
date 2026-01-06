@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
 
 interface PricingCardProps {
-  tier: 'free' | 'professional' | 'enterprise';
+  tier: "free" | "entrepreneur" | "professional" | "enterprise";
   name: string;
   price: number;
   features: readonly string[];
@@ -21,7 +21,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
   apiCredits,
   currentTier,
   onSelectPlan,
-  popular = false
+  popular = false,
 }) => {
   const isCurrentPlan = currentTier === tier;
 
@@ -31,7 +31,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className={`relative bg-white rounded-2xl shadow-xl overflow-hidden ${
-        popular ? 'ring-2 ring-primary-500' : ''
+        popular ? "ring-2 ring-primary-500" : ""
       }`}
     >
       {popular && (
@@ -45,11 +45,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
         <div className="mb-6">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">{name}</h3>
           <div className="flex items-baseline mb-4">
-            <span className="text-5xl font-extrabold text-gray-900">${price}</span>
+            <span className="text-5xl font-extrabold text-gray-900">
+              ${price}
+            </span>
             <span className="text-gray-500 ml-2">/month</span>
           </div>
           <p className="text-sm text-gray-600">
-            {apiCredits === -1 ? 'Unlimited' : `${apiCredits.toLocaleString()}`} API Credits/month
+            {apiCredits === -1 ? "Unlimited" : `${apiCredits.toLocaleString()}`}{" "}
+            API Credits/month
           </p>
         </div>
 
@@ -71,13 +74,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
           disabled={isCurrentPlan}
           className={`w-full py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
             isCurrentPlan
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
               : popular
-              ? 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl'
-              : 'bg-gray-800 text-white hover:bg-gray-900'
+                ? "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 hover:shadow-2xl shadow-lg"
+                : "bg-gray-800 text-white hover:bg-gray-900 hover:scale-105 hover:shadow-2xl"
           }`}
+          style={!isCurrentPlan ? { color: 'white', fontWeight: '700' } : undefined}
         >
-          {isCurrentPlan ? 'Current Plan' : tier === 'free' ? 'Get Started' : 'Upgrade Now'}
+          {isCurrentPlan ? "Current Plan" : tier === "free" ? "Get Started" : "Upgrade Now"}
         </button>
 
         {isCurrentPlan && (
@@ -91,3 +95,6 @@ const PricingCard: React.FC<PricingCardProps> = ({
 };
 
 export default PricingCard;
+
+
+

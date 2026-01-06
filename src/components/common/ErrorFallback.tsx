@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
 
 interface ErrorFallbackProps {
-  error: Error
-  resetErrorBoundary: () => void
+  error: Error;
+  resetErrorBoundary: () => void;
 }
 
-const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => {
+const ErrorFallback: React.FC<ErrorFallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
@@ -32,7 +35,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ErrorFallback
+export default ErrorFallback;

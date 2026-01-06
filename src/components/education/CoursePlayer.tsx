@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
 
 interface Lesson {
   id: string;
@@ -24,7 +24,9 @@ const CoursePlayer: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<Course | null>(null);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
-  const [userProgress, setUserProgress] = useState<{[key: string]: boolean}>({});
+  const [userProgress, setUserProgress] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,32 +38,58 @@ const CoursePlayer: React.FC = () => {
 
   const fetchCourseData = async () => {
     const { data: courseData, error: courseError } = await supabase
-      .from('courses')
-      .select('*')
-      .eq('id', courseId)
+      .from("courses")
+      .select("*")
+      .eq("id", courseId)
       .single();
 
     if (courseError) {
-      console.error('Error fetching course:', courseError);
+      console.error("Error fetching course:", courseError);
       return;
     }
 
     const { data: lessonsData, error: lessonsError } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('course_id', courseId)
-      .order('lesson_order');
+      .from("lessons")
+      .select("*")
+      .eq("course_id", courseId)
+      .order("lesson_order");
 
     if (lessonsError) {
-      console.error('Error fetching lessons:', lessonsError);
+      console.error("Error fetching lessons:", lessonsError);
       return;
     }
 
     setCourse({
       ...courseData,
-      lessons: lessonsData || []
+      lessons: lessonsData || [],
     });
     setLoading(false);
+  };
+
+  const fetchUserProgress = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !courseId) return;
+
+      const { data, error } = await supabase
+        .from("user_progress")
+        .select("lesson_id, completed")
+        .eq("user_id", user.id)
+        .eq("course_id", courseId);
+
+      if (error) {
+        console.error("Error fetching user progress:", error);
+        return;
+      }
+
+      const progressMap: { [key: string]: boolean } = {};
+      data?.forEach((item) => {
+        progressMap[item.lesson_id] = item.completed;
+      });
+      setUserProgress(progressMap);
+    } catch (error) {
+      console.error("Error in fetchUserProgress:", error);
+    }
   };
 
   return (

@@ -1,7 +1,7 @@
 export interface UserSubscription {
   id?: string;
   user_id: string;
-  subscription_tier: 'free' | 'professional' | 'enterprise';
+  subscription_tier: "free" | "professional" | "enterprise";
   expires_at?: string;
   api_credits: number;
   created_at?: string;

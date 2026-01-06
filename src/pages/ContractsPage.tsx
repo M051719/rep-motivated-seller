@@ -1,35 +1,691 @@
-import React from 'react';
-import { BackButton } from '../components/ui/BackButton';
+import React, { useState } from "react";
+import { motion } from 'framer-motion';
+import { FileText, Download, Check, Home, DollarSign, Calendar, User } from 'lucide-react';
+import { BackButton } from "../components/ui/BackButton";
+import toast from 'react-hot-toast';
+
+type ContractType = 'wholesale' | 'fix-flip' | 'cashout-refi' | null;
+
+interface WholesaleFormData {
+  sellerName: string;
+  sellerAddress: string;
+  buyerName: string;
+  buyerAddress: string;
+  propertyAddress: string;
+  purchasePrice: string;
+  depositAmount: string;
+  closingDate: string;
+  assignmentFee: string;
+}
+
+interface FixFlipFormData {
+  sellerName: string;
+  propertyAddress: string;
+  purchasePrice: string;
+  estimatedRepairs: string;
+  afterRepairValue: string;
+  closingDate: string;
+}
 
 export const ContractsPage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <BackButton />
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 mt-4">Contract Generator</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Wholesale Contract</h3>
-            <p className="text-gray-600 mb-4">Generate wholesale real estate contracts</p>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Create Contract
-            </button>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Fix-and-Flip</h3>
-            <p className="text-gray-600 mb-4">Generate fix-and-flip contracts</p>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Create Contract
-            </button>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-4">Cash-Out Refinance</h3>
-            <p className="text-gray-600 mb-4">Generate cash-out refi applications</p>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Create Application
-            </button>
+  const [selectedContract, setSelectedContract] = useState<ContractType>(null);
+  const [generatedContract, setGeneratedContract] = useState<string | null>(null);
+
+  // Wholesale form state
+  const [wholesaleData, setWholesaleData] = useState<WholesaleFormData>({
+    sellerName: '',
+    sellerAddress: '',
+    buyerName: '',
+    buyerAddress: '',
+    propertyAddress: '',
+    purchasePrice: '',
+    depositAmount: '',
+    closingDate: '',
+    assignmentFee: ''
+  });
+
+  // Fix-Flip form state
+  const [fixFlipData, setFixFlipData] = useState<FixFlipFormData>({
+    sellerName: '',
+    propertyAddress: '',
+    purchasePrice: '',
+    estimatedRepairs: '',
+    afterRepairValue: '',
+    closingDate: ''
+  });
+
+  const generateWholesaleContract = () => {
+    const contract = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; padding: 40px; }
+          h1 { text-align: center; color: #1e40af; }
+          .section { margin: 20px 0; }
+          .signature-line { margin-top: 40px; border-top: 1px solid #000; width: 300px; }
+        </style>
+      </head>
+      <body>
+        <h1>WHOLESALE REAL ESTATE PURCHASE AGREEMENT</h1>
+        
+        <div class="section">
+          <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        </div>
+
+        <div class="section">
+          <h3>SELLER INFORMATION</h3>
+          <p><strong>Name:</strong> ${wholesaleData.sellerName}</p>
+          <p><strong>Address:</strong> ${wholesaleData.sellerAddress}</p>
+        </div>
+
+        <div class="section">
+          <h3>BUYER INFORMATION</h3>
+          <p><strong>Name:</strong> ${wholesaleData.buyerName} and/or assigns</p>
+          <p><strong>Address:</strong> ${wholesaleData.buyerAddress}</p>
+        </div>
+
+        <div class="section">
+          <h3>PROPERTY</h3>
+          <p><strong>Address:</strong> ${wholesaleData.propertyAddress}</p>
+        </div>
+
+        <div class="section">
+          <h3>PURCHASE TERMS</h3>
+          <p><strong>Purchase Price:</strong> $${parseInt(wholesaleData.purchasePrice).toLocaleString()}</p>
+          <p><strong>Earnest Money Deposit:</strong> $${parseInt(wholesaleData.depositAmount).toLocaleString()}</p>
+          <p><strong>Assignment Fee:</strong> $${parseInt(wholesaleData.assignmentFee).toLocaleString()}</p>
+          <p><strong>Closing Date:</strong> ${wholesaleData.closingDate}</p>
+        </div>
+
+        <div class="section">
+          <h3>ASSIGNMENT RIGHTS</h3>
+          <p>Buyer shall have the right to assign this contract to another party without the consent of the Seller. 
+          The assignment fee of $${parseInt(wholesaleData.assignmentFee).toLocaleString()} shall be paid to Buyer at closing.</p>
+        </div>
+
+        <div class="section">
+          <h3>CONTINGENCIES</h3>
+          <p>This agreement is contingent upon:</p>
+          <ul>
+            <li>Buyer's inspection and approval of the property</li>
+            <li>Clear and marketable title</li>
+            <li>Buyer's ability to secure financing or assign to end buyer</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <h3>SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-top: 60px;">
+            <div>
+              <div class="signature-line"></div>
+              <p>Seller Signature / Date</p>
+            </div>
+            <div>
+              <div class="signature-line"></div>
+              <p>Buyer Signature / Date</p>
+            </div>
           </div>
         </div>
+
+        <div class="section" style="margin-top: 40px; border-top: 2px solid #000; padding-top: 20px;">
+          <p><strong>IMPORTANT NOTICE:</strong> This is a legally binding contract. All parties should review with legal counsel before signing.</p>
+          <p style="font-size: 12px; color: #666;">Generated by RepMotivatedSeller Contract Generator on ${new Date().toLocaleString()}</p>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    setGeneratedContract(contract);
+    toast.success('Wholesale contract generated successfully!');
+  };
+
+  const generateFixFlipContract = () => {
+    const contract = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; padding: 40px; }
+          h1 { text-align: center; color: #1e40af; }
+          .section { margin: 20px 0; }
+          .signature-line { margin-top: 40px; border-top: 1px solid #000; width: 300px; }
+        </style>
+      </head>
+      <body>
+        <h1>FIX-AND-FLIP PURCHASE AGREEMENT</h1>
+        
+        <div class="section">
+          <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        </div>
+
+        <div class="section">
+          <h3>SELLER INFORMATION</h3>
+          <p><strong>Name:</strong> ${fixFlipData.sellerName}</p>
+        </div>
+
+        <div class="section">
+          <h3>PROPERTY</h3>
+          <p><strong>Address:</strong> ${fixFlipData.propertyAddress}</p>
+        </div>
+
+        <div class="section">
+          <h3>PURCHASE TERMS</h3>
+          <p><strong>Purchase Price:</strong> $${parseInt(fixFlipData.purchasePrice).toLocaleString()}</p>
+          <p><strong>Estimated Repair Costs:</strong> $${parseInt(fixFlipData.estimatedRepairs).toLocaleString()}</p>
+          <p><strong>After Repair Value (ARV):</strong> $${parseInt(fixFlipData.afterRepairValue).toLocaleString()}</p>
+          <p><strong>Closing Date:</strong> ${fixFlipData.closingDate}</p>
+        </div>
+
+        <div class="section">
+          <h3>PROFIT ANALYSIS</h3>
+          <p><strong>Total Investment:</strong> $${(parseInt(fixFlipData.purchasePrice) + parseInt(fixFlipData.estimatedRepairs)).toLocaleString()}</p>
+          <p><strong>Projected Profit:</strong> $${(parseInt(fixFlipData.afterRepairValue) - parseInt(fixFlipData.purchasePrice) - parseInt(fixFlipData.estimatedRepairs)).toLocaleString()}</p>
+        </div>
+
+        <div class="section">
+          <h3>PROPERTY CONDITION</h3>
+          <p>Property is being sold "AS-IS" with all faults. Buyer acknowledges property requires renovation and has budgeted accordingly.</p>
+        </div>
+
+        <div class="section">
+          <h3>SIGNATURES</h3>
+          <div style="display: flex; justify-content: space-between; margin-top: 60px;">
+            <div>
+              <div class="signature-line"></div>
+              <p>Seller Signature / Date</p>
+            </div>
+            <div>
+              <div class="signature-line"></div>
+              <p>Buyer Signature / Date</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top: 40px; border-top: 2px solid #000; padding-top: 20px;">
+          <p><strong>IMPORTANT NOTICE:</strong> This is a legally binding contract. All parties should review with legal counsel before signing.</p>
+          <p style="font-size: 12px; color: #666;">Generated by RepMotivatedSeller Contract Generator on ${new Date().toLocaleString()}</p>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    setGeneratedContract(contract);
+    toast.success('Fix-and-flip contract generated successfully!');
+  };
+
+  const downloadContract = () => {
+    if (!generatedContract) return;
+    
+    const blob = new Blob([generatedContract], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `contract-${Date.now()}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Contract downloaded successfully!');
+  };
+
+  const printContract = () => {
+    if (!generatedContract) return;
+    
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(generatedContract);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
+  if (generatedContract) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="max-w-5xl mx-auto">
+          <BackButton />
+          
+          <div className="bg-white rounded-xl shadow-lg p-8 mt-4">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <Check className="w-8 h-8 text-green-500" />
+                Contract Generated Successfully
+              </h2>
+              <button
+                onClick={() => {
+                  setGeneratedContract(null);
+                  setSelectedContract(null);
+                }}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            <div className="flex gap-4 mb-6">
+              <button
+                onClick={downloadContract}
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+              >
+                <Download className="w-5 h-5" />
+                Download Contract
+              </button>
+              <button
+                onClick={printContract}
+                className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
+              >
+                <FileText className="w-5 h-5" />
+                Print Contract
+              </button>
+            </div>
+
+            <div className="border border-gray-300 rounded-lg p-6 bg-white max-h-[600px] overflow-y-auto">
+              <div dangerouslySetInnerHTML={{ __html: generatedContract }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedContract === 'wholesale') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <BackButton />
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl shadow-lg p-8 mt-4"
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Wholesale Purchase Agreement</h2>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <User className="w-4 h-4 inline mr-1" />
+                    Seller Name
+                  </label>
+                  <input
+                    type="text"
+                    value={wholesaleData.sellerName}
+                    onChange={(e) => setWholesaleData({...wholesaleData, sellerName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="John Doe"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Seller Address
+                  </label>
+                  <input
+                    type="text"
+                    value={wholesaleData.sellerAddress}
+                    onChange={(e) => setWholesaleData({...wholesaleData, sellerAddress: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="123 Main St, City, ST 12345"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Buyer Name
+                  </label>
+                  <input
+                    type="text"
+                    value={wholesaleData.buyerName}
+                    onChange={(e) => setWholesaleData({...wholesaleData, buyerName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Jane Smith"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Buyer Address
+                  </label>
+                  <input
+                    type="text"
+                    value={wholesaleData.buyerAddress}
+                    onChange={(e) => setWholesaleData({...wholesaleData, buyerAddress: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="456 Oak Ave, City, ST 12345"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Home className="w-4 h-4 inline mr-1" />
+                    Property Address
+                  </label>
+                  <input
+                    type="text"
+                    value={wholesaleData.propertyAddress}
+                    onChange={(e) => setWholesaleData({...wholesaleData, propertyAddress: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="789 Property Ln, City, ST 12345"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <DollarSign className="w-4 h-4 inline mr-1" />
+                    Purchase Price
+                  </label>
+                  <input
+                    type="number"
+                    value={wholesaleData.purchasePrice}
+                    onChange={(e) => setWholesaleData({...wholesaleData, purchasePrice: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="150000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Earnest Money Deposit
+                  </label>
+                  <input
+                    type="number"
+                    value={wholesaleData.depositAmount}
+                    onChange={(e) => setWholesaleData({...wholesaleData, depositAmount: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="1000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Assignment Fee
+                  </label>
+                  <input
+                    type="number"
+                    value={wholesaleData.assignmentFee}
+                    onChange={(e) => setWholesaleData({...wholesaleData, assignmentFee: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="10000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Calendar className="w-4 h-4 inline mr-1" />
+                    Closing Date
+                  </label>
+                  <input
+                    type="date"
+                    value={wholesaleData.closingDate}
+                    onChange={(e) => setWholesaleData({...wholesaleData, closingDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-6">
+                <button
+                  onClick={() => setSelectedContract(null)}
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={generateWholesaleContract}
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold flex items-center justify-center gap-2"
+                >
+                  <FileText className="w-5 h-5" />
+                  Generate Wholesale Contract
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedContract === 'fix-flip') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <BackButton />
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl shadow-lg p-8 mt-4"
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Fix-and-Flip Purchase Agreement</h2>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <User className="w-4 h-4 inline mr-1" />
+                    Seller Name
+                  </label>
+                  <input
+                    type="text"
+                    value={fixFlipData.sellerName}
+                    onChange={(e) => setFixFlipData({...fixFlipData, sellerName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Home className="w-4 h-4 inline mr-1" />
+                    Property Address
+                  </label>
+                  <input
+                    type="text"
+                    value={fixFlipData.propertyAddress}
+                    onChange={(e) => setFixFlipData({...fixFlipData, propertyAddress: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="789 Property Ln, City, ST 12345"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <DollarSign className="w-4 h-4 inline mr-1" />
+                    Purchase Price
+                  </label>
+                  <input
+                    type="number"
+                    value={fixFlipData.purchasePrice}
+                    onChange={(e) => setFixFlipData({...fixFlipData, purchasePrice: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="100000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estimated Repair Costs
+                  </label>
+                  <input
+                    type="number"
+                    value={fixFlipData.estimatedRepairs}
+                    onChange={(e) => setFixFlipData({...fixFlipData, estimatedRepairs: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="30000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    After Repair Value (ARV)
+                  </label>
+                  <input
+                    type="number"
+                    value={fixFlipData.afterRepairValue}
+                    onChange={(e) => setFixFlipData({...fixFlipData, afterRepairValue: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="200000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Calendar className="w-4 h-4 inline mr-1" />
+                    Closing Date
+                  </label>
+                  <input
+                    type="date"
+                    value={fixFlipData.closingDate}
+                    onChange={(e) => setFixFlipData({...fixFlipData, closingDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              {fixFlipData.purchasePrice && fixFlipData.estimatedRepairs && fixFlipData.afterRepairValue && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <h3 className="font-bold text-gray-900 mb-3">Profit Analysis</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-gray-600">Total Investment:</p>
+                      <p className="text-xl font-bold text-gray-900">
+                        ${(parseInt(fixFlipData.purchasePrice) + parseInt(fixFlipData.estimatedRepairs)).toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">Projected Profit:</p>
+                      <p className="text-xl font-bold text-green-600">
+                        ${(parseInt(fixFlipData.afterRepairValue) - parseInt(fixFlipData.purchasePrice) - parseInt(fixFlipData.estimatedRepairs)).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-4 pt-6">
+                <button
+                  onClick={() => setSelectedContract(null)}
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={generateFixFlipContract}
+                  className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2"
+                >
+                  <FileText className="w-5 h-5" />
+                  Generate Fix-and-Flip Contract
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        <BackButton />
+        
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12 mt-4"
+        >
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            📄 Contract Generator
+          </h1>
+          <p className="text-xl text-gray-600">
+            Generate professional real estate contracts instantly
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all hover:scale-105"
+          >
+            <div className="text-center mb-6">
+              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Wholesale Contract</h3>
+              <p className="text-gray-600 mb-4">
+                Generate wholesale real estate purchase agreements with assignment rights
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedContract('wholesale')}
+              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            >
+              Create Contract
+            </button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all hover:scale-105"
+          >
+            <div className="text-center mb-6">
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Home className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Fix-and-Flip</h3>
+              <p className="text-gray-600 mb-4">
+                Generate fix-and-flip purchase agreements with profit analysis
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedContract('fix-flip')}
+              className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+            >
+              Create Contract
+            </button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all hover:scale-105"
+          >
+            <div className="text-center mb-6">
+              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Cash-Out Refinance</h3>
+              <p className="text-gray-600 mb-4">
+                Generate cash-out refinance applications (Coming Soon)
+              </p>
+            </div>
+            <button
+              disabled
+              className="w-full bg-gray-300 text-gray-500 px-6 py-3 rounded-lg cursor-not-allowed font-semibold"
+            >
+              Coming Soon
+            </button>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl shadow-xl p-6 text-white"
+        >
+          <h3 className="text-xl font-bold mb-2">⚠️ LEGAL DISCLAIMER</h3>
+          <p className="opacity-90">
+            These contracts are templates for informational purposes only. Always have legal documents reviewed by a licensed attorney before signing. RepMotivatedSeller is not responsible for legal issues arising from contract use.
+          </p>
+        </motion.div>
       </div>
     </div>
   );

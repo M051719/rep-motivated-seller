@@ -272,4 +272,4 @@ const UnsubscribePage: React.FC = () => {
 };
 
 export default UnsubscribePage;
-```
+```;

@@ -1,31 +1,35 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
-import { BackButton } from '../components/ui/BackButton';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
+import { BackButton } from "../components/ui/BackButton";
 
 const ContactPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement form submission to Supabase or email service
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
     setSubmitted(true);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -33,7 +37,10 @@ const ContactPage = () => {
     <>
       <Helmet>
         <title>Contact Us - RepMotivatedSeller</title>
-        <meta name="description" content="Get in touch with RepMotivatedSeller for foreclosure assistance, property analysis, or investment opportunities." />
+        <meta
+          name="description"
+          content="Get in touch with RepMotivatedSeller for foreclosure assistance, property analysis, or investment opportunities."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50 py-12">
@@ -51,7 +58,8 @@ const ContactPage = () => {
                 Contact Us
               </h1>
               <p className="text-lg text-gray-600 mb-8">
-                We're here to help you save your home and achieve your real estate goals.
+                We're here to help you save your home and achieve your real
+                estate goals.
               </p>
 
               <div className="space-y-6">
@@ -84,7 +92,10 @@ const ContactPage = () => {
                       <span className="text-blue-600 mr-3">📞</span>
                       <div>
                         <p className="font-medium">Phone</p>
-                        <a href="tel:+18778064677" className="text-blue-600 hover:underline">
+                        <a
+                          href="tel:+18778064677"
+                          className="text-blue-600 hover:underline"
+                        >
                           (877) 806-4677
                         </a>
                       </div>
@@ -93,8 +104,11 @@ const ContactPage = () => {
                       <span className="text-blue-600 mr-3">📧</span>
                       <div>
                         <p className="font-medium">Email</p>
-                        <a href="mailto:info@repmotivatedseller.com" className="text-blue-600 hover:underline">
-                          info@repmotivatedseller.com
+                        <a
+                          href="mailto:admin@repmotivatedseller.shoprealestatespace.org"
+                          className="text-blue-600 hover:underline"
+                        >
+                          admin@repmotivatedseller.shoprealestatespace.org
                         </a>
                       </div>
                     </div>
@@ -102,9 +116,15 @@ const ContactPage = () => {
                       <span className="text-blue-600 mr-3">⏰</span>
                       <div>
                         <p className="font-medium">Business Hours</p>
-                        <p className="text-gray-600">Monday - Friday: 8am - 8pm EST</p>
-                        <p className="text-gray-600">Saturday: 10am - 4pm EST</p>
-                        <p className="text-gray-600">Sunday: Emergency calls only</p>
+                        <p className="text-gray-600">
+                          Monday - Friday: 8am - 8pm EST
+                        </p>
+                        <p className="text-gray-600">
+                          Saturday: 10am - 4pm EST
+                        </p>
+                        <p className="text-gray-600">
+                          Sunday: Emergency calls only
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -116,16 +136,28 @@ const ContactPage = () => {
                     🌐 Connect With Us
                   </h3>
                   <div className="flex space-x-4">
-                    <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">
+                    <a
+                      href="#"
+                      className="text-gray-600 hover:text-blue-600 transition-colors"
+                    >
                       <span className="text-2xl">📘</span>
                     </a>
-                    <a href="#" className="text-gray-600 hover:text-blue-400 transition-colors">
+                    <a
+                      href="#"
+                      className="text-gray-600 hover:text-blue-400 transition-colors"
+                    >
                       <span className="text-2xl">🐦</span>
                     </a>
-                    <a href="#" className="text-gray-600 hover:text-pink-600 transition-colors">
+                    <a
+                      href="#"
+                      className="text-gray-600 hover:text-pink-600 transition-colors"
+                    >
                       <span className="text-2xl">📷</span>
                     </a>
-                    <a href="#" className="text-gray-600 hover:text-blue-700 transition-colors">
+                    <a
+                      href="#"
+                      className="text-gray-600 hover:text-blue-700 transition-colors"
+                    >
                       <span className="text-2xl">💼</span>
                     </a>
                   </div>
@@ -147,7 +179,8 @@ const ContactPage = () => {
                       Message Sent!
                     </h3>
                     <p className="text-gray-600 mb-6">
-                      Thank you for contacting us. We'll respond within 24 hours.
+                      Thank you for contacting us. We'll respond within 24
+                      hours.
                     </p>
                     <button
                       onClick={() => setSubmitted(false)}
@@ -218,9 +251,15 @@ const ContactPage = () => {
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                           <option value="">Select a subject</option>
-                          <option value="foreclosure">Foreclosure Assistance</option>
-                          <option value="investment">Investment Opportunities</option>
-                          <option value="property_analysis">Property Analysis</option>
+                          <option value="foreclosure">
+                            Foreclosure Assistance
+                          </option>
+                          <option value="investment">
+                            Investment Opportunities
+                          </option>
+                          <option value="property_analysis">
+                            Property Analysis
+                          </option>
                           <option value="general">General Inquiry</option>
                           <option value="support">Technical Support</option>
                         </select>

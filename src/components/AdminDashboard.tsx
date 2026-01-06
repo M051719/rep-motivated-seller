@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 
 interface Submission {
   id: string;
@@ -24,7 +24,7 @@ const AdminDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     // Get current user
@@ -40,30 +40,34 @@ const AdminDashboard: React.FC = () => {
   const fetchSubmissions = async () => {
     try {
       const { data, error } = await supabase
-        .from('foreclosure_submissions')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("foreclosure_submissions")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setSubmissions(data || []);
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      console.error("Error fetching submissions:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredSubmissions = submissions.filter(submission => {
-    if (filter === 'all') return true;
+  const filteredSubmissions = submissions.filter((submission) => {
+    if (filter === "all") return true;
     return submission.urgency_level === filter;
   });
 
   const getUrgencyColor = (level: string) => {
     switch (level) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case "high":
+        return "text-red-600 bg-red-100";
+      case "medium":
+        return "text-yellow-600 bg-yellow-100";
+      case "low":
+        return "text-green-600 bg-green-100";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
   };
 
@@ -81,9 +85,13 @@ const AdminDashboard: React.FC = () => {
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Admin Dashboard
+            </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.email}</span>
+              <span className="text-sm text-gray-600">
+                Welcome, {user?.email}
+              </span>
               <button
                 onClick={() => supabase.auth.signOut()}
                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
@@ -99,25 +107,31 @@ const AdminDashboard: React.FC = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900">Total Submissions</h3>
-            <p className="text-3xl font-bold text-blue-600">{submissions.length}</p>
+            <h3 className="text-lg font-medium text-gray-900">
+              Total Submissions
+            </h3>
+            <p className="text-3xl font-bold text-blue-600">
+              {submissions.length}
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-medium text-gray-900">High Priority</h3>
             <p className="text-3xl font-bold text-red-600">
-              {submissions.filter(s => s.urgency_level === 'high').length}
+              {submissions.filter((s) => s.urgency_level === "high").length}
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900">Medium Priority</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Medium Priority
+            </h3>
             <p className="text-3xl font-bold text-yellow-600">
-              {submissions.filter(s => s.urgency_level === 'medium').length}
+              {submissions.filter((s) => s.urgency_level === "medium").length}
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-medium text-gray-900">Low Priority</h3>
             <p className="text-3xl font-bold text-green-600">
-              {submissions.filter(s => s.urgency_level === 'low').length}
+              {submissions.filter((s) => s.urgency_level === "low").length}
             </p>
           </div>
         </div>
@@ -126,33 +140,41 @@ const AdminDashboard: React.FC = () => {
         <div className="bg-white p-4 rounded-lg shadow mb-6">
           <div className="flex space-x-2">
             <button
-              onClick={() => setFilter('all')}
+              onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-md ${
-                filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
+                filter === "all"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
               All
             </button>
             <button
-              onClick={() => setFilter('high')}
+              onClick={() => setFilter("high")}
               className={`px-4 py-2 rounded-md ${
-                filter === 'high' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'
+                filter === "high"
+                  ? "bg-red-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
               High Priority
             </button>
             <button
-              onClick={() => setFilter('medium')}
+              onClick={() => setFilter("medium")}
               className={`px-4 py-2 rounded-md ${
-                filter === 'medium' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700'
+                filter === "medium"
+                  ? "bg-yellow-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
               Medium Priority
             </button>
             <button
-              onClick={() => setFilter('low')}
+              onClick={() => setFilter("low")}
               className={`px-4 py-2 rounded-md ${
-                filter === 'low' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'
+                filter === "low"
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-200 text-gray-700"
               }`}
             >
               Low Priority
@@ -187,20 +209,26 @@ const AdminDashboard: React.FC = () => {
                       <div className="text-sm font-medium text-gray-900">
                         {submission.contact_info.name}
                       </div>
-                      <div className="text-sm text-gray-500">{submission.contact_info.email}</div>
-                      <div className="text-sm text-gray-500">{submission.contact_info.phone}</div>
+                      <div className="text-sm text-gray-500">
+                        {submission.contact_info.email}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {submission.contact_info.phone}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{submission.contact_info.address}</div>
+                    <div className="text-sm text-gray-900">
+                      {submission.contact_info.address}
+                    </div>
                     <div className="text-sm text-gray-500">
-                      Value: {submission.situation.property_value || 'N/A'}
+                      Value: {submission.situation.property_value || "N/A"}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getUrgencyColor(
-                        submission.urgency_level
+                        submission.urgency_level,
                       )}`}
                     >
                       {submission.urgency_level}

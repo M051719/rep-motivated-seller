@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
 
 const WhatWeDoPage = () => {
   const navigate = useNavigate();
@@ -9,8 +9,13 @@ const WhatWeDoPage = () => {
   return (
     <>
       <Helmet>
-        <title>What We Do - Private Funding Solutions | Sofie's Investment Group</title>
-        <meta name="description" content="Connecting real estate professionals with private funding options for non-owner-occupied single-family rentals. Quick funding, cash-out refinance, and investment property loans." />
+        <title>
+          What We Do - Private Funding Solutions | Sofie's Investment Group
+        </title>
+        <meta
+          name="description"
+          content="Connecting real estate professionals with private funding options for non-owner-occupied single-family rentals. Quick funding, cash-out refinance, and investment property loans."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -18,11 +23,21 @@ const WhatWeDoPage = () => {
         <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-green-700 text-white py-20">
           <div className="max-w-7xl mx-auto px-4">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="mb-6 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/10 border border-white/30 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-colors backdrop-blur-sm"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
               Back to Home
             </button>
@@ -36,7 +51,8 @@ const WhatWeDoPage = () => {
                 What We Do
               </h1>
               <p className="text-2xl md:text-3xl text-blue-100 mb-8 max-w-4xl mx-auto leading-relaxed">
-                Connecting Real Estate Professionals with Private Funding Solutions
+                Connecting Real Estate Professionals with Private Funding
+                Solutions
               </p>
               <p className="text-xl text-blue-50 max-w-3xl mx-auto">
                 Sofie's Investment Group | RepMotivatedSeller
@@ -58,19 +74,25 @@ const WhatWeDoPage = () => {
                   Your Partner in Private Real Estate Funding
                 </h2>
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                  Our service connects real estate professionals with private funding options to assist
-                  financially challenged clients in purchasing <strong>non-owner-occupied single-family rentals</strong>.
-                  This unique feature allows realtors and brokers to provide their clients with access to funding
-                  solutions that traditional lenders may not offer.
+                  Our service connects real estate professionals with private
+                  funding options to assist financially challenged clients in
+                  purchasing{" "}
+                  <strong>non-owner-occupied single-family rentals</strong>.
+                  This unique feature allows realtors and brokers to provide
+                  their clients with access to funding solutions that
+                  traditional lenders may not offer.
                 </p>
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                  The advantage of our service is the ability to <strong>secure funding quickly and efficiently</strong>,
-                  helping clients overcome financial obstacles and secure their dream properties.
+                  The advantage of our service is the ability to{" "}
+                  <strong>secure funding quickly and efficiently</strong>,
+                  helping clients overcome financial obstacles and secure their
+                  dream properties.
                 </p>
                 <div className="bg-green-50 border-l-4 border-green-600 p-6 rounded-lg">
                   <p className="text-gray-800 font-semibold">
-                    By partnering with us, real estate professionals can offer a valuable resource to their clients,
-                    leading to increased customer satisfaction and loyalty.
+                    By partnering with us, real estate professionals can offer a
+                    valuable resource to their clients, leading to increased
+                    customer satisfaction and loyalty.
                   </p>
                 </div>
               </motion.div>
@@ -94,28 +116,34 @@ const WhatWeDoPage = () => {
                     <span className="text-3xl">⚡</span>
                     <div>
                       <p className="font-bold text-lg">Fast Approval</p>
-                      <p className="text-green-100">24-48 hour decisions</p>
+                      <p className="text-green-100">7 business day decisions</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <span className="text-3xl">🏠</span>
                     <div>
                       <p className="font-bold text-lg">Investment Properties</p>
-                      <p className="text-green-100">Non-owner-occupied single-family rentals</p>
+                      <p className="text-green-100">
+                        Non-owner-occupied single-family rentals
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <span className="text-3xl">📈</span>
                     <div>
                       <p className="font-bold text-lg">8-15% Interest Rates</p>
-                      <p className="text-green-100">Competitive private money rates</p>
+                      <p className="text-green-100">
+                        Competitive private money rates
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <span className="text-3xl">📅</span>
                     <div>
                       <p className="font-bold text-lg">6-24 Month Terms</p>
-                      <p className="text-green-100">Short-term financing options</p>
+                      <p className="text-green-100">
+                        Short-term financing options
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -132,8 +160,8 @@ const WhatWeDoPage = () => {
                 Funding Solutions We Provide
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Are you currently on the market for funding? We offer flexible financing options
-                for real estate investors and professionals.
+                Are you currently on the market for funding? We offer flexible
+                financing options for real estate investors and professionals.
               </p>
             </div>
 
@@ -150,26 +178,34 @@ const WhatWeDoPage = () => {
                   Investment Property Purchase
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Any deals in the works that you need funding for? We provide quick funding
-                  for non-owner-occupied single-family rental purchases when traditional lenders
-                  say no or take too long.
+                  Any deals in the works that you need funding for? We provide
+                  quick funding for non-owner-occupied single-family rental
+                  purchases when traditional lenders say no or take too long.
                 </p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
-                    <span className="text-gray-700">Perfect for investment properties</span>
+                    <span className="text-gray-700">
+                      Perfect for investment properties
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
-                    <span className="text-gray-700">Fast approval and closing</span>
+                    <span className="text-gray-700">
+                      Fast approval and closing
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
-                    <span className="text-gray-700">For financially challenged clients</span>
+                    <span className="text-gray-700">
+                      For financially challenged clients
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
-                    <span className="text-gray-700">Single-family rentals only</span>
+                    <span className="text-gray-700">
+                      Single-family rentals only
+                    </span>
                   </li>
                 </ul>
                 <Link
@@ -192,14 +228,16 @@ const WhatWeDoPage = () => {
                   Cash-Out Refinance
                 </h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">
-                  Any free & clear assets that you'd maybe like to leverage with a cash-out refinance?
-                  Unlock the equity in your properties to fund new investments, renovations, or other
-                  business needs.
+                  Any free & clear assets that you'd maybe like to leverage with
+                  a cash-out refinance? Unlock the equity in your properties to
+                  fund new investments, renovations, or other business needs.
                 </p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
-                    <span className="text-gray-700">Leverage free & clear properties</span>
+                    <span className="text-gray-700">
+                      Leverage free & clear properties
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
@@ -207,7 +245,9 @@ const WhatWeDoPage = () => {
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
-                    <span className="text-gray-700">Fund new deals or renovations</span>
+                    <span className="text-gray-700">
+                      Fund new deals or renovations
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-green-600 font-bold mr-2">✓</span>
@@ -233,8 +273,8 @@ const WhatWeDoPage = () => {
                 Who We Serve
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Our private funding solutions are designed specifically for real estate professionals
-                and their clients.
+                Our private funding solutions are designed specifically for real
+                estate professionals and their clients.
               </p>
             </div>
 
@@ -246,10 +286,12 @@ const WhatWeDoPage = () => {
                 transition={{ duration: 0.6 }}
               >
                 <div className="text-6xl mb-4">🏢</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Real Estate Professionals</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Real Estate Professionals
+                </h3>
                 <p className="text-gray-700">
-                  Realtors, brokers, and agents looking to provide additional value to their clients
-                  through alternative funding options.
+                  Realtors, brokers, and agents looking to provide additional
+                  value to their clients through alternative funding options.
                 </p>
               </motion.div>
 
@@ -260,10 +302,12 @@ const WhatWeDoPage = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <div className="text-6xl mb-4">💼</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Real Estate Investors</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Real Estate Investors
+                </h3>
                 <p className="text-gray-700">
-                  Active investors seeking quick funding for non-owner-occupied single-family
-                  rental properties and portfolio expansion.
+                  Active investors seeking quick funding for non-owner-occupied
+                  single-family rental properties and portfolio expansion.
                 </p>
               </motion.div>
 
@@ -274,10 +318,13 @@ const WhatWeDoPage = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <div className="text-6xl mb-4">🔑</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Financially Challenged Clients</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Financially Challenged Clients
+                </h3>
                 <p className="text-gray-700">
-                  Buyers who don't qualify for traditional financing but have viable investment
-                  opportunities and need alternative funding solutions.
+                  Buyers who don't qualify for traditional financing but have
+                  viable investment opportunities and need alternative funding
+                  solutions.
                 </p>
               </motion.div>
             </div>
@@ -292,7 +339,8 @@ const WhatWeDoPage = () => {
                 Why Partner With Sofie's Investment Group?
               </h2>
               <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-                Let us help you support your clients in achieving their real estate goals.
+                Let us help you support your clients in achieving their real
+                estate goals.
               </p>
             </div>
 
@@ -305,8 +353,9 @@ const WhatWeDoPage = () => {
                 <div className="text-4xl mb-4">⚡</div>
                 <h3 className="text-xl font-bold mb-3">Quick & Efficient</h3>
                 <p className="text-blue-100">
-                  Fast approval process with decisions in 24-48 hours. No lengthy bank processes
-                  or excessive documentation requirements.
+                  Professional approval process with decisions in 7 business days. No
+                  lengthy bank processes or excessive documentation
+                  requirements.
                 </p>
               </motion.div>
 
@@ -318,8 +367,9 @@ const WhatWeDoPage = () => {
                 <div className="text-4xl mb-4">🤝</div>
                 <h3 className="text-xl font-bold mb-3">Alternative Lending</h3>
                 <p className="text-blue-100">
-                  Access to funding solutions that traditional lenders may not offer. Perfect for
-                  clients who don't fit the conventional lending box.
+                  Access to funding solutions that traditional lenders may not
+                  offer. Perfect for clients who don't fit the conventional
+                  lending box.
                 </p>
               </motion.div>
 
@@ -331,8 +381,9 @@ const WhatWeDoPage = () => {
                 <div className="text-4xl mb-4">💪</div>
                 <h3 className="text-xl font-bold mb-3">Overcome Obstacles</h3>
                 <p className="text-blue-100">
-                  Help your clients overcome financial obstacles and secure their dream properties
-                  when traditional financing isn't an option.
+                  Help your clients overcome financial obstacles and secure
+                  their dream properties when traditional financing isn't an
+                  option.
                 </p>
               </motion.div>
 
@@ -342,10 +393,12 @@ const WhatWeDoPage = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="text-4xl mb-4">😊</div>
-                <h3 className="text-xl font-bold mb-3">Customer Satisfaction</h3>
+                <h3 className="text-xl font-bold mb-3">
+                  Customer Satisfaction
+                </h3>
                 <p className="text-blue-100">
-                  Increase customer satisfaction and loyalty by offering valuable funding resources
-                  that help close more deals.
+                  Increase customer satisfaction and loyalty by offering
+                  valuable funding resources that help close more deals.
                 </p>
               </motion.div>
 
@@ -357,8 +410,8 @@ const WhatWeDoPage = () => {
                 <div className="text-4xl mb-4">🎯</div>
                 <h3 className="text-xl font-bold mb-3">Specialized Focus</h3>
                 <p className="text-blue-100">
-                  Expertise in non-owner-occupied single-family rentals. We understand investment
-                  properties and investor needs.
+                  Expertise in non-owner-occupied single-family rentals. We
+                  understand investment properties and investor needs.
                 </p>
               </motion.div>
 
@@ -370,8 +423,8 @@ const WhatWeDoPage = () => {
                 <div className="text-4xl mb-4">🔒</div>
                 <h3 className="text-xl font-bold mb-3">Zero Tolerance Fraud</h3>
                 <p className="text-blue-100">
-                  Secure, transparent, and trustworthy lending with strict fraud prevention policies
-                  that protect all parties involved.
+                  Secure, transparent, and trustworthy lending with strict fraud
+                  prevention policies that protect all parties involved.
                 </p>
               </motion.div>
             </div>
@@ -386,7 +439,8 @@ const WhatWeDoPage = () => {
                 How It Works
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Our streamlined process makes securing private funding simple and efficient.
+                Our streamlined process makes securing private funding simple
+                and efficient.
               </p>
             </div>
 
@@ -395,10 +449,12 @@ const WhatWeDoPage = () => {
                 <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   1
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Initial Inquiry</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Initial Inquiry
+                </h3>
                 <p className="text-gray-700">
-                  Contact us or submit a pre-loan application. Share details about your deal or
-                  property that needs funding.
+                  Contact us or submit a pre-loan application. Share details
+                  about your deal or property that needs funding.
                 </p>
               </div>
 
@@ -406,10 +462,12 @@ const WhatWeDoPage = () => {
                 <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   2
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Review & Evaluation</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Review & Evaluation
+                </h3>
                 <p className="text-gray-700">
-                  We review your application and property details. Our team evaluates the deal
-                  and determines funding options.
+                  We review your application and property details. Our team
+                  evaluates the deal and determines funding options.
                 </p>
               </div>
 
@@ -417,10 +475,12 @@ const WhatWeDoPage = () => {
                 <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   3
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Approval & Terms</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Approval & Terms
+                </h3>
                 <p className="text-gray-700">
-                  Fast approval decision within 24-48 hours. We present loan terms including
-                  rate, amount, and timeline.
+                  Professional approval decision within 7 business days. We present loan
+                  terms including rate, amount, and timeline.
                 </p>
               </div>
 
@@ -428,10 +488,12 @@ const WhatWeDoPage = () => {
                 <div className="bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   4
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Funding & Closing</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Funding & Closing
+                </h3>
                 <p className="text-gray-700">
-                  Quick closing process with funding disbursed efficiently. Your client secures
-                  their property and achieves their goals.
+                  Quick closing process with funding disbursed efficiently. Your
+                  client secures their property and achieves their goals.
                 </p>
               </div>
             </div>
@@ -445,8 +507,9 @@ const WhatWeDoPage = () => {
               Ready to Get Started?
             </h2>
             <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed">
-              This is Melvin at Sofie's Investment Group. Are you currently on the market for funding?
-              Let us help you in achieving your real estate goals and your clients in securing their dream properties.
+              This is Melvin at Sofie's Investment Group. Are you currently on
+              the market for funding? Let us help you in achieving your real
+              estate goals and your clients in securing their dream properties.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -471,7 +534,7 @@ const WhatWeDoPage = () => {
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span className="text-2xl">✓</span>
-                <span>24-48 hour decisions</span>
+                <span>7 business day decisions</span>
               </div>
               <div className="flex items-center justify-center space-x-2">
                 <span className="text-2xl">✓</span>
@@ -485,19 +548,31 @@ const WhatWeDoPage = () => {
         <section className="py-12 bg-gray-100">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-              <Link to="/terms-of-service" className="hover:text-blue-600 transition-colors">
+              <Link
+                to="/terms-of-service"
+                className="hover:text-blue-600 transition-colors"
+              >
                 Terms of Service
               </Link>
               <span className="text-gray-400">•</span>
-              <Link to="/privacy-policy" className="hover:text-blue-600 transition-colors">
+              <Link
+                to="/privacy-policy"
+                className="hover:text-blue-600 transition-colors"
+              >
                 Privacy Policy
               </Link>
               <span className="text-gray-400">•</span>
-              <Link to="/refund-policy" className="hover:text-blue-600 transition-colors">
+              <Link
+                to="/refund-policy"
+                className="hover:text-blue-600 transition-colors"
+              >
                 Refund Policy
               </Link>
               <span className="text-gray-400">•</span>
-              <Link to="/disclaimer" className="hover:text-blue-600 transition-colors">
+              <Link
+                to="/disclaimer"
+                className="hover:text-blue-600 transition-colors"
+              >
                 Disclaimer
               </Link>
             </div>

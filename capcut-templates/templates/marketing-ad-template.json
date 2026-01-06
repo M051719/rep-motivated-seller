@@ -1,0 +1,590 @@
+{
+  "templateName": "Marketing/Advertisement - RepMotivatedSeller",
+  "version": "1.0.0",
+  "description": "High-impact template for paid ads (Meta, Google, YouTube)",
+  "aspectRatio": "Multiple (1:1, 9:16, 16:9)",
+  "resolution": {
+    "square": "1080x1080",
+    "vertical": "1080x1920",
+    "horizontal": "1920x1080"
+  },
+  "duration": "15-30s",
+  "frameRate": 30,
+
+  "structure": {
+    "hook": {
+      "duration": "2-3s",
+      "purpose": "Grab attention in first 2 seconds",
+      "elements": [
+        {
+          "type": "background",
+          "video": "[High-impact visual or stressed homeowner]",
+          "overlay": {
+            "gradient": {
+              "type": "radial",
+              "colors": ["rgba(0,0,0,0.2)", "rgba(0,0,0,0.6)"]
+            }
+          }
+        },
+        {
+          "type": "text",
+          "layer": "question",
+          "content": "[ATTENTION GRABBER]",
+          "examples": [
+            "Facing Foreclosure?",
+            "Behind on Mortgage Payments?",
+            "Worried About Losing Your Home?"
+          ],
+          "font": "Inter",
+          "weight": 800,
+          "size": 72,
+          "color": "#ff3b3b",
+          "position": "center",
+          "textAlign": "center",
+          "maxWidth": "85%",
+          "textShadow": "0px 4px 25px rgba(0,0,0,0.7)",
+          "animation": {
+            "type": "zoom-pulse",
+            "duration": "0.5s",
+            "scale": {
+              "from": 0.9,
+              "to": 1.0
+            }
+          }
+        },
+        {
+          "type": "text",
+          "layer": "urgency",
+          "content": "⏰ You Have Options",
+          "font": "Inter",
+          "weight": 700,
+          "size": 40,
+          "color": "#ffffff",
+          "position": "bottom-center",
+          "offset": {
+            "y": -150
+          },
+          "textAlign": "center",
+          "animation": {
+            "type": "fade-up",
+            "duration": "0.6s",
+            "delay": "0.5s"
+          }
+        }
+      ]
+    },
+
+    "problem": {
+      "duration": "5-8s",
+      "purpose": "Identify with viewer's pain point",
+      "elements": [
+        {
+          "type": "split-screen",
+          "layout": "vertical-thirds",
+          "sections": [
+            {
+              "position": "left",
+              "background": {
+                "video": "[Stress visual - bills, worried expression]",
+                "overlay": {
+                  "color": "#ef4444",
+                  "opacity": 0.3
+                }
+              },
+              "icon": "❌",
+              "text": "Mounting Debt",
+              "textColor": "#ffffff"
+            },
+            {
+              "position": "center",
+              "background": {
+                "video": "[Clock ticking or calendar]",
+                "overlay": {
+                  "color": "#ef4444",
+                  "opacity": 0.3
+                }
+              },
+              "icon": "⏱️",
+              "text": "Running Out of Time",
+              "textColor": "#ffffff"
+            },
+            {
+              "position": "right",
+              "background": {
+                "video": "[Foreclosure notice]",
+                "overlay": {
+                  "color": "#ef4444",
+                  "opacity": 0.3
+                }
+              },
+              "icon": "🏠",
+              "text": "Fear of Losing Home",
+              "textColor": "#ffffff"
+            }
+          ],
+          "animation": {
+            "type": "slide-in-stagger",
+            "duration": "0.6s",
+            "stagger": "0.2s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "empathy",
+          "content": "We Understand. You're Not Alone.",
+          "font": "Inter",
+          "weight": 700,
+          "size": 48,
+          "color": "#ffffff",
+          "position": "bottom-center",
+          "offset": {
+            "y": -100
+          },
+          "textAlign": "center",
+          "backgroundColor": "#1e3a8a",
+          "backgroundOpacity": 0.9,
+          "padding": {
+            "horizontal": 30,
+            "vertical": 15
+          },
+          "borderRadius": 8
+        }
+      ]
+    },
+
+    "solution": {
+      "duration": "8-10s",
+      "purpose": "Introduce RepMotivatedSeller as the solution",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 135,
+            "colors": ["#2563eb", "#4338ca", "#7c3aed"]
+          }
+        },
+        {
+          "type": "logo",
+          "file": "assets/logos/RepMotivatedSeller_Logo_White.png",
+          "position": "top-center",
+          "offset": {
+            "y": 80
+          },
+          "size": "25%",
+          "animation": {
+            "type": "fade-scale",
+            "duration": "0.8s"
+          }
+        },
+        {
+          "type": "text",
+          "layer": "headline",
+          "content": "RepMotivatedSeller Can Help",
+          "font": "Inter",
+          "weight": 800,
+          "size": 64,
+          "color": "#ffffff",
+          "position": "custom",
+          "coordinates": {
+            "x": "center",
+            "y": 350
+          },
+          "textAlign": "center",
+          "animation": {
+            "type": "fade-up",
+            "duration": "0.8s",
+            "delay": "0.5s"
+          }
+        },
+        {
+          "type": "benefits-list",
+          "items": [
+            {
+              "icon": "✓",
+              "text": "Free Consultation",
+              "delay": "1s"
+            },
+            {
+              "icon": "✓",
+              "text": "Mortgage Modification Assistance",
+              "delay": "1.4s"
+            },
+            {
+              "icon": "✓",
+              "text": "Expert Guidance Every Step",
+              "delay": "1.8s"
+            }
+          ],
+          "position": "center",
+          "offset": {
+            "y": 80
+          },
+          "font": "Inter",
+          "weight": 600,
+          "size": 42,
+          "color": "#ffffff",
+          "lineHeight": 1.8,
+          "animation": {
+            "type": "fade-slide-stagger",
+            "duration": "0.6s"
+          }
+        },
+        {
+          "type": "proof-point",
+          "position": "bottom-center",
+          "offset": {
+            "y": -100
+          },
+          "elements": [
+            {
+              "type": "statistic",
+              "number": "1,000+",
+              "label": "Families Helped",
+              "font": "Inter",
+              "numberSize": 56,
+              "labelSize": 28,
+              "color": "#10b981",
+              "animation": {
+                "type": "count-up",
+                "duration": "1.5s",
+                "delay": "2s"
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    "cta": {
+      "duration": "5-7s",
+      "purpose": "Drive immediate action",
+      "elements": [
+        {
+          "type": "background",
+          "gradient": {
+            "type": "linear",
+            "angle": 135,
+            "colors": ["#1e3a8a", "#3730a3"]
+          }
+        },
+        {
+          "type": "urgency-banner",
+          "position": "top",
+          "dimensions": {
+            "width": "100%",
+            "height": 100
+          },
+          "background": {
+            "color": "#f59e0b"
+          },
+          "elements": [
+            {
+              "type": "text",
+              "content": "⚡ Limited Time - Act Now",
+              "font": "Inter",
+              "weight": 800,
+              "size": 44,
+              "color": "#1e3a8a",
+              "position": "center",
+              "animation": {
+                "type": "pulse",
+                "duration": "2s",
+                "loop": true
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "layer": "action",
+          "content": "Get Your Free Consultation Today",
+          "font": "Inter",
+          "weight": 800,
+          "size": 60,
+          "color": "#ffffff",
+          "position": "custom",
+          "coordinates": {
+            "x": "center",
+            "y": 350
+          },
+          "textAlign": "center",
+          "maxWidth": "85%",
+          "animation": {
+            "type": "fade-scale",
+            "duration": "0.8s"
+          }
+        },
+        {
+          "type": "button",
+          "content": "📞 Call Now",
+          "font": "Inter",
+          "weight": 800,
+          "size": 48,
+          "color": "#1e3a8a",
+          "backgroundColor": "#ffffff",
+          "position": "center",
+          "offset": {
+            "y": 50
+          },
+          "padding": {
+            "horizontal": 60,
+            "vertical": 24
+          },
+          "borderRadius": 12,
+          "boxShadow": "0px 6px 25px rgba(0,0,0,0.3)",
+          "animation": {
+            "type": "bounce-scale",
+            "duration": "1s",
+            "delay": "0.8s",
+            "loop": {
+              "type": "subtle-pulse",
+              "interval": "3s"
+            }
+          }
+        },
+        {
+          "type": "contact-info",
+          "position": "bottom-center",
+          "offset": {
+            "y": -150
+          },
+          "elements": [
+            {
+              "type": "text",
+              "content": "1-800-XXX-XXXX",
+              "font": "Inter",
+              "weight": 800,
+              "size": 52,
+              "color": "#10b981",
+              "textAlign": "center",
+              "animation": {
+                "type": "fade-in",
+                "duration": "0.6s",
+                "delay": "1.5s"
+              }
+            },
+            {
+              "type": "text",
+              "content": "www.RepMotivatedSeller.com",
+              "font": "Inter",
+              "weight": 600,
+              "size": 36,
+              "color": "#ffffff",
+              "opacity": 0.9,
+              "textAlign": "center",
+              "offset": {
+                "y": 50
+              }
+            }
+          ]
+        },
+        {
+          "type": "disclaimer",
+          "content": "No obligation. Free consultation.",
+          "font": "Inter",
+          "weight": 400,
+          "size": 20,
+          "color": "#ffffff",
+          "opacity": 0.7,
+          "position": "bottom-center",
+          "offset": {
+            "y": -40
+          },
+          "textAlign": "center"
+        }
+      ]
+    }
+  },
+
+  "variations": {
+    "square_1x1": {
+      "resolution": "1080x1080",
+      "use": "Instagram Feed, Facebook Feed",
+      "adjustments": {
+        "textSize": "reduce by 10%",
+        "spacing": "tighter vertical spacing",
+        "logo": "15% size"
+      }
+    },
+    "vertical_9x16": {
+      "resolution": "1080x1920",
+      "use": "Instagram Stories/Reels, TikTok, YouTube Shorts",
+      "adjustments": {
+        "textSize": "increase by 15%",
+        "spacing": "more vertical space",
+        "logo": "18% size",
+        "elements": "stack vertically, full-height"
+      }
+    },
+    "horizontal_16x9": {
+      "resolution": "1920x1080",
+      "use": "YouTube Pre-roll, Display Ads",
+      "adjustments": {
+        "textSize": "standard",
+        "spacing": "use horizontal space",
+        "logo": "12% size",
+        "layout": "can use side-by-side elements"
+      }
+    }
+  },
+
+  "audio": {
+    "music": {
+      "file": "assets/music/energetic-upbeat-[TRACK].mp3",
+      "volume": -20,
+      "fadeIn": "0.5s",
+      "fadeOut": "1s",
+      "tempo": "130-150 BPM",
+      "mood": "Urgent, motivating, hopeful"
+    },
+    "voiceOver": {
+      "script": {
+        "hook": "[2s] Facing foreclosure? You're not alone.",
+        "problem": "[5s] Thousands of homeowners are struggling with mortgage payments every day.",
+        "solution": "[7s] RepMotivatedSeller provides free expert guidance to help you save your home through mortgage modification and foreclosure prevention.",
+        "cta": "[3s] Call now for your free consultation. Don't wait - get help today."
+      },
+      "tone": "Empathetic but urgent, professional, reassuring",
+      "pacing": "Slightly faster than normal (160 WPM)",
+      "volume": 0,
+      "compression": {
+        "ratio": "5:1",
+        "threshold": "-8dB"
+      }
+    },
+    "soundEffects": [
+      {
+        "type": "whoosh",
+        "file": "assets/sfx/whoosh-impact.mp3",
+        "timing": "transitions between sections",
+        "volume": -26
+      },
+      {
+        "type": "notification",
+        "file": "assets/sfx/notification-bell.mp3",
+        "timing": "when CTA button appears",
+        "volume": -22
+      }
+    ]
+  },
+
+  "captions": {
+    "enabled": true,
+    "required": "Facebook/Instagram ads require captions",
+    "style": {
+      "font": "Inter",
+      "weight": 800,
+      "size": 52,
+      "color": "#ffffff",
+      "backgroundColor": "#1e3a8a",
+      "backgroundOpacity": 0.95,
+      "padding": {
+        "horizontal": 24,
+        "vertical": 12
+      },
+      "borderRadius": 6,
+      "position": "bottom-center",
+      "offset": {
+        "y": -80
+      },
+      "maxWidth": "85%",
+      "textAlign": "center"
+    },
+    "animation": {
+      "type": "word-highlight",
+      "highlight": {
+        "color": "#10b981",
+        "weight": 900
+      }
+    }
+  },
+
+  "adPlatformSpecs": {
+    "metaAds": {
+      "duration": "15s recommended, 60s max",
+      "aspectRatio": "1:1 or 9:16 preferred",
+      "textOverlay": "Keep under 20% of frame",
+      "captions": "Required (85% watch without sound)",
+      "fileSize": "Under 4GB",
+      "format": "MP4 (H.264)"
+    },
+    "googleAds": {
+      "duration": "15-30s for skippable, 6-15s for bumper",
+      "aspectRatio": "16:9 standard",
+      "audioRequired": "Yes, but design for mute viewing",
+      "fileSize": "Under 1GB",
+      "format": "MP4 (H.264)"
+    },
+    "youtubePreroll": {
+      "duration": "15-30s (skippable after 5s)",
+      "aspectRatio": "16:9",
+      "audioRecommended": "Yes",
+      "hookTiming": "First 5 seconds critical",
+      "format": "MP4 (H.264)"
+    }
+  },
+
+  "exports": {
+    "metaAds": {
+      "format": "MP4",
+      "codec": "H.264",
+      "resolution": "1080x1080 or 1080x1920",
+      "frameRate": 30,
+      "bitrate": "8Mbps",
+      "audioCodec": "AAC",
+      "audioBitrate": "128kbps",
+      "maxFileSize": "4GB"
+    },
+    "googleDisplayAds": {
+      "format": "MP4",
+      "codec": "H.264",
+      "resolution": "1920x1080",
+      "frameRate": 30,
+      "bitrate": "8Mbps",
+      "audioCodec": "AAC",
+      "audioBitrate": "128kbps",
+      "maxFileSize": "150MB"
+    }
+  },
+
+  "aBTesting": {
+    "variations": [
+      {
+        "name": "Hook A - Question",
+        "hook": "Facing Foreclosure?",
+        "tone": "Direct question"
+      },
+      {
+        "name": "Hook B - Statistic",
+        "hook": "1 in 4 Homeowners at Risk",
+        "tone": "Alarming stat"
+      },
+      {
+        "name": "Hook C - Solution",
+        "hook": "Save Your Home Today",
+        "tone": "Immediate solution"
+      }
+    ],
+    "testingRecommendations": [
+      "Test different hooks (first 3 seconds)",
+      "Test CTA wording ('Call Now' vs 'Get Help' vs 'Free Consultation')",
+      "Test with/without voiceover",
+      "Test different urgency levels",
+      "Monitor view-through rate, click-through rate, conversion rate"
+    ]
+  },
+
+  "notes": [
+    "First 2-3 seconds are CRITICAL - grab attention immediately",
+    "Design for sound-off viewing (75%+ watch muted)",
+    "Keep CTA simple and singular - one action only",
+    "Use urgency carefully - be authentic, not manipulative",
+    "Mobile-first design - test on small screens",
+    "Comply with platform advertising policies",
+    "Include required disclaimers",
+    "A/B test different versions",
+    "Track metrics: impressions, CTR, conversion rate",
+    "Refresh creative every 2-3 weeks to avoid ad fatigue"
+  ]
+}

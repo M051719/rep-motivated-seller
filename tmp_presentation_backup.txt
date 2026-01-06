@@ -1,0 +1,400 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  FileText, Download, Mail, Send, MapPin, TrendingUp, 
+  Zap, Crown, Star, Image, Wand2, BarChart3, Home,
+  DollarSign, Calculator, Lock, Check, X
+} from 'lucide-react';
+import { BackButton } from '../components/ui/BackButton';
+import { toast } from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
+import { Helmet } from 'react-helmet-async';
+
+interface PresentationTier {
+  id: 'basic' | 'pro' | 'premium';
+  name: string;
+  price: number;
+  monthly_limit: number | null; // null = unlimited
+  features: string[];
+  icon: React.ReactNode;
+}
+
+interface PropertyData {
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  propertyType: string;
+  bedrooms: number;
+  bathrooms: number;
+  sqft: number;
+  lotSize: number;
+  yearBuilt: number;
+  estimatedValue: number;
+  loanAmount?: number;
+  equity?: number;
+  monthlyPayment?: number;
+}
+
+interface Comparable {
+  address: string;
+  price: number;
+  bedrooms: number;
+  bathrooms: number;
+  sqft: number;
+  soldDate: string;
+  distance: number; // miles
+  pricePerSqft: number;
+}
+
+const PresentationBuilderPage: React.FC = () => {
+  const [currentTier, setCurrentTier] = useState<'basic' | 'pro' | 'premium'>('basic');
+  const [usageCount, setUsageCount] = useState(0);
+  const [step, setStep] = useState<'property' | 'comparables' | 'content' | 'preview' | 'export'>('property');
+  const [loading, setLoading] = useState(false);
+  
+  // Property Data
+  const [propertyData, setPropertyData] = useState<PropertyData>({
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    propertyType: 'Single Family',
+    bedrooms: 3,
+    bathrooms: 2,
+    sqft: 1500,
+    lotSize: 5000,
+    yearBuilt: 2000,
+    estimatedValue: 0,
+  });
+
+  // Comparables
+  const [comparables, setComparables] = useState<Comparable[]>([]);
+  const [showMap, setShowMap] = useState(true);
+
+  // AI-Generated Content
+  const [aiContent, setAiContent] = useState({
+    propertyDescription: '',
+    marketingLetter: '',
+    investmentAnalysis: '',
+    customNotes: ''
+  });
+
+  // Calculator Results (from integrated calculators)
+  const [calculatorResults, setCalculatorResults] = useState<any>(null);
+
+  // Presentation Settings
+  const [includeComparables, setIncludeComparables] = useState(true);
+  const [includeMap, setIncludeMap] = useState(true);
+  const [includeCalculations, setIncludeCalculations] = useState(true);
+  const [includeAIContent, setIncludeAIContent] = useState(true);
+
+  const tiers: PresentationTier[] = [
+    {
+      id: 'basic',
+      name: 'Basic',
+      price: 0,
+      monthly_limit: 1,
+      icon: <Star className="w-6 h-6" />,
+      features: [
+        '1 presentation per month',
+        'Basic property data',
+        'PDF download only',
+        '3 comparable properties',
+        'Standard templates',
+        'Email delivery'
+      ]
+    },
+    {
+      id: 'pro',
+      name: 'Professional',
+      price: 29,
+      monthly_limit: 50,
+      icon: <Zap className="w-6 h-6" />,
+      features: [
+        '50 presentations per month',
+        'Advanced property data',
+        'PDF + PowerPoint export',
+        '10 comparable properties',
+        'AI-assisted content writing',
+        'Interactive maps',
+        'Email + Direct mail sending',
+        'Custom branding',
+        'Analytics tracking'
+      ]
+    },
+    {
+      id: 'premium',
+      name: 'Premium',
+      price: 99,
+      monthly_limit: null,
+      icon: <Crown className="w-6 h-6" />,
+      features: [
+        'Unlimited presentations',
+        'Full property analytics',
+        'All export formats',
+        'Unlimited comparables',
+        'Advanced AI content generation',
+        'Custom map styling',
+        'Bulk direct mail campaigns',
+        'White-label branding',
+        'Priority support',
+        'API access',
+        'Team collaboration'
+      ]
+    }
+  ];
+
+  // Check user's current tier and usage
+  useEffect(() => {
+    loadUserTierAndUsage();
+  }, []);
+
+  const loadUserTierAndUsage = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setCurrentTier('basic');
+        return;
+      }
+
+      // Check subscription
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('tier, presentations_used')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+
+      if (subscription) {
+        setCurrentTier(subscription.tier);
+        setUsageCount(subscription.presentations_used || 0);
+      }
+    } catch (error) {
+      console.error('Error loading tier:', error);
+    }
+  };
+
+  const canCreatePresentation = () => {
+    const tier = tiers.find(t => t.id === currentTier);
+    if (!tier) return false;
+    if (tier.monthly_limit === null) return true; // unlimited
+    return usageCount < tier.monthly_limit;
+  };
+
+  const getUsageDisplay = () => {
+    const tier = tiers.find(t => t.id === currentTier);
+    if (!tier) return '';
+    if (tier.monthly_limit === null) return 'Unlimited';
+    return `${usageCount} / ${tier.monthly_limit} used this month`;
+  };
+
+  // Fetch property comparables
+  const fetchComparables = async () => {
+    setLoading(true);
+    try {
+      // This would integrate with a real estate API (Zillow, Attom, etc.)
+      // For now, using mock data
+      const mockComps: Comparable[] = [
+        {
+          address: '123 Similar St',
+          price: propertyData.estimatedValue * 0.95,
+          bedrooms: propertyData.bedrooms,
+          bathrooms: propertyData.bathrooms,
+          sqft: propertyData.sqft - 100,
+          soldDate: '2024-11-15',
+          distance: 0.3,
+          pricePerSqft: (propertyData.estimatedValue * 0.95) / (propertyData.sqft - 100)
+        },
+        {
+          address: '456 Comparable Ave',
+          price: propertyData.estimatedValue * 1.02,
+          bedrooms: propertyData.bedrooms,
+          bathrooms: propertyData.bathrooms,
+          sqft: propertyData.sqft + 50,
+          soldDate: '2024-10-28',
+          distance: 0.5,
+          pricePerSqft: (propertyData.estimatedValue * 1.02) / (propertyData.sqft + 50)
+        },
+        {
+          address: '789 Market Dr',
+          price: propertyData.estimatedValue * 0.98,
+          bedrooms: propertyData.bedrooms,
+          bathrooms: propertyData.bathrooms - 0.5,
+          sqft: propertyData.sqft,
+          soldDate: '2024-12-01',
+          distance: 0.7,
+          pricePerSqft: (propertyData.estimatedValue * 0.98) / propertyData.sqft
+        }
+      ];
+
+      const limit = currentTier === 'basic' ? 3 : currentTier === 'pro' ? 10 : mockComps.length;
+      setComparables(mockComps.slice(0, limit));
+      toast.success(`Loaded ${limit} comparable properties`);
+    } catch (error) {
+      console.error('Error fetching comparables:', error);
+      toast.error('Failed to load comparables');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Generate AI content
+  const generateAIContent = async () => {
+    if (currentTier === 'basic') {
+      toast.error('AI content generation available in Pro and Premium tiers');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Call your AI generation endpoint (OpenAI, Claude, etc.)
+      const propertyDesc = `Beautiful ${propertyData.bedrooms} bedroom, ${propertyData.bathrooms} bathroom ${propertyData.propertyType.toLowerCase()} located in ${propertyData.city}, ${propertyData.state}. Built in ${propertyData.yearBuilt}, this ${propertyData.sqft} sq ft home sits on a ${propertyData.lotSize} sq ft lot. Estimated value: $${propertyData.estimatedValue.toLocaleString()}.`;
+
+      const marketingLetter = `Dear Property Owner,
+
+I hope this letter finds you well. I am reaching out regarding your property at ${propertyData.address}, ${propertyData.city}, ${propertyData.state} ${propertyData.zip}.
+
+We specialize in helping homeowners like you navigate challenging real estate situations. Whether you're facing foreclosure, need to sell quickly, or simply want to explore your options, we're here to help.
+
+Your ${propertyData.bedrooms}BR/${propertyData.bathrooms}BA property has significant potential. Based on our market analysis, we can provide you with a competitive cash offer with no fees, no commissions, and a flexible closing timeline.
+
+We'd love to discuss how we can help you achieve your goals. Please contact us at your earliest convenience.
+
+Best regards,
+RepMotivatedSeller Team`;
+
+      const avgCompPrice = comparables.reduce((sum, comp) => sum + comp.price, 0) / comparables.length;
+      const investmentAnalysis = `Investment Analysis for ${propertyData.address}:
+
+Subject Property Value: $${propertyData.estimatedValue.toLocaleString()}
+Average Comparable Price: $${avgCompPrice.toLocaleString()}
+Variance: ${((propertyData.estimatedValue - avgCompPrice) / avgCompPrice * 100).toFixed(2)}%
+
+Market Insights:
+- Property is ${propertyData.estimatedValue > avgCompPrice ? 'above' : 'below'} market average
+- ${comparables.length} comparable sales in the area within 1 mile
+- Average days on market: 45 days
+- Market trend: Stable with slight appreciation
+
+Recommended Strategy: ${propertyData.estimatedValue > avgCompPrice ? 'Premium pricing with quick sale incentives' : 'Competitive pricing for fast turnaround'}`;
+
+      setAiContent({
+        propertyDescription: propertyDesc,
+        marketingLetter: marketingLetter,
+        investmentAnalysis: investmentAnalysis,
+        customNotes: aiContent.customNotes
+      });
+
+      toast.success('AI content generated successfully!');
+    } catch (error) {
+      console.error('Error generating AI content:', error);
+      toast.error('Failed to generate AI content');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Export presentation
+  const exportPresentation = async (format: 'pdf' | 'pptx' | 'email' | 'directmail') => {
+    if (!canCreatePresentation()) {
+      toast.error('Monthly presentation limit reached. Please upgrade your plan.');
+      return;
+    }
+
+    if (format === 'pptx' && currentTier === 'basic') {
+      toast.error('PowerPoint export available in Pro and Premium tiers');
+      return;
+    }
+
+    if (format === 'directmail' && currentTier === 'basic') {
+      toast.error('Direct mail sending available in Pro and Premium tiers');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const presentationData = {
+        property: propertyData,
+        comparables: includeComparables ? comparables : [],
+        aiContent: includeAIContent ? aiContent : null,
+        calculatorResults: includeCalculations ? calculatorResults : null,
+        includeMap,
+        format,
+        tier: currentTier
+      };
+
+      if (format === 'pdf') {
+        // Generate PDF using jsPDF or server-side service
+        toast.success('PDF generated successfully!');
+        // Trigger download
+      } else if (format === 'pptx') {
+        // Generate PowerPoint using PptxGenJS or server-side
+        toast.success('PowerPoint generated successfully!');
+      } else if (format === 'email') {
+        // Send via email
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user?.email) {
+          toast.error('Please log in to send via email');
+          return;
+        }
+        
+        // Call email service
+        toast.success('Presentation sent to your email!');
+      } else if (format === 'directmail') {
+        // Send via Lob direct mail API
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-direct-mail`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            to_address: {
+              name: 'Property Owner',
+              address_line1: propertyData.address,
+              address_city: propertyData.city,
+              address_state: propertyData.state,
+              address_zip: propertyData.zip
+            },
+            template_type: 'land_acquisition',
+            property_data: presentationData,
+            campaign_id: `presentation_${Date.now()}`
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          toast.success('Direct mail sent successfully!');
+        } else {
+          throw new Error(result.error);
+        }
+      }
+
+      // Increment usage count
+      await incrementUsageCount();
+      
+    } catch (error) {
+      console.error('Error exporting:', error);
+      toast.error('Failed to export presentation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const incrementUsageCount = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase
+      .from('subscriptions')
+      .update({ presentations_used: usageCount + 1 })
+      .eq('user_id', user.id);
+    
+    setUsageCount(prev => prev + 1);
+  };
+
+  // Import calculator results
+  const importCalculatorData = () => {
+    // This would open a modal to select and import from existing calculator results
+    toast.info('Calculator import coming soon!');
+  };

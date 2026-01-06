@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FileText, Download, Search, Filter, BookOpen, Plus } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import FavoriteButton from '../components/FavoriteButton';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Download,
+  Search,
+  Filter,
+  BookOpen,
+  Plus,
+} from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import FavoriteButton from "../components/FavoriteButton";
+import toast from "react-hot-toast";
 
 interface ContractDocument {
   id: string;
@@ -22,11 +29,19 @@ interface ContractDocument {
 }
 
 // Keep existing categories for backwards compatibility
-const categories = ['All', 'Legal', 'Wholesale', 'Options', 'Financing', 'Marketing', 'Education'];
+const categories = [
+  "All",
+  "Legal",
+  "Wholesale",
+  "Options",
+  "Financing",
+  "Marketing",
+  "Education",
+];
 
 const ContractsLibraryPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [contracts, setContracts] = useState<ContractDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -38,23 +53,25 @@ const ContractsLibraryPage: React.FC = () => {
 
   const checkAdminStatus = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         setIsAdmin(false);
         return;
       }
 
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
         .single();
 
-      if (!error && data?.role === 'admin') {
+      if (!error && data?.role === "admin") {
         setIsAdmin(true);
       }
     } catch (error) {
-      console.error('Error checking admin status:', error);
+      console.error("Error checking admin status:", error);
     }
   };
 
@@ -62,51 +79,55 @@ const ContractsLibraryPage: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('templates_forms')
-        .select('*')
-        .in('category', ['contract', 'form'])
-        .eq('is_active', true)
-        .order('is_featured', { ascending: false })
-        .order('created_at', { ascending: false });
+        .from("templates_forms")
+        .select("*")
+        .in("category", ["contract", "form"])
+        .eq("is_active", true)
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setContracts(data || []);
     } catch (error: any) {
-      console.error('Error fetching contracts:', error);
-      toast.error('Failed to load contracts');
+      console.error("Error fetching contracts:", error);
+      toast.error("Failed to load contracts");
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredContracts = contracts.filter(contract => {
-    const matchesSearch = contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         contract.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || contract.subcategory === selectedCategory;
+  const filteredContracts = contracts.filter((contract) => {
+    const matchesSearch =
+      contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contract.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || contract.subcategory === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const handleDownload = async (contract: ContractDocument) => {
     try {
       // Open file in new tab
-      window.open(contract.file_url, '_blank');
-      
+      window.open(contract.file_url, "_blank");
+
       // Increment download count
-      await supabase.rpc('increment_template_download', {
-        template_id: contract.id
+      await supabase.rpc("increment_template_download", {
+        template_id: contract.id,
       });
 
       // Update local state
-      setContracts(prev => prev.map(c => 
-        c.id === contract.id 
-          ? { ...c, download_count: c.download_count + 1 }
-          : c
-      ));
+      setContracts((prev) =>
+        prev.map((c) =>
+          c.id === contract.id
+            ? { ...c, download_count: c.download_count + 1 }
+            : c,
+        ),
+      );
 
-      toast.success('Opening document...');
+      toast.success("Opening document...");
     } catch (error: any) {
-      console.error('Error downloading:', error);
-      toast.error('Failed to download document');
+      console.error("Error downloading:", error);
+      toast.error("Failed to download document");
     }
   };
 
@@ -114,7 +135,7 @@ const ContractsLibraryPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton />
-        
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -129,7 +150,8 @@ const ContractsLibraryPage: React.FC = () => {
             Contracts Library
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Professional real estate contracts, agreements, and educational resources for investors
+            Professional real estate contracts, agreements, and educational
+            resources for investors
           </p>
         </motion.div>
 
@@ -169,8 +191,10 @@ const ContractsLibraryPage: React.FC = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none"
               >
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 ))}
               </select>
             </div>
@@ -224,7 +248,7 @@ const ContractsLibraryPage: React.FC = () => {
 
                     {/* Description */}
                     <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                      {contract.description || 'No description available'}
+                      {contract.description || "No description available"}
                     </p>
 
                     {/* Stats */}
@@ -236,7 +260,7 @@ const ContractsLibraryPage: React.FC = () => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2">
-                      <FavoriteButton 
+                      <FavoriteButton
                         templateId={contract.id}
                         initialFavorited={false}
                         showCount={true}
@@ -284,8 +308,16 @@ const ContractsLibraryPage: React.FC = () => {
         <div className="mt-12 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-lg">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <svg
+                className="h-5 w-5 text-yellow-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div className="ml-3">
@@ -294,7 +326,10 @@ const ContractsLibraryPage: React.FC = () => {
               </h3>
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
-                  These contract templates are provided for educational purposes only. Always consult with a qualified attorney before using any legal documents. RepMotivatedSeller is not a law firm and does not provide legal advice.
+                  These contract templates are provided for educational purposes
+                  only. Always consult with a qualified attorney before using
+                  any legal documents. RepMotivatedSeller is not a law firm and
+                  does not provide legal advice.
                 </p>
               </div>
             </div>
