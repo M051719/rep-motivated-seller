@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSBO Gallery - Los Angeles County</title>
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <header>
+    <h1>FSBO Gallery - Los Angeles County</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/fsbo-gallery.html">Gallery</a>
+      <a href="/login.html" id="auth-link">Login</a>
+    </nav>
+  </header>
+  <main>
+    <!-- Dappier Search Widget -->
+    <!--#include file="../components/dappier-search.html" -->
+    <section class="add-listing">
+      <h2>Add Your Home Listing</h2>
+      <form id="listing-form" enctype="multipart/form-data">
+        <input type="text" name="ownerName" placeholder="Owner Name" required />
+        <input type="text" name="address" placeholder="Home Address" required />
+        <input type="tel" name="phone" placeholder="Phone Number" required />
+        <input type="number" name="price" placeholder="Asking Price ($)" required />
+        <input type="number" name="bedrooms" placeholder="Bedrooms" required />
+        <input type="number" name="bathrooms" placeholder="Bathrooms" required />
+        <input type="number" name="sqft" placeholder="Square Footage" required />
+        <input type="number" name="lotSize" placeholder="Lot Size (sqft)" />
+        <input type="number" name="yearBuilt" placeholder="Year Built" />
+        <input type="number" name="yearRemodeled" placeholder="Year Remodeled" />
+        <input type="text" name="propertyCondition" placeholder="Property Condition" />
+        <input type="text" name="financing" placeholder="Financing (Free & Clear? Loans?)" />
+        <input type="file" name="photos" accept="image/jpeg,image/png" multiple required />
+        <textarea name="features" placeholder="Describe features: garage, style, rooms, heating, solar, ADUs, etc."></textarea>
+        <button type="submit">Add Listing</button>
+      </form>
+    </section>
+    <section class="gallery-listings">
+      <h2>All FSBO Listings</h2>
+      <div id="gallery-list"></div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 LA County FSBO. All rights reserved.</p>
+  </footer>
+  <script src="../utils/gallery.js"></script>
+  <script src="../utils/listing-form.js"></script>
+</body>
+</html>

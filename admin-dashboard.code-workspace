@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "supabase/functions/admin-dashboard"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"markdown.validate.enabled": true
+	}
+}

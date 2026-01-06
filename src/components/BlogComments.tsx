@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../store/authStore';
-import { MessageCircle, Send, AlertCircle, CheckCircle, User } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { useAuthStore } from "../store/authStore";
+import {
+  MessageCircle,
+  Send,
+  AlertCircle,
+  CheckCircle,
+  User,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 interface Comment {
   id: string;
@@ -11,7 +17,7 @@ interface Comment {
   user_id: string | null;
   author_name: string;
   content: string;
-  status: 'pending' | 'approved' | 'rejected' | 'spam';
+  status: "pending" | "approved" | "rejected" | "spam";
   parent_comment_id: string | null;
   created_at: string;
   reply_count?: number;
@@ -22,10 +28,13 @@ interface BlogCommentsProps {
   initialCommentCount?: number;
 }
 
-const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentCount = 0 }) => {
+const BlogComments: React.FC<BlogCommentsProps> = ({
+  blogPostId,
+  initialCommentCount = 0,
+}) => {
   const { user, isAuthenticated } = useAuthStore();
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -40,19 +49,19 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
       setLoading(true);
 
       const { data, error } = await supabase
-        .from('blog_comments')
-        .select('*')
-        .eq('blog_post_id', blogPostId)
-        .eq('status', 'approved')
-        .is('parent_comment_id', null)
-        .order('created_at', { ascending: false });
+        .from("blog_comments")
+        .select("*")
+        .eq("blog_post_id", blogPostId)
+        .eq("status", "approved")
+        .is("parent_comment_id", null)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
       setComments(data || []);
       setCommentCount(data?.length || 0);
     } catch (error: any) {
-      console.error('Error fetching comments:', error);
+      console.error("Error fetching comments:", error);
     } finally {
       setLoading(false);
     }
@@ -62,12 +71,12 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
     e.preventDefault();
 
     if (!isAuthenticated) {
-      toast.error('Please sign in to comment');
+      toast.error("Please sign in to comment");
       return;
     }
 
     if (!newComment.trim()) {
-      toast.error('Comment cannot be empty');
+      toast.error("Comment cannot be empty");
       return;
     }
 
@@ -77,23 +86,23 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
       const commentData = {
         blog_post_id: blogPostId,
         user_id: user?.id,
-        author_name: user?.name || user?.email?.split('@')[0] || 'Anonymous',
+        author_name: user?.name || user?.email?.split("@")[0] || "Anonymous",
         author_email: user?.email,
         content: newComment.trim(),
-        status: 'pending', // Comments need admin approval
-        parent_comment_id: replyToId
+        status: "pending", // Comments need admin approval
+        parent_comment_id: replyToId,
       };
 
       const { data, error } = await supabase
-        .from('blog_comments')
+        .from("blog_comments")
         .insert([commentData])
         .select()
         .single();
 
       if (error) throw error;
 
-      toast.success('Comment submitted! It will appear after admin approval.');
-      setNewComment('');
+      toast.success("Comment submitted! It will appear after admin approval.");
+      setNewComment("");
       setReplyToId(null);
 
       // Optionally refresh comments after a delay
@@ -101,8 +110,8 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
         fetchComments();
       }, 1000);
     } catch (error: any) {
-      console.error('Error submitting comment:', error);
-      toast.error('Failed to submit comment. Please try again.');
+      console.error("Error submitting comment:", error);
+      toast.error("Failed to submit comment. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -115,16 +124,16 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
     if (diffInDays === 0) {
-      return 'Today';
+      return "Today";
     } else if (diffInDays === 1) {
-      return 'Yesterday';
+      return "Yesterday";
     } else if (diffInDays < 7) {
       return `${diffInDays} days ago`;
     } else {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
     }
   };
@@ -144,7 +153,7 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
         <form onSubmit={handleSubmitComment} className="mb-8">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {replyToId ? 'Write a reply' : 'Leave a comment'}
+              {replyToId ? "Write a reply" : "Leave a comment"}
             </label>
             <textarea
               value={newComment}
@@ -178,7 +187,7 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center"
               >
                 <Send className="w-4 h-4 mr-2" />
-                {submitting ? 'Submitting...' : 'Submit Comment'}
+                {submitting ? "Submitting..." : "Submit Comment"}
               </button>
             </div>
           </div>
@@ -204,7 +213,9 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
       ) : comments.length === 0 ? (
         <div className="text-center py-12">
           <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No comments yet. Be the first to comment!</p>
+          <p className="text-gray-500">
+            No comments yet. Be the first to comment!
+          </p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -233,7 +244,7 @@ const BlogComments: React.FC<BlogCommentsProps> = ({ blogPostId, initialCommentC
                         <span className="font-semibold text-gray-900">
                           {comment.author_name}
                         </span>
-                        {comment.status === 'approved' && (
+                        {comment.status === "approved" && (
                           <CheckCircle className="w-4 h-4 text-green-500 inline ml-1" />
                         )}
                       </div>

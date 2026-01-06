@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { 
-  DollarSign, 
-  Home, 
-  FileText, 
-  Download, 
-  Printer, 
-  CheckCircle, 
+import React, { useState } from "react";
+import {
+  DollarSign,
+  Home,
+  FileText,
+  Download,
+  Printer,
+  CheckCircle,
   AlertTriangle,
   User,
   Calculator,
   TrendingUp,
   Shield,
   Clock,
-  Building2
-} from 'lucide-react';
+  Building2,
+} from "lucide-react";
 
 interface CashoutRefiFormData {
   // Borrower Information
@@ -26,7 +26,7 @@ interface CashoutRefiFormData {
   borrowerEmployer: string;
   borrowerIncome: string;
   borrowerCreditScore: string;
-  
+
   // Co-Borrower Information (if applicable)
   coBorrowerName: string;
   coBorrowerAddress: string;
@@ -37,7 +37,7 @@ interface CashoutRefiFormData {
   coBorrowerEmployer: string;
   coBorrowerIncome: string;
   coBorrowerCreditScore: string;
-  
+
   // Property Information
   propertyAddress: string;
   propertyType: string;
@@ -46,31 +46,31 @@ interface CashoutRefiFormData {
   squareFootage: string;
   occupancyType: string;
   propertyUse: string;
-  
+
   // Current Loan Information
   currentLender: string;
   currentBalance: string;
   currentRate: string;
   currentPayment: string;
   originalLoanDate: string;
-  
+
   // New Loan Information
   requestedLoanAmount: string;
   cashoutAmount: string;
   newLoanTerm: string;
   desiredRate: string;
   loanProgram: string;
-  
+
   // Financial Information
   monthlyIncome: string;
   monthlyDebts: string;
   assets: string;
   liabilities: string;
-  
+
   // Cash-Out Purpose
   cashoutPurpose: string;
   purposeDetails: string;
-  
+
   // Lender Information
   lenderName: string;
   lenderAddress: string;
@@ -81,82 +81,89 @@ interface CashoutRefiFormData {
 }
 
 const initialFormData: CashoutRefiFormData = {
-  borrowerName: '',
-  borrowerAddress: '',
-  borrowerPhone: '',
-  borrowerEmail: '',
-  borrowerSSN: '',
-  borrowerDOB: '',
-  borrowerEmployer: '',
-  borrowerIncome: '',
-  borrowerCreditScore: '',
-  coBorrowerName: '',
-  coBorrowerAddress: '',
-  coBorrowerPhone: '',
-  coBorrowerEmail: '',
-  coBorrowerSSN: '',
-  coBorrowerDOB: '',
-  coBorrowerEmployer: '',
-  coBorrowerIncome: '',
-  coBorrowerCreditScore: '',
-  propertyAddress: '',
-  propertyType: 'single-family',
-  propertyValue: '',
-  yearBuilt: '',
-  squareFootage: '',
-  occupancyType: 'owner-occupied',
-  propertyUse: 'primary-residence',
-  currentLender: '',
-  currentBalance: '',
-  currentRate: '',
-  currentPayment: '',
-  originalLoanDate: '',
-  requestedLoanAmount: '',
-  cashoutAmount: '',
-  newLoanTerm: '360',
-  desiredRate: '',
-  loanProgram: 'conventional',
-  monthlyIncome: '',
-  monthlyDebts: '',
-  assets: '',
-  liabilities: '',
-  cashoutPurpose: 'home-improvement',
-  purposeDetails: '',
-  lenderName: '',
-  lenderAddress: '',
-  lenderPhone: '',
-  lenderEmail: '',
-  loanOfficer: '',
-  lenderLicense: ''
+  borrowerName: "",
+  borrowerAddress: "",
+  borrowerPhone: "",
+  borrowerEmail: "",
+  borrowerSSN: "",
+  borrowerDOB: "",
+  borrowerEmployer: "",
+  borrowerIncome: "",
+  borrowerCreditScore: "",
+  coBorrowerName: "",
+  coBorrowerAddress: "",
+  coBorrowerPhone: "",
+  coBorrowerEmail: "",
+  coBorrowerSSN: "",
+  coBorrowerDOB: "",
+  coBorrowerEmployer: "",
+  coBorrowerIncome: "",
+  coBorrowerCreditScore: "",
+  propertyAddress: "",
+  propertyType: "single-family",
+  propertyValue: "",
+  yearBuilt: "",
+  squareFootage: "",
+  occupancyType: "owner-occupied",
+  propertyUse: "primary-residence",
+  currentLender: "",
+  currentBalance: "",
+  currentRate: "",
+  currentPayment: "",
+  originalLoanDate: "",
+  requestedLoanAmount: "",
+  cashoutAmount: "",
+  newLoanTerm: "360",
+  desiredRate: "",
+  loanProgram: "conventional",
+  monthlyIncome: "",
+  monthlyDebts: "",
+  assets: "",
+  liabilities: "",
+  cashoutPurpose: "home-improvement",
+  purposeDetails: "",
+  lenderName: "",
+  lenderAddress: "",
+  lenderPhone: "",
+  lenderEmail: "",
+  loanOfficer: "",
+  lenderLicense: "",
 };
 
 export const CashoutRefiForm: React.FC = () => {
-  const [formData, setFormData] = useState<CashoutRefiFormData>(initialFormData);
+  const [formData, setFormData] =
+    useState<CashoutRefiFormData>(initialFormData);
   const [currentSection, setCurrentSection] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedDocument, setGeneratedDocument] = useState<string | null>(null);
+  const [generatedDocument, setGeneratedDocument] = useState<string | null>(
+    null,
+  );
   const [hasCoBorrower, setHasCoBorrower] = useState(false);
 
   const sections = [
-    { title: 'Borrower Information', icon: User, color: 'blue' },
-    { title: 'Property Details', icon: Home, color: 'green' },
-    { title: 'Current Loan Info', icon: FileText, color: 'yellow' },
-    { title: 'New Loan Terms', icon: Calculator, color: 'purple' },
-    { title: 'Financial Profile', icon: TrendingUp, color: 'indigo' },
-    { title: 'Lender & Purpose', icon: Building2, color: 'red' },
+    { title: "Borrower Information", icon: User, color: "blue" },
+    { title: "Property Details", icon: Home, color: "green" },
+    { title: "Current Loan Info", icon: FileText, color: "yellow" },
+    { title: "New Loan Terms", icon: Calculator, color: "purple" },
+    { title: "Financial Profile", icon: TrendingUp, color: "indigo" },
+    { title: "Lender & Purpose", icon: Building2, color: "red" },
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const generateDocument = async () => {
     setIsGenerating(true);
-    
+
     // Simulate document generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     const document = generateCashoutRefiDocument(formData);
     setGeneratedDocument(document);
     setIsGenerating(false);
@@ -164,20 +171,20 @@ export const CashoutRefiForm: React.FC = () => {
 
   const downloadDocument = () => {
     if (!generatedDocument) return;
-    
-    const blob = new Blob([generatedDocument], { type: 'text/html' });
+
+    const blob = new Blob([generatedDocument], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `cashout-refi-application-${formData.borrowerName.replace(/\s+/g, '-').toLowerCase()}.html`;
+    a.download = `cashout-refi-application-${formData.borrowerName.replace(/\s+/g, "-").toLowerCase()}.html`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const printDocument = () => {
     if (!generatedDocument) return;
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(generatedDocument);
       printWindow.document.close();
@@ -199,12 +206,12 @@ export const CashoutRefiForm: React.FC = () => {
 
   const getSectionColor = (color: string) => {
     const colors = {
-      blue: 'bg-blue-500',
-      green: 'bg-green-500',
-      yellow: 'bg-yellow-500',
-      purple: 'bg-purple-500',
-      indigo: 'bg-indigo-500',
-      red: 'bg-red-500',
+      blue: "bg-blue-500",
+      green: "bg-green-500",
+      yellow: "bg-yellow-500",
+      purple: "bg-purple-500",
+      indigo: "bg-indigo-500",
+      red: "bg-red-500",
     };
     return colors[color as keyof typeof colors];
   };
@@ -218,8 +225,13 @@ export const CashoutRefiForm: React.FC = () => {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Cash-Out Refinance Application Generated!</h2>
-              <p className="text-gray-600">Your comprehensive refinance documentation is ready for submission.</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Cash-Out Refinance Application Generated!
+              </h2>
+              <p className="text-gray-600">
+                Your comprehensive refinance documentation is ready for
+                submission.
+              </p>
             </div>
 
             <div className="flex justify-center space-x-4 mb-8">
@@ -264,7 +276,8 @@ export const CashoutRefiForm: React.FC = () => {
             Cash-Out Refinance Application Generator
           </h1>
           <p className="text-xl text-gray-600">
-            Professional mortgage refinance documentation with cash-out provisions
+            Professional mortgage refinance documentation with cash-out
+            provisions
           </p>
         </div>
 
@@ -275,7 +288,7 @@ export const CashoutRefiForm: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div
@@ -283,8 +296,8 @@ export const CashoutRefiForm: React.FC = () => {
                       isActive
                         ? `${getSectionColor(section.color)} text-white shadow-lg scale-110`
                         : isCompleted
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-200 text-gray-500'
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-200 text-gray-500"
                     }`}
                   >
                     <Icon className="w-6 h-6" />
@@ -292,7 +305,7 @@ export const CashoutRefiForm: React.FC = () => {
                   {index < sections.length - 1 && (
                     <div
                       className={`h-1 w-16 mx-2 transition-all duration-300 ${
-                        isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                        isCompleted ? "bg-green-500" : "bg-gray-200"
                       }`}
                     />
                   )}
@@ -582,7 +595,9 @@ export const CashoutRefiForm: React.FC = () => {
                     <option value="townhouse">Townhouse</option>
                     <option value="condo">Condominium</option>
                     <option value="duplex">Duplex</option>
-                    <option value="multi-family">Multi-Family (3-4 units)</option>
+                    <option value="multi-family">
+                      Multi-Family (3-4 units)
+                    </option>
                   </select>
                 </div>
 
@@ -761,9 +776,12 @@ export const CashoutRefiForm: React.FC = () => {
                 <div className="flex items-start">
                   <AlertTriangle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-yellow-900">Current Loan Information</h4>
+                    <h4 className="font-medium text-yellow-900">
+                      Current Loan Information
+                    </h4>
                     <p className="text-yellow-800 text-sm mt-1">
-                      Provide accurate information about your existing mortgage. This will be verified during the application process.
+                      Provide accurate information about your existing mortgage.
+                      This will be verified during the application process.
                     </p>
                   </div>
                 </div>
@@ -870,9 +888,13 @@ export const CashoutRefiForm: React.FC = () => {
                 <div className="flex items-start">
                   <Calculator className="w-5 h-5 text-purple-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-purple-900">Loan-to-Value Calculation</h4>
+                    <h4 className="font-medium text-purple-900">
+                      Loan-to-Value Calculation
+                    </h4>
                     <p className="text-purple-800 text-sm mt-1">
-                      Most cash-out refinances are limited to 80% LTV for primary residences, 75% for second homes, and 70% for investment properties.
+                      Most cash-out refinances are limited to 80% LTV for
+                      primary residences, 75% for second homes, and 70% for
+                      investment properties.
                     </p>
                   </div>
                 </div>
@@ -961,9 +983,12 @@ export const CashoutRefiForm: React.FC = () => {
                 <div className="flex items-start">
                   <TrendingUp className="w-5 h-5 text-indigo-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-indigo-900">Financial Qualification</h4>
+                    <h4 className="font-medium text-indigo-900">
+                      Financial Qualification
+                    </h4>
                     <p className="text-indigo-800 text-sm mt-1">
-                      Lenders typically require a debt-to-income ratio below 43% and sufficient assets to cover closing costs and reserves.
+                      Lenders typically require a debt-to-income ratio below 43%
+                      and sufficient assets to cover closing costs and reserves.
                     </p>
                   </div>
                 </div>
@@ -993,8 +1018,12 @@ export const CashoutRefiForm: React.FC = () => {
                       required
                     >
                       <option value="home-improvement">Home Improvement</option>
-                      <option value="debt-consolidation">Debt Consolidation</option>
-                      <option value="investment">Investment Property Purchase</option>
+                      <option value="debt-consolidation">
+                        Debt Consolidation
+                      </option>
+                      <option value="investment">
+                        Investment Property Purchase
+                      </option>
                       <option value="education">Education Expenses</option>
                       <option value="business">Business Investment</option>
                       <option value="emergency">Emergency Fund</option>
@@ -1116,9 +1145,13 @@ export const CashoutRefiForm: React.FC = () => {
                 <div className="flex items-start">
                   <Shield className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-red-900">Important Disclosure</h4>
+                    <h4 className="font-medium text-red-900">
+                      Important Disclosure
+                    </h4>
                     <p className="text-red-800 text-sm mt-1">
-                      Cash-out refinancing increases your loan balance and may result in higher monthly payments. Consider the long-term financial impact before proceeding.
+                      Cash-out refinancing increases your loan balance and may
+                      result in higher monthly payments. Consider the long-term
+                      financial impact before proceeding.
                     </p>
                   </div>
                 </div>
@@ -1152,7 +1185,9 @@ export const CashoutRefiForm: React.FC = () => {
                 disabled={isGenerating}
                 className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isGenerating ? 'Generating Application...' : 'Generate Application'}
+                {isGenerating
+                  ? "Generating Application..."
+                  : "Generate Application"}
               </button>
             )}
           </div>
@@ -1168,10 +1203,14 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
   const requestedLoan = parseFloat(data.requestedLoanAmount) || 0;
   const currentBalance = parseFloat(data.currentBalance) || 0;
   const cashOut = parseFloat(data.cashoutAmount) || 0;
-  const ltv = propertyValue > 0 ? ((requestedLoan / propertyValue) * 100).toFixed(2) : '0';
+  const ltv =
+    propertyValue > 0
+      ? ((requestedLoan / propertyValue) * 100).toFixed(2)
+      : "0";
   const monthlyIncome = parseFloat(data.monthlyIncome) || 0;
   const monthlyDebts = parseFloat(data.monthlyDebts) || 0;
-  const dti = monthlyIncome > 0 ? ((monthlyDebts / monthlyIncome) * 100).toFixed(2) : '0';
+  const dti =
+    monthlyIncome > 0 ? ((monthlyDebts / monthlyIncome) * 100).toFixed(2) : "0";
 
   return `
 <!DOCTYPE html>
@@ -1217,25 +1256,29 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
                 <strong>PRIMARY BORROWER:</strong><br>
                 Name: ${data.borrowerName}<br>
                 SSN: ${data.borrowerSSN}<br>
-                DOB: ${data.borrowerDOB ? new Date(data.borrowerDOB).toLocaleDateString() : 'Not provided'}<br>
+                DOB: ${data.borrowerDOB ? new Date(data.borrowerDOB).toLocaleDateString() : "Not provided"}<br>
                 Phone: ${data.borrowerPhone}<br>
                 Email: ${data.borrowerEmail}<br>
                 Address: ${data.borrowerAddress}<br>
                 Employer: ${data.borrowerEmployer}<br>
-                Annual Income: $${parseFloat(data.borrowerIncome || '0').toLocaleString()}<br>
-                Credit Score: ${data.borrowerCreditScore || 'TBD'}
+                Annual Income: $${parseFloat(data.borrowerIncome || "0").toLocaleString()}<br>
+                Credit Score: ${data.borrowerCreditScore || "TBD"}
             </div>
-            ${data.coBorrowerName ? `
+            ${
+              data.coBorrowerName
+                ? `
             <div>
                 <strong>CO-BORROWER:</strong><br>
                 Name: ${data.coBorrowerName}<br>
                 SSN: ${data.coBorrowerSSN}<br>
-                DOB: ${data.coBorrowerDOB ? new Date(data.coBorrowerDOB).toLocaleDateString() : 'Not provided'}<br>
+                DOB: ${data.coBorrowerDOB ? new Date(data.coBorrowerDOB).toLocaleDateString() : "Not provided"}<br>
                 Employer: ${data.coBorrowerEmployer}<br>
-                Annual Income: $${parseFloat(data.coBorrowerIncome || '0').toLocaleString()}<br>
-                Credit Score: ${data.coBorrowerCreditScore || 'TBD'}
+                Annual Income: $${parseFloat(data.coBorrowerIncome || "0").toLocaleString()}<br>
+                Credit Score: ${data.coBorrowerCreditScore || "TBD"}
             </div>
-            ` : '<div><em>No Co-Borrower</em></div>'}
+            `
+                : "<div><em>No Co-Borrower</em></div>"
+            }
         </div>
     </div>
 
@@ -1246,8 +1289,8 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
             <tr><td>Property Address</td><td>${data.propertyAddress}</td></tr>
             <tr><td>Property Type</td><td>${data.propertyType}</td></tr>
             <tr><td>Current Value</td><td>$${propertyValue.toLocaleString()}</td></tr>
-            <tr><td>Year Built</td><td>${data.yearBuilt || 'TBD'}</td></tr>
-            <tr><td>Square Footage</td><td>${data.squareFootage || 'TBD'}</td></tr>
+            <tr><td>Year Built</td><td>${data.yearBuilt || "TBD"}</td></tr>
+            <tr><td>Square Footage</td><td>${data.squareFootage || "TBD"}</td></tr>
             <tr><td>Occupancy Type</td><td>${data.occupancyType}</td></tr>
             <tr><td>Property Use</td><td>${data.propertyUse}</td></tr>
         </table>
@@ -1260,8 +1303,8 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
             <tr><td>Current Lender</td><td>${data.currentLender}</td></tr>
             <tr><td>Current Balance</td><td>$${currentBalance.toLocaleString()}</td></tr>
             <tr><td>Current Interest Rate</td><td>${data.currentRate}%</td></tr>
-            <tr><td>Current Monthly Payment</td><td>$${parseFloat(data.currentPayment || '0').toLocaleString()}</td></tr>
-            <tr><td>Original Loan Date</td><td>${data.originalLoanDate ? new Date(data.originalLoanDate).toLocaleDateString() : 'Not provided'}</td></tr>
+            <tr><td>Current Monthly Payment</td><td>$${parseFloat(data.currentPayment || "0").toLocaleString()}</td></tr>
+            <tr><td>Original Loan Date</td><td>${data.originalLoanDate ? new Date(data.originalLoanDate).toLocaleDateString() : "Not provided"}</td></tr>
         </table>
     </div>
 
@@ -1273,7 +1316,7 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
                 <tr><td><strong>Requested Loan Amount</strong></td><td><strong>$${requestedLoan.toLocaleString()}</strong></td></tr>
                 <tr><td>Cash-Out Amount</td><td>$${cashOut.toLocaleString()}</td></tr>
                 <tr><td>Loan Term</td><td>${data.newLoanTerm} months</td></tr>
-                <tr><td>Desired Interest Rate</td><td>${data.desiredRate || 'Market Rate'}%</td></tr>
+                <tr><td>Desired Interest Rate</td><td>${data.desiredRate || "Market Rate"}%</td></tr>
                 <tr><td>Loan Program</td><td>${data.loanProgram}</td></tr>
                 <tr><td><strong>Loan-to-Value Ratio</strong></td><td><strong>${ltv}%</strong></td></tr>
             </table>
@@ -1284,7 +1327,7 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
                 <tr><td>New Loan Amount</td><td>$${requestedLoan.toLocaleString()}</td></tr>
                 <tr><td>Less: Current Balance Payoff</td><td>($${currentBalance.toLocaleString()})</td></tr>
                 <tr><td>Less: Estimated Closing Costs</td><td>($${Math.round(requestedLoan * 0.02).toLocaleString()})</td></tr>
-                <tr><td><strong>Net Cash to Borrower</strong></td><td><strong>$${(requestedLoan - currentBalance - (requestedLoan * 0.02)).toLocaleString()}</strong></td></tr>
+                <tr><td><strong>Net Cash to Borrower</strong></td><td><strong>$${(requestedLoan - currentBalance - requestedLoan * 0.02).toLocaleString()}</strong></td></tr>
             </table>
         </div>
     </div>
@@ -1297,9 +1340,9 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
                 <tr><td>Total Monthly Income</td><td>$${monthlyIncome.toLocaleString()}</td></tr>
                 <tr><td>Total Monthly Debts</td><td>$${monthlyDebts.toLocaleString()}</td></tr>
                 <tr><td><strong>Debt-to-Income Ratio</strong></td><td><strong>${dti}%</strong></td></tr>
-                <tr><td>Total Assets</td><td>$${parseFloat(data.assets || '0').toLocaleString()}</td></tr>
-                <tr><td>Total Liabilities</td><td>$${parseFloat(data.liabilities || '0').toLocaleString()}</td></tr>
-                <tr><td><strong>Net Worth</strong></td><td><strong>$${(parseFloat(data.assets || '0') - parseFloat(data.liabilities || '0')).toLocaleString()}</strong></td></tr>
+                <tr><td>Total Assets</td><td>$${parseFloat(data.assets || "0").toLocaleString()}</td></tr>
+                <tr><td>Total Liabilities</td><td>$${parseFloat(data.liabilities || "0").toLocaleString()}</td></tr>
+                <tr><td><strong>Net Worth</strong></td><td><strong>$${(parseFloat(data.assets || "0") - parseFloat(data.liabilities || "0")).toLocaleString()}</strong></td></tr>
             </table>
         </div>
     </div>
@@ -1325,12 +1368,12 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
         <div class="section-title">7. LENDER INFORMATION</div>
         <table>
             <tr><th>Lender Details</th><th>Information</th></tr>
-            <tr><td>Lender Name</td><td>${data.lenderName || 'To be determined'}</td></tr>
-            <tr><td>Loan Officer</td><td>${data.loanOfficer || 'To be assigned'}</td></tr>
-            <tr><td>Phone Number</td><td>${data.lenderPhone || 'TBD'}</td></tr>
-            <tr><td>Email Address</td><td>${data.lenderEmail || 'TBD'}</td></tr>
-            <tr><td>Address</td><td>${data.lenderAddress || 'TBD'}</td></tr>
-            <tr><td>License Number</td><td>${data.lenderLicense || 'TBD'}</td></tr>
+            <tr><td>Lender Name</td><td>${data.lenderName || "To be determined"}</td></tr>
+            <tr><td>Loan Officer</td><td>${data.loanOfficer || "To be assigned"}</td></tr>
+            <tr><td>Phone Number</td><td>${data.lenderPhone || "TBD"}</td></tr>
+            <tr><td>Email Address</td><td>${data.lenderEmail || "TBD"}</td></tr>
+            <tr><td>Address</td><td>${data.lenderAddress || "TBD"}</td></tr>
+            <tr><td>License Number</td><td>${data.lenderLicense || "TBD"}</td></tr>
         </table>
     </div>
 
@@ -1411,7 +1454,9 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
             SSN: ${data.borrowerSSN}
         </div>
 
-        ${data.coBorrowerName ? `
+        ${
+          data.coBorrowerName
+            ? `
         <div style="margin: 40px 0;">
             <strong>CO-BORROWER:</strong><br><br>
             <div class="signature-line"></div>
@@ -1419,14 +1464,16 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
             Date: _______________<br>
             SSN: ${data.coBorrowerSSN}
         </div>
-        ` : ''}
+        `
+            : ""
+        }
 
         <div style="margin: 40px 0;">
             <strong>LOAN OFFICER:</strong><br><br>
             <div class="signature-line"></div>
-            ${data.loanOfficer || 'Loan Officer Name'}<br>
+            ${data.loanOfficer || "Loan Officer Name"}<br>
             Date: _______________<br>
-            NMLS ID: ${data.lenderLicense || 'NMLS#'}
+            NMLS ID: ${data.lenderLicense || "NMLS#"}
         </div>
     </div>
 

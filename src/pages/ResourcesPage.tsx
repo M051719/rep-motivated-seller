@@ -1,204 +1,230 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { BackButton } from '../components/ui/BackButton';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { BackButton } from "../components/ui/BackButton";
 
 interface Resource {
   id: number;
   title: string;
   description: string;
   category: string;
-  type: 'download' | 'link' | 'tool';
+  type: "download" | "link" | "tool";
   icon: string;
   link?: string;
 }
 
 const ResourcesPage: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const navigate = useNavigate();
 
   const categories = [
-    { value: 'all', label: 'All Resources', icon: '📚' },
-    { value: 'templates', label: 'Templates & Forms', icon: '📄' },
-    { value: 'guides', label: 'Guides & Checklists', icon: '📋' },
-    { value: 'tools', label: 'Calculators & Tools', icon: '🔧' },
-    { value: 'external', label: 'External Resources', icon: '🔗' }
+    { value: "all", label: "All Resources", icon: "📚" },
+    { value: "templates", label: "Templates & Forms", icon: "📄" },
+    { value: "guides", label: "Guides & Checklists", icon: "📋" },
+    { value: "tools", label: "Calculators & Tools", icon: "🔧" },
+    { value: "external", label: "External Resources", icon: "🔗" },
   ];
 
   const resources: Resource[] = [
-    // Deal Analysis Tools
+    // Deal Analysis Tools (Available Online)
     {
       id: 1,
-      title: 'Deal Analysis Software',
-      description: 'Comprehensive real estate deal analyzer for evaluating investment opportunities',
-      category: 'tools',
-      type: 'tool',
-      icon: '📊',
-      link: '/downloads/Deal Analysis Software.xlsx'
+      title: "Flip Property Analyzer",
+      description:
+        "Comprehensive flip analyzer with ROI calculations, repair budgets, and profit projections - Free online tool!",
+      category: "tools",
+      type: "tool",
+      icon: "🏘️",
+      link: "/calculators",
     },
     {
       id: 2,
-      title: 'Deal Analyzer for Flips',
-      description: 'Specialized analyzer for flip properties with ROI calculations and profit projections',
-      category: 'tools',
-      type: 'tool',
-      icon: '🏘️',
-      link: '/downloads/Deal+Analyzer+for+Flips.xlsx'
+      title: "Rental Property Analyzer (Basic)",
+      description:
+        "Basic rental property analyzer with cash flow and ROI calculations - Free online calculator!",
+      category: "tools",
+      type: "tool",
+      icon: "🏠",
+      link: "/calculators",
     },
     {
       id: 3,
-      title: 'Deal Analyzer for Rentals (Basic)',
-      description: 'Basic rental property analyzer with cash flow and ROI calculations',
-      category: 'tools',
-      type: 'tool',
-      icon: '🏠',
-      link: '/downloads/Deal+Analyzer+for+Rentals+BASIC.xlsx'
+      title: "Rental Property Analyzer (Full)",
+      description:
+        "Advanced rental analyzer with 5-year projections and appreciation modeling - Pro members!",
+      category: "tools",
+      type: "tool",
+      icon: "🏢",
+      link: "/calculators",
     },
     {
       id: 4,
-      title: 'Deal Analyzer for Rentals (Full)',
-      description: 'Full-featured rental property analyzer with advanced metrics and projections',
-      category: 'tools',
-      type: 'tool',
-      icon: '🏢',
-      link: '/downloads/Deal+Analyzer+for+Rentals+FULL.xlsx'
+      title: "Amortization Calculator",
+      description:
+        "Loan amortization calculator with payment schedules and interest breakdowns - Free online!",
+      category: "tools",
+      type: "tool",
+      icon: "🧮",
+      link: "/calculators",
     },
     {
       id: 5,
-      title: 'Flip or Rent Calculator',
-      description: 'Decision tool to determine whether to flip or rent a property based on market conditions',
-      category: 'tools',
-      type: 'tool',
-      icon: '⚖️',
-      link: '/downloads/Flip-Or-Rent-Calculator-from-Rehab-Valuator-1.xlsx'
+      title: "Underwriting Analysis Tool",
+      description:
+        "Professional underwriting analysis for detailed property evaluation - Enterprise members! ⭐",
+      category: "tools",
+      type: "tool",
+      icon: "📋",
+      link: "/calculators",
     },
     {
       id: 6,
-      title: 'Underwriting Deal Analysis Software',
-      description: 'Professional underwriting analysis tool for detailed property evaluation',
-      category: 'tools',
-      type: 'tool',
-      icon: '📋',
-      link: '/downloads/underwriting Deal Analysis Software.xlsx'
+      title: "Portfolio Performance Dashboard",
+      description:
+        "Track and monitor your property portfolio performance with visual dashboards - Enterprise members! ⭐",
+      category: "tools",
+      type: "tool",
+      icon: "📈",
+      link: "/calculators",
     },
 
-    // Financial Calculators
+    // Downloadable Tools
     {
       id: 7,
-      title: 'Amortization Table',
-      description: 'Loan amortization calculator with payment schedules and interest breakdowns',
-      category: 'tools',
-      type: 'tool',
-      icon: '🧮',
-      link: '/downloads/Amortization Table.xls'
+      title: "Flip vs Rent Decision Tool",
+      description:
+        "Smart decision calculator comparing flip vs rental strategies with ROI analysis and 5-year projections - Free online!",
+      category: "tools",
+      type: "download",
+      icon: "⚖️",
+      link: "/calculators",
     },
     {
       id: 8,
-      title: 'Mortgage Calculator (Online)',
-      description: 'Calculate your monthly payment and see amortization schedules instantly',
-      category: 'tools',
-      type: 'tool',
-      icon: '💰',
-      link: '/tools'
-    },
-
-    // Performance & Tracking
-    {
-      id: 9,
-      title: 'Performance Dashboard',
-      description: 'Track and monitor your property portfolio performance with visual dashboards',
-      category: 'tools',
-      type: 'download',
-      icon: '📈',
-      link: '/downloads/Performance Dashboard-2.xls'
-    },
-    {
-      id: 10,
-      title: 'Repair Estimator Worksheet',
-      description: 'Detailed repair cost estimation tool for renovation projects',
-      category: 'tools',
-      type: 'tool',
-      icon: '🔧',
-      link: '/downloads/Repair+Estimator+Worksheet.xlsx'
+      title: "Repair Cost Estimator",
+      description:
+        "Detailed repair cost estimation by category with contingency calculator - Free online!",
+      category: "tools",
+      type: "download",
+      icon: "��",
+      link: "/calculators",
     },
 
     // Document Templates & References
     {
+      id: 9,
+      title: "3 Option LOI with Owner Financing",
+      description:
+        "Letter of Intent template with three owner financing options (interactive docx)",
+      category: "templates",
+      type: "download",
+      icon: "📝",
+      link: "/downloads/Updated 3 Option LOI with Owner Finance Language.docx",
+    },
+    {
+      id: 10,
+      title: "CAP RATES Documentation",
+      description:
+        "Comprehensive guide to capitalization rates and their application in real estate",
+      category: "guides",
+      type: "download",
+      icon: "📖",
+      link: "/downloads/CAP RATES.docx",
+    },
+    {
       id: 11,
-      title: '3 Option LOI with Owner Financing',
-      description: 'Letter of Intent template with three owner financing options (interactive docx)',
-      category: 'templates',
-      type: 'download',
-      icon: '📝',
-      link: '/downloads/Updated 3 Option LOI with Owner Finance Language.docx'
-    },
-    {
-      id: 12,
-      title: 'CAP RATES Documentation',
-      description: 'Comprehensive guide to capitalization rates and their application in real estate',
-      category: 'guides',
-      type: 'download',
-      icon: '📖',
-      link: '/downloads/CAP RATES.docx'
-    },
-    {
-      id: 13,
-      title: 'Quarterly Cap Rate Survey',
-      description: 'Market cap rate data and trends across different property types and regions',
-      category: 'guides',
-      type: 'download',
-      icon: '📊',
-      link: '/downloads/Quarterly_Cap_Rate_Survey_D_D_Club_edited_by_Lance_updated2.xlsx'
+      title: "Quarterly Cap Rate Survey",
+      description:
+        "Market cap rate data and trends across different property types and regions",
+      category: "guides",
+      type: "download",
+      icon: "📊",
+      link: "/downloads/Quarterly_Cap_Rate_Survey_D_D_Club_edited_by_Lance_updated2.xlsx",
     },
 
     // External Resources
     {
+      id: 12,
+      title: "HUD-Approved Housing Counselors",
+      description: "Find free housing counseling services in your area",
+      category: "external",
+      type: "link",
+      icon: "🏛️",
+      link: "https://www.hud.gov/findacounselor",
+    },
+    {
+      id: 13,
+      title: "Property Market Research",
+      description:
+        "Access comprehensive market data, trends, and analytics to make informed real estate decisions",
+      category: "external",
+      type: "link",
+      icon: "📊",
+      link: "https://www.zillow.com/research/",
+    },
+    {
       id: 14,
-      title: 'HUD-Approved Housing Counselors',
-      description: 'Find free housing counseling services in your area',
-      category: 'external',
-      type: 'link',
-      icon: '🏛️',
-      link: 'https://www.hud.gov/findacounselor'
+      title: "Consumer Financial Protection Bureau",
+      description:
+        "Know your rights and file complaints about lender practices",
+      category: "external",
+      type: "link",
+      icon: "🛡️",
+      link: "https://www.consumerfinance.gov",
     },
     {
-      id: 15,
-      title: 'BiggerPockets Resources',
-      description: 'Access calculators, forums, and education from the largest real estate investing community',
-      category: 'external',
-      type: 'link',
-      icon: '🌐',
-      link: 'https://www.biggerpockets.com/resources'
+      id: 30,
+      title: "Free Hardship Letter Generator",
+      description:
+        "Create professional hardship letters instantly - no sign-up required. Fill in your info and download personalized letters for foreclosure prevention, loan modification, debt settlement, and more.",
+      type: "tool",
+      link: "/hardship-letter-generator",
+      category: "tools",
+      icon: "📝",
     },
-    {
-      id: 16,
-      title: 'Consumer Financial Protection Bureau',
-      description: 'Know your rights and file complaints about lender practices',
-      category: 'external',
-      type: 'link',
-      icon: '🛡️',
-      link: 'https://www.consumerfinance.gov'
-    }
   ];
 
-  const filteredResources = selectedCategory === 'all'
-    ? resources
-    : resources.filter(resource => resource.category === selectedCategory);
+  const filteredResources =
+    selectedCategory === "all"
+      ? resources
+      : resources.filter((resource) => resource.category === selectedCategory);
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'download': return '⬇️ Download';
-      case 'link': return '🔗 Visit Site';
-      case 'tool': return '🔧 Use Tool';
-      default: return 'View';
+      case "download":
+        return "⬇️ Download";
+      case "link":
+        return "🔗 Visit Site";
+      case "tool":
+        return "🔧 Use Tool";
+      default:
+        return "View";
+    }
+  };
+
+  const handleResourceClick = (resource: Resource) => {
+    if (!resource.link) return;
+
+    if (resource.type === "tool" && resource.link.startsWith("/")) {
+      // Internal navigation for tools
+      navigate(resource.link);
+    } else {
+      // External links or downloads
+      window.open(resource.link, "_blank");
     }
   };
 
   return (
     <>
       <Helmet>
-        <title>Resources - Templates, Guides & Tools | RepMotivatedSeller</title>
-        <meta name="description" content="Free templates, guides, calculators, and tools to help you save your home from foreclosure." />
+        <title>
+          Resources - Templates, Guides & Tools | RepMotivatedSeller
+        </title>
+        <meta
+          name="description"
+          content="Free templates, guides, calculators, and tools to help you save your home from foreclosure."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -210,7 +236,8 @@ const ResourcesPage: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 text-center">
             <h1 className="text-5xl font-bold mb-6">📚 Resources</h1>
             <p className="text-xl text-green-100 max-w-3xl mx-auto">
-              Free templates, guides, calculators, and tools to help you navigate foreclosure
+              Free templates, guides, calculators, and tools to help you
+              navigate foreclosure
             </p>
           </div>
         </section>
@@ -225,8 +252,8 @@ const ResourcesPage: React.FC = () => {
                   onClick={() => setSelectedCategory(category.value)}
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedCategory === category.value
-                      ? 'bg-green-600 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-green-600 text-white shadow-lg"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {category.icon} {category.label}
@@ -256,8 +283,8 @@ const ResourcesPage: React.FC = () => {
                       {resource.title}
                     </h3>
                     <p className="text-gray-600 mb-4">{resource.description}</p>
-                    <button 
-                      onClick={() => resource.link && window.open(resource.link, '_blank')}
+                    <button
+                      onClick={() => handleResourceClick(resource)}
                       className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center cursor-pointer"
                     >
                       {getTypeLabel(resource.type)}
@@ -284,7 +311,9 @@ const ResourcesPage: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 text-center">
                 <div className="text-5xl mb-4">📝</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Hardship Letter Template</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Hardship Letter Template
+                </h3>
                 <p className="text-gray-600 mb-4">Downloaded 5,200+ times</p>
                 <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                   Download
@@ -293,16 +322,23 @@ const ResourcesPage: React.FC = () => {
 
               <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-8 text-center">
                 <div className="text-5xl mb-4">🧮</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Payment Calculator</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Investment Calculators
+                </h3>
                 <p className="text-gray-600 mb-4">Used 12,300+ times</p>
-                <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
-                  Use Tool
-                </button>
+                <Link 
+                  to="/calculators"
+                  className="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+                >
+                  Use Tools
+                </Link>
               </div>
 
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8 text-center">
                 <div className="text-5xl mb-4">📖</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Prevention Guide</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Prevention Guide
+                </h3>
                 <p className="text-gray-600 mb-4">Downloaded 8,100+ times</p>
                 <button className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
                   Download
@@ -341,3 +377,5 @@ const ResourcesPage: React.FC = () => {
 };
 
 export default ResourcesPage;
+
+

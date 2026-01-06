@@ -1,8 +1,8 @@
 // src/components/professional/ProfessionalDashboard.tsx
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { supabase } from "../../lib/supabase";
 
 const ProfessionalDashboard: React.FC = () => {
   const [stats, setStats] = useState({
@@ -11,7 +11,7 @@ const ProfessionalDashboard: React.FC = () => {
     dealsAnalyzed: 0,
     propertiesResearched: 0,
     totalProfit: 0,
-    activeLeads: 0
+    activeLeads: 0,
   });
 
   useEffect(() => {
@@ -20,15 +20,23 @@ const ProfessionalDashboard: React.FC = () => {
 
   const loadDashboardStats = async () => {
     // Load real stats from database
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     // Fetch stats from various tables
     const [calls, mails, deals, properties] = await Promise.all([
-      supabase.from('call_campaigns').select('calls_made').eq('user_id', user.id),
-      supabase.from('mailing_campaigns').select('sent_count').eq('user_id', user.id),
-      supabase.from('deal_analyses').select('*').eq('user_id', user.id),
-      supabase.from('property_searches').select('*').eq('user_id', user.id)
+      supabase
+        .from("call_campaigns")
+        .select("calls_made")
+        .eq("user_id", user.id),
+      supabase
+        .from("mailing_campaigns")
+        .select("sent_count")
+        .eq("user_id", user.id),
+      supabase.from("deal_analyses").select("*").eq("user_id", user.id),
+      supabase.from("property_searches").select("*").eq("user_id", user.id),
     ]);
 
     setStats({
@@ -37,59 +45,59 @@ const ProfessionalDashboard: React.FC = () => {
       dealsAnalyzed: deals.data?.length || 0,
       propertiesResearched: properties.data?.length || 0,
       totalProfit: 0, // Calculate from deals
-      activeLeads: 0 // Calculate from CRM
+      activeLeads: 0, // Calculate from CRM
     });
   };
 
   const tools = [
     {
-      title: 'Call Center',
-      icon: '📞',
-      description: 'AI-powered auto-dialing and outsourced teams',
-      link: '/pro/call-center',
-      color: 'from-blue-500 to-blue-600',
-      stats: `${stats.activeCalls} calls made`
+      title: "Call Center",
+      icon: "📞",
+      description: "AI-powered auto-dialing and outsourced teams",
+      link: "/pro/call-center",
+      color: "from-blue-500 to-blue-600",
+      stats: `${stats.activeCalls} calls made`,
     },
     {
-      title: 'Direct Mail',
-      icon: '📬',
-      description: 'Send LOIs, postcards, and offers automatically',
-      link: '/pro/mailing',
-      color: 'from-green-500 to-green-600',
-      stats: `${stats.mailsSent} pieces sent`
+      title: "Direct Mail",
+      icon: "📬",
+      description: "Send LOIs, postcards, and offers automatically",
+      link: "/pro/mailing",
+      color: "from-green-500 to-green-600",
+      stats: `${stats.mailsSent} pieces sent`,
     },
     {
-      title: 'Property Research',
-      icon: '🔍',
-      description: 'Title search, liens, Zillow & Google data',
-      link: '/pro/property-research',
-      color: 'from-purple-500 to-purple-600',
-      stats: `${stats.propertiesResearched} researched`
+      title: "Property Research",
+      icon: "🔍",
+      description: "Title search, liens, Zillow & Google data",
+      link: "/pro/property-research",
+      color: "from-purple-500 to-purple-600",
+      stats: `${stats.propertiesResearched} researched`,
     },
     {
-      title: 'Deal Analyzer',
-      icon: '📊',
-      description: 'Flip, rental, and wholesale analysis',
-      link: '/pro/deal-analyzer',
-      color: 'from-orange-500 to-orange-600',
-      stats: `${stats.dealsAnalyzed} analyzed`
+      title: "Deal Analyzer",
+      icon: "📊",
+      description: "Flip, rental, and wholesale analysis",
+      link: "/pro/deal-analyzer",
+      color: "from-orange-500 to-orange-600",
+      stats: `${stats.dealsAnalyzed} analyzed`,
     },
     {
-      title: 'Lead Manager',
-      icon: '👥',
-      description: 'CRM and pipeline management',
-      link: '/pro/leads',
-      color: 'from-indigo-500 to-indigo-600',
-      stats: `${stats.activeLeads} active leads`
+      title: "Lead Manager",
+      icon: "👥",
+      description: "CRM and pipeline management",
+      link: "/pro/leads",
+      color: "from-indigo-500 to-indigo-600",
+      stats: `${stats.activeLeads} active leads`,
     },
     {
-      title: 'Documents',
-      icon: '📄',
-      description: 'Contracts, LOIs, and templates',
-      link: '/pro/documents',
-      color: 'from-pink-500 to-pink-600',
-      stats: 'All templates ready'
-    }
+      title: "Documents",
+      icon: "📄",
+      description: "Contracts, LOIs, and templates",
+      link: "/pro/documents",
+      color: "from-pink-500 to-pink-600",
+      stats: "All templates ready",
+    },
   ];
 
   return (
@@ -187,7 +195,9 @@ const ProfessionalDashboard: React.FC = () => {
               to={tool.link}
               className="block bg-white rounded-lg shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1"
             >
-              <div className={`h-2 bg-gradient-to-r ${tool.color} rounded-t-lg`} />
+              <div
+                className={`h-2 bg-gradient-to-r ${tool.color} rounded-t-lg`}
+              />
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <span className="text-4xl">{tool.icon}</span>
@@ -198,9 +208,7 @@ const ProfessionalDashboard: React.FC = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {tool.title}
                 </h3>
-                <p className="text-gray-600 text-sm">
-                  {tool.description}
-                </p>
+                <p className="text-gray-600 text-sm">{tool.description}</p>
               </div>
             </Link>
           </motion.div>
@@ -221,14 +229,18 @@ const ProfessionalDashboard: React.FC = () => {
           <div className="flex items-center justify-between py-2 border-b">
             <div className="flex items-center space-x-3">
               <span className="text-blue-500">📞</span>
-              <span className="text-sm">Call campaign completed: 50 contacts</span>
+              <span className="text-sm">
+                Call campaign completed: 50 contacts
+              </span>
             </div>
             <span className="text-xs text-gray-500">5 hours ago</span>
           </div>
           <div className="flex items-center justify-between py-2 border-b">
             <div className="flex items-center space-x-3">
               <span className="text-purple-500">📬</span>
-              <span className="text-sm">100 postcards sent to pre-foreclosure list</span>
+              <span className="text-sm">
+                100 postcards sent to pre-foreclosure list
+              </span>
             </div>
             <span className="text-xs text-gray-500">Yesterday</span>
           </div>

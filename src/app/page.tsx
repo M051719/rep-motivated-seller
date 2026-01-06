@@ -1,40 +1,42 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import AuthForm from '@/components/AuthForm'
-import UserProfile from '@/components/UserProfile'
-import type { User } from '@supabase/supabase-js'
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import AuthForm from "@/components/AuthForm";
+import UserProfile from "@/components/UserProfile";
+import type { User } from "@supabase/supabase-js";
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      setLoading(false)
-    }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      setLoading(false);
+    };
 
-    getSession()
+    getSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => subscription.unsubscribe();
+  }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-xl">Loading...</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -43,13 +45,9 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center mb-8">
           Next.js + Supabase App
         </h1>
-        
-        {user ? (
-          <UserProfile user={user} />
-        ) : (
-          <AuthForm />
-        )}
+
+        {user ? <UserProfile user={user} /> : <AuthForm />}
       </div>
     </main>
-  )
+  );
 }

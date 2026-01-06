@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "capcut-projects": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\monte\\AppData\\Local\\CapCut\\User Data\\Projects",
+        "C:\\Users\\monte\\Videos\\CapCut",
+        "C:\\Users\\monte\\Videos\\CapCut-Exports"
+      ],
+      "env": {},
+      "disabled": false
+    },
+    "capcut-content": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\monte\\Documents\\CapCut",
+        "C:\\Users\\monte\\Documents\\cert api token keys ids\\supabase project deployment\\rep-motivated-seller\\capcut-templates",
+        "C:\\Users\\monte\\Documents\\cert api token keys ids\\supabase project deployment\\rep-motivated-seller\\public\\videos"
+      ],
+      "env": {},
+      "disabled": false
+    },
+    "content-creation": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\monte\\Documents\\Content-Creation",
+        "C:\\Users\\monte\\Documents\\cert api token keys ids\\supabase project deployment\\rep-motivated-seller\\supabase\\functions\\admin-dashboard\\capcut-setup"
+      ],
+      "env": {},
+      "disabled": false
+    }
+  }
+}

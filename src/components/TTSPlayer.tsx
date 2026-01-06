@@ -1,35 +1,35 @@
-import React, { useState } from 'react'
-import { useTTS } from '@/hooks/useTTS'
-import { 
-  Play, 
-  Pause, 
-  Square, 
-  Volume2, 
-  Settings, 
+import React, { useState } from "react";
+import { useTTS } from "@/hooks/useTTS";
+import {
+  Play,
+  Pause,
+  Square,
+  Volume2,
+  Settings,
   Loader2,
-  AlertCircle 
-} from 'lucide-react'
+  AlertCircle,
+} from "lucide-react";
 
 interface TTSPlayerProps {
-  initialText?: string
-  voice_id?: string
-  speed?: 'x-slow' | 'slow' | 'medium' | 'fast' | 'x-fast'
-  pitch?: 'x-low' | 'low' | 'medium' | 'high' | 'x-high'
-  className?: string
+  initialText?: string;
+  voice_id?: string;
+  speed?: "x-slow" | "slow" | "medium" | "fast" | "x-fast";
+  pitch?: "x-low" | "low" | "medium" | "high" | "x-high";
+  className?: string;
 }
 
 export function TTSPlayer({
-  initialText = '',
-  voice_id = 'Joanna',
-  speed = 'medium',
-  pitch = 'medium',
-  className = '',
+  initialText = "",
+  voice_id = "Joanna",
+  speed = "medium",
+  pitch = "medium",
+  className = "",
 }: TTSPlayerProps) {
-  const [text, setText] = useState(initialText)
-  const [showSettings, setShowSettings] = useState(false)
-  const [currentVoice, setCurrentVoice] = useState(voice_id)
-  const [currentSpeed, setCurrentSpeed] = useState(speed)
-  const [currentPitch, setCurrentPitch] = useState(pitch)
+  const [text, setText] = useState(initialText);
+  const [showSettings, setShowSettings] = useState(false);
+  const [currentVoice, setCurrentVoice] = useState(voice_id);
+  const [currentSpeed, setCurrentSpeed] = useState(speed);
+  const [currentPitch, setCurrentPitch] = useState(pitch);
 
   const {
     synthesize,
@@ -47,31 +47,31 @@ export function TTSPlayer({
     voice_id: currentVoice,
     speed: currentSpeed,
     pitch: currentPitch,
-  })
+  });
 
   const handleSynthesize = async () => {
-    if (!text.trim()) return
-    clearError()
-    await synthesize(text)
-  }
+    if (!text.trim()) return;
+    clearError();
+    await synthesize(text);
+  };
 
   const handlePlayPause = () => {
-    if (!audioUrl) return
-    
+    if (!audioUrl) return;
+
     if (isPlaying) {
-      pauseAudio()
+      pauseAudio();
     } else {
       if (audioUrl) {
-        resumeAudio()
+        resumeAudio();
       }
     }
-  }
+  };
 
   const formatDuration = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${minutes}:${secs.toString().padStart(2, '0')}`
-  }
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className={`bg-white rounded-lg shadow-md p-6 space-y-4 ${className}`}>
@@ -195,7 +195,7 @@ export function TTSPlayer({
             ) : (
               <Volume2 className="w-4 h-4 mr-2" />
             )}
-            {isLoading ? 'Converting...' : 'Convert to Speech'}
+            {isLoading ? "Converting..." : "Convert to Speech"}
           </button>
 
           {/* Playback Controls */}
@@ -232,13 +232,8 @@ export function TTSPlayer({
 
       {/* Audio Element (hidden) */}
       {audioUrl && (
-        <audio
-          src={audioUrl}
-          className="hidden"
-          controls
-          preload="metadata"
-        />
+        <audio src={audioUrl} className="hidden" controls preload="metadata" />
       )}
     </div>
-  )
+  );
 }

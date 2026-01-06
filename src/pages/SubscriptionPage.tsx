@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Crown, Zap, Building2, ArrowRight, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import PricingCard from '../components/subscription/PricingCard';
-import { SUBSCRIPTION_PLANS } from '../config/subscriptionPlans';
-import { useSubscription } from '../hooks/useSubscription';
-import { useAuthStore } from '../store/authStore';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import {
+  Crown,
+  Zap,
+  Building2,
+  ArrowRight,
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import PricingCard from "../components/subscription/PricingCard";
+import { SUBSCRIPTION_PLANS } from "../config/subscriptionPlans";
+import { useSubscription } from "../hooks/useSubscription";
+import { useAuthStore } from "../store/authStore";
 
 const SubscriptionPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,53 +23,58 @@ const SubscriptionPage: React.FC = () => {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
-  const handleSelectPlan = async (tier: 'free' | 'entrepreneur' | 'professional' | 'enterprise') => {
+  const handleSelectPlan = async (
+    tier: "free" | "entrepreneur" | "professional" | "enterprise",
+  ) => {
     if (!user) {
-      navigate('/login', { state: { from: '/subscription' } });
+      navigate("/login", { state: { from: "/subscription" } });
       return;
     }
 
-    if (tier === 'free') {
-      navigate('/get-started');
+    if (tier === "free") {
+      navigate("/get-started");
       return;
     }
 
     setSelectedTier(tier);
-    
+
     // In production, integrate with Stripe or payment processor
     try {
       await upgradeSubscription(tier);
       alert(`Successfully upgraded to ${SUBSCRIPTION_PLANS[tier].name} plan!`);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Upgrade failed:', error);
-      alert('Upgrade failed. Please try again.');
+      console.error("Upgrade failed:", error);
+      alert("Upgrade failed. Please try again.");
     }
   };
 
   const benefits = [
     {
       icon: <Zap className="w-8 h-8 text-primary-500" />,
-      title: 'Powerful APIs',
-      description: 'Access comprehensive property data and foreclosure information'
+      title: "Powerful APIs",
+      description:
+        "Access comprehensive property data and foreclosure information",
     },
     {
       icon: <Crown className="w-8 h-8 text-primary-500" />,
-      title: 'Premium Tools',
-      description: 'Deal analyzer, direct mail campaigns, and call center integration'
+      title: "Premium Tools",
+      description:
+        "Deal analyzer, direct mail campaigns, and call center integration",
     },
     {
       icon: <Building2 className="w-8 h-8 text-primary-500" />,
-      title: 'Enterprise Ready',
-      description: 'White-label solutions and custom integrations for your business'
-    }
+      title: "Enterprise Ready",
+      description:
+        "White-label solutions and custom integrations for your business",
+    },
   ];
 
   if (loading && user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading subscription plans...</p>
         </div>
       </div>
@@ -85,7 +98,8 @@ const SubscriptionPage: React.FC = () => {
               Choose Your Plan
             </h1>
             <p className="text-xl md:text-2xl text-primary-100 max-w-3xl mx-auto mb-8">
-              Access powerful foreclosure tools and resources to grow your real estate investment business
+              Access powerful foreclosure tools and resources to grow your real
+              estate investment business
             </p>
             {user && subscription && (
               <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3">
@@ -116,9 +130,7 @@ const SubscriptionPage: React.FC = () => {
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {benefit.title}
               </h3>
-              <p className="text-gray-600">
-                {benefit.description}
-              </p>
+              <p className="text-gray-600">{benefit.description}</p>
             </motion.div>
           ))}
         </div>
@@ -132,16 +144,16 @@ const SubscriptionPage: React.FC = () => {
             features={SUBSCRIPTION_PLANS.free.features}
             apiCredits={SUBSCRIPTION_PLANS.free.apiCredits}
             currentTier={subscription?.tier}
-            onSelectPlan={() => handleSelectPlan('free')}
+            onSelectPlan={() => handleSelectPlan("free")}
           />
           <PricingCard
-            tier="professional"
+            tier="entrepreneur"
             name={SUBSCRIPTION_PLANS.entrepreneur.name}
             price={SUBSCRIPTION_PLANS.entrepreneur.price}
             features={SUBSCRIPTION_PLANS.entrepreneur.features}
             apiCredits={SUBSCRIPTION_PLANS.entrepreneur.apiCredits}
             currentTier={subscription?.tier}
-            onSelectPlan={() => handleSelectPlan('entrepreneur')}
+            onSelectPlan={() => handleSelectPlan("entrepreneur")}
             popular={true}
           />
           <PricingCard
@@ -151,7 +163,7 @@ const SubscriptionPage: React.FC = () => {
             features={SUBSCRIPTION_PLANS.professional.features}
             apiCredits={SUBSCRIPTION_PLANS.professional.apiCredits}
             currentTier={subscription?.tier}
-            onSelectPlan={() => handleSelectPlan('professional')}
+            onSelectPlan={() => handleSelectPlan("professional")}
           />
           <PricingCard
             tier="enterprise"
@@ -160,7 +172,7 @@ const SubscriptionPage: React.FC = () => {
             features={SUBSCRIPTION_PLANS.enterprise.features}
             apiCredits={SUBSCRIPTION_PLANS.enterprise.apiCredits}
             currentTier={subscription?.tier}
-            onSelectPlan={() => handleSelectPlan('enterprise')}
+            onSelectPlan={() => handleSelectPlan("enterprise")}
           />
         </div>
 
@@ -176,14 +188,15 @@ const SubscriptionPage: React.FC = () => {
               Frequently Asked Questions
             </h2>
             <p className="text-lg text-gray-600">
-              Everything you need to know about our membership tiers and policies
+              Everything you need to know about our membership tiers and
+              policies
             </p>
           </motion.div>
 
           <div className="space-y-4">
             {[
               {
-                question: 'What are API credits and how do they work?',
+                question: "What are API credits and how do they work?",
                 answer: `API credits are the currency used to access our platform's features. Each time you use a service like property data lookup, deal analysis, direct mail campaigns, or CRM integrations, it consumes a certain number of credits. Different actions consume different amounts:
 
 • Basic property search: 1-2 credits
@@ -192,10 +205,10 @@ const SubscriptionPage: React.FC = () => {
 • Direct mail campaign send: 10-20 credits per recipient
 • CRM integration sync: 5 credits per contact
 
-Your credits reset at the beginning of each billing cycle (monthly).`
+Your credits reset at the beginning of each billing cycle (monthly).`,
               },
               {
-                question: 'What are the differences between membership tiers?',
+                question: "What are the differences between membership tiers?",
                 answer: `We offer 4 membership tiers designed for different needs:
 
 🆓 FREE ($0/month - 50 API credits)
@@ -208,10 +221,10 @@ Great for individual investors. Includes all Free features plus advanced propert
 For serious real estate professionals. Includes all Entrepreneur features plus call center tools, unlimited direct mail campaigns, CRM integration, custom branding, and team collaboration (up to 5 users). Up to 1,000 properties.
 
 🏢 ENTERPRISE ($299/month - Unlimited API credits)
-Complete solution for large organizations. Includes everything plus white-label solution, custom integrations, dedicated account manager, 24/7 priority support, unlimited team members, custom training, and SLA guarantee.`
+Complete solution for large organizations. Includes everything plus white-label solution, custom integrations, dedicated account manager, priority support (1-2 business day response), unlimited team members, custom training, and SLA guarantee.`,
               },
               {
-                question: 'What happens when I run out of API credits?',
+                question: "What happens when I run out of API credits?",
                 answer: `When you exhaust your monthly API credits, you have several options:
 
 1. Wait for your credits to reset at the beginning of your next billing cycle
@@ -220,10 +233,10 @@ Complete solution for large organizations. Includes everything plus white-label 
 
 Your existing data and saved searches remain accessible even with 0 credits. You just won't be able to perform new credit-consuming actions until you get more credits.
 
-We'll send you email notifications at 80% and 95% credit usage so you're never caught off guard.`
+We'll send you email notifications at 80% and 95% credit usage so you're never caught off guard.`,
               },
               {
-                question: 'Can I upgrade or downgrade my plan at any time?',
+                question: "Can I upgrade or downgrade my plan at any time?",
                 answer: `Yes! You have complete flexibility:
 
 UPGRADES: Take effect immediately. You'll be charged the prorated difference for the remainder of your billing cycle, and your new credit limit applies right away.
@@ -232,10 +245,10 @@ DOWNGRADES: Take effect at the end of your current billing period. You'll contin
 
 NO PENALTIES: There are no fees for changing your plan. You can switch as often as needed to match your business needs.
 
-To change your plan, go to Account → Subscription & Billing and select your new tier.`
+To change your plan, go to Account → Subscription & Billing and select your new tier.`,
               },
               {
-                question: 'What payment methods do you accept?',
+                question: "What payment methods do you accept?",
                 answer: `We accept multiple secure payment methods:
 
 💳 Credit/Debit Cards: Visa, Mastercard, American Express, Discover
@@ -243,10 +256,10 @@ To change your plan, go to Account → Subscription & Billing and select your ne
 💰 Wire Transfers: For Enterprise plans with annual billing
 🔒 Cryptocurrency: Bitcoin and Ethereum accepted for annual Enterprise plans
 
-All payments are processed securely through Stripe, and we never store your payment information on our servers. We're PCI DSS compliant for your security.`
+All payments are processed securely through Stripe, and we never store your payment information on our servers. We're PCI DSS compliant for your security.`,
               },
               {
-                question: 'Is there a free trial available?',
+                question: "Is there a free trial available?",
                 answer: `Yes! Our Free tier is essentially a permanent trial that never expires. You can:
 
 • Start with the Free plan (50 API credits/month) to explore the platform
@@ -254,10 +267,10 @@ All payments are processed securely through Stripe, and we never store your paym
 • Try basic property searches and calculators
 • Experience the platform with no credit card required
 
-When you're ready for more features and credits, you can upgrade to Entrepreneur, Professional, or Enterprise at any time. We also offer a 30-day money-back guarantee on all paid plans if you're not satisfied.`
+When you're ready for more features and credits, you can upgrade to Entrepreneur, Professional, or Enterprise at any time. We also offer a 30-day money-back guarantee on all paid plans if you're not satisfied.`,
               },
               {
-                question: 'What is your refund and cancellation policy?',
+                question: "What is your refund and cancellation policy?",
                 answer: `We want you to be completely satisfied:
 
 30-DAY MONEY-BACK GUARANTEE: If you're not happy with a paid plan within the first 30 days, we'll refund 100% of your payment - no questions asked.
@@ -266,10 +279,10 @@ CANCELLATION: You can cancel anytime from your account dashboard. Your subscript
 
 NO LONG-TERM CONTRACTS: All plans are month-to-month. Enterprise plans can opt for annual billing for a discount, but month-to-month is always available.
 
-UNUSED CREDITS: Credits don't roll over to the next month or carry over after cancellation, but you'll keep access to all your saved data and exports.`
+UNUSED CREDITS: Credits don't roll over to the next month or carry over after cancellation, but you'll keep access to all your saved data and exports.`,
               },
               {
-                question: 'Do unused API credits roll over to the next month?',
+                question: "Do unused API credits roll over to the next month?",
                 answer: `API credits are reset monthly and do not roll over. This keeps pricing fair and predictable. However:
 
 • Your credit allocation resets on your billing date each month
@@ -277,10 +290,10 @@ UNUSED CREDITS: Credits don't roll over to the next month or carry over after ca
 • If you consistently have leftover credits, consider downgrading to save money
 • If you frequently run out of credits, upgrading gives you more credits per dollar
 
-We provide detailed usage analytics in your dashboard so you can choose the tier that matches your actual usage patterns.`
+We provide detailed usage analytics in your dashboard so you can choose the tier that matches your actual usage patterns.`,
               },
               {
-                question: 'Can I add team members to my account?',
+                question: "Can I add team members to my account?",
                 answer: `Team collaboration is available on Professional and Enterprise plans:
 
 PROFESSIONAL PLAN: Up to 5 team members included
@@ -296,37 +309,37 @@ ENTERPRISE PLAN: Unlimited team members
 • Dedicated account manager for team training
 • Single Sign-On (SSO) available
 
-Free and Entrepreneur tiers are single-user only. Upgrade to Professional to start collaborating with your team.`
+Free and Entrepreneur tiers are single-user only. Upgrade to Professional to start collaborating with your team.`,
               },
               {
-                question: 'What support do I get with my plan?',
+                question: "What support do I get with my plan?",
                 answer: `Support levels vary by tier:
 
 🆓 FREE TIER:
-• Email support (48-hour response time)
+• Email support (7 business day response time)
 • Knowledge base and documentation
 • Community forum access
 
 💼 ENTREPRENEUR TIER:
-• Email & chat support (24-hour response time)
+• Email & chat support (7 business day response time)
 • Priority email support
 • Video tutorials and guides
 
 ⚡ PROFESSIONAL TIER:
-• Phone & priority support (4-hour response time)
+• Phone & priority support (3-5 business day response time)
 • Dedicated support specialist
 • Screen sharing for troubleshooting
 • Quarterly business reviews
 
 🏢 ENTERPRISE TIER:
-• 24/7 priority support (1-hour response time)
+• Priority support (1-2 business day response time)
 • Dedicated account manager
 • Direct phone line and Slack channel
 • Custom training sessions
-• SLA guarantee with uptime commitment`
+• SLA guarantee with uptime commitment`,
               },
               {
-                question: 'Are there any hidden fees or additional costs?',
+                question: "Are there any hidden fees or additional costs?",
                 answer: `No hidden fees! Your monthly subscription includes everything advertised. Here's what's included:
 
 INCLUDED IN ALL PLANS:
@@ -343,10 +356,10 @@ OPTIONAL ADD-ONS (NOT REQUIRED):
 • Custom integrations (Enterprise)
 • Premium templates (all tiers)
 
-We believe in transparent pricing. The price you see is the price you pay. No setup fees, no contract minimums, no surprise charges.`
+We believe in transparent pricing. The price you see is the price you pay. No setup fees, no contract minimums, no surprise charges.`,
               },
               {
-                question: 'How secure is my data and payment information?',
+                question: "How secure is my data and payment information?",
                 answer: `Security is our top priority:
 
 🔐 DATA SECURITY:
@@ -368,8 +381,8 @@ We believe in transparent pricing. The price you see is the price you pay. No se
 • Role-based access controls
 • Audit logs for all activities
 
-Your data is hosted on secure AWS servers with multiple redundancies and 99.9% uptime guarantee.`
-              }
+Your data is hosted on secure AWS servers with multiple redundancies and 99.9% uptime guarantee.`,
+              },
             ].map((faq, index) => (
               <motion.div
                 key={index}
@@ -379,14 +392,16 @@ Your data is hosted on secure AWS servers with multiple redundancies and 99.9% u
                 className="bg-white rounded-lg shadow-md overflow-hidden"
               >
                 <button
-                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  onClick={() =>
+                    setOpenFaqIndex(openFaqIndex === index ? null : index)
+                  }
                   className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                 >
                   <h3 className="text-lg font-semibold text-gray-900 pr-4">
                     {faq.question}
                   </h3>
                   {openFaqIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-primary-600 flex-shrink-0" />
+                    <ChevronUp className="w-5 h-5 text-blue-600 flex-shrink-0" />
                   ) : (
                     <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
                   )}
@@ -395,7 +410,7 @@ Your data is hosted on secure AWS servers with multiple redundancies and 99.9% u
                   {openFaqIndex === index && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
+                      animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
@@ -421,12 +436,13 @@ Your data is hosted on secure AWS servers with multiple redundancies and 99.9% u
               Still have questions?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Our team is here to help! Contact us directly for personalized assistance with choosing the right plan for your business.
+              Our team is here to help! Contact us directly for personalized
+              assistance with choosing the right plan for your business.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="mailto:admin@repmotivatedseller.shoprealestatespace.org"
-                className="inline-flex items-center justify-center bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                className="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
                 📧 Email Support
               </a>
@@ -437,8 +453,8 @@ Your data is hosted on secure AWS servers with multiple redundancies and 99.9% u
                 🚨 Urgent Inquiry
               </a>
               <button
-                onClick={() => navigate('/help')}
-                className="inline-flex items-center justify-center bg-white text-primary-600 px-6 py-3 rounded-lg font-semibold border-2 border-primary-600 hover:bg-primary-50 transition-colors"
+                onClick={() => navigate("/help")}
+                className="inline-flex items-center justify-center bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold border-2 border-blue-600 hover:bg-blue-50 transition-colors"
               >
                 📚 Visit Help Center
               </button>
@@ -458,13 +474,14 @@ Your data is hosted on secure AWS servers with multiple redundancies and 99.9% u
               Ready to Get Started?
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Join thousands of real estate investors who are growing their business with RepMotivatedSeller
+              Join thousands of real estate investors who are growing their
+              business with RepMotivatedSeller
             </p>
             <button
-              onClick={() => navigate(user ? '/dashboard' : '/signup')}
-              className="inline-flex items-center bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              onClick={() => navigate(user ? "/dashboard" : "/signup")}
+              className="inline-flex items-center bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              {user ? 'Go to Dashboard' : 'Create Free Account'}
+              {user ? "Go to Dashboard" : "Create Free Account"}
               <ArrowRight className="ml-2 w-5 h-5" />
             </button>
           </motion.div>
@@ -477,7 +494,7 @@ Your data is hosted on secure AWS servers with multiple redundancies and 99.9% u
 export default SubscriptionPage;
 
 interface PricingCardProps {
-  tier: 'free' | 'professional' | 'enterprise';
+  tier: "free" | "professional" | "enterprise";
   name: string;
   price: number;
   features: readonly string[];
@@ -486,3 +503,8 @@ interface PricingCardProps {
   onSelectPlan: () => void;
   popular?: boolean;
 }
+
+
+
+
+

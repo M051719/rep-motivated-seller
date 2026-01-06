@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface SMSConsentCheckboxProps {
   phoneNumber: string;
@@ -9,7 +9,7 @@ interface SMSConsentCheckboxProps {
 export default function SMSConsentCheckbox({
   phoneNumber,
   onConsentChange,
-  defaultChecked = false
+  defaultChecked = false,
 }: SMSConsentCheckboxProps) {
   const [consented, setConsented] = useState(defaultChecked);
 
@@ -35,8 +35,9 @@ export default function SMSConsentCheckbox({
               Optional: Receive SMS updates about your case
             </span>
             <span className="text-sm text-gray-600 block mt-1">
-              By checking this box, you consent to receive SMS messages from RepMotivatedSeller
-              at the phone number you provided ({phoneNumber || 'your phone number'}) regarding:
+              By checking this box, you consent to receive SMS messages from
+              RepMotivatedSeller at the phone number you provided (
+              {phoneNumber || "your phone number"}) regarding:
             </span>
           </label>
 
@@ -49,17 +50,20 @@ export default function SMSConsentCheckbox({
 
           <div className="mt-3 text-xs text-gray-500 space-y-1">
             <p>
-              <strong>Message frequency:</strong> Approximately 2-4 messages per month. Message and data rates may apply.
+              <strong>Message frequency:</strong> Approximately 2-4 messages per
+              month. Message and data rates may apply.
             </p>
             <p>
-              <strong>Opt-out anytime:</strong> Reply <strong>STOP</strong> to any message to unsubscribe.
-              Reply <strong>HELP</strong> for assistance.
+              <strong>Opt-out anytime:</strong> Reply <strong>STOP</strong> to
+              any message to unsubscribe. Reply <strong>HELP</strong> for
+              assistance.
             </p>
             <p>
-              <strong>Not required:</strong> This is optional. You can still receive our full services without SMS notifications.
+              <strong>Not required:</strong> This is optional. You can still
+              receive our full services without SMS notifications.
             </p>
             <p className="mt-2">
-              For more information, see our{' '}
+              For more information, see our{" "}
               <a
                 href="/privacy-policy"
                 target="_blank"
@@ -67,8 +71,8 @@ export default function SMSConsentCheckbox({
                 className="text-blue-600 hover:underline"
               >
                 Privacy Policy
-              </a>
-              {' '}and{' '}
+              </a>{" "}
+              and{" "}
               <a
                 href="/terms-of-service"
                 target="_blank"
@@ -76,7 +80,8 @@ export default function SMSConsentCheckbox({
                 className="text-blue-600 hover:underline"
               >
                 Terms of Service
-              </a>.
+              </a>
+              .
             </p>
           </div>
         </div>

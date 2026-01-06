@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 const SecurityHeaders: React.FC = () => {
   useEffect(() => {
@@ -15,52 +15,62 @@ const SecurityHeaders: React.FC = () => {
         "frame-src 'self' https://js.stripe.com https://www.paypal.com https://assets.calendly.com",
         "object-src 'none'",
         "base-uri 'self'",
-        "form-action 'self'"
-      ].join('; ')
+        "form-action 'self'",
+      ].join("; ");
 
       // Remove existing CSP meta tag if present
-      const existingCSP = document.querySelector('meta[http-equiv="Content-Security-Policy"]')
+      const existingCSP = document.querySelector(
+        'meta[http-equiv="Content-Security-Policy"]',
+      );
       if (existingCSP) {
-        existingCSP.remove()
+        existingCSP.remove();
       }
 
       // Add CSP meta tag
-      const cspMeta = document.createElement('meta')
-      cspMeta.httpEquiv = 'Content-Security-Policy'
-      cspMeta.content = csp
-      document.head.appendChild(cspMeta)
+      const cspMeta = document.createElement("meta");
+      cspMeta.httpEquiv = "Content-Security-Policy";
+      cspMeta.content = csp;
+      document.head.appendChild(cspMeta);
 
       // Add other security meta tags
       const securityMetas = [
-        { name: 'referrer', content: 'strict-origin-when-cross-origin' },
-        { httpEquiv: 'X-Content-Type-Options', content: 'nosniff' },
-        { httpEquiv: 'X-Frame-Options', content: 'DENY' },
-        { httpEquiv: 'X-XSS-Protection', content: '1; mode=block' },
-        { httpEquiv: 'Strict-Transport-Security', content: 'max-age=31536000; includeSubDomains' },
-        { httpEquiv: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(), payment=()' }
-      ]
+        { name: "referrer", content: "strict-origin-when-cross-origin" },
+        { httpEquiv: "X-Content-Type-Options", content: "nosniff" },
+        { httpEquiv: "X-Frame-Options", content: "DENY" },
+        { httpEquiv: "X-XSS-Protection", content: "1; mode=block" },
+        {
+          httpEquiv: "Strict-Transport-Security",
+          content: "max-age=31536000; includeSubDomains",
+        },
+        {
+          httpEquiv: "Permissions-Policy",
+          content: "camera=(), microphone=(), geolocation=(), payment=()",
+        },
+      ];
 
-      securityMetas.forEach(meta => {
-        const existingMeta = document.querySelector(`meta[${meta.name ? 'name' : 'http-equiv'}="${meta.name || meta.httpEquiv}"]`)
+      securityMetas.forEach((meta) => {
+        const existingMeta = document.querySelector(
+          `meta[${meta.name ? "name" : "http-equiv"}="${meta.name || meta.httpEquiv}"]`,
+        );
         if (existingMeta) {
-          existingMeta.remove()
+          existingMeta.remove();
         }
 
-        const metaTag = document.createElement('meta')
+        const metaTag = document.createElement("meta");
         if (meta.name) {
-          metaTag.name = meta.name
+          metaTag.name = meta.name;
         } else {
-          metaTag.httpEquiv = meta.httpEquiv!
+          metaTag.httpEquiv = meta.httpEquiv!;
         }
-        metaTag.content = meta.content
-        document.head.appendChild(metaTag)
-      })
-    }
+        metaTag.content = meta.content;
+        document.head.appendChild(metaTag);
+      });
+    };
 
-    setSecurityMeta()
-  }, [])
+    setSecurityMeta();
+  }, []);
 
-  return null // This component doesn't render anything
-}
+  return null; // This component doesn't render anything
+};
 
-export default SecurityHeaders
+export default SecurityHeaders;

@@ -1,0 +1,28 @@
+# Stripe Product and Price IDs for RepMotivatedSeller
+# Generated: December 12, 2025
+
+# ====================================================================
+# BASIC MEMBERSHIP - $29/month
+# ====================================================================
+STRIPE_BASIC_PRODUCT_ID=prod_Taf1CDgrxxMdn7
+STRIPE_BASIC_PRICE_ID=price_1SdTiFDRW9Q4RSm0EzCBBI1e
+
+# ====================================================================
+# PREMIUM MEMBERSHIP - $49/month
+# ====================================================================
+STRIPE_PREMIUM_PRODUCT_ID=prod_Taf2mOQMtWOuh7
+STRIPE_PREMIUM_PRICE_ID=price_1SdTifDRW9Q4RSm08vtIEUvJ
+
+# ====================================================================
+# VIP MEMBERSHIP - $97/month
+# ====================================================================
+STRIPE_VIP_PRODUCT_ID=prod_Taf2IjaU5DBsTu
+STRIPE_VIP_PRICE_ID=price_1SdTj3DRW9Q4RSm0hq9WyGSM
+
+# ====================================================================
+# INSTRUCTIONS
+# ====================================================================
+# 1. Copy these values to your .env file
+# 2. Use the PRICE IDs in your frontend payment components
+# 3. Test with Stripe test cards (see docs/QUICK-REFERENCE.md)
+# 4. Set up webhooks next (see docs/stripe-integration-guide.md)

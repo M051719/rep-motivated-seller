@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { Heart, Download, FileText, Trash2 } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { Heart, Download, FileText, Trash2 } from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 interface Favorite {
   id: string;
@@ -28,8 +28,10 @@ const UserFavoritesPage: React.FC = () => {
 
   const checkAuthAndFetchFavorites = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         setIsAuthenticated(false);
         setLoading(false);
@@ -39,7 +41,7 @@ const UserFavoritesPage: React.FC = () => {
       setIsAuthenticated(true);
       await fetchFavorites();
     } catch (error) {
-      console.error('Error checking auth:', error);
+      console.error("Error checking auth:", error);
       setLoading(false);
     }
   };
@@ -47,13 +49,13 @@ const UserFavoritesPage: React.FC = () => {
   const fetchFavorites = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase.rpc('get_user_favorites');
+      const { data, error } = await supabase.rpc("get_user_favorites");
 
       if (error) throw error;
       setFavorites(data || []);
     } catch (error: any) {
-      console.error('Error fetching favorites:', error);
-      toast.error('Failed to load favorites');
+      console.error("Error fetching favorites:", error);
+      toast.error("Failed to load favorites");
     } finally {
       setLoading(false);
     }
@@ -61,43 +63,47 @@ const UserFavoritesPage: React.FC = () => {
 
   const handleRemoveFavorite = async (templateId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       const { error } = await supabase
-        .from('user_template_favorites')
+        .from("user_template_favorites")
         .delete()
-        .eq('user_id', user.id)
-        .eq('template_id', templateId);
+        .eq("user_id", user.id)
+        .eq("template_id", templateId);
 
       if (error) throw error;
 
-      setFavorites(prev => prev.filter(f => f.id !== templateId));
-      toast.success('Removed from favorites');
+      setFavorites((prev) => prev.filter((f) => f.id !== templateId));
+      toast.success("Removed from favorites");
     } catch (error: any) {
-      console.error('Error removing favorite:', error);
-      toast.error('Failed to remove favorite');
+      console.error("Error removing favorite:", error);
+      toast.error("Failed to remove favorite");
     }
   };
 
   const handleDownload = async (favorite: Favorite) => {
     try {
-      window.open(favorite.file_url, '_blank');
-      
-      await supabase.rpc('increment_template_download', {
-        template_id: favorite.id
+      window.open(favorite.file_url, "_blank");
+
+      await supabase.rpc("increment_template_download", {
+        template_id: favorite.id,
       });
 
       // Update local state
-      setFavorites(prev => prev.map(f =>
-        f.id === favorite.id
-          ? { ...f, download_count: f.download_count + 1 }
-          : f
-      ));
+      setFavorites((prev) =>
+        prev.map((f) =>
+          f.id === favorite.id
+            ? { ...f, download_count: f.download_count + 1 }
+            : f,
+        ),
+      );
 
-      toast.success('Opening document...');
+      toast.success("Opening document...");
     } catch (error) {
-      console.error('Error downloading:', error);
+      console.error("Error downloading:", error);
     }
   };
 
@@ -135,9 +141,7 @@ const UserFavoritesPage: React.FC = () => {
         <div className="text-center mb-12 mt-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Heart className="w-12 h-12 text-red-500 fill-red-500" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              My Favorites
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900">My Favorites</h1>
           </div>
           <p className="text-xl text-gray-600">
             Your saved templates and forms
@@ -176,7 +180,7 @@ const UserFavoritesPage: React.FC = () => {
         ) : (
           <>
             <div className="mb-6 text-gray-600">
-              {favorites.length} favorite{favorites.length !== 1 ? 's' : ''}
+              {favorites.length} favorite{favorites.length !== 1 ? "s" : ""}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -219,7 +223,10 @@ const UserFavoritesPage: React.FC = () => {
                     {/* Stats */}
                     <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
                       <span>{favorite.download_count} downloads</span>
-                      <span>Saved {new Date(favorite.favorited_at).toLocaleDateString()}</span>
+                      <span>
+                        Saved{" "}
+                        {new Date(favorite.favorited_at).toLocaleDateString()}
+                      </span>
                     </div>
 
                     {/* Actions */}

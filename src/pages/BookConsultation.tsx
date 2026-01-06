@@ -1,251 +1,218 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import CalendlyWidget from '../components/booking/CalendlyWidget'
-import { supabase } from '../lib/supabase'
-import toast from 'react-hot-toast'
-import { BackButton } from '../components/ui/BackButton'
+/**
+ * Book Consultation Page
+ * Allows users to schedule foreclosure prevention consultations via Calendly
+ */
 
-const BookConsultation: React.FC = () => {
-  const [user, setUser] = useState<any>(null)
-  const [selectedService, setSelectedService] = useState<string>('foreclosure-consultation')
+import React from 'react';
+import CalendlyWidget, { CalendlyFeatures, ConsultationTypes } from '../components/calendly/CalendlyWidget';
+import { Calendar, Shield, Users, MessageCircle } from 'lucide-react';
 
-  useEffect(() => {
-    // Get current user for prefill
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-    })
-  }, [])
-
-  const consultationTypes = [
-    {
-      id: 'foreclosure-consultation',
-      title: '🆘 Foreclosure Prevention Consultation',
-      description: 'Get immediate help to stop foreclosure proceedings',
-      duration: '60 minutes',
-      price: 'FREE',
-      calendlyUrl: 'your-username/foreclosure-consultation',
-      features: [
-        'Review your current situation',
-        'Explore all available options',
-        'Create an action plan',
-        'Connect with professionals',
-        'Follow-up support'
-      ]
-    },
-    {
-      id: 'investment-consultation',
-      title: '💰 Real Estate Investment Consultation',
-      description: 'Learn about real estate investment opportunities',
-      duration: '45 minutes',
-      price: '$97',
-      calendlyUrl: 'your-username/investment-consultation',
-      features: [
-        'Portfolio assessment',
-        'Investment strategy planning',
-        'Market analysis',
-        'Risk evaluation',
-        'Action steps'
-      ]
-    },
-    {
-      id: 'credit-repair-consultation',
-      title: '📊 Credit Repair Strategy Session',
-      description: 'Personalized credit improvement plan',
-      duration: '30 minutes',
-      price: '$47',
-      calendlyUrl: 'your-username/credit-repair-consultation',
-      features: [
-        'Credit report review',
-        'Dispute strategy',
-        'Score improvement plan',
-        'Timeline expectations',
-        'Resources and tools'
-      ]
-    }
-  ]
-
-  const selectedConsultation = consultationTypes.find(c => c.id === selectedService)
-
-  const handleEventScheduled = (event: any) => {
-    toast.success('🎉 Consultation scheduled successfully!')
-    
-    // Track the booking
-    if (user) {
-      supabase.from('consultation_bookings').insert({
-        user_id: user.id,
-        consultation_type: selectedService,
-        calendly_event_uri: event.uri,
-        scheduled_at: event.start_time,
-        invitee_email: event.invitee.email
-      })
-    }
-  }
-
+export default function BookConsultation() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <BackButton />
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
-      >
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          📅 Book Your Free Consultation
-        </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Get personalized help from our experts. Choose the consultation that best fits your needs.
-        </p>
-      </motion.div>
-
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Service Selection */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Choose Your Consultation
-            </h2>
-            
-            <div className="space-y-4">
-              {consultationTypes.map((consultation) => (
-                <motion.div
-                  key={consultation.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${
-                    selectedService === consultation.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
-                  onClick={() => setSelectedService(consultation.id)}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-900 text-sm">
-                      {consultation.title}
-                    </h3>
-                    <span className={`text-sm font-bold ${
-                      consultation.price === 'FREE' ? 'text-green-600' : 'text-blue-600'
-                    }`}>
-                      {consultation.price}
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-600 text-xs mb-3">
-                    {consultation.description}
-                  </p>
-                  
-                  <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span>⏱️ {consultation.duration}</span>
-                    <span className={`px-2 py-1 rounded ${
-                      selectedService === consultation.id 
-                        ? 'bg-blue-500 text-white' 
-                        : 'bg-gray-100'
-                    }`}>
-                      Select
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Hero Section */}
+      <div className="bg-blue-600 text-white py-16 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+            Schedule Your Free Consultation
+          </h1>
+          <p className="text-xl md:text-2xl opacity-90 mb-8">
+            Get expert guidance on foreclosure prevention and credit repair
+          </p>
+          <div className="flex flex-wrap justify-center gap-8 text-left">
+            <div className="flex items-start">
+              <Shield className="h-6 w-6 mr-2 mt-1" />
+              <div>
+                <div className="font-semibold">100% Confidential</div>
+                <div className="text-sm opacity-80">Your information is secure</div>
+              </div>
             </div>
-
-            {/* Selected Service Details */}
-            {selectedConsultation && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-8 p-4 bg-gray-50 rounded-lg"
-              >
-                <h3 className="font-semibold text-gray-900 mb-3">
-                  What's Included:
-                </h3>
-                <ul className="space-y-2">
-                  {selectedConsultation.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-sm text-gray-600">
-                      <span className="text-green-500 mr-2">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            )}
-          </div>
-        </div>
-
-        {/* Calendly Widget */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            {selectedConsultation && (
-              <CalendlyWidget
-                url={`https://calendly.com/${selectedConsultation.calendlyUrl}`}
-                prefill={{
-                  name: user?.user_metadata?.full_name || '',
-                  email: user?.email || ''
-                }}
-                utm={{
-                  source: 'repmotivatedseller',
-                  medium: 'website',
-                  campaign: 'consultation-booking'
-                }}
-                height={700}
-                onEventScheduled={handleEventScheduled}
-                onDateAndTimeSelected={(event) => {
-                  console.log('Date and time selected:', event)
-                }}
-              />
-            )}
+            <div className="flex items-start">
+              <Users className="h-6 w-6 mr-2 mt-1" />
+              <div>
+                <div className="font-semibold">Expert Advisors</div>
+                <div className="text-sm opacity-80">15+ years experience</div>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <MessageCircle className="h-6 w-6 mr-2 mt-1" />
+              <div>
+                <div className="font-semibold">Real Solutions</div>
+                <div className="text-sm opacity-80">Actionable strategies</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Additional Information */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="mt-16 bg-blue-50 rounded-lg p-8"
-      >
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold text-blue-900 mb-4">
-              📞 What to Expect
-            </h3>
-            <ul className="space-y-2 text-blue-800">
-              <li>• Personalized consultation with our experts</li>
-              <li>• Review of your specific situation</li>
-              <li>• Actionable recommendations</li>
-              <li>• Follow-up resources and support</li>
-              <li>• No high-pressure sales tactics</li>
-            </ul>
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Features */}
+        <CalendlyFeatures />
+
+        {/* Consultation Types */}
+        <ConsultationTypes />
+
+        {/* Calendly Widget */}
+        <div className="bg-white rounded-xl shadow-2xl p-8 mb-12">
+          <div className="text-center mb-8">
+            <Calendar className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Choose Your Available Time
+            </h2>
+            <p className="text-gray-600">
+              Select a time that works best for you - all times shown in your local timezone
+            </p>
           </div>
           
-          <div>
-            <h3 className="text-lg font-semibold text-blue-900 mb-4">
-              🛡️ Privacy & Security
-            </h3>
-            <ul className="space-y-2 text-blue-800">
-              <li>• All consultations are completely confidential</li>
-              <li>• Secure video conferencing platform</li>
-              <li>• Your information is never shared</li>
-              <li>• GDPR and privacy law compliant</li>
-              <li>• Cancel or reschedule anytime</li>
-            </ul>
+          <CalendlyWidget type="inline" />
+        </div>
+
+        {/* What to Expect */}
+        <div className="bg-blue-50 rounded-xl p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            What to Expect
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="text-blue-600 font-bold text-lg mb-3">
+                1. Before Your Call
+              </div>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Confirmation email with Zoom link</li>
+                <li>• Calendar invite added automatically</li>
+                <li>• Preparation checklist sent</li>
+                <li>• Document upload instructions</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="text-blue-600 font-bold text-lg mb-3">
+                2. During Your Call
+              </div>
+              <ul className="space-y-2 text-gray-700">
+                <li>• One-on-one video consultation</li>
+                <li>• Screen sharing for document review</li>
+                <li>• Personalized recommendations</li>
+                <li>• Q&A with expert advisor</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="text-blue-600 font-bold text-lg mb-3">
+                3. After Your Call
+              </div>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Written action plan summary</li>
+                <li>• Resource links and templates</li>
+                <li>• Follow-up email support</li>
+                <li>• Next steps checklist</li>
+              </ul>
+            </div>
           </div>
         </div>
-        
-        <div className="text-center mt-8">
-          <p className="text-blue-700 mb-4">
-            Need immediate assistance? Call us directly:
+
+        {/* Preparation Tips */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            How to Prepare for Your Consultation
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Documents to Have Ready:</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Recent mortgage statements</li>
+                <li>• Notice of default or foreclosure notice (if received)</li>
+                <li>• Recent pay stubs or income documentation</li>
+                <li>• Monthly expense summary</li>
+                <li>• Credit reports (if available)</li>
+                <li>• Property tax statements</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Questions to Consider:</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• What is your current financial situation?</li>
+                <li>• How many months behind are you?</li>
+                <li>• Have you contacted your lender?</li>
+                <li>• What are your goals (keep home, sell, etc.)?</li>
+                <li>• What is your timeline?</li>
+                <li>• Do you have any other debts?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="bg-gray-50 rounded-xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Is the initial consultation really free?
+              </h3>
+              <p className="text-gray-700">
+                Yes! The 15-minute quick assessment is completely free with no obligation. 
+                We want to understand your situation and see if we can help before you commit.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                What happens if I need to reschedule?
+              </h3>
+              <p className="text-gray-700">
+                You can reschedule or cancel your appointment up to 24 hours in advance 
+                through the confirmation email. We understand emergencies happen.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Do I need to pay before the consultation?
+              </h3>
+              <p className="text-gray-700">
+                Payment is required at booking for 30-minute and 60-minute consultations. 
+                The 15-minute assessment is free. Paid consultations are fully refundable 
+                if cancelled 24+ hours in advance.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Will my information be kept confidential?
+              </h3>
+              <p className="text-gray-700">
+                Absolutely. All consultations are completely confidential. We comply with 
+                GLBA privacy requirements and never share your information without consent.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-12 bg-blue-600 text-white rounded-xl p-8">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to Take Control of Your Financial Future?
+          </h2>
+          <p className="text-xl mb-6 opacity-90">
+            Book your free assessment now and start your journey to financial recovery
           </p>
-          <a
-            href="tel:+18778064677"
-            className="text-2xl font-bold text-blue-600 hover:text-blue-700"
+          <a 
+            href="#calendly-widget"
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector('.calendly-widget-container')?.scrollIntoView({ 
+                behavior: 'smooth' 
+              });
+            }}
+            className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
           >
-            📞 (877) 806-4677
+            Schedule Now - It's Free
           </a>
         </div>
-      </motion.div>
+      </div>
     </div>
-  )
+  );
 }
-
-export default BookConsultation

@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
-import { Home, AlertTriangle, FileText, CheckCircle, Calendar, DollarSign, Phone, Mail, User } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
-import { supabase } from '../../lib/supabase';
+import React, { useState } from "react";
+import {
+  Home,
+  AlertTriangle,
+  FileText,
+  CheckCircle,
+  Calendar,
+  DollarSign,
+  Phone,
+  Mail,
+  User,
+} from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
+import { supabase } from "../../lib/supabase";
 
 interface FormData {
   // Contact Information
   contact_name: string;
   contact_email: string;
   contact_phone: string;
-  
+
   // Situation Questions
   situation_length: string;
   payment_difficulty_date: string;
@@ -21,7 +31,7 @@ interface FormData {
   home_value: string;
   mortgage_balance: string;
   liens: string;
-  
+
   // Problem Questions
   challenge: string;
   lender_issue: string;
@@ -29,7 +39,7 @@ interface FormData {
   options_narrowing: string;
   third_party_help: string;
   overwhelmed: string;
-  
+
   // Implication Questions
   implication_credit: string;
   implication_loss: string;
@@ -37,7 +47,7 @@ interface FormData {
   legal_concerns: string;
   future_impact: string;
   financial_risk: string;
-  
+
   // Need-Payoff Questions
   interested_solution: string;
   negotiation_help: string;
@@ -48,38 +58,38 @@ interface FormData {
 }
 
 const initialFormData: FormData = {
-  contact_name: '',
-  contact_email: '',
-  contact_phone: '',
-  situation_length: '',
-  payment_difficulty_date: '',
-  lender: '',
-  payment_status: '',
-  missed_payments: '',
-  nod: '',
-  property_type: '',
-  relief_contacted: '',
-  home_value: '',
-  mortgage_balance: '',
-  liens: '',
-  challenge: '',
-  lender_issue: '',
-  impact: '',
-  options_narrowing: '',
-  third_party_help: '',
-  overwhelmed: '',
-  implication_credit: '',
-  implication_loss: '',
-  implication_stay_duration: '',
-  legal_concerns: '',
-  future_impact: '',
-  financial_risk: '',
-  interested_solution: '',
-  negotiation_help: '',
-  sell_feelings: '',
-  credit_importance: '',
-  resolution_peace: '',
-  open_options: '',
+  contact_name: "",
+  contact_email: "",
+  contact_phone: "",
+  situation_length: "",
+  payment_difficulty_date: "",
+  lender: "",
+  payment_status: "",
+  missed_payments: "",
+  nod: "",
+  property_type: "",
+  relief_contacted: "",
+  home_value: "",
+  mortgage_balance: "",
+  liens: "",
+  challenge: "",
+  lender_issue: "",
+  impact: "",
+  options_narrowing: "",
+  third_party_help: "",
+  overwhelmed: "",
+  implication_credit: "",
+  implication_loss: "",
+  implication_stay_duration: "",
+  legal_concerns: "",
+  future_impact: "",
+  financial_risk: "",
+  interested_solution: "",
+  negotiation_help: "",
+  sell_feelings: "",
+  credit_importance: "",
+  resolution_peace: "",
+  open_options: "",
 };
 
 export const ForeclosureQuestionnaire: React.FC = () => {
@@ -91,23 +101,27 @@ export const ForeclosureQuestionnaire: React.FC = () => {
   const { user, isAuthenticated } = useAuthStore();
 
   const sections = [
-    { title: 'Contact Information', icon: User, color: 'purple' },
-    { title: 'Situation Assessment', icon: Home, color: 'blue' },
-    { title: 'Problem Identification', icon: AlertTriangle, color: 'orange' },
-    { title: 'Impact Analysis', icon: FileText, color: 'red' },
-    { title: 'Solution Planning', icon: CheckCircle, color: 'green' },
+    { title: "Contact Information", icon: User, color: "purple" },
+    { title: "Situation Assessment", icon: Home, color: "blue" },
+    { title: "Problem Identification", icon: AlertTriangle, color: "orange" },
+    { title: "Impact Analysis", icon: FileText, color: "red" },
+    { title: "Solution Planning", icon: CheckCircle, color: "green" },
   ];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isAuthenticated) {
-      setSubmitError('Please sign in to submit the questionnaire');
+      setSubmitError("Please sign in to submit the questionnaire");
       return;
     }
 
@@ -116,26 +130,32 @@ export const ForeclosureQuestionnaire: React.FC = () => {
 
     try {
       // Get the current user session
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        throw new Error('No active session found');
+        throw new Error("No active session found");
       }
 
       // Prepare the data for submission
       const submissionData = {
         ...formData,
-        missed_payments: formData.missed_payments ? parseInt(formData.missed_payments) : 0,
+        missed_payments: formData.missed_payments
+          ? parseInt(formData.missed_payments)
+          : 0,
         payment_difficulty_date: formData.payment_difficulty_date || null,
       };
 
       // Submit to Supabase
       const { data, error } = await supabase
-        .from('foreclosure_responses')
-        .insert([{
-          user_id: session.user.id,
-          ...submissionData,
-        }])
+        .from("foreclosure_responses")
+        .insert([
+          {
+            user_id: session.user.id,
+            ...submissionData,
+          },
+        ])
         .select()
         .single();
 
@@ -143,15 +163,17 @@ export const ForeclosureQuestionnaire: React.FC = () => {
         throw error;
       }
 
-      console.log('Form submitted successfully:', data);
+      console.log("Form submitted successfully:", data);
 
       // Trigger email notifications
       await triggerEmailNotifications(data);
 
       setIsSubmitted(true);
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      console.error("Error submitting form:", error);
+      setSubmitError(
+        error instanceof Error ? error.message : "An unexpected error occurred",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -161,30 +183,30 @@ export const ForeclosureQuestionnaire: React.FC = () => {
     try {
       // Determine urgency level
       const missedPayments = submission.missed_payments || 0;
-      const hasNOD = submission.nod === 'yes';
+      const hasNOD = submission.nod === "yes";
       const isUrgent = hasNOD || missedPayments >= 3;
 
       // Send new submission notification
-      await supabase.functions.invoke('send-notification-email', {
+      await supabase.functions.invoke("send-notification-email", {
         body: {
           submissionId: submission.id,
-          type: 'new_submission'
-        }
+          type: "new_submission",
+        },
       });
 
       // Send urgent notification if needed
       if (isUrgent) {
-        await supabase.functions.invoke('send-notification-email', {
+        await supabase.functions.invoke("send-notification-email", {
           body: {
             submissionId: submission.id,
-            type: 'urgent_case'
-          }
+            type: "urgent_case",
+          },
         });
       }
 
-      console.log('Email notifications triggered successfully');
+      console.log("Email notifications triggered successfully");
     } catch (error) {
-      console.error('Failed to trigger email notifications:', error);
+      console.error("Failed to trigger email notifications:", error);
       // Don't fail the entire submission if email fails
     }
   };
@@ -203,11 +225,11 @@ export const ForeclosureQuestionnaire: React.FC = () => {
 
   const getSectionColor = (color: string) => {
     const colors = {
-      purple: 'bg-purple-500',
-      blue: 'bg-blue-500',
-      orange: 'bg-orange-500',
-      red: 'bg-red-500',
-      green: 'bg-green-500',
+      purple: "bg-purple-500",
+      blue: "bg-blue-500",
+      orange: "bg-orange-500",
+      red: "bg-red-500",
+      green: "bg-green-500",
     };
     return colors[color as keyof typeof colors];
   };
@@ -215,10 +237,10 @@ export const ForeclosureQuestionnaire: React.FC = () => {
   // Pre-fill contact info from user data
   React.useEffect(() => {
     if (user && !formData.contact_name && !formData.contact_email) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        contact_name: user.name || '',
-        contact_email: user.email || '',
+        contact_name: user.name || "",
+        contact_email: user.email || "",
       }));
     }
   }, [user, formData.contact_name, formData.contact_email]);
@@ -232,11 +254,14 @@ export const ForeclosureQuestionnaire: React.FC = () => {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h2>
           <p className="text-gray-600 mb-6">
-            Your questionnaire has been submitted successfully. Our team will review your information and contact you within 24 hours with personalized options.
+            Your questionnaire has been submitted successfully. Our team will
+            review your information and contact you within 24 hours with
+            personalized options.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              📧 You'll receive an email confirmation shortly with next steps and our team's contact information.
+              📧 You'll receive an email confirmation shortly with next steps
+              and our team's contact information.
             </p>
           </div>
           <div className="space-y-3">
@@ -261,9 +286,12 @@ export const ForeclosureQuestionnaire: React.FC = () => {
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <User className="w-8 h-8 text-blue-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sign In Required</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Sign In Required
+          </h2>
           <p className="text-gray-600 mb-6">
-            Please sign in to access the foreclosure questionnaire. This helps us provide personalized assistance and keep your information secure.
+            Please sign in to access the foreclosure questionnaire. This helps
+            us provide personalized assistance and keep your information secure.
           </p>
           <a
             href="/auth"
@@ -285,7 +313,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
             Foreclosure & Home Relief Assessment
           </h1>
           <p className="text-gray-600">
-            Help us understand your situation so we can provide the best assistance
+            Help us understand your situation so we can provide the best
+            assistance
           </p>
         </div>
 
@@ -296,7 +325,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div
@@ -304,8 +333,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                       isActive
                         ? `${getSectionColor(section.color)} text-white shadow-lg scale-110`
                         : isCompleted
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-200 text-gray-500'
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-200 text-gray-500"
                     }`}
                   >
                     <Icon className="w-6 h-6" />
@@ -313,7 +342,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                   {index < sections.length - 1 && (
                     <div
                       className={`h-1 w-12 mx-2 transition-all duration-300 ${
-                        isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                        isCompleted ? "bg-green-500" : "bg-gray-200"
                       }`}
                     />
                   )}
@@ -332,7 +361,10 @@ export const ForeclosureQuestionnaire: React.FC = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl shadow-xl p-8"
+        >
           {/* Section 0: Contact Information */}
           {currentSection === 0 && (
             <div className="space-y-6">
@@ -393,7 +425,9 @@ export const ForeclosureQuestionnaire: React.FC = () => {
 
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <p className="text-sm text-purple-800">
-                  <strong>Privacy Notice:</strong> Your information is kept strictly confidential and will only be used to provide you with personalized foreclosure assistance options.
+                  <strong>Privacy Notice:</strong> Your information is kept
+                  strictly confidential and will only be used to provide you
+                  with personalized foreclosure assistance options.
                 </p>
               </div>
             </div>
@@ -524,7 +558,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="nod"
                         value="yes"
-                        checked={formData.nod === 'yes'}
+                        checked={formData.nod === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -535,7 +569,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="nod"
                         value="no"
-                        checked={formData.nod === 'no'}
+                        checked={formData.nod === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -554,22 +588,26 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="property_type"
                         value="primary"
-                        checked={formData.property_type === 'primary'}
+                        checked={formData.property_type === "primary"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-gray-700">Primary Residence</span>
+                      <span className="ml-2 text-gray-700">
+                        Primary Residence
+                      </span>
                     </label>
                     <label className="flex items-center">
                       <input
                         type="radio"
                         name="property_type"
                         value="investment"
-                        checked={formData.property_type === 'investment'}
+                        checked={formData.property_type === "investment"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-gray-700">Investment Property</span>
+                      <span className="ml-2 text-gray-700">
+                        Investment Property
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -584,7 +622,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="relief_contacted"
                         value="yes"
-                        checked={formData.relief_contacted === 'yes'}
+                        checked={formData.relief_contacted === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -595,7 +633,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="relief_contacted"
                         value="no"
-                        checked={formData.relief_contacted === 'no'}
+                        checked={formData.relief_contacted === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -614,7 +652,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="liens"
                         value="yes"
-                        checked={formData.liens === 'yes'}
+                        checked={formData.liens === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -625,7 +663,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="liens"
                         value="no"
-                        checked={formData.liens === 'no'}
+                        checked={formData.liens === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -679,7 +717,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="lender_issue"
                         value="yes"
-                        checked={formData.lender_issue === 'yes'}
+                        checked={formData.lender_issue === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -690,7 +728,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="lender_issue"
                         value="no"
-                        checked={formData.lender_issue === 'no'}
+                        checked={formData.lender_issue === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -709,7 +747,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="options_narrowing"
                         value="yes"
-                        checked={formData.options_narrowing === 'yes'}
+                        checked={formData.options_narrowing === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -720,7 +758,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="options_narrowing"
                         value="no"
-                        checked={formData.options_narrowing === 'no'}
+                        checked={formData.options_narrowing === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -739,7 +777,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="third_party_help"
                         value="yes"
-                        checked={formData.third_party_help === 'yes'}
+                        checked={formData.third_party_help === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -750,7 +788,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="third_party_help"
                         value="no"
-                        checked={formData.third_party_help === 'no'}
+                        checked={formData.third_party_help === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -769,7 +807,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="overwhelmed"
                         value="yes"
-                        checked={formData.overwhelmed === 'yes'}
+                        checked={formData.overwhelmed === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -780,7 +818,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="overwhelmed"
                         value="no"
-                        checked={formData.overwhelmed === 'no'}
+                        checked={formData.overwhelmed === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-orange-600 border-gray-300 focus:ring-orange-500"
                       />
@@ -797,7 +835,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  How will this situation affect your credit and future housing options?
+                  How will this situation affect your credit and future housing
+                  options?
                 </label>
                 <textarea
                   name="implication_credit"
@@ -853,7 +892,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  What are your concerns about job security, savings, and financial stability?
+                  What are your concerns about job security, savings, and
+                  financial stability?
                 </label>
                 <textarea
                   name="financial_risk"
@@ -875,7 +915,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                       type="radio"
                       name="legal_concerns"
                       value="yes"
-                      checked={formData.legal_concerns === 'yes'}
+                      checked={formData.legal_concerns === "yes"}
                       onChange={handleInputChange}
                       className="w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500"
                     />
@@ -886,7 +926,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                       type="radio"
                       name="legal_concerns"
                       value="no"
-                      checked={formData.legal_concerns === 'no'}
+                      checked={formData.legal_concerns === "no"}
                       onChange={handleInputChange}
                       className="w-4 h-4 text-red-600 border-gray-300 focus:ring-red-500"
                     />
@@ -902,7 +942,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  If you could sell and walk away with dignity, how would that feel?
+                  If you could sell and walk away with dignity, how would that
+                  feel?
                 </label>
                 <textarea
                   name="sell_feelings"
@@ -934,7 +975,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">
-                    If a solution could stop foreclosure, would you be interested?
+                    If a solution could stop foreclosure, would you be
+                    interested?
                   </label>
                   <div className="flex space-x-4">
                     <label className="flex items-center">
@@ -942,7 +984,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="interested_solution"
                         value="yes"
-                        checked={formData.interested_solution === 'yes'}
+                        checked={formData.interested_solution === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -953,7 +995,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="interested_solution"
                         value="no"
-                        checked={formData.interested_solution === 'no'}
+                        checked={formData.interested_solution === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -972,7 +1014,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="negotiation_help"
                         value="yes"
-                        checked={formData.negotiation_help === 'yes'}
+                        checked={formData.negotiation_help === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -983,7 +1025,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="negotiation_help"
                         value="no"
-                        checked={formData.negotiation_help === 'no'}
+                        checked={formData.negotiation_help === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -994,7 +1036,8 @@ export const ForeclosureQuestionnaire: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">
-                    If this could be resolved in 30–60 days, would you feel peace of mind?
+                    If this could be resolved in 30–60 days, would you feel
+                    peace of mind?
                   </label>
                   <div className="flex space-x-4">
                     <label className="flex items-center">
@@ -1002,7 +1045,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="resolution_peace"
                         value="yes"
-                        checked={formData.resolution_peace === 'yes'}
+                        checked={formData.resolution_peace === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -1013,7 +1056,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="resolution_peace"
                         value="no"
-                        checked={formData.resolution_peace === 'no'}
+                        checked={formData.resolution_peace === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -1032,7 +1075,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="open_options"
                         value="yes"
-                        checked={formData.open_options === 'yes'}
+                        checked={formData.open_options === "yes"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -1043,7 +1086,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                         type="radio"
                         name="open_options"
                         value="no"
-                        checked={formData.open_options === 'no'}
+                        checked={formData.open_options === "no"}
                         onChange={handleInputChange}
                         className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                       />
@@ -1087,7 +1130,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
                 disabled={isSubmitting}
                 className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Assessment'}
+                {isSubmitting ? "Submitting..." : "Submit Assessment"}
               </button>
             )}
           </div>

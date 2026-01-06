@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 interface FormData {
   // Current Loan Information
@@ -60,37 +60,37 @@ interface FormData {
 }
 
 const initialFormData: FormData = {
-  lenderName: '',
-  lenderPhone: '',
-  lenderEmail: '',
-  loanNumber: '',
-  originalLoanAmount: '',
-  currentBalance: '',
-  interestRate: '',
-  monthlyPayment: '',
-  loanType: '',
-  loanOriginationDate: '',
-  hardshipType: '',
-  hardshipStartDate: '',
-  hardshipDuration: '',
-  hardshipDescription: '',
-  monthlyGrossIncome: '',
-  monthlyNetIncome: '',
-  monthlyHousingExpenses: '',
-  monthlyUtilities: '',
-  monthlyDebtPayments: '',
-  monthlyOtherExpenses: '',
-  savingsBalance: '',
-  otherAssets: '',
-  propertyAddress: '',
-  estimatedPropertyValue: '',
-  propertyCondition: '',
-  occupancyStatus: '',
-  yearsOwned: '',
-  desiredMonthlyPayment: '',
-  preferredModificationType: '',
-  urgencyLevel: '',
-  additionalGoals: '',
+  lenderName: "",
+  lenderPhone: "",
+  lenderEmail: "",
+  loanNumber: "",
+  originalLoanAmount: "",
+  currentBalance: "",
+  interestRate: "",
+  monthlyPayment: "",
+  loanType: "",
+  loanOriginationDate: "",
+  hardshipType: "",
+  hardshipStartDate: "",
+  hardshipDuration: "",
+  hardshipDescription: "",
+  monthlyGrossIncome: "",
+  monthlyNetIncome: "",
+  monthlyHousingExpenses: "",
+  monthlyUtilities: "",
+  monthlyDebtPayments: "",
+  monthlyOtherExpenses: "",
+  savingsBalance: "",
+  otherAssets: "",
+  propertyAddress: "",
+  estimatedPropertyValue: "",
+  propertyCondition: "",
+  occupancyStatus: "",
+  yearsOwned: "",
+  desiredMonthlyPayment: "",
+  preferredModificationType: "",
+  urgencyLevel: "",
+  additionalGoals: "",
   hasPaystubs: false,
   hasBankStatements: false,
   hasTaxReturns: false,
@@ -99,9 +99,9 @@ const initialFormData: FormData = {
   hasPropertyTaxBill: false,
   hasInsuranceInfo: false,
   hasUtilityBills: false,
-  lastContactDate: '',
-  lossmitigationContact: '',
-  communicationNotes: '',
+  lastContactDate: "",
+  lossmitigationContact: "",
+  communicationNotes: "",
 };
 
 const MortgageModificationTemplate: React.FC = () => {
@@ -109,24 +109,31 @@ const MortgageModificationTemplate: React.FC = () => {
   const [activeSection, setActiveSection] = useState<number>(0);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value, type } = e.target;
-    if (type === 'checkbox') {
+    if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
-      setFormData(prev => ({ ...prev, [name]: checked }));
+      setFormData((prev) => ({ ...prev, [name]: checked }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSave = () => {
-    localStorage.setItem('mortgageModificationTemplate', JSON.stringify(formData));
+    localStorage.setItem(
+      "mortgageModificationTemplate",
+      JSON.stringify(formData),
+    );
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
   const handleLoad = () => {
-    const saved = localStorage.getItem('mortgageModificationTemplate');
+    const saved = localStorage.getItem("mortgageModificationTemplate");
     if (saved) {
       setFormData(JSON.parse(saved));
       setShowSuccess(true);
@@ -136,12 +143,13 @@ const MortgageModificationTemplate: React.FC = () => {
 
   const handleExport = () => {
     const dataStr = JSON.stringify(formData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-    const exportFileDefaultName = `mortgage-modification-research-${new Date().toISOString().split('T')[0]}.json`;
+    const dataUri =
+      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+    const exportFileDefaultName = `mortgage-modification-research-${new Date().toISOString().split("T")[0]}.json`;
 
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", exportFileDefaultName);
     linkElement.click();
   };
 
@@ -165,13 +173,13 @@ const MortgageModificationTemplate: React.FC = () => {
   };
 
   const sections = [
-    { id: 0, title: 'Current Loan Info', icon: '📋' },
-    { id: 1, title: 'Financial Hardship', icon: '⚠️' },
-    { id: 2, title: 'Financial Situation', icon: '💰' },
-    { id: 3, title: 'Property Details', icon: '🏠' },
-    { id: 4, title: 'Modification Goals', icon: '🎯' },
-    { id: 5, title: 'Document Checklist', icon: '✅' },
-    { id: 6, title: 'Lender Communication', icon: '📞' },
+    { id: 0, title: "Current Loan Info", icon: "📋" },
+    { id: 1, title: "Financial Hardship", icon: "⚠️" },
+    { id: 2, title: "Financial Situation", icon: "💰" },
+    { id: 3, title: "Property Details", icon: "🏠" },
+    { id: 4, title: "Modification Goals", icon: "🎯" },
+    { id: 5, title: "Document Checklist", icon: "✅" },
+    { id: 6, title: "Lender Communication", icon: "📞" },
   ];
 
   return (
@@ -190,9 +198,12 @@ const MortgageModificationTemplate: React.FC = () => {
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg p-8 mb-8 print:bg-white print:text-black print:border print:border-gray-300">
-        <h1 className="text-4xl font-bold mb-2">Chapter 3: Mortgage Modification Research Template</h1>
+        <h1 className="text-4xl font-bold mb-2">
+          Chapter 3: Mortgage Modification Research Template
+        </h1>
         <p className="text-lg text-blue-100 print:text-gray-600">
-          Organize your information to prepare for a mortgage modification application
+          Organize your information to prepare for a mortgage modification
+          application
         </p>
       </div>
 
@@ -233,8 +244,8 @@ const MortgageModificationTemplate: React.FC = () => {
               onClick={() => setActiveSection(section.id)}
               className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                 activeSection === section.id
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               {section.icon} {section.title}
@@ -246,7 +257,9 @@ const MortgageModificationTemplate: React.FC = () => {
       {/* Form Sections */}
       <div className="space-y-8">
         {/* Section 0: Current Loan Information */}
-        {(activeSection === 0 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 0 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -257,7 +270,9 @@ const MortgageModificationTemplate: React.FC = () => {
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Lender Name *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Lender Name *
+                </label>
                 <input
                   type="text"
                   name="lenderName"
@@ -268,7 +283,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Lender Phone Number</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Lender Phone Number
+                </label>
                 <input
                   type="tel"
                   name="lenderPhone"
@@ -279,7 +296,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Lender Email</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Lender Email
+                </label>
                 <input
                   type="email"
                   name="lenderEmail"
@@ -290,7 +309,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Loan Number *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Loan Number *
+                </label>
                 <input
                   type="text"
                   name="loanNumber"
@@ -301,7 +322,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Original Loan Amount</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Original Loan Amount
+                </label>
                 <input
                   type="text"
                   name="originalLoanAmount"
@@ -312,7 +335,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Current Balance *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Current Balance *
+                </label>
                 <input
                   type="text"
                   name="currentBalance"
@@ -323,7 +348,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Interest Rate</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Interest Rate
+                </label>
                 <input
                   type="text"
                   name="interestRate"
@@ -334,7 +361,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Current Monthly Payment *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Current Monthly Payment *
+                </label>
                 <input
                   type="text"
                   name="monthlyPayment"
@@ -345,7 +374,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Loan Type</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Loan Type
+                </label>
                 <select
                   name="loanType"
                   value={formData.loanType}
@@ -361,7 +392,9 @@ const MortgageModificationTemplate: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Loan Origination Date</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Loan Origination Date
+                </label>
                 <input
                   type="date"
                   name="loanOriginationDate"
@@ -375,7 +408,9 @@ const MortgageModificationTemplate: React.FC = () => {
         )}
 
         {/* Section 1: Financial Hardship */}
-        {(activeSection === 1 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 1 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -386,7 +421,9 @@ const MortgageModificationTemplate: React.FC = () => {
             </h2>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Type of Hardship *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Type of Hardship *
+                </label>
                 <select
                   name="hardshipType"
                   value={formData.hardshipType}
@@ -407,7 +444,9 @@ const MortgageModificationTemplate: React.FC = () => {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">When Did Hardship Begin?</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    When Did Hardship Begin?
+                  </label>
                   <input
                     type="date"
                     name="hardshipStartDate"
@@ -417,7 +456,9 @@ const MortgageModificationTemplate: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Expected Duration</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Expected Duration
+                  </label>
                   <select
                     name="hardshipDuration"
                     value={formData.hardshipDuration}
@@ -446,7 +487,8 @@ const MortgageModificationTemplate: React.FC = () => {
                   placeholder="Explain your situation in detail. Include specific dates, circumstances, and how it has affected your ability to make mortgage payments. This will be the foundation of your hardship letter."
                 />
                 <p className="text-sm text-gray-500 mt-2">
-                  Tip: Be honest, specific, and explain how you've tried to resolve the situation.
+                  Tip: Be honest, specific, and explain how you've tried to
+                  resolve the situation.
                 </p>
               </div>
             </div>
@@ -454,7 +496,9 @@ const MortgageModificationTemplate: React.FC = () => {
         )}
 
         {/* Section 2: Current Financial Situation */}
-        {(activeSection === 2 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 2 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -466,7 +510,9 @@ const MortgageModificationTemplate: React.FC = () => {
 
             {/* Income */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Monthly Income</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                Monthly Income
+              </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -499,7 +545,9 @@ const MortgageModificationTemplate: React.FC = () => {
 
             {/* Expenses */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Monthly Expenses</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                Monthly Expenses
+              </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -556,14 +604,17 @@ const MortgageModificationTemplate: React.FC = () => {
               </div>
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm font-semibold text-gray-700">
-                  Total Monthly Expenses: ${calculateTotalExpenses().toLocaleString()}
+                  Total Monthly Expenses: $
+                  {calculateTotalExpenses().toLocaleString()}
                 </p>
               </div>
             </div>
 
             {/* Assets */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Assets</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+                Assets
+              </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -596,19 +647,31 @@ const MortgageModificationTemplate: React.FC = () => {
 
             {/* Financial Metrics */}
             <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Financial Metrics</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Financial Metrics
+              </h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Housing Payment to Income Ratio (Front-end DTI)</p>
-                  <p className="text-2xl font-bold text-blue-600">{calculateDebtToIncome()}%</p>
+                  <p className="text-sm text-gray-600">
+                    Housing Payment to Income Ratio (Front-end DTI)
+                  </p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {calculateDebtToIncome()}%
+                  </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {parseFloat(calculateDebtToIncome()) > 31 ? '⚠️ Above recommended 31%' : '✅ Within recommended range'}
+                    {parseFloat(calculateDebtToIncome()) > 31
+                      ? "⚠️ Above recommended 31%"
+                      : "✅ Within recommended range"}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Monthly Cash Flow</p>
                   <p className="text-2xl font-bold text-gray-700">
-                    ${((parseFloat(formData.monthlyNetIncome) || 0) - calculateTotalExpenses()).toLocaleString()}
+                    $
+                    {(
+                      (parseFloat(formData.monthlyNetIncome) || 0) -
+                      calculateTotalExpenses()
+                    ).toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
                     Net Income - Total Expenses
@@ -620,7 +683,9 @@ const MortgageModificationTemplate: React.FC = () => {
         )}
 
         {/* Section 3: Property Information */}
-        {(activeSection === 3 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 3 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -631,7 +696,9 @@ const MortgageModificationTemplate: React.FC = () => {
             </h2>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Property Address *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Property Address *
+                </label>
                 <input
                   type="text"
                   name="propertyAddress"
@@ -659,7 +726,9 @@ const MortgageModificationTemplate: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Years Owned</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Years Owned
+                  </label>
                   <input
                     type="text"
                     name="yearsOwned"
@@ -670,7 +739,9 @@ const MortgageModificationTemplate: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Property Condition</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Property Condition
+                  </label>
                   <select
                     name="propertyCondition"
                     value={formData.propertyCondition}
@@ -678,14 +749,18 @@ const MortgageModificationTemplate: React.FC = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select condition...</option>
-                    <option value="excellent">Excellent - Well maintained</option>
+                    <option value="excellent">
+                      Excellent - Well maintained
+                    </option>
                     <option value="good">Good - Minor repairs needed</option>
                     <option value="fair">Fair - Some repairs needed</option>
                     <option value="poor">Poor - Major repairs needed</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Occupancy Status</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Occupancy Status
+                  </label>
                   <select
                     name="occupancyStatus"
                     value={formData.occupancyStatus}
@@ -693,7 +768,9 @@ const MortgageModificationTemplate: React.FC = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select status...</option>
-                    <option value="owner-occupied">Owner Occupied (Primary Residence)</option>
+                    <option value="owner-occupied">
+                      Owner Occupied (Primary Residence)
+                    </option>
                     <option value="second-home">Second Home</option>
                     <option value="rental">Rental Property</option>
                     <option value="vacant">Vacant</option>
@@ -704,18 +781,30 @@ const MortgageModificationTemplate: React.FC = () => {
               {/* Equity Calculation */}
               {formData.estimatedPropertyValue && formData.currentBalance && (
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-800 mb-2">Estimated Equity</h3>
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    Estimated Equity
+                  </h3>
                   <p className="text-2xl font-bold text-green-600">
-                    ${(parseFloat(formData.estimatedPropertyValue.replace(/[$,]/g, '')) -
-                       parseFloat(formData.currentBalance.replace(/[$,]/g, ''))).toLocaleString()}
+                    $
+                    {(
+                      parseFloat(
+                        formData.estimatedPropertyValue.replace(/[$,]/g, ""),
+                      ) -
+                      parseFloat(formData.currentBalance.replace(/[$,]/g, ""))
+                    ).toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-600 mt-1">
                     Property Value - Loan Balance
                   </p>
-                  {parseFloat(formData.estimatedPropertyValue.replace(/[$,]/g, '')) <
-                   parseFloat(formData.currentBalance.replace(/[$,]/g, '')) && (
+                  {parseFloat(
+                    formData.estimatedPropertyValue.replace(/[$,]/g, ""),
+                  ) <
+                    parseFloat(
+                      formData.currentBalance.replace(/[$,]/g, ""),
+                    ) && (
                     <p className="text-sm text-red-600 mt-2">
-                      ⚠️ Property is underwater (negative equity). This may affect modification options.
+                      ⚠️ Property is underwater (negative equity). This may
+                      affect modification options.
                     </p>
                   )}
                 </div>
@@ -725,7 +814,9 @@ const MortgageModificationTemplate: React.FC = () => {
         )}
 
         {/* Section 4: Modification Goals */}
-        {(activeSection === 4 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 4 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -753,7 +844,9 @@ const MortgageModificationTemplate: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Urgency Level</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Urgency Level
+                  </label>
                   <select
                     name="urgencyLevel"
                     value={formData.urgencyLevel}
@@ -761,9 +854,15 @@ const MortgageModificationTemplate: React.FC = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select urgency...</option>
-                    <option value="immediate">Immediate - Already behind on payments</option>
-                    <option value="urgent">Urgent - Will be behind soon (30-60 days)</option>
-                    <option value="proactive">Proactive - Planning ahead</option>
+                    <option value="immediate">
+                      Immediate - Already behind on payments
+                    </option>
+                    <option value="urgent">
+                      Urgent - Will be behind soon (30-60 days)
+                    </option>
+                    <option value="proactive">
+                      Proactive - Planning ahead
+                    </option>
                   </select>
                 </div>
               </div>
@@ -779,16 +878,25 @@ const MortgageModificationTemplate: React.FC = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select preferred type...</option>
-                  <option value="rate-reduction">Interest Rate Reduction</option>
-                  <option value="term-extension">Term Extension (e.g., 30 to 40 years)</option>
-                  <option value="principal-forbearance">Principal Forbearance</option>
-                  <option value="principal-reduction">Principal Reduction</option>
+                  <option value="rate-reduction">
+                    Interest Rate Reduction
+                  </option>
+                  <option value="term-extension">
+                    Term Extension (e.g., 30 to 40 years)
+                  </option>
+                  <option value="principal-forbearance">
+                    Principal Forbearance
+                  </option>
+                  <option value="principal-reduction">
+                    Principal Reduction
+                  </option>
                   <option value="combination">Combination of Methods</option>
                   <option value="open">Open to Any Option</option>
                 </select>
                 <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-gray-700">
-                  <strong>Note:</strong> Most lenders start with rate reduction and term extension.
-                  Principal reduction is rare and usually only for special programs.
+                  <strong>Note:</strong> Most lenders start with rate reduction
+                  and term extension. Principal reduction is rare and usually
+                  only for special programs.
                 </div>
               </div>
 
@@ -809,18 +917,37 @@ const MortgageModificationTemplate: React.FC = () => {
               {/* Payment Reduction Calculation */}
               {formData.monthlyPayment && formData.desiredMonthlyPayment && (
                 <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-800 mb-2">Payment Reduction Needed</h3>
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    Payment Reduction Needed
+                  </h3>
                   <p className="text-2xl font-bold text-purple-600">
-                    ${(parseFloat(formData.monthlyPayment.replace(/[$,]/g, '')) -
-                       parseFloat(formData.desiredMonthlyPayment.replace(/[$,]/g, ''))).toLocaleString()}
-                    <span className="text-base font-normal text-gray-600"> per month</span>
+                    $
+                    {(
+                      parseFloat(formData.monthlyPayment.replace(/[$,]/g, "")) -
+                      parseFloat(
+                        formData.desiredMonthlyPayment.replace(/[$,]/g, ""),
+                      )
+                    ).toLocaleString()}
+                    <span className="text-base font-normal text-gray-600">
+                      {" "}
+                      per month
+                    </span>
                   </p>
                   <p className="text-sm text-gray-600 mt-1">
-                    That's a {
-                      ((parseFloat(formData.monthlyPayment.replace(/[$,]/g, '')) -
-                        parseFloat(formData.desiredMonthlyPayment.replace(/[$,]/g, ''))) /
-                       parseFloat(formData.monthlyPayment.replace(/[$,]/g, '')) * 100).toFixed(1)
-                    }% reduction
+                    That's a{" "}
+                    {(
+                      ((parseFloat(
+                        formData.monthlyPayment.replace(/[$,]/g, ""),
+                      ) -
+                        parseFloat(
+                          formData.desiredMonthlyPayment.replace(/[$,]/g, ""),
+                        )) /
+                        parseFloat(
+                          formData.monthlyPayment.replace(/[$,]/g, ""),
+                        )) *
+                      100
+                    ).toFixed(1)}
+                    % reduction
                   </p>
                 </div>
               )}
@@ -829,7 +956,9 @@ const MortgageModificationTemplate: React.FC = () => {
         )}
 
         {/* Section 5: Document Checklist */}
-        {(activeSection === 5 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 5 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -841,21 +970,54 @@ const MortgageModificationTemplate: React.FC = () => {
 
             <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-sm text-gray-700">
-                <strong>Important:</strong> Gather these documents before contacting your lender.
-                Complete applications are processed faster.
+                <strong>Important:</strong> Gather these documents before
+                contacting your lender. Complete applications are processed
+                faster.
               </p>
             </div>
 
             <div className="space-y-3">
               {[
-                { name: 'hasPaystubs', label: 'Recent Pay Stubs (last 2-3 months)', description: 'All household income earners' },
-                { name: 'hasBankStatements', label: 'Bank Statements (last 2-3 months)', description: 'All checking and savings accounts' },
-                { name: 'hasTaxReturns', label: 'Tax Returns (last 2 years)', description: 'Complete returns with all schedules' },
-                { name: 'hasHardshipLetter', label: 'Hardship Letter', description: 'Detailed explanation of your situation' },
-                { name: 'hasMortgageStatement', label: 'Current Mortgage Statement', description: 'Shows current balance and payment info' },
-                { name: 'hasPropertyTaxBill', label: 'Property Tax Bill', description: 'Most recent annual or quarterly statement' },
-                { name: 'hasInsuranceInfo', label: 'Homeowners Insurance Info', description: 'Policy and premium information' },
-                { name: 'hasUtilityBills', label: 'Recent Utility Bills', description: 'Proof of occupancy if owner-occupied' },
+                {
+                  name: "hasPaystubs",
+                  label: "Recent Pay Stubs (last 2-3 months)",
+                  description: "All household income earners",
+                },
+                {
+                  name: "hasBankStatements",
+                  label: "Bank Statements (last 2-3 months)",
+                  description: "All checking and savings accounts",
+                },
+                {
+                  name: "hasTaxReturns",
+                  label: "Tax Returns (last 2 years)",
+                  description: "Complete returns with all schedules",
+                },
+                {
+                  name: "hasHardshipLetter",
+                  label: "Hardship Letter",
+                  description: "Detailed explanation of your situation",
+                },
+                {
+                  name: "hasMortgageStatement",
+                  label: "Current Mortgage Statement",
+                  description: "Shows current balance and payment info",
+                },
+                {
+                  name: "hasPropertyTaxBill",
+                  label: "Property Tax Bill",
+                  description: "Most recent annual or quarterly statement",
+                },
+                {
+                  name: "hasInsuranceInfo",
+                  label: "Homeowners Insurance Info",
+                  description: "Policy and premium information",
+                },
+                {
+                  name: "hasUtilityBills",
+                  label: "Recent Utility Bills",
+                  description: "Proof of occupancy if owner-occupied",
+                },
               ].map((doc) => (
                 <label
                   key={doc.name}
@@ -869,8 +1031,12 @@ const MortgageModificationTemplate: React.FC = () => {
                     className="mt-1 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                   />
                   <div className="flex-1">
-                    <div className="font-semibold text-gray-900">{doc.label}</div>
-                    <div className="text-sm text-gray-600">{doc.description}</div>
+                    <div className="font-semibold text-gray-900">
+                      {doc.label}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {doc.description}
+                    </div>
                   </div>
                 </label>
               ))}
@@ -879,20 +1045,30 @@ const MortgageModificationTemplate: React.FC = () => {
             {/* Completion Progress */}
             <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
               <div className="flex justify-between items-center mb-2">
-                <h3 className="font-semibold text-gray-800">Document Completion</h3>
+                <h3 className="font-semibold text-gray-800">
+                  Document Completion
+                </h3>
                 <span className="text-2xl font-bold text-blue-600">
-                  {Object.entries(formData).filter(([key, value]) =>
-                    key.startsWith('has') && value === true
-                  ).length} / 8
+                  {
+                    Object.entries(formData).filter(
+                      ([key, value]) => key.startsWith("has") && value === true,
+                    ).length
+                  }{" "}
+                  / 8
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-blue-600 h-3 rounded-full transition-all duration-300"
                   style={{
-                    width: `${(Object.entries(formData).filter(([key, value]) =>
-                      key.startsWith('has') && value === true
-                    ).length / 8) * 100}%`
+                    width: `${
+                      (Object.entries(formData).filter(
+                        ([key, value]) =>
+                          key.startsWith("has") && value === true,
+                      ).length /
+                        8) *
+                      100
+                    }%`,
                   }}
                 />
               </div>
@@ -900,20 +1076,26 @@ const MortgageModificationTemplate: React.FC = () => {
 
             {/* Additional Tips */}
             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h3 className="font-semibold text-gray-800 mb-3">Document Tips</h3>
+              <h3 className="font-semibold text-gray-800 mb-3">
+                Document Tips
+              </h3>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li>• Make copies of everything - never send originals</li>
                 <li>• Organize documents in a clearly labeled folder</li>
                 <li>• Keep a log of what you send and when</li>
                 <li>• Follow up if you don't hear back within 2 weeks</li>
-                <li>• Consider sending via certified mail for proof of delivery</li>
+                <li>
+                  • Consider sending via certified mail for proof of delivery
+                </li>
               </ul>
             </div>
           </motion.div>
         )}
 
         {/* Section 6: Lender Communication */}
-        {(activeSection === 6 || typeof window !== 'undefined' && window.matchMedia('print').matches) && (
+        {(activeSection === 6 ||
+          (typeof window !== "undefined" &&
+            window.matchMedia("print").matches)) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -968,25 +1150,58 @@ const MortgageModificationTemplate: React.FC = () => {
 
               {/* Communication Best Practices */}
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h3 className="font-semibold text-gray-800 mb-3">Communication Best Practices</h3>
+                <h3 className="font-semibold text-gray-800 mb-3">
+                  Communication Best Practices
+                </h3>
                 <ul className="space-y-2 text-sm text-gray-700">
-                  <li>• <strong>Always get a name:</strong> Note who you spoke with and their direct extension</li>
-                  <li>• <strong>Request confirmation:</strong> Ask for email confirmation of verbal agreements</li>
-                  <li>• <strong>Follow up in writing:</strong> Send email summaries after phone calls</li>
-                  <li>• <strong>Keep records:</strong> Save all letters, emails, and faxes</li>
-                  <li>• <strong>Be persistent:</strong> Call regularly if you don't hear back</li>
-                  <li>• <strong>Stay professional:</strong> Remain calm and courteous, even if frustrated</li>
-                  <li>• <strong>Know your rights:</strong> You have the right to apply for a modification</li>
+                  <li>
+                    • <strong>Always get a name:</strong> Note who you spoke
+                    with and their direct extension
+                  </li>
+                  <li>
+                    • <strong>Request confirmation:</strong> Ask for email
+                    confirmation of verbal agreements
+                  </li>
+                  <li>
+                    • <strong>Follow up in writing:</strong> Send email
+                    summaries after phone calls
+                  </li>
+                  <li>
+                    • <strong>Keep records:</strong> Save all letters, emails,
+                    and faxes
+                  </li>
+                  <li>
+                    • <strong>Be persistent:</strong> Call regularly if you
+                    don't hear back
+                  </li>
+                  <li>
+                    • <strong>Stay professional:</strong> Remain calm and
+                    courteous, even if frustrated
+                  </li>
+                  <li>
+                    • <strong>Know your rights:</strong> You have the right to
+                    apply for a modification
+                  </li>
                 </ul>
               </div>
 
               {/* Important Numbers */}
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h3 className="font-semibold text-gray-800 mb-3">Important Contact Numbers</h3>
+                <h3 className="font-semibold text-gray-800 mb-3">
+                  Important Contact Numbers
+                </h3>
                 <div className="space-y-2 text-sm text-gray-700">
-                  <p><strong>HOPE Hotline (Free counseling):</strong> 1-888-995-HOPE (4673)</p>
-                  <p><strong>HUD Housing Counselor:</strong> 1-800-569-4287</p>
-                  <p><strong>Your Lender (from form):</strong> {formData.lenderPhone || 'Not entered yet'}</p>
+                  <p>
+                    <strong>HOPE Hotline (Free counseling):</strong>{" "}
+                    1-888-995-HOPE (4673)
+                  </p>
+                  <p>
+                    <strong>HUD Housing Counselor:</strong> 1-800-569-4287
+                  </p>
+                  <p>
+                    <strong>Your Lender (from form):</strong>{" "}
+                    {formData.lenderPhone || "Not entered yet"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -1009,8 +1224,10 @@ const MortgageModificationTemplate: React.FC = () => {
 
         <div className="mt-6 p-4 bg-white/10 rounded-lg print:bg-gray-50">
           <p className="text-sm">
-            <strong>Remember:</strong> Mortgage modification is a process that can take 30-90 days.
-            Stay organized, be persistent, and don't give up. Many homeowners successfully modify their loans and save their homes.
+            <strong>Remember:</strong> Mortgage modification is a process that
+            can take 30-90 days. Stay organized, be persistent, and don't give
+            up. Many homeowners successfully modify their loans and save their
+            homes.
           </p>
         </div>
       </div>

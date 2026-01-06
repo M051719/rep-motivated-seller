@@ -1,14 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { ErrorBoundary } from 'react-error-boundary'
-import EnhancedApp from './App.enhanced'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ErrorBoundary } from "react-error-boundary";
+import EnhancedApp from "./App.enhanced";
+import "./index.css";
 
 // Enhanced Error Fallback Component
-const ErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => void }> = ({ 
-  error, 
-  resetErrorBoundary 
-}) => (
+const ErrorFallback: React.FC<{
+  error: Error;
+  resetErrorBoundary: () => void;
+}> = ({ error, resetErrorBoundary }) => (
   <div className="min-h-screen flex items-center justify-center bg-red-50">
     <div className="max-w-md mx-auto text-center p-6">
       <div className="text-6xl mb-4">💥</div>
@@ -34,7 +34,7 @@ const ErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => void }> 
           Try Again
         </button>
         <button
-          onClick={() => window.location.href = '/'}
+          onClick={() => (window.location.href = "/")}
           className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
         >
           Go Home
@@ -46,18 +46,18 @@ const ErrorFallback: React.FC<{ error: Error; resetErrorBoundary: () => void }> 
 
 // Enhanced Performance Monitoring
 const performanceObserver = () => {
-  if ('PerformanceObserver' in window) {
+  if ("PerformanceObserver" in window) {
     const observer = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach((entry) => {
         // Log performance metrics for monitoring
-        if (entry.entryType === 'navigation') {
+        if (entry.entryType === "navigation") {
           console.log(`Page Load Time: ${entry.duration}ms`);
         }
       });
     });
-    
-    observer.observe({ entryTypes: ['navigation', 'paint'] });
+
+    observer.observe({ entryTypes: ["navigation", "paint"] });
   }
 };
 
@@ -67,37 +67,38 @@ const initializeApp = () => {
   performanceObserver();
 
   // Service Worker registration (if available)
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/sw.js")
         .then((registration) => {
-          console.log('SW registered: ', registration);
+          console.log("SW registered: ", registration);
         })
         .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
+          console.log("SW registration failed: ", registrationError);
         });
     });
   }
 
   // Enhanced error tracking
-  window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason);
+  window.addEventListener("unhandledrejection", (event) => {
+    console.error("Unhandled promise rejection:", event.reason);
   });
 
   // App initialization complete
-  console.log('🏠 RepMotivatedSeller Enhanced App Initialized');
+  console.log("🏠 RepMotivatedSeller Enhanced App Initialized");
 };
 
 // Initialize enhanced features
 initializeApp();
 
 // Render Enhanced App
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onError={(error, errorInfo) => {
-        console.error('Application Error:', error, errorInfo);
+        console.error("Application Error:", error, errorInfo);
         // You can send error reports to your monitoring service here
       }}
       onReset={() => {
@@ -107,5 +108,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     >
       <EnhancedApp />
     </ErrorBoundary>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

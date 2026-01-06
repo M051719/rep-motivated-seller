@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import { X, Calculator, DollarSign, Home, TrendingUp, Percent } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  X,
+  Calculator,
+  DollarSign,
+  Home,
+  TrendingUp,
+  Percent,
+} from "lucide-react";
 
 interface CalculatorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  calculatorType: 'flip' | 'rental' | 'mortgage' | 'roi';
+  calculatorType: "flip" | "rental" | "mortgage" | "roi";
 }
 
 export const CalculatorModal: React.FC<CalculatorModalProps> = ({
@@ -20,10 +27,10 @@ export const CalculatorModal: React.FC<CalculatorModalProps> = ({
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Calculator className="w-6 h-6" />
-            {calculatorType === 'flip' && 'Fix & Flip Calculator'}
-            {calculatorType === 'rental' && 'Rental Property Calculator'}
-            {calculatorType === 'mortgage' && 'Mortgage Calculator'}
-            {calculatorType === 'roi' && 'ROI Calculator'}
+            {calculatorType === "flip" && "Fix & Flip Calculator"}
+            {calculatorType === "rental" && "Rental Property Calculator"}
+            {calculatorType === "mortgage" && "Mortgage Calculator"}
+            {calculatorType === "roi" && "ROI Calculator"}
           </h2>
           <button
             onClick={onClose}
@@ -34,10 +41,10 @@ export const CalculatorModal: React.FC<CalculatorModalProps> = ({
         </div>
 
         <div className="p-6">
-          {calculatorType === 'flip' && <FlipCalculator />}
-          {calculatorType === 'rental' && <RentalCalculator />}
-          {calculatorType === 'mortgage' && <MortgageCalculator />}
-          {calculatorType === 'roi' && <ROICalculator />}
+          {calculatorType === "flip" && <FlipCalculator />}
+          {calculatorType === "rental" && <RentalCalculator />}
+          {calculatorType === "mortgage" && <MortgageCalculator />}
+          {calculatorType === "roi" && <ROICalculator />}
         </div>
       </div>
     </div>
@@ -54,7 +61,8 @@ const FlipCalculator: React.FC = () => {
   });
 
   const calculate = () => {
-    const totalCost = values.purchasePrice + values.rehabCost + values.closingCosts;
+    const totalCost =
+      values.purchasePrice + values.rehabCost + values.closingCosts;
     const profit = values.arv - totalCost;
     const roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
     return { totalCost, profit, roi };
@@ -73,8 +81,10 @@ const FlipCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.purchasePrice || ''}
-              onChange={(e) => setValues({ ...values, purchasePrice: Number(e.target.value) })}
+              value={values.purchasePrice || ""}
+              onChange={(e) =>
+                setValues({ ...values, purchasePrice: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -89,8 +99,10 @@ const FlipCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.rehabCost || ''}
-              onChange={(e) => setValues({ ...values, rehabCost: Number(e.target.value) })}
+              value={values.rehabCost || ""}
+              onChange={(e) =>
+                setValues({ ...values, rehabCost: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -105,8 +117,10 @@ const FlipCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.arv || ''}
-              onChange={(e) => setValues({ ...values, arv: Number(e.target.value) })}
+              value={values.arv || ""}
+              onChange={(e) =>
+                setValues({ ...values, arv: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -121,8 +135,10 @@ const FlipCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.closingCosts || ''}
-              onChange={(e) => setValues({ ...values, closingCosts: Number(e.target.value) })}
+              value={values.closingCosts || ""}
+              onChange={(e) =>
+                setValues({ ...values, closingCosts: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -141,13 +157,17 @@ const FlipCalculator: React.FC = () => {
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Projected Profit</p>
-            <p className={`text-2xl font-bold ${results.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p
+              className={`text-2xl font-bold ${results.profit >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
               ${results.profit.toLocaleString()}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">ROI</p>
-            <p className={`text-2xl font-bold ${results.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p
+              className={`text-2xl font-bold ${results.roi >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
               {results.roi.toFixed(2)}%
             </p>
           </div>
@@ -178,10 +198,14 @@ const RentalCalculator: React.FC = () => {
     const loanAmount = values.purchasePrice * (1 - values.downPayment / 100);
     const monthlyRate = values.interestRate / 100 / 12;
     const numPayments = values.loanTerm * 12;
-    const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+    const monthlyPayment =
+      (loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments))) /
+      (Math.pow(1 + monthlyRate, numPayments) - 1);
     const cashFlow = values.monthlyRent - monthlyPayment - values.expenses;
-    const cashOnCashReturn = (cashFlow * 12) / (values.purchasePrice * values.downPayment / 100) * 100;
-    
+    const cashOnCashReturn =
+      ((cashFlow * 12) / ((values.purchasePrice * values.downPayment) / 100)) *
+      100;
+
     return { monthlyPayment, cashFlow, cashOnCashReturn };
   };
 
@@ -198,8 +222,10 @@ const RentalCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.purchasePrice || ''}
-              onChange={(e) => setValues({ ...values, purchasePrice: Number(e.target.value) })}
+              value={values.purchasePrice || ""}
+              onChange={(e) =>
+                setValues({ ...values, purchasePrice: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -215,7 +241,9 @@ const RentalCalculator: React.FC = () => {
             <input
               type="number"
               value={values.downPayment}
-              onChange={(e) => setValues({ ...values, downPayment: Number(e.target.value) })}
+              onChange={(e) =>
+                setValues({ ...values, downPayment: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               min="0"
               max="100"
@@ -233,7 +261,9 @@ const RentalCalculator: React.FC = () => {
               type="number"
               step="0.1"
               value={values.interestRate}
-              onChange={(e) => setValues({ ...values, interestRate: Number(e.target.value) })}
+              onChange={(e) =>
+                setValues({ ...values, interestRate: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -247,8 +277,10 @@ const RentalCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.monthlyRent || ''}
-              onChange={(e) => setValues({ ...values, monthlyRent: Number(e.target.value) })}
+              value={values.monthlyRent || ""}
+              onChange={(e) =>
+                setValues({ ...values, monthlyRent: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -263,8 +295,10 @@ const RentalCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.expenses || ''}
-              onChange={(e) => setValues({ ...values, expenses: Number(e.target.value) })}
+              value={values.expenses || ""}
+              onChange={(e) =>
+                setValues({ ...values, expenses: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -278,18 +312,28 @@ const RentalCalculator: React.FC = () => {
           <div>
             <p className="text-sm text-gray-600 mb-1">Monthly Payment</p>
             <p className="text-2xl font-bold text-gray-900">
-              ${results.monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              $
+              {results.monthlyPayment.toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Monthly Cash Flow</p>
-            <p className={`text-2xl font-bold ${results.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              ${results.cashFlow.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            <p
+              className={`text-2xl font-bold ${results.cashFlow >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              $
+              {results.cashFlow.toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Cash on Cash Return</p>
-            <p className={`text-2xl font-bold ${results.cashOnCashReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p
+              className={`text-2xl font-bold ${results.cashOnCashReturn >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
               {results.cashOnCashReturn.toFixed(2)}%
             </p>
           </div>
@@ -315,7 +359,10 @@ const MortgageCalculator: React.FC = () => {
 
   const monthlyRate = values.interestRate / 100 / 12;
   const numPayments = values.loanTerm * 12;
-  const monthlyPayment = values.loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+  const monthlyPayment =
+    (values.loanAmount *
+      (monthlyRate * Math.pow(1 + monthlyRate, numPayments))) /
+    (Math.pow(1 + monthlyRate, numPayments) - 1);
   const totalPaid = monthlyPayment * numPayments;
   const totalInterest = totalPaid - values.loanAmount;
 
@@ -330,8 +377,10 @@ const MortgageCalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.loanAmount || ''}
-              onChange={(e) => setValues({ ...values, loanAmount: Number(e.target.value) })}
+              value={values.loanAmount || ""}
+              onChange={(e) =>
+                setValues({ ...values, loanAmount: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -348,7 +397,9 @@ const MortgageCalculator: React.FC = () => {
               type="number"
               step="0.1"
               value={values.interestRate}
-              onChange={(e) => setValues({ ...values, interestRate: Number(e.target.value) })}
+              onChange={(e) =>
+                setValues({ ...values, interestRate: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -361,7 +412,9 @@ const MortgageCalculator: React.FC = () => {
           <input
             type="number"
             value={values.loanTerm}
-            onChange={(e) => setValues({ ...values, loanTerm: Number(e.target.value) })}
+            onChange={(e) =>
+              setValues({ ...values, loanTerm: Number(e.target.value) })
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -373,19 +426,34 @@ const MortgageCalculator: React.FC = () => {
           <div>
             <p className="text-sm text-gray-600 mb-1">Monthly Payment</p>
             <p className="text-2xl font-bold text-gray-900">
-              ${isFinite(monthlyPayment) ? monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'}
+              $
+              {isFinite(monthlyPayment)
+                ? monthlyPayment.toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })
+                : "0"}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Total Interest</p>
             <p className="text-2xl font-bold text-orange-600">
-              ${isFinite(totalInterest) ? totalInterest.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'}
+              $
+              {isFinite(totalInterest)
+                ? totalInterest.toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })
+                : "0"}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Total Paid</p>
             <p className="text-2xl font-bold text-gray-900">
-              ${isFinite(totalPaid) ? totalPaid.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'}
+              $
+              {isFinite(totalPaid)
+                ? totalPaid.toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })
+                : "0"}
             </p>
           </div>
         </div>
@@ -409,8 +477,19 @@ const ROICalculator: React.FC = () => {
   });
 
   const totalReturn = values.finalValue - values.initialInvestment;
-  const roi = values.initialInvestment > 0 ? (totalReturn / values.initialInvestment) * 100 : 0;
-  const annualizedROI = values.timeYears > 0 ? (Math.pow(values.finalValue / values.initialInvestment, 1 / values.timeYears) - 1) * 100 : 0;
+  const roi =
+    values.initialInvestment > 0
+      ? (totalReturn / values.initialInvestment) * 100
+      : 0;
+  const annualizedROI =
+    values.timeYears > 0
+      ? (Math.pow(
+          values.finalValue / values.initialInvestment,
+          1 / values.timeYears,
+        ) -
+          1) *
+        100
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -423,8 +502,13 @@ const ROICalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.initialInvestment || ''}
-              onChange={(e) => setValues({ ...values, initialInvestment: Number(e.target.value) })}
+              value={values.initialInvestment || ""}
+              onChange={(e) =>
+                setValues({
+                  ...values,
+                  initialInvestment: Number(e.target.value),
+                })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -439,8 +523,10 @@ const ROICalculator: React.FC = () => {
             <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="number"
-              value={values.finalValue || ''}
-              onChange={(e) => setValues({ ...values, finalValue: Number(e.target.value) })}
+              value={values.finalValue || ""}
+              onChange={(e) =>
+                setValues({ ...values, finalValue: Number(e.target.value) })
+              }
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="0"
             />
@@ -455,7 +541,9 @@ const ROICalculator: React.FC = () => {
             type="number"
             step="0.1"
             value={values.timeYears}
-            onChange={(e) => setValues({ ...values, timeYears: Number(e.target.value) })}
+            onChange={(e) =>
+              setValues({ ...values, timeYears: Number(e.target.value) })
+            }
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -466,20 +554,26 @@ const ROICalculator: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <p className="text-sm text-gray-600 mb-1">Total Return</p>
-            <p className={`text-2xl font-bold ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p
+              className={`text-2xl font-bold ${totalReturn >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
               ${totalReturn.toLocaleString()}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">ROI</p>
-            <p className={`text-2xl font-bold ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {isFinite(roi) ? roi.toFixed(2) : '0.00'}%
+            <p
+              className={`text-2xl font-bold ${roi >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {isFinite(roi) ? roi.toFixed(2) : "0.00"}%
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Annualized ROI</p>
-            <p className={`text-2xl font-bold ${annualizedROI >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {isFinite(annualizedROI) ? annualizedROI.toFixed(2) : '0.00'}%
+            <p
+              className={`text-2xl font-bold ${annualizedROI >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {isFinite(annualizedROI) ? annualizedROI.toFixed(2) : "0.00"}%
             </p>
           </div>
         </div>

@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "action": "set_http_response_header",
+      "expression": "http.request.uri.path matches \".*\"",
+      "action_parameters": {
+        "headers": [
+          {
+            "name": "Content-Security-Policy",
+            "operation": "set",
+            "value": "default-src 'self'; script-src 'self' https://js.stripe.com https://m.stripe.network 'nonce-<GENERATED_NONCE>'; style-src 'self' https://fonts.googleapis.com https://api.mapbox.com https://assets.calendly.com https://m.stripe.network 'unsafe-hashes'; img-src 'self' data: https://*.stripe.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://js.stripe.com https://m.stripe.network; frame-src 'self' https://js.stripe.com https://m.stripe.network https://calendly.com; media-src 'self' data:; base-uri 'self'; form-action 'self';"
+          }
+        ]
+      },
+      "description": "Set CSP header for all responses",
+      "enabled": true
+    }
+  ]
+}

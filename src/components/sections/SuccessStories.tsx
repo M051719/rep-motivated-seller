@@ -1,53 +1,61 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function SuccessStories() {
   const stories = [
     {
       id: 1,
-      name: 'John D.',
-      location: 'Phoenix, AZ',
-      situation: 'Facing Foreclosure - 3 months behind',
-      outcome: 'Saved home with loan modification',
-      savings: '$45,000',
-      image: '/images/success-home-1.jpg',
-      quote: 'RepMotivatedSeller helped me navigate foreclosure and save my home. The support was invaluable!',
-      details: 'After losing my job, I fell 3 months behind on payments. The team helped me negotiate a loan modification and get back on track.'
+      name: "John D.",
+      location: "Phoenix, AZ",
+      situation: "Facing Foreclosure - 3 months behind",
+      outcome: "Saved home with loan modification",
+      savings: "$45,000",
+      image: "/images/success-home-1.jpg",
+      quote:
+        "RepMotivatedSeller helped me navigate foreclosure and save my home. The support was invaluable!",
+      details:
+        "After losing my job, I fell 3 months behind on payments. The team helped me negotiate a loan modification and get back on track.",
     },
     {
       id: 2,
-      name: 'Sarah M.',
-      location: 'Dallas, TX',
-      situation: 'Underwater mortgage',
-      outcome: 'Short sale approved, debt forgiven',
-      savings: '$78,000',
-      image: '/images/success-home-2.jpg',
-      quote: 'The platform made a difficult situation manageable. I\'m grateful for the guidance!',
-      details: 'I was underwater on my mortgage after divorce. They helped me complete a short sale and move forward debt-free.'
+      name: "Sarah M.",
+      location: "Dallas, TX",
+      situation: "Underwater mortgage",
+      outcome: "Short sale approved, debt forgiven",
+      savings: "$78,000",
+      image: "/images/success-home-2.jpg",
+      quote:
+        "The platform made a difficult situation manageable. I'm grateful for the guidance!",
+      details:
+        "I was underwater on my mortgage after divorce. They helped me complete a short sale and move forward debt-free.",
     },
     {
       id: 3,
-      name: 'Michael & Lisa T.',
-      location: 'Orlando, FL',
-      situation: 'Property tax debt',
-      outcome: 'Payment plan established',
-      savings: '$23,000',
-      image: '/images/success-home-3.jpg',
-      quote: 'We thought we\'d lose everything. Now we have a manageable payment plan and peace of mind.',
-      details: 'Years of back property taxes threatened our home. The education platform taught us our options and helped us negotiate with the county.'
+      name: "Michael & Lisa T.",
+      location: "Orlando, FL",
+      situation: "Property tax debt",
+      outcome: "Payment plan established",
+      savings: "$23,000",
+      image: "/images/success-home-3.jpg",
+      quote:
+        "We thought we'd lose everything. Now we have a manageable payment plan and peace of mind.",
+      details:
+        "Years of back property taxes threatened our home. The education platform taught us our options and helped us negotiate with the county.",
     },
     {
       id: 4,
-      name: 'Robert K.',
-      location: 'Atlanta, GA',
-      situation: 'Medical emergency expenses',
-      outcome: 'Refinanced and consolidated debt',
-      savings: '$32,000',
-      image: '/images/success-home-4.jpg',
-      quote: 'After a medical emergency, I didn\'t know where to turn. This platform saved my family\'s home.',
-      details: 'Medical bills pushed me to the brink. With their help, I refinanced, consolidated debt, and now make one affordable payment.'
-    }
+      name: "Robert K.",
+      location: "Atlanta, GA",
+      situation: "Medical emergency expenses",
+      outcome: "Refinanced and consolidated debt",
+      savings: "$32,000",
+      image: "/images/success-home-4.jpg",
+      quote:
+        "After a medical emergency, I didn't know where to turn. This platform saved my family's home.",
+      details:
+        "Medical bills pushed me to the brink. With their help, I refinanced, consolidated debt, and now make one affordable payment.",
+    },
   ];
 
   return (
@@ -58,7 +66,8 @@ export default function SuccessStories() {
             🏆 Real Families, Real Results
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            See how we've helped families across America save their homes and regain financial stability
+            See how we've helped families across America save their homes and
+            regain financial stability
           </p>
         </div>
 
@@ -85,11 +94,15 @@ export default function SuccessStories() {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">{story.name}</h3>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {story.name}
+                    </h3>
                     <p className="text-sm text-gray-600">{story.location}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-green-600">{story.savings}</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {story.savings}
+                    </p>
                     <p className="text-xs text-gray-600">Saved</p>
                   </div>
                 </div>
@@ -97,11 +110,15 @@ export default function SuccessStories() {
                 <div className="mb-4 space-y-2">
                   <div className="flex items-center text-sm">
                     <span className="text-red-500 mr-2">📉</span>
-                    <span className="text-gray-700"><strong>Situation:</strong> {story.situation}</span>
+                    <span className="text-gray-700">
+                      <strong>Situation:</strong> {story.situation}
+                    </span>
                   </div>
                   <div className="flex items-center text-sm">
                     <span className="text-green-500 mr-2">📈</span>
-                    <span className="text-gray-700"><strong>Outcome:</strong> {story.outcome}</span>
+                    <span className="text-gray-700">
+                      <strong>Outcome:</strong> {story.outcome}
+                    </span>
                   </div>
                 </div>
 
@@ -109,9 +126,7 @@ export default function SuccessStories() {
                   "{story.quote}"
                 </blockquote>
 
-                <p className="text-sm text-gray-600 mb-4">
-                  {story.details}
-                </p>
+                <p className="text-sm text-gray-600 mb-4">{story.details}</p>
               </div>
             </motion.div>
           ))}

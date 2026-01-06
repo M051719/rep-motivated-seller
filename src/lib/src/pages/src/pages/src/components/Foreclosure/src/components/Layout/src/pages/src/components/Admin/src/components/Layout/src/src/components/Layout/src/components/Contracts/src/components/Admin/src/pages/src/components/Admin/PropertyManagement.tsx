@@ -6,7 +6,7 @@ export interface Property {
   bathrooms: number;
   squareFootage: number;
   yearBuilt: number;
-  propertyType: 'single-family' | 'condo' | 'townhouse' | 'multi-family';
+  propertyType: "single-family" | "condo" | "townhouse" | "multi-family";
   listingDate: Date;
   images: string[];
 }
@@ -47,9 +47,9 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  membershipTier: 'free' | 'pro' | 'enterprise';
+  membershipTier: "free" | "pro" | "enterprise";
   stripeCustomerId?: string;
   subscriptionId?: string;
-  subscriptionStatus?: 'active' | 'canceled' | 'past_due' | 'incomplete';
+  subscriptionStatus?: "active" | "canceled" | "past_due" | "incomplete";
   createdAt: Date;
 }

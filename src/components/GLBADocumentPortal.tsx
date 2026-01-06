@@ -1,232 +1,249 @@
-import React, { useState, useEffect } from 'react'
-import { GLBAEncryption } from '../lib/encryption/glba-encryption'
-import { GLBAKeyManagement } from '../lib/security/key-management'
-import { supabase } from '../lib/supabase'
+import React, { useState, useEffect } from "react";
+import { GLBAEncryption } from "../lib/encryption/glba-encryption";
+import { GLBAKeyManagement } from "../lib/security/key-management";
+import { supabase } from "../lib/supabase";
 
 interface SecureDocument {
-  id: string
-  filename: string
-  encrypted_content: string
-  content_type: string
-  uploaded_at: string
-  expires_at?: string
-  access_count: number
-  client_id: string
-  is_active: boolean
+  id: string;
+  filename: string;
+  encrypted_content: string;
+  content_type: string;
+  uploaded_at: string;
+  expires_at?: string;
+  access_count: number;
+  client_id: string;
+  is_active: boolean;
 }
 
 const GLBADocumentPortal: React.FC = () => {
-  const [documents, setDocuments] = useState<SecureDocument[]>([])
-  const [uploading, setUploading] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [complianceStatus, setComplianceStatus] = useState<any>(null)
+  const [documents, setDocuments] = useState<SecureDocument[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [complianceStatus, setComplianceStatus] = useState<any>(null);
 
   useEffect(() => {
-    loadDocuments()
-    checkComplianceStatus()
-  }, [])
+    loadDocuments();
+    checkComplianceStatus();
+  }, []);
 
   const checkComplianceStatus = () => {
-    const status = GLBAEncryption.validateCompliance()
-    setComplianceStatus(status)
-  }
+    const status = GLBAEncryption.validateCompliance();
+    setComplianceStatus(status);
+  };
 
   const loadDocuments = async () => {
     try {
       const { data, error } = await supabase
-        .from('secure_documents')
-        .select('*')
-        .eq('is_active', true)
-        .order('uploaded_at', { ascending: false })
+        .from("secure_documents")
+        .select("*")
+        .eq("is_active", true)
+        .order("uploaded_at", { ascending: false });
 
       if (error) {
-        console.error('Error loading documents:', error)
-        return
+        console.error("Error loading documents:", error);
+        return;
       }
 
-      setDocuments(data || [])
+      setDocuments(data || []);
     } catch (error) {
-      console.error('Error loading documents:', error)
+      console.error("Error loading documents:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const uploadSecureDocument = async (file: File, expirationDays?: number) => {
-    setUploading(true)
+    setUploading(true);
     try {
       // Validate file type (only allow specific financial document types)
       const allowedTypes = [
-        'application/pdf',
-        'image/png', 
-        'image/jpeg',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'text/plain'
-      ]
+        "application/pdf",
+        "image/png",
+        "image/jpeg",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "text/plain",
+      ];
 
       if (!allowedTypes.includes(file.type)) {
-        alert('❌ File type not allowed for financial documents')
-        return
+        alert("❌ File type not allowed for financial documents");
+        return;
       }
 
       // Read file content
-      const fileContent = await file.arrayBuffer()
-      const fileBase64 = Buffer.from(fileContent).toString('base64')
+      const fileContent = await file.arrayBuffer();
+      const fileBase64 = Buffer.from(fileContent).toString("base64");
 
       // Get encryption key for document encryption
-      const encryptionKey = await GLBAKeyManagement.getActiveKey('document_encryption')
+      const encryptionKey = await GLBAKeyManagement.getActiveKey(
+        "document_encryption",
+      );
       if (!encryptionKey) {
-        alert('❌ Encryption key not available - contact administrator')
-        return
+        alert("❌ Encryption key not available - contact administrator");
+        return;
       }
 
       // Encrypt the document content
-      const encryptedDocument = GLBAEncryption.encryptNPI(fileBase64, encryptionKey)
+      const encryptedDocument = GLBAEncryption.encryptNPI(
+        fileBase64,
+        encryptionKey,
+      );
 
       // Set expiration if specified
-      let expiresAt: string | undefined
+      let expiresAt: string | undefined;
       if (expirationDays) {
-        const expiration = new Date()
-        expiration.setDate(expiration.getDate() + expirationDays)
-        expiresAt = expiration.toISOString()
+        const expiration = new Date();
+        expiration.setDate(expiration.getDate() + expirationDays);
+        expiresAt = expiration.toISOString();
       }
 
       // Store in database
-      const { data: user } = await supabase.auth.getUser()
-      const { error } = await supabase
-        .from('secure_documents')
-        .insert({
-          filename: file.name,
-          encrypted_content: JSON.stringify(encryptedDocument),
-          content_type: file.type,
-          expires_at: expiresAt,
-          client_id: user.user?.id,
-          is_active: true,
-          access_count: 0
-        })
+      const { data: user } = await supabase.auth.getUser();
+      const { error } = await supabase.from("secure_documents").insert({
+        filename: file.name,
+        encrypted_content: JSON.stringify(encryptedDocument),
+        content_type: file.type,
+        expires_at: expiresAt,
+        client_id: user.user?.id,
+        is_active: true,
+        access_count: 0,
+      });
 
       if (error) {
-        alert(`❌ Upload failed: ${error.message}`)
-        return
+        alert(`❌ Upload failed: ${error.message}`);
+        return;
       }
 
       // Audit log
-      await supabase
-        .from('document_audit_log')
-        .insert({
-          action: 'upload',
-          filename: file.name,
-          user_id: user.user?.id,
-          timestamp: new Date().toISOString(),
-          compliance_status: 'glba_encrypted'
-        })
+      await supabase.from("document_audit_log").insert({
+        action: "upload",
+        filename: file.name,
+        user_id: user.user?.id,
+        timestamp: new Date().toISOString(),
+        compliance_status: "glba_encrypted",
+      });
 
-      alert('✅ Document uploaded and encrypted successfully!')
-      await loadDocuments()
-
+      alert("✅ Document uploaded and encrypted successfully!");
+      await loadDocuments();
     } catch (error) {
-      alert(`❌ Upload error: ${error.message}`)
+      alert(`❌ Upload error: ${error.message}`);
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   const downloadSecureDocument = async (document: SecureDocument) => {
     try {
       // Get decryption key
-      const decryptionKey = await GLBAKeyManagement.getActiveKey('document_encryption')
+      const decryptionKey = await GLBAKeyManagement.getActiveKey(
+        "document_encryption",
+      );
       if (!decryptionKey) {
-        alert('❌ Decryption key not available')
-        return
+        alert("❌ Decryption key not available");
+        return;
       }
 
       // Decrypt document
-      const encryptedData = JSON.parse(document.encrypted_content)
-      const decryptedBase64 = GLBAEncryption.decryptNPI(encryptedData, decryptionKey)
-      const decryptedContent = Buffer.from(decryptedBase64, 'base64')
+      const encryptedData = JSON.parse(document.encrypted_content);
+      const decryptedBase64 = GLBAEncryption.decryptNPI(
+        encryptedData,
+        decryptionKey,
+      );
+      const decryptedContent = Buffer.from(decryptedBase64, "base64");
 
       // Create download blob
-      const blob = new Blob([decryptedContent], { type: document.content_type })
-      const url = URL.createObjectURL(blob)
-      
+      const blob = new Blob([decryptedContent], {
+        type: document.content_type,
+      });
+      const url = URL.createObjectURL(blob);
+
       // Trigger download
-      const a = document.createElement('a')
-      a.href = url
-      a.download = document.filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = document.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
 
       // Update access count
       await supabase
-        .from('secure_documents')
+        .from("secure_documents")
         .update({ access_count: document.access_count + 1 })
-        .eq('id', document.id)
+        .eq("id", document.id);
 
       // Audit log
-      await supabase
-        .from('document_audit_log')
-        .insert({
-          action: 'download',
-          filename: document.filename,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
-          timestamp: new Date().toISOString(),
-          document_id: document.id
-        })
-
+      await supabase.from("document_audit_log").insert({
+        action: "download",
+        filename: document.filename,
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        timestamp: new Date().toISOString(),
+        document_id: document.id,
+      });
     } catch (error) {
-      alert(`❌ Download failed: ${error.message}`)
+      alert(`❌ Download failed: ${error.message}`);
     }
-  }
+  };
 
   const revokeDocumentAccess = async (documentId: string) => {
     try {
       await supabase
-        .from('secure_documents')
+        .from("secure_documents")
         .update({ is_active: false })
-        .eq('id', documentId)
+        .eq("id", documentId);
 
-      alert('✅ Document access revoked')
-      await loadDocuments()
-
+      alert("✅ Document access revoked");
+      await loadDocuments();
     } catch (error) {
-      alert(`❌ Revocation failed: ${error.message}`)
+      alert(`❌ Revocation failed: ${error.message}`);
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* GLBA Compliance Status */}
-      <div className={`p-6 rounded-lg border ${complianceStatus?.isCompliant ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+      <div
+        className={`p-6 rounded-lg border ${complianceStatus?.isCompliant ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}
+      >
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          {complianceStatus?.isCompliant ? '✅' : '❌'} GLBA Compliance Status
+          {complianceStatus?.isCompliant ? "✅" : "❌"} GLBA Compliance Status
         </h2>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="font-semibold">FIPS 140-2 Algorithm:</span>
-            <span className={`ml-2 px-2 py-1 rounded ${complianceStatus?.checks?.fips140_2_algorithm ? 'bg-green-100' : 'bg-red-100'}`}>
-              {complianceStatus?.checks?.fips140_2_algorithm ? 'Compliant' : 'Non-Compliant'}
+            <span
+              className={`ml-2 px-2 py-1 rounded ${complianceStatus?.checks?.fips140_2_algorithm ? "bg-green-100" : "bg-red-100"}`}
+            >
+              {complianceStatus?.checks?.fips140_2_algorithm
+                ? "Compliant"
+                : "Non-Compliant"}
             </span>
           </div>
           <div>
             <span className="font-semibold">Key Length:</span>
-            <span className={`ml-2 px-2 py-1 rounded ${complianceStatus?.checks?.adequate_key_length ? 'bg-green-100' : 'bg-red-100'}`}>
-              {complianceStatus?.checks?.adequate_key_length ? 'AES-256' : 'Insufficient'}
+            <span
+              className={`ml-2 px-2 py-1 rounded ${complianceStatus?.checks?.adequate_key_length ? "bg-green-100" : "bg-red-100"}`}
+            >
+              {complianceStatus?.checks?.adequate_key_length
+                ? "AES-256"
+                : "Insufficient"}
             </span>
           </div>
           <div>
             <span className="font-semibold">Authentication:</span>
-            <span className={`ml-2 px-2 py-1 rounded ${complianceStatus?.checks?.authentication_tag ? 'bg-green-100' : 'bg-red-100'}`}>
-              {complianceStatus?.checks?.authentication_tag ? 'GCM Mode' : 'Missing'}
+            <span
+              className={`ml-2 px-2 py-1 rounded ${complianceStatus?.checks?.authentication_tag ? "bg-green-100" : "bg-red-100"}`}
+            >
+              {complianceStatus?.checks?.authentication_tag
+                ? "GCM Mode"
+                : "Missing"}
             </span>
           </div>
         </div>
@@ -243,10 +260,12 @@ const GLBADocumentPortal: React.FC = () => {
               className="hidden"
               accept=".pdf,.png,.jpg,.jpeg,.xlsx,.txt"
               onChange={(e) => {
-                const file = e.target.files?.[0]
+                const file = e.target.files?.[0];
                 if (file) {
-                  const days = parseInt(prompt('Set expiration days (optional):') || '0')
-                  uploadSecureDocument(file, days || undefined)
+                  const days = parseInt(
+                    prompt("Set expiration days (optional):") || "0",
+                  );
+                  uploadSecureDocument(file, days || undefined);
                 }
               }}
             />
@@ -262,7 +281,9 @@ const GLBADocumentPortal: React.FC = () => {
               ) : (
                 <div>
                   <div className="text-4xl mb-2">📁</div>
-                  <div className="font-semibold">Click to upload secure financial document</div>
+                  <div className="font-semibold">
+                    Click to upload secure financial document
+                  </div>
                   <div className="text-sm text-gray-500 mt-2">
                     Supported: PDF, Images, Excel, Text (AES-256 encrypted)
                   </div>
@@ -281,13 +302,17 @@ const GLBADocumentPortal: React.FC = () => {
         ) : (
           <div className="space-y-3">
             {documents.map((doc) => (
-              <div key={doc.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div
+                key={doc.id}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+              >
                 <div className="flex-1">
                   <div className="font-semibold">{doc.filename}</div>
                   <div className="text-sm text-gray-500">
-                    Uploaded: {new Date(doc.uploaded_at).toLocaleString()} | 
-                    Access Count: {doc.access_count} | 
-                    {doc.expires_at && `Expires: ${new Date(doc.expires_at).toLocaleDateString()}`}
+                    Uploaded: {new Date(doc.uploaded_at).toLocaleString()} |
+                    Access Count: {doc.access_count} |
+                    {doc.expires_at &&
+                      `Expires: ${new Date(doc.expires_at).toLocaleDateString()}`}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -310,7 +335,7 @@ const GLBADocumentPortal: React.FC = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GLBADocumentPortal
+export default GLBADocumentPortal;

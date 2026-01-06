@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface CreditScoreTrackerProps {
-  userTier?: 'FREE' | 'PREMIUM' | 'ELITE';
+  userTier?: "FREE" | "PREMIUM" | "ELITE";
   showHistory?: boolean;
   showGoal?: boolean;
 }
@@ -15,9 +15,9 @@ interface CreditData {
 }
 
 const CreditScoreTracker: React.FC<CreditScoreTrackerProps> = ({
-  userTier = 'FREE',
+  userTier = "FREE",
   showHistory = true,
-  showGoal = true
+  showGoal = true,
 }) => {
   const [data, setData] = useState<CreditData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,28 +28,28 @@ const CreditScoreTracker: React.FC<CreditScoreTrackerProps> = ({
 
   const loadCreditData = async () => {
     try {
-      const response = await fetch('/api/credit-repair/progress', {
+      const response = await fetch("/api/credit-repair/progress", {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       const result = await response.json();
       setData(result.data);
     } catch (error) {
-      console.error('Error loading credit data:', error);
+      console.error("Error loading credit data:", error);
       // Fallback data
       setData({
         current: 680,
         improvement: 100,
         goal: 720,
-        estimatedTimeToGoal: '3 months',
+        estimatedTimeToGoal: "3 months",
         history: [
-          { date: '2025-07-01', score: 580 },
-          { date: '2025-08-01', score: 610 },
-          { date: '2025-09-01', score: 635 },
-          { date: '2025-10-01', score: 655 },
-          { date: '2025-11-01', score: 680 }
-        ]
+          { date: "2025-07-01", score: 580 },
+          { date: "2025-08-01", score: 610 },
+          { date: "2025-09-01", score: 635 },
+          { date: "2025-10-01", score: 655 },
+          { date: "2025-11-01", score: 680 },
+        ],
       });
     } finally {
       setLoading(false);
@@ -57,16 +57,19 @@ const CreditScoreTracker: React.FC<CreditScoreTrackerProps> = ({
   };
 
   const getScoreClass = (score: number): string => {
-    if (score >= 750) return 'excellent';
-    if (score >= 700) return 'good';
-    if (score >= 650) return 'fair';
-    if (score >= 600) return 'poor';
-    return 'very-poor';
+    if (score >= 750) return "excellent";
+    if (score >= 700) return "good";
+    if (score >= 650) return "fair";
+    if (score >= 600) return "poor";
+    return "very-poor";
   };
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
   };
 
   if (loading) {
@@ -86,13 +89,15 @@ const CreditScoreTracker: React.FC<CreditScoreTrackerProps> = ({
           <div className="score-number">{current}</div>
           <div className="score-label">Current Score</div>
         </div>
-        
+
         <div className="score-details">
-          <div className={`score-change ${improvement >= 0 ? 'positive' : 'negative'}`}>
-            {improvement >= 0 ? '↑' : '↓'} {Math.abs(improvement)} points
+          <div
+            className={`score-change ${improvement >= 0 ? "positive" : "negative"}`}
+          >
+            {improvement >= 0 ? "↑" : "↓"} {Math.abs(improvement)} points
             <span className="change-label">Overall Improvement</span>
           </div>
-          
+
           {showGoal && goal && (
             <div className="score-goal">
               <strong>Goal: {goal}</strong>
@@ -107,13 +112,17 @@ const CreditScoreTracker: React.FC<CreditScoreTrackerProps> = ({
           <h3>Score History</h3>
           <div className="history-chart">
             {history.map((point, index) => {
-              const maxScore = Math.max(...history.map(h => h.score));
-              const minScore = Math.min(...history.map(h => h.score));
+              const maxScore = Math.max(...history.map((h) => h.score));
+              const minScore = Math.min(...history.map((h) => h.score));
               const range = maxScore - minScore || 100;
               const height = ((point.score - minScore) / range) * 100;
-              
+
               return (
-                <div key={index} className="history-point" style={{ height: `${height}%` }}>
+                <div
+                  key={index}
+                  className="history-point"
+                  style={{ height: `${height}%` }}
+                >
                   <div className="point-marker" data-score={point.score}></div>
                   <div className="point-label">{formatDate(point.date)}</div>
                 </div>
@@ -126,22 +135,37 @@ const CreditScoreTracker: React.FC<CreditScoreTrackerProps> = ({
       <div className="quick-actions">
         <h3>Improve Your Score</h3>
         <div className="action-buttons">
-          <button className="btn btn-primary btn-sm" onClick={() => window.location.href='/credit-repair/disputes/new'}>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() =>
+              (window.location.href = "/credit-repair/disputes/new")
+            }
+          >
             Start Dispute
           </button>
-          <button className="btn btn-outline btn-sm" onClick={() => window.location.href='/credit-repair/tips'}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => (window.location.href = "/credit-repair/tips")}
+          >
             View Tips
           </button>
-          <button className="btn btn-outline btn-sm" onClick={() => window.location.href='/credit-repair/reports'}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => (window.location.href = "/credit-repair/reports")}
+          >
             View Reports
           </button>
         </div>
       </div>
 
-      {userTier === 'FREE' && (
+      {userTier === "FREE" && (
         <div className="upgrade-prompt">
-          <p>📊 Upgrade to Professional or Elite for all 3 bureau monitoring!</p>
-          <a href="/credit-repair/pricing" className="btn btn-primary btn-sm">View Plans</a>
+          <p>
+            📊 Upgrade to Professional or Elite for all 3 bureau monitoring!
+          </p>
+          <a href="/credit-repair/pricing" className="btn btn-primary btn-sm">
+            View Plans
+          </a>
         </div>
       )}
     </div>

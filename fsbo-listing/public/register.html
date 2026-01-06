@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - FSBO Listing</title>
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+  <header>
+    <h1>Register to List Your Home</h1>
+    <nav>
+      <a href="/index.html">Home</a>
+      <a href="/fsbo-gallery.html">Gallery</a>
+    </nav>
+  </header>
+  <main>
+    <!-- Dappier Search Widget -->
+    <!--#include file="../components/dappier-search.html" -->
+    <form id="register-form">
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="text" name="ownerName" placeholder="Owner Name" required />
+      <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="/login.html">Login here</a>.</p>
+  </main>
+  <footer>
+    <p>&copy; 2025 LA County FSBO. All rights reserved.</p>
+  </footer>
+  <script src="../utils/auth.js"></script>
+</body>
+</html>

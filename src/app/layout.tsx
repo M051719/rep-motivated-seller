@@ -1,12 +1,12 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { SessionContextProvider } from '@supabase/auth-helpers-react'
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentClient();
 
   return (
     <html lang="en">
@@ -16,5 +16,5 @@ export default function RootLayout({
         </SessionContextProvider>
       </body>
     </html>
-  )
+  );
 }

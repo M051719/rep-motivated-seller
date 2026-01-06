@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { BackButton } from '../components/ui/BackButton';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { BackButton } from "../components/ui/BackButton";
 
 interface FAQItem {
   id: number;
@@ -12,97 +12,113 @@ interface FAQItem {
 }
 
 const HelpPage: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categories = [
-    { value: 'all', label: 'All Topics', icon: '❓' },
-    { value: 'account', label: 'Account & Login', icon: '👤' },
-    { value: 'foreclosure', label: 'Foreclosure Help', icon: '🏠' },
-    { value: 'payment', label: 'Payments & Billing', icon: '💳' },
-    { value: 'technical', label: 'Technical Issues', icon: '🔧' }
+    { value: "all", label: "All Topics", icon: "❓" },
+    { value: "account", label: "Account & Login", icon: "👤" },
+    { value: "foreclosure", label: "Foreclosure Help", icon: "🏠" },
+    { value: "payment", label: "Payments & Billing", icon: "💳" },
+    { value: "technical", label: "Technical Issues", icon: "🔧" },
   ];
 
   const faqs: FAQItem[] = [
     {
       id: 1,
-      question: 'How do I create an account?',
-      answer: 'Click the "Sign In" button in the top right corner, then select "Sign Up". Enter your email and create a password. You\'ll receive a confirmation email to activate your account.',
-      category: 'account'
+      question: "How do I create an account?",
+      answer:
+        'Click the "Sign In" button in the top right corner, then select "Sign Up". Enter your email and create a password. You\'ll receive a confirmation email to activate your account.',
+      category: "account",
     },
     {
       id: 2,
-      question: 'Is the foreclosure assessment really free?',
-      answer: 'Yes! Our initial foreclosure assessment questionnaire is completely free with no obligation. We believe everyone deserves access to help when facing foreclosure.',
-      category: 'foreclosure'
+      question: "Is the foreclosure assessment really free?",
+      answer:
+        "Yes! Our initial foreclosure assessment questionnaire is completely free with no obligation. We believe everyone deserves access to help when facing foreclosure.",
+      category: "foreclosure",
     },
     {
       id: 3,
-      question: 'How quickly will I hear back after submitting my information?',
-      answer: 'For urgent foreclosure cases, we respond within 24 hours. For general inquiries, you can expect a response within 1-2 business days.',
-      category: 'foreclosure'
+      question: "How quickly will I hear back after submitting my information?",
+      answer:
+        "For urgent foreclosure cases, we respond within 3-5 business days. For general inquiries, you can expect a response within 5-7 business days. This allows our representatives to thoroughly review your case and apply appropriate relief options.",
+      category: "foreclosure",
     },
     {
       id: 4,
-      question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit cards (Visa, Mastercard, American Express, Discover), debit cards, and PayPal. Payment plans are available for our services.',
-      category: 'payment'
+      question: "What payment methods do you accept?",
+      answer:
+        "We accept all major credit cards (Visa, Mastercard, American Express, Discover), debit cards, and PayPal. Payment plans are available for our services.",
+      category: "payment",
     },
     {
       id: 5,
-      question: 'I forgot my password. How do I reset it?',
-      answer: 'Click "Sign In" then select "Forgot Password". Enter your email address and we\'ll send you a link to reset your password.',
-      category: 'account'
+      question: "I forgot my password. How do I reset it?",
+      answer:
+        'Click "Sign In" then select "Forgot Password". Enter your email address and we\'ll send you a link to reset your password.',
+      category: "account",
     },
     {
       id: 6,
-      question: 'What information do I need for the foreclosure questionnaire?',
-      answer: 'Have ready: your property address, current mortgage balance, monthly payment amount, how far behind you are (if applicable), and your household income. Don\'t worry if you don\'t have everything - you can always update later.',
-      category: 'foreclosure'
+      question: "What information do I need for the foreclosure questionnaire?",
+      answer:
+        "Have ready: your property address, current mortgage balance, monthly payment amount, how far behind you are (if applicable), and your household income. Don't worry if you don't have everything - you can always update later.",
+      category: "foreclosure",
     },
     {
       id: 7,
-      question: 'Is my information secure?',
-      answer: 'Absolutely. We use bank-level encryption (SSL/TLS) to protect all your data. Your personal information is never shared with third parties without your explicit consent.',
-      category: 'technical'
+      question: "Is my information secure?",
+      answer:
+        "Absolutely. We use bank-level encryption (SSL/TLS) to protect all your data. Your personal information is never shared with third parties without your explicit consent.",
+      category: "technical",
     },
     {
       id: 8,
-      question: 'Can I cancel my subscription anytime?',
-      answer: 'Yes. You can cancel your subscription at any time from your account settings. There are no cancellation fees, and you\'ll have access until the end of your current billing period.',
-      category: 'payment'
+      question: "Can I cancel my subscription anytime?",
+      answer:
+        "Yes. You can cancel your subscription at any time from your account settings. There are no cancellation fees, and you'll have access until the end of your current billing period.",
+      category: "payment",
     },
     {
       id: 9,
-      question: 'The website is loading slowly. What should I do?',
-      answer: 'Try clearing your browser cache, disabling browser extensions, or using a different browser. If problems persist, contact our support team at support@repmotivatedseller.com.',
-      category: 'technical'
+      question: "The website is loading slowly. What should I do?",
+      answer:
+        "Try clearing your browser cache, disabling browser extensions, or using a different browser. If problems persist, contact our support team at support@repmotivatedseller.com.",
+      category: "technical",
     },
     {
       id: 10,
-      question: 'How do I update my account information?',
-      answer: 'Log in and click your name in the top right corner, then select "Profile". You can update your email, password, phone number, and notification preferences.',
-      category: 'account'
+      question: "How do I update my account information?",
+      answer:
+        'Log in and click your name in the top right corner, then select "Profile". You can update your email, password, phone number, and notification preferences.',
+      category: "account",
     },
     {
       id: 11,
-      question: 'What makes your service different from other foreclosure help?',
-      answer: 'We combine 24/7 AI assistance, expert human support, comprehensive education, and a caring community. We don\'t just provide information - we walk with you through the entire process.',
-      category: 'foreclosure'
+      question:
+        "What makes your service different from other foreclosure help?",
+      answer:
+        "We combine 24/7 AI assistance, expert human support, comprehensive education, and a caring community. We don't just provide information - we walk with you through the entire process.",
+      category: "foreclosure",
     },
     {
       id: 12,
-      question: 'Do you work with all types of properties?',
-      answer: 'Yes! We help homeowners with single-family homes, condos, townhouses, and multi-family properties up to 4 units. We serve all 50 states.',
-      category: 'foreclosure'
-    }
+      question: "Do you work with all types of properties?",
+      answer:
+        "Yes! We help homeowners with single-family homes, condos, townhouses, and multi-family properties up to 4 units. We serve all 50 states.",
+      category: "foreclosure",
+    },
   ];
 
-  const filteredFAQs = faqs.filter(faq => {
-    const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
-    const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredFAQs = faqs.filter((faq) => {
+    const matchesCategory =
+      selectedCategory === "all" || faq.category === selectedCategory;
+    const searchTerm = searchQuery.trim().toLowerCase();
+    const matchesSearch = searchTerm === "" || 
+      faq.question.toLowerCase().includes(searchTerm) ||
+      faq.answer.toLowerCase().includes(searchTerm);
     return matchesCategory && matchesSearch;
   });
 
@@ -110,7 +126,10 @@ const HelpPage: React.FC = () => {
     <>
       <Helmet>
         <title>Help Center - FAQs & Support | RepMotivatedSeller</title>
-        <meta name="description" content="Get answers to frequently asked questions about foreclosure help, account management, and technical support." />
+        <meta
+          name="description"
+          content="Get answers to frequently asked questions about foreclosure help, account management, and technical support."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -154,7 +173,9 @@ const HelpPage: React.FC = () => {
                 to="/foreclosure"
                 className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 text-center hover:shadow-lg transition-all group"
               >
-                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🆘</div>
+                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">
+                  🆘
+                </div>
                 <h3 className="font-bold text-gray-900 mb-2">Emergency Help</h3>
                 <p className="text-sm text-gray-600">Facing foreclosure now?</p>
               </Link>
@@ -163,7 +184,9 @@ const HelpPage: React.FC = () => {
                 to="/consultation"
                 className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 text-center hover:shadow-lg transition-all group"
               >
-                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📞</div>
+                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">
+                  📞
+                </div>
                 <h3 className="font-bold text-gray-900 mb-2">Book Call</h3>
                 <p className="text-sm text-gray-600">Talk to an expert</p>
               </Link>
@@ -172,7 +195,9 @@ const HelpPage: React.FC = () => {
                 to="/resources"
                 className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 text-center hover:shadow-lg transition-all group"
               >
-                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📚</div>
+                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">
+                  📚
+                </div>
                 <h3 className="font-bold text-gray-900 mb-2">Resources</h3>
                 <p className="text-sm text-gray-600">Templates & guides</p>
               </Link>
@@ -181,7 +206,9 @@ const HelpPage: React.FC = () => {
                 href="mailto:support@repmotivatedseller.com"
                 className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 text-center hover:shadow-lg transition-all group"
               >
-                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">✉️</div>
+                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">
+                  ✉️
+                </div>
                 <h3 className="font-bold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-sm text-gray-600">Get direct support</p>
               </a>
@@ -199,8 +226,8 @@ const HelpPage: React.FC = () => {
                   onClick={() => setSelectedCategory(category.value)}
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedCategory === category.value
-                      ? 'bg-purple-600 text-white shadow-lg'
-                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                      ? "bg-purple-600 text-white shadow-lg"
+                      : "bg-white text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {category.icon} {category.label}
@@ -226,7 +253,9 @@ const HelpPage: React.FC = () => {
                   transition={{ delay: index * 0.05 }}
                 >
                   <button
-                    onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
+                    onClick={() =>
+                      setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)
+                    }
                     className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                   >
                     <span className="font-semibold text-gray-900 pr-4">
@@ -234,19 +263,22 @@ const HelpPage: React.FC = () => {
                     </span>
                     <svg
                       className={`w-6 h-6 text-gray-500 flex-shrink-0 transition-transform ${
-                        expandedFAQ === faq.id ? 'transform rotate-180' : ''
+                        expandedFAQ === faq.id ? "transform rotate-180" : ""
                       }`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </button>
                   {expandedFAQ === faq.id && (
-                    <div className="px-6 pb-4 text-gray-600">
-                      {faq.answer}
-                    </div>
+                    <div className="px-6 pb-4 text-gray-600">{faq.answer}</div>
                   )}
                 </motion.div>
               ))}
@@ -254,7 +286,9 @@ const HelpPage: React.FC = () => {
 
             {filteredFAQs.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-600">No questions found matching your search.</p>
+                <p className="text-xl text-gray-600">
+                  No questions found matching your search.
+                </p>
               </div>
             )}
           </div>
@@ -273,7 +307,10 @@ const HelpPage: React.FC = () => {
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6">
                 <div className="text-4xl mb-3">📞</div>
                 <h3 className="font-bold text-gray-900 mb-2">Phone</h3>
-                <a href="tel:+18778064677" className="text-blue-600 font-semibold hover:underline">
+                <a
+                  href="tel:+18778064677"
+                  className="text-blue-600 font-semibold hover:underline"
+                >
                   (877) 806-4677
                 </a>
                 <p className="text-sm text-gray-600 mt-2">Mon-Fri 9AM-5PM PT</p>
@@ -282,10 +319,15 @@ const HelpPage: React.FC = () => {
               <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6">
                 <div className="text-4xl mb-3">✉️</div>
                 <h3 className="font-bold text-gray-900 mb-2">Email</h3>
-                <a href="mailto:support@repmotivatedseller.com" className="text-green-600 font-semibold hover:underline break-all">
+                <a
+                  href="mailto:support@repmotivatedseller.com"
+                  className="text-green-600 font-semibold hover:underline break-all"
+                >
                   support@repmotivatedseller.com
                 </a>
-                <p className="text-sm text-gray-600 mt-2">Response within 24hrs</p>
+                <p className="text-sm text-gray-600 mt-2">
+                  Response within 3-5 business days for urgent cases
+                </p>
               </div>
 
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
@@ -321,3 +363,5 @@ const HelpPage: React.FC = () => {
 };
 
 export default HelpPage;
+
+

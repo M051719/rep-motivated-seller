@@ -1,0 +1,705 @@
+I'll help you create a complete subscription service implementation. Let me provide step-by-step instructions for the entire setup.
+
+## Step 1: Create Directory Structure
+
+```bash
+mkdir -p src/services
+mkdir -p src/lib
+mkdir -p src/config
+mkdir -p src/types
+mkdir -p src/hooks
+mkdir -p src/components/subscription
+```
+
+## Step 2: Environment Configuration
+
+### Create `.env.local` file in your project root:
+
+```bash
+# .env.local
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+```
+
+## Step 3: Install Required Dependencies
+
+```bash
+npm install @supabase/supabase-js
+npm install @types/node # if using TypeScript
+```
+
+## Step 4: Create Supabase Configuration[ check if .ts is good ] 
+
+### File: `src/lib/supabase.ts`
+
+```typescript
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
+// For server-side operations that need elevated permissions
+export const supabaseAdmin = createClient(
+  supabaseUrl,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+```[ check if .ts is good ]
+
+## Step 5: Create Subscription Plans Configuration
+
+### File: `src/config/subscriptionPlans.ts`[ done ] 
+
+```typescript
+export const SUBSCRIPTION_PLANS = {
+  free: {
+    name: 'Free',
+    price: 0,
+    features: [
+      'Education resources',
+      'Basic property search',
+      'Limited API calls (10/month)'
+    ],
+    apiCredits: 10,
+    limits: {
+      properties: 10,
+      savedSearches: 3,
+      exportLimit: 5
+    }
+  },
+  professional: {
+    name: 'Professional',
+    price: 49,
+    features: [
+      'All Free features',
+      'Call center tools',
+      'Direct mail campaigns',
+      'Property research tools',
+      'Deal analyzer',
+      'API access (1000/month)'
+    ],
+    apiCredits: 1000,
+    limits: {
+      properties: 1000,
+      savedSearches: 25,
+      exportLimit: 500
+    }
+  },
+  enterprise: {
+    name: 'Enterprise',
+    price: 199,
+    features: [
+      'All Professional features',
+      'White-label solution',
+      'Unlimited API access',
+      'Priority support',
+      'Custom integrations'
+    ],
+    apiCredits: -1, // Unlimited
+    limits: {
+      properties: -1, // Unlimited
+      savedSearches: -1, // Unlimited
+      exportLimit: -1 // Unlimited
+    }
+  }
+} as const;
+
+export type SubscriptionTier = keyof typeof SUBSCRIPTION_PLANS;[ done ] 
+```
+
+## Step 6: Create Types
+
+### File: `src/types/subscription.ts`[ done ] 
+
+```typescript
+export interface UserSubscription {
+  id?: string;
+  user_id: string;
+  subscription_tier: 'free' | 'professional' | 'enterprise';
+  expires_at?: string;
+  api_credits: number;
+  created_at?: string;
+  updated_at?: string;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+}
+
+export interface ApiUsage {
+  id?: string;
+  user_id: string;
+  api_name: string;
+  credits_used: number;
+  created_at?: string;
+}
+
+export interface FeatureAccess {
+  hasAccess: boolean;
+  tier: string;
+  feature: string;
+  remainingCredits?: number;
+}
+```[ done ] 
+
+## Step 7: Enhanced Subscription Service
+
+### File: `src/services/SubscriptionService.ts`[ done ] 
+
+```typescript[ done ] 
+import { supabase } from '../lib/supabase';
+import { SUBSCRIPTION_PLANS, SubscriptionTier } from '../config/subscriptionPlans';
+import { UserSubscription, ApiUsage, FeatureAccess } from '../types/subscription';
+
+class SubscriptionService {
+  async getUserSubscription(userId: string): Promise<UserSubscription & { tier: SubscriptionTier; plan: any }> {
+    try {
+      const { data, error } = await supabase
+        .from('professional_members')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error || !data) {
+        // Return default free tier
+        return {
+          user_id: userId,
+          tier: 'free',
+          api_credits: SUBSCRIPTION_PLANS.free.apiCredits,
+          subscription_tier: 'free',
+          plan: SUBSCRIPTION_PLANS.free
+        };
+      }
+      
+      const tier = data.subscription_tier as SubscriptionTier;
+      return {
+        ...data,
+        tier,
+        plan: SUBSCRIPTION_PLANS[tier]
+      };
+    } catch (error) {
+      console.error('Error fetching user subscription:', error);
+      throw new Error('Failed to fetch subscription data');
+    }
+  }
+
+  async checkFeatureAccess(userId: string, feature: string): Promise<FeatureAccess> {
+    try {
+      const subscription = await this.getUserSubscription(userId);
+      
+      // Check if subscription is active (if expires_at exists)
+      if (subscription.expires_at && new Date(subscription.expires_at) < new Date()) {
+        return {
+          hasAccess: false,
+          tier: subscription.tier,
+          feature,
+          remainingCredits: 0
+        };
+      }
+      
+      // Feature access hierarchy
+      const tierHierarchy: Record<SubscriptionTier, number> = {
+        free: 0,
+        professional: 1,
+        enterprise: 2
+      };
+      
+      const featureRequirements: Record<string, number> = {
+        'education': 0,
+        'basic-search': 0,
+        'call-center': 1,
+        'direct-mail': 1,
+        'property-research': 1,
+        'deal-analyzer': 1,
+        'api-access': 1,
+        'white-label': 2,
+        'unlimited-api': 2,
+        'priority-support': 2
+      };
+      
+      const userTierLevel = tierHierarchy[subscription.tier] || 0;
+      const requiredLevel = featureRequirements[feature] || 0;
+      const hasAccess = userTierLevel >= requiredLevel;
+      
+      return {
+        hasAccess,
+        tier: subscription.tier,
+        feature,
+        remainingCredits: subscription.api_credits
+      };
+    } catch (error) {
+      console.error('Error checking feature access:', error);
+      return {
+        hasAccess: false,
+        tier: 'free',
+        feature,
+        remainingCredits: 0
+      };
+    }
+  }
+
+  async trackApiUsage(userId: string, apiName: string, credits: number = 1): Promise<number> {
+    try {
+      // Get current subscription
+      const subscription = await this.getUserSubscription(userId);
+      
+      // Check if user has unlimited credits (enterprise)
+      if (subscription.api_credits === -1) {
+        // Track usage but don't deduct credits
+        await supabase.from('api_usage').insert({
+          user_id: userId,
+          api_name: apiName,
+          credits_used: credits
+        });
+        return -1; // Unlimited
+      }
+      
+      // Check if user has enough credits
+      if (subscription.api_credits < credits) {
+        throw new Error('Insufficient API credits');
+      }
+      
+      // Track API usage
+      const { error: usageError } = await supabase.from('api_usage').insert({
+        user_id: userId,
+        api_name: apiName,
+        credits_used: credits
+      });
+      
+      if (usageError) {
+        console.error('Error tracking API usage:', usageError);
+      }
+      
+      // Update remaining credits
+      const newCredits = subscription.api_credits - credits;
+      const { error: updateError } = await supabase
+        .from('professional_members')
+        .update({ 
+          api_credits: newCredits,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId);
+      
+      if (updateError) {
+        console.error('Error updating credits:', updateError);
+        throw new Error('Failed to update API credits');
+      }
+      
+      return newCredits;
+    } catch (error) {
+      console.error('Error tracking API usage:', error);
+      throw error;
+    }
+  }
+
+  async upgradeSubscription(userId: string, newTier: SubscriptionTier, stripeSubscriptionId?: string) {
+    try {
+      const plan = SUBSCRIPTION_PLANS[newTier];
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 1); // 1 month from now
+      
+      const { data, error } = await supabase
+        .from('professional_members')
+        .upsert({
+          user_id: userId,
+          subscription_tier: newTier,
+          api_credits: plan.apiCredits,
+          expires_at: expiresAt.toISOString(),
+          stripe_subscription_id: stripeSubscriptionId,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error upgrading subscription:', error);
+        throw new Error('Failed to upgrade subscription');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error in upgradeSubscription:', error);
+      throw error;
+    }
+  }
+
+  async cancelSubscription(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('professional_members')
+        .update({
+          subscription_tier: 'free',
+          api_credits: SUBSCRIPTION_PLANS.free.apiCredits,
+          expires_at: null,
+          stripe_subscription_id: null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error canceling subscription:', error);
+        throw new Error('Failed to cancel subscription');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error in cancelSubscription:', error);
+      throw error;
+    }
+  }
+
+  async getApiUsageStats(userId: string, days: number = 30) {
+    try {
+      const fromDate = new Date();
+      fromDate.setDate(fromDate.getDate() - days);
+      
+      const { data, error } = await supabase
+        .from('api_usage')
+        .select('api_name, credits_used, created_at')
+        .eq('user_id', userId)
+        .gte('created_at', fromDate.toISOString())
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching API usage stats:', error);
+        return [];
+      }
+      
+      return data || [];
+    } catch (error) {
+      console.error('Error in getApiUsageStats:', error);
+      return [];
+    }
+  }
+}
+
+export default new SubscriptionService();[ done ]
+```
+
+## Step 8: Create React Hook for Subscriptions[ done ] 
+
+### File: `src/hooks/useSubscription.ts`[ done ] 
+
+```typescript[ done] 
+import { useState, useEffect } from 'react';
+import { useUser } from '@supabase/auth-helpers-react'; // or your auth hook
+import SubscriptionService from '../services/SubscriptionService';
+import { UserSubscription, FeatureAccess } from '../types/subscription';
+import { SubscriptionTier } from '../config/subscriptionPlans';
+
+export function useSubscription() {
+  const user = useUser();
+  const [subscription, setSubscription] = useState<(UserSubscription & { tier: SubscriptionTier; plan: any }) | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchSubscription();
+    } else {
+      setLoading(false);
+    }
+  }, [user?.id]);
+
+  const fetchSubscription = async () => {
+    try {
+      setLoading(true);
+      const sub = await SubscriptionService.getUserSubscription(user!.id);
+      setSubscription(sub);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch subscription');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkFeatureAccess = async (feature: string): Promise<FeatureAccess> => {
+    if (!user?.id) {
+      return { hasAccess: false, tier: 'free', feature };
+    }
+    return await SubscriptionService.checkFeatureAccess(user.id, feature);
+  };
+
+  const trackApiUsage = async (apiName: string, credits: number = 1): Promise<number> => {
+    if (!user?.id) {
+      throw new Error('User not authenticated');
+    }
+    const remainingCredits = await SubscriptionService.trackApiUsage(user.id, apiName, credits);
+    // Refresh subscription data
+    await fetchSubscription();
+    return remainingCredits;
+  };
+
+  const upgradeSubscription = async (newTier: SubscriptionTier, stripeSubscriptionId?: string) => {
+    if (!user?.id) {
+      throw new Error('User not authenticated');
+    }
+    await SubscriptionService.upgradeSubscription(user.id, newTier, stripeSubscriptionId);
+    await fetchSubscription();
+  };
+
+  return {
+    subscription,
+    loading,
+    error,
+    checkFeatureAccess,
+    trackApiUsage,
+    upgradeSubscription,
+    refreshSubscription: fetchSubscription
+  };
+}
+```[ done ] 
+
+## Step 9: Create Subscription Component[ done ]
+
+### File: `src/components/subscription/SubscriptionCard.tsx`[ done ] 
+
+```tsx
+import React from 'react';
+import { SUBSCRIPTION_PLANS } from '../../config/subscriptionPlans';
+import { useSubscription } from '../../hooks/useSubscription';
+
+const SubscriptionCard: React.FC = () => {
+  const { subscription, loading, error } = useSubscription();
+
+  if (loading) return <div>Loading subscription...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!subscription) return <div>No subscription data</div>;
+
+  const isExpired = subscription.expires_at && new Date(subscription.expires_at) < new Date();
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-xl font-semibold text-gray-900">
+            {subscription.plan.name} Plan
+          </h3>
+          <p className="text-gray-600">
+            ${subscription.plan.price}/month
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm text-gray-500">API Credits</p>
+          <p className="text-lg font-semibold">
+            {subscription.api_credits === -1 ? 'Unlimited' : subscription.api_credits}
+          </p>
+        </div>
+      </div>
+
+      {subscription.expires_at && (
+        <div className="mb-4">
+          <p className="text-sm text-gray-500">
+            {isExpired ? 'Expired on' : 'Expires on'}: {' '}
+            <span className={isExpired ? 'text-red-600' : 'text-green-600'}>
+              {new Date(subscription.expires_at).toLocaleDateString()}
+            </span>
+          </p>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <h4 className="font-medium text-gray-900">Features:</h4>
+        <ul className="space-y-1">
+          {subscription.plan.features.map((feature: string, index: number) => (
+            <li key={index} className="flex items-center text-sm text-gray-600">
+              <svg className="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              {feature}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default SubscriptionCard;
+```[ done ]
+
+## Step 10: Create Database Tables (Supabase SQL)[ done ]
+
+Run these SQL commands in your Supabase SQL editor:[ done ]
+
+```sql
+-- Create professional_members table
+CREATE TABLE IF NOT EXISTS professional_members (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  subscription_tier TEXT DEFAULT 'free' CHECK (subscription_tier IN ('free', 'professional', 'enterprise')),
+  api_credits INTEGER DEFAULT 10,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id)
+);
+
+-- Create api_usage table
+CREATE TABLE IF NOT EXISTS api_usage (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  api_name TEXT NOT NULL,
+  credits_used INTEGER DEFAULT 1,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_professional_members_user_id ON professional_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_api_usage_user_id ON api_usage(user_id);
+CREATE INDEX IF NOT EXISTS idx_api_usage_created_at ON api_usage(created_at);
+
+-- Enable Row Level Security
+ALTER TABLE professional_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE api_usage ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies
+CREATE POLICY "Users can view own subscription" ON professional_members
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own subscription" ON professional_members
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own subscription" ON professional_members
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can view own API usage" ON api_usage
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own API usage" ON api_usage
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+```
+
+## Step 11: Usage Example
+
+### File: `src/pages/dashboard.tsx` or `src/app/dashboard/page.tsx`
+
+```tsx
+import React, { useState } from 'react';
+import { useSubscription } from '../hooks/useSubscription';
+import SubscriptionCard from '../components/subscription/SubscriptionCard';
+
+const Dashboard: React.FC = () => {
+  const { subscription, checkFeatureAccess, trackApiUsage } = useSubscription();
+  const [apiResult, setApiResult] = useState<string>('');
+
+  const handleApiCall = async (apiName: string) => {
+    try {
+      // Check if user has access to this feature
+      const access = await checkFeatureAccess(apiName);
+      
+      if (!access.hasAccess) {
+        alert(`You need a higher subscription tier to access ${apiName}`);
+        return;
+      }
+
+      // Track API usage
+      const remainingCredits = await trackApiUsage(apiName, 1);
+      
+      // Make your actual API call here
+      // const result = await yourApiCall();
+      
+      setApiResult(`API call successful! Remaining credits: ${remainingCredits}`);
+    } catch (error) {
+      console.error('API call failed:', error);
+      setApiResult('API call failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <h2 className="text-2xl font-semibold mb-4">API Tools</h2>
+          
+          <div className="space-y-4">
+            <button
+              onClick={() => handleApiCall('property-research')}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Property Research API
+            </button>
+            
+            <button
+              onClick={() => handleApiCall('deal-analyzer')}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+            >
+              Deal Analyzer API
+            </button>
+            
+            <button
+              onClick={() => handleApiCall('call-center')}
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
+            >
+              Call Center Tools
+            </button>
+          </div>
+          
+          {apiResult && (
+            <div className="mt-4 p-4 bg-gray-100 rounded">
+              <p>{apiResult}</p>
+            </div>
+          )}
+        </div>
+        
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Subscription</h2>
+          <SubscriptionCard />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
+```
+
+## Step 12: Add to Main App
+
+### File: `src/app/layout.tsx` or `src/pages/_app.tsx`
+
+Make sure you have the Supabase provider set up:
+
+```tsx
+// For Next.js App Router (src/app/layout.tsx)
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const supabase = createClientComponentClient()
+
+  return (
+    <html lang="en">
+      <body>
+        <SessionContextProvider supabaseClient={supabase}>
+          {children}
+        </SessionContextProvider>
+      </body>
+    </html>
+  )
+}[ done ] 
+```
+
+This complete implementation provides:
+- ✅ Subscription management
+- ✅ Feature access control
+- ✅ API usage tracking
+- ✅ Credit management
+- ✅ Database integration
+- ✅ React hooks
+- ✅ UI components
+- ✅ Error handling
+- ✅ TypeScript support
+
+You can now use this system throughout your application to control access to features based on subscription tiers!

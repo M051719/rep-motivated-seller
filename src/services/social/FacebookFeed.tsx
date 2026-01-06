@@ -1,57 +1,61 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import FacebookService, { FacebookPost, FacebookPage, FacebookEvent } from '../../services/social/FacebookService'
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import FacebookService, {
+  FacebookPost,
+  FacebookPage,
+  FacebookEvent,
+} from "../../services/social/FacebookService";
 
 const FacebookFeed: React.FC = () => {
-  const [posts, setPosts] = useState<FacebookPost[]>([])
-  const [pageInfo, setPageInfo] = useState<FacebookPage | null>(null)
-  const [events, setEvents] = useState<FacebookEvent[]>([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'posts' | 'events'>('posts')
+  const [posts, setPosts] = useState<FacebookPost[]>([]);
+  const [pageInfo, setPageInfo] = useState<FacebookPage | null>(null);
+  const [events, setEvents] = useState<FacebookEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"posts" | "events">("posts");
 
   useEffect(() => {
-    loadFacebookData()
-  }, [])
+    loadFacebookData();
+  }, []);
 
   const loadFacebookData = async () => {
     try {
       const [pageData, postsData, eventsData] = await Promise.all([
         FacebookService.getPageInfo(),
         FacebookService.getPagePosts(12),
-        FacebookService.getPageEvents(6)
-      ])
+        FacebookService.getPageEvents(6),
+      ]);
 
-      setPageInfo(pageData)
-      setPosts(postsData)
-      setEvents(eventsData)
+      setPageInfo(pageData);
+      setPosts(postsData);
+      setEvents(eventsData);
     } catch (error) {
-      console.error('Error loading Facebook data:', error)
+      console.error("Error loading Facebook data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const formatPostContent = (post: FacebookPost) => {
-    const content = post.message || post.story || ''
+    const content = post.message || post.story || "";
     if (content.length > 200) {
-      return content.substring(0, 200) + '...'
+      return content.substring(0, 200) + "...";
     }
-    return content
-  }
+    return content;
+  };
 
   const getEngagementCount = (post: FacebookPost) => {
-    const likes = post.likes?.summary?.total_count || 0
-    const comments = post.comments?.summary?.total_count || 0
-    const shares = post.shares?.count || 0
-    return likes + comments + shares
-  }
+    const likes = post.likes?.summary?.total_count || 0;
+    const comments = post.comments?.summary?.total_count || 0;
+    const shares = post.shares?.count || 0;
+    return likes + comments + shares;
+  };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -73,7 +77,7 @@ const FacebookFeed: React.FC = () => {
                 />
               </div>
             )}
-            
+
             <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
               <div className="bg-white p-2 rounded-full shadow-lg">
                 <img
@@ -89,7 +93,7 @@ const FacebookFeed: React.FC = () => {
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               📘 {pageInfo.name}
             </h1>
-            
+
             {pageInfo.about && (
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
                 {pageInfo.about}
@@ -99,11 +103,11 @@ const FacebookFeed: React.FC = () => {
             <div className="flex justify-center items-center space-x-8 mb-8">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {pageInfo.fan_count?.toLocaleString() || '0'}
+                  {pageInfo.fan_count?.toLocaleString() || "0"}
                 </div>
                 <div className="text-gray-500">Followers</div>
               </div>
-              
+
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
                   {posts.length}
@@ -121,11 +125,14 @@ const FacebookFeed: React.FC = () => {
               >
                 👍 Like Our Page
               </a>
-              
+
               <button
                 onClick={() => {
-                  const shareUrl = FacebookService.generateShareUrl(window.location.href, 'Check out RepMotivatedSeller for foreclosure help!')
-                  window.open(shareUrl, '_blank', 'width=600,height=400')
+                  const shareUrl = FacebookService.generateShareUrl(
+                    window.location.href,
+                    "Check out RepMotivatedSeller for foreclosure help!",
+                  );
+                  window.open(shareUrl, "_blank", "width=600,height=400");
                 }}
                 className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
               >
@@ -140,22 +147,22 @@ const FacebookFeed: React.FC = () => {
       <div className="flex justify-center mb-8">
         <div className="bg-white rounded-lg shadow-md p-2">
           <button
-            onClick={() => setActiveTab('posts')}
+            onClick={() => setActiveTab("posts")}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === 'posts'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-600 hover:text-blue-600'
+              activeTab === "posts"
+                ? "bg-blue-600 text-white"
+                : "text-gray-600 hover:text-blue-600"
             }`}
           >
             📝 Posts ({posts.length})
           </button>
-          
+
           <button
-            onClick={() => setActiveTab('events')}
+            onClick={() => setActiveTab("events")}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === 'events'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-600 hover:text-blue-600'
+              activeTab === "events"
+                ? "bg-blue-600 text-white"
+                : "text-gray-600 hover:text-blue-600"
             }`}
           >
             📅 Events ({events.length})
@@ -165,7 +172,7 @@ const FacebookFeed: React.FC = () => {
 
       {/* Content */}
       <AnimatePresence mode="wait">
-        {activeTab === 'posts' && (
+        {activeTab === "posts" && (
           <motion.div
             key="posts"
             initial={{ opacity: 0, y: 20 }}
@@ -197,7 +204,9 @@ const FacebookFeed: React.FC = () => {
                   {/* Post Content */}
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-3 text-sm text-gray-500">
-                      <span>{FacebookService.formatDate(post.created_time)}</span>
+                      <span>
+                        {FacebookService.formatDate(post.created_time)}
+                      </span>
                       <div className="flex items-center space-x-3">
                         {post.likes && (
                           <span className="flex items-center space-x-1">
@@ -228,7 +237,7 @@ const FacebookFeed: React.FC = () => {
                       <div className="text-xs text-gray-500">
                         {getEngagementCount(post)} interactions
                       </div>
-                      
+
                       <a
                         href={post.permalink_url}
                         target="_blank"
@@ -257,7 +266,7 @@ const FacebookFeed: React.FC = () => {
           </motion.div>
         )}
 
-        {activeTab === 'events' && (
+        {activeTab === "events" && (
           <motion.div
             key="events"
             initial={{ opacity: 0, y: 20 }}
@@ -291,26 +300,31 @@ const FacebookFeed: React.FC = () => {
                     <div className="flex items-center space-x-4 mb-4">
                       <div className="bg-blue-100 rounded-lg p-3 text-center min-w-[60px]">
                         <div className="text-xs text-blue-600 font-medium">
-                          {new Date(event.start_time).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
+                          {new Date(event.start_time)
+                            .toLocaleDateString("en-US", { month: "short" })
+                            .toUpperCase()}
                         </div>
                         <div className="text-lg font-bold text-blue-800">
                           {new Date(event.start_time).getDate()}
                         </div>
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900 text-lg mb-1">
                           {event.name}
                         </h3>
                         <p className="text-gray-600 text-sm">
-                          {new Date(event.start_time).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                          {new Date(event.start_time).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
                         </p>
                       </div>
                     </div>
@@ -319,17 +333,17 @@ const FacebookFeed: React.FC = () => {
                       <div className="flex items-center space-x-2 text-gray-600 mb-3">
                         <span>📍</span>
                         <span className="text-sm">
-                          {event.place.name}, {event.place.location.city}, {event.place.location.state}
+                          {event.place.name}, {event.place.location.city},{" "}
+                          {event.place.location.state}
                         </span>
                       </div>
                     )}
 
                     {event.description && (
                       <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                        {event.description.length > 150 
-                          ? event.description.substring(0, 150) + '...'
-                          : event.description
-                        }
+                        {event.description.length > 150
+                          ? event.description.substring(0, 150) + "..."
+                          : event.description}
                       </p>
                     )}
 
@@ -385,7 +399,8 @@ const FacebookFeed: React.FC = () => {
           🤝 Join Our Community
         </h2>
         <p className="text-gray-600 mb-6">
-          Stay connected with us on Facebook for the latest updates, tips, and community support.
+          Stay connected with us on Facebook for the latest updates, tips, and
+          community support.
         </p>
         <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
           <a
@@ -405,7 +420,7 @@ const FacebookFeed: React.FC = () => {
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default FacebookFeed
+export default FacebookFeed;

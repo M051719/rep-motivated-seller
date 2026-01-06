@@ -1,13 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { LayoutDashboard, MessageSquare, Shield, User } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { LayoutDashboard, MessageSquare, Shield, User, Calendar } from "lucide-react";
 
 interface DashboardNavigationProps {
   user: any;
   isAdmin?: boolean;
 }
 
-export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ user, isAdmin }) => {
+export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
+  user,
+  isAdmin,
+}) => {
   if (!user) return null;
 
   return (
@@ -55,6 +58,24 @@ export const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ user, 
               </h3>
               <p className="text-gray-600 text-sm">
                 Update your personal information and settings
+              </p>
+            </div>
+          </Link>
+
+          {/* Scheduling Dashboard - Always visible to authenticated users */}
+          <Link
+            to="/scheduling"
+            className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-6 border-2 border-transparent hover:border-orange-500"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-orange-100 p-4 rounded-full mb-4 group-hover:bg-orange-500 transition-colors">
+                <Calendar className="w-8 h-8 text-orange-600 group-hover:text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Scheduling
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Book and manage your consultation appointments
               </p>
             </div>
           </Link>

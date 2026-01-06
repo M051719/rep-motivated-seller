@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { BackButton } from '../components/ui/BackButton';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { supabase } from '../lib/supabase';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { BackButton } from "../components/ui/BackButton";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { supabase } from "../lib/supabase";
 
 interface BlogPost {
   id: string;
@@ -18,7 +18,7 @@ interface BlogPost {
 }
 
 const BlogPage: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,15 +30,15 @@ const BlogPage: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('published', true)
-        .order('published_at', { ascending: false });
+        .from("blog_posts")
+        .select("*")
+        .eq("published", true)
+        .order("published_at", { ascending: false });
 
       if (error) throw error;
       setBlogPosts(data || []);
     } catch (error) {
-      console.error('Error fetching blog posts:', error);
+      console.error("Error fetching blog posts:", error);
       // Fallback to empty array if there's an error
       setBlogPosts([]);
     } finally {
@@ -50,16 +50,17 @@ const BlogPage: React.FC = () => {
   const displayPosts = blogPosts.length > 0 ? blogPosts : [];
 
   const categories = [
-    { value: 'all', label: 'All Posts', icon: '📚' },
-    { value: 'Education', label: 'Education', icon: '🎓' },
-    { value: 'Financial Tips', label: 'Financial Tips', icon: '💰' },
-    { value: 'Legal', label: 'Legal', icon: '⚖️' },
-    { value: 'Success Stories', label: 'Success Stories', icon: '🏆' }
+    { value: "all", label: "All Posts", icon: "📚" },
+    { value: "Education", label: "Education", icon: "🎓" },
+    { value: "Financial Tips", label: "Financial Tips", icon: "💰" },
+    { value: "Legal", label: "Legal", icon: "⚖️" },
+    { value: "Success Stories", label: "Success Stories", icon: "🏆" },
   ];
 
-  const filteredPosts = selectedCategory === 'all'
-    ? displayPosts
-    : displayPosts.filter(post => post.category === selectedCategory);
+  const filteredPosts =
+    selectedCategory === "all"
+      ? displayPosts
+      : displayPosts.filter((post) => post.category === selectedCategory);
 
   if (loading) {
     return (
@@ -76,7 +77,10 @@ const BlogPage: React.FC = () => {
     <>
       <Helmet>
         <title>Blog - Foreclosure Prevention Tips | RepMotivatedSeller</title>
-        <meta name="description" content="Expert advice on foreclosure prevention, financial planning, and success stories from families who saved their homes." />
+        <meta
+          name="description"
+          content="Expert advice on foreclosure prevention, financial planning, and success stories from families who saved their homes."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -103,8 +107,8 @@ const BlogPage: React.FC = () => {
                   onClick={() => setSelectedCategory(category.value)}
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedCategory === category.value
-                      ? 'bg-indigo-600 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-indigo-600 text-white shadow-lg"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {category.icon} {category.label}
@@ -120,9 +124,12 @@ const BlogPage: React.FC = () => {
             {filteredPosts.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📝</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">No Blog Posts Yet</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  No Blog Posts Yet
+                </h3>
                 <p className="text-gray-600">
-                  Check back soon for expert articles and insights on foreclosure prevention and real estate investing.
+                  Check back soon for expert articles and insights on
+                  foreclosure prevention and real estate investing.
                 </p>
               </div>
             ) : (
@@ -150,17 +157,22 @@ const BlogPage: React.FC = () => {
                         <h3 className="text-xl font-bold text-gray-900 mt-3 mb-2 hover:text-indigo-600 transition-colors">
                           {post.title}
                         </h3>
-                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
+                        <p className="text-gray-600 mb-4 line-clamp-3">
+                          {post.excerpt}
+                        </p>
                         <div className="flex items-center justify-between text-sm text-gray-500">
                           <span>{post.author_name}</span>
                           <span>{post.read_time}</span>
                         </div>
                         <div className="mt-3 text-xs text-gray-400">
-                          {new Date(post.published_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
+                          {new Date(post.published_at).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
                         </div>
                       </div>
                     </motion.article>

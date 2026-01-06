@@ -1,0 +1,17 @@
+
+📤 Email Survey Version (Text-Based for Mail)
+Ideal for use in email autoresponders or one-on-one follow-ups:
+
+Hi [First Name],
+
+I’d love to better understand your current situation and help you explore real options to avoid foreclosure or improve your mortgage terms. Please reply with answers to the following questions:
+
+1. How long have you lived in your current home?
+2. Are you behind on payments or just anticipating trouble?
+3. Have you received any foreclosure notices?
+4. What’s been the biggest challenge in catching up?
+5. What would resolving this issue mean to you personally?
+
+If you’d prefer a quick phone call, reply with the best time and number to reach you.
+
+— [Your Name/Team]

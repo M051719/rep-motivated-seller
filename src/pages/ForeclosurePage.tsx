@@ -1,6 +1,6 @@
-import React from 'react';
-import ForeclosureQuestionnaire from '../components/ForeclosureQuestionnaire';
-import { BackButton } from '../components/ui/BackButton';
+import React from "react";
+import ForeclosureQuestionnaire from "../components/ForeclosureQuestionnaire";
+import { BackButton } from "../components/ui/BackButton";
 
 export const ForeclosurePage: React.FC = () => {
   return (

@@ -1,13 +1,20 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { HelmetProvider } from 'react-helmet-async'
-import App from './App'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
+import App from "./App";
+import { AuthProvider } from "./contexts/AuthContext";
+import "./index.css";
+import { initTracing } from "./tracing";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Initialize tracing before rendering the app
+initTracing();
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </HelmetProvider>
   </React.StrictMode>,
-)
+);

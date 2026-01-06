@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
-import { Upload, X, FileText, Loader, CheckCircle } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState, useCallback } from "react";
+import { supabase } from "../lib/supabase";
+import { Upload, X, FileText, Loader, CheckCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface FileUploaderProps {
   currentFile?: string;
@@ -18,20 +18,20 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   currentFile,
   onFileUploaded,
   onFileRemoved,
-  bucket = 'templates-forms',
-  folder = 'uploads',
+  bucket = "templates-forms",
+  folder = "uploads",
   maxSizeMB = 10,
   acceptedTypes = [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'image/jpeg',
-    'image/png',
-    'image/gif'
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "image/jpeg",
+    "image/png",
+    "image/gif",
   ],
-  label = 'Upload File'
+  label = "Upload File",
 }) => {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -40,42 +40,47 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   }, []);
 
   const getFileExtension = (filename: string): string => {
-    return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
   };
 
   const getFileTypeLabel = (type: string): string => {
     const typeMap: { [key: string]: string } = {
-      'application/pdf': 'PDF',
-      'application/msword': 'Word Document',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word Document',
-      'application/vnd.ms-excel': 'Excel Spreadsheet',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Excel Spreadsheet',
-      'image/jpeg': 'JPEG Image',
-      'image/png': 'PNG Image',
-      'image/gif': 'GIF Image'
+      "application/pdf": "PDF",
+      "application/msword": "Word Document",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        "Word Document",
+      "application/vnd.ms-excel": "Excel Spreadsheet",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        "Excel Spreadsheet",
+      "image/jpeg": "JPEG Image",
+      "image/png": "PNG Image",
+      "image/gif": "GIF Image",
     };
-    return typeMap[type] || 'File';
+    return typeMap[type] || "File";
   };
 
   const validateFile = (file: File): boolean => {
     // Check file type
     if (!acceptedTypes.includes(file.type)) {
-      const acceptedExtensions = acceptedTypes.map(type => {
-        if (type.includes('pdf')) return 'PDF';
-        if (type.includes('word')) return 'DOC/DOCX';
-        if (type.includes('excel')) return 'XLS/XLSX';
-        if (type.includes('image')) return 'Images';
-        return '';
-      }).filter(Boolean).join(', ');
-      
+      const acceptedExtensions = acceptedTypes
+        .map((type) => {
+          if (type.includes("pdf")) return "PDF";
+          if (type.includes("word")) return "DOC/DOCX";
+          if (type.includes("excel")) return "XLS/XLSX";
+          if (type.includes("image")) return "Images";
+          return "";
+        })
+        .filter(Boolean)
+        .join(", ");
+
       toast.error(`Please upload a valid file type: ${acceptedExtensions}`);
       return false;
     }
@@ -107,7 +112,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
       // Simulate upload progress
       const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
+        setUploadProgress((prev) => {
           if (prev >= 90) {
             clearInterval(progressInterval);
             return 90;
@@ -120,8 +125,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       const { data, error } = await supabase.storage
         .from(bucket)
         .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
+          cacheControl: "3600",
+          upsert: false,
         });
 
       clearInterval(progressInterval);
@@ -129,19 +134,19 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       if (error) throw error;
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from(bucket).getPublicUrl(fileName);
 
       setUploadProgress(100);
-      
+
       // Call the callback with file info
       onFileUploaded(publicUrl, file.name, file.size);
-      
-      toast.success('File uploaded successfully!');
+
+      toast.success("File uploaded successfully!");
     } catch (error: any) {
-      console.error('Upload error:', error);
-      toast.error(error.message || 'Failed to upload file');
+      console.error("Upload error:", error);
+      toast.error(error.message || "Failed to upload file");
     } finally {
       setTimeout(() => {
         setUploading(false);
@@ -173,21 +178,19 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     try {
       // Extract file path from URL
       const url = new URL(currentFile);
-      const pathParts = url.pathname.split('/');
-      const filePath = pathParts.slice(pathParts.indexOf(bucket) + 1).join('/');
+      const pathParts = url.pathname.split("/");
+      const filePath = pathParts.slice(pathParts.indexOf(bucket) + 1).join("/");
 
       // Delete from storage
-      const { error } = await supabase.storage
-        .from(bucket)
-        .remove([filePath]);
+      const { error } = await supabase.storage.from(bucket).remove([filePath]);
 
       if (error) throw error;
 
       onFileRemoved();
-      toast.success('File removed successfully');
+      toast.success("File removed successfully");
     } catch (error: any) {
-      console.error('Remove error:', error);
-      toast.error('Failed to remove file');
+      console.error("Remove error:", error);
+      toast.error("Failed to remove file");
     }
   };
 
@@ -204,7 +207,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
             <div className="flex items-center gap-3">
               <CheckCircle className="w-8 h-8 text-green-600" />
               <div>
-                <p className="text-sm font-medium text-gray-900">File uploaded</p>
+                <p className="text-sm font-medium text-gray-900">
+                  File uploaded
+                </p>
                 <a
                   href={currentFile}
                   target="_blank"
@@ -233,14 +238,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           onDrop={handleDrop}
           className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all ${
             dragActive
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
-          } ${uploading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100"
+          } ${uploading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
         >
           <input
             type="file"
             onChange={handleChange}
-            accept={acceptedTypes.join(',')}
+            accept={acceptedTypes.join(",")}
             disabled={uploading}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />

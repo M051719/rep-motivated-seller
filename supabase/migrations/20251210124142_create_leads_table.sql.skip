@@ -1,0 +1,60 @@
+-- Create leads table for capturing hardship letter generator users
+CREATE TABLE IF NOT EXISTS public.leads (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT NOT NULL,
+  name TEXT,
+  source TEXT NOT NULL DEFAULT 'unknown',
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create unique index on email to prevent duplicates
+CREATE UNIQUE INDEX IF NOT EXISTS leads_email_idx ON public.leads(email);
+
+-- Create index on source for filtering
+CREATE INDEX IF NOT EXISTS leads_source_idx ON public.leads(source);
+
+-- Create index on created_at for sorting
+CREATE INDEX IF NOT EXISTS leads_created_at_idx ON public.leads(created_at DESC);
+
+-- Enable RLS (Row Level Security)
+ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
+
+-- Create policy to allow service role to manage all leads
+CREATE POLICY "Service role can manage all leads"
+  ON public.leads
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- Create policy to allow authenticated users to read their own lead
+CREATE POLICY "Users can read their own lead"
+  ON public.leads
+  FOR SELECT
+  TO authenticated
+  USING (email = auth.jwt()->>'email');
+
+-- Add comments
+COMMENT ON TABLE public.leads IS 'Stores leads captured from hardship letter generator and other lead magnets';
+COMMENT ON COLUMN public.leads.email IS 'Email address of the lead';
+COMMENT ON COLUMN public.leads.name IS 'Full name of the lead';
+COMMENT ON COLUMN public.leads.source IS 'Source where the lead was captured (e.g., hardship_letter_generator)';
+COMMENT ON COLUMN public.leads.metadata IS 'Additional metadata about the lead (template used, tags, IP, etc.)';
+
+-- Create function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION public.handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = timezone('utc'::text, now());
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to automatically update updated_at
+DROP TRIGGER IF EXISTS set_updated_at ON public.leads;
+CREATE TRIGGER set_updated_at
+  BEFORE UPDATE ON public.leads
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_updated_at();

@@ -1,11 +1,17 @@
 {
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "MCP_DOCKER"
-  ],
   "permissions": {
     "allow": [
-      "Bash(psql:*)"
+      "Bash(psql:*)",
+      "Bash(dir:*)",
+      "Bash(winget install:*)",
+      "Bash(start \"\" explorer \"C:\\Users\\monte\\Documents\\Content-Creation\\Video-Scripts\\Educational\\CapCut-Production\")"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "MCP_DOCKER",
+    "filesystem-documents",
+    "content-workspace",
+    "capcut-projects"
+  ]
 }

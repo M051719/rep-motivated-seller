@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { User, Mail, Phone, MapPin, Calendar, Shield, CreditCard, Save } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { BackButton } from './ui/BackButton';
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Shield,
+  CreditCard,
+  Save,
+} from "lucide-react";
+import { toast } from "react-hot-toast";
+import { BackButton } from "./ui/BackButton";
 
 interface Profile {
   id: string;
@@ -25,12 +34,12 @@ const UserProfile: React.FC = () => {
   const [editing, setEditing] = useState(false);
 
   const [formData, setFormData] = useState({
-    full_name: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
+    full_name: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
   });
 
   useEffect(() => {
@@ -40,42 +49,45 @@ const UserProfile: React.FC = () => {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (userError || !user) {
-        console.error('Error fetching user:', userError);
-        toast.error('Please log in to view your profile');
+        console.error("Error fetching user:", userError);
+        toast.error("Please log in to view your profile");
         return;
       }
 
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
         .single();
 
       if (profileError) {
-        console.error('Error fetching profile:', profileError);
+        console.error("Error fetching profile:", profileError);
       }
 
       const fullProfile = {
         id: user.id,
-        email: user.email || '',
+        email: user.email || "",
         ...profileData,
       };
 
       setProfile(fullProfile);
       setFormData({
-        full_name: profileData?.full_name || '',
-        phone: profileData?.phone || '',
-        address: profileData?.address || '',
-        city: profileData?.city || '',
-        state: profileData?.state || '',
-        zip: profileData?.zip || '',
+        full_name: profileData?.full_name || "",
+        phone: profileData?.phone || "",
+        address: profileData?.address || "",
+        city: profileData?.city || "",
+        state: profileData?.state || "",
+        zip: profileData?.zip || "",
       });
     } catch (err) {
-      console.error('Unexpected error:', err);
-      toast.error('Failed to load profile');
+      console.error("Unexpected error:", err);
+      toast.error("Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -87,7 +99,7 @@ const UserProfile: React.FC = () => {
     try {
       setSaving(true);
       const { error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({
           full_name: formData.full_name,
           phone: formData.phone,
@@ -97,16 +109,16 @@ const UserProfile: React.FC = () => {
           zip: formData.zip,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', profile.id);
+        .eq("id", profile.id);
 
       if (error) throw error;
 
-      toast.success('Profile updated successfully!');
+      toast.success("Profile updated successfully!");
       setEditing(false);
       loadProfile();
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -127,7 +139,9 @@ const UserProfile: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-600">Please log in to view your profile</p>
+          <p className="text-xl text-gray-600">
+            Please log in to view your profile
+          </p>
         </div>
       </div>
     );
@@ -136,7 +150,7 @@ const UserProfile: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <BackButton />
-      
+
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 text-white">
@@ -145,7 +159,9 @@ const UserProfile: React.FC = () => {
               <User className="w-12 h-12 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">{formData.full_name || 'Your Profile'}</h1>
+              <h1 className="text-3xl font-bold">
+                {formData.full_name || "Your Profile"}
+              </h1>
               <p className="text-blue-100">{profile.email}</p>
             </div>
           </div>
@@ -161,7 +177,7 @@ const UserProfile: React.FC = () => {
                 <div>
                   <p className="font-semibold text-gray-900">Membership Tier</p>
                   <p className="text-sm text-gray-600 capitalize">
-                    {profile.membership_tier || 'Free'}
+                    {profile.membership_tier || "Free"}
                   </p>
                 </div>
               </div>
@@ -176,7 +192,9 @@ const UserProfile: React.FC = () => {
 
           {/* Edit Toggle */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Personal Information
+            </h2>
             {!editing ? (
               <button
                 onClick={() => setEditing(true)}
@@ -190,12 +208,12 @@ const UserProfile: React.FC = () => {
                   onClick={() => {
                     setEditing(false);
                     setFormData({
-                      full_name: profile.full_name || '',
-                      phone: profile.phone || '',
-                      address: profile.address || '',
-                      city: profile.city || '',
-                      state: profile.state || '',
-                      zip: profile.zip || '',
+                      full_name: profile.full_name || "",
+                      phone: profile.phone || "",
+                      address: profile.address || "",
+                      city: profile.city || "",
+                      state: profile.state || "",
+                      zip: profile.zip || "",
                     });
                   }}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
@@ -208,7 +226,7 @@ const UserProfile: React.FC = () => {
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             )}
@@ -226,7 +244,9 @@ const UserProfile: React.FC = () => {
                   type="text"
                   disabled={!editing}
                   value={formData.full_name}
-                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, full_name: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="John Doe"
                 />
@@ -243,7 +263,9 @@ const UserProfile: React.FC = () => {
                   value={profile.email}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Email cannot be changed
+                </p>
               </div>
 
               <div>
@@ -255,7 +277,9 @@ const UserProfile: React.FC = () => {
                   type="tel"
                   disabled={!editing}
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="(555) 123-4567"
                 />
@@ -269,7 +293,11 @@ const UserProfile: React.FC = () => {
                 <input
                   type="text"
                   disabled
-                  value={profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
+                  value={
+                    profile.created_at
+                      ? new Date(profile.created_at).toLocaleDateString()
+                      : "N/A"
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
                 />
               </div>
@@ -284,7 +312,9 @@ const UserProfile: React.FC = () => {
                 type="text"
                 disabled={!editing}
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="123 Main Street"
               />
@@ -299,7 +329,9 @@ const UserProfile: React.FC = () => {
                   type="text"
                   disabled={!editing}
                   value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, city: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="San Francisco"
                 />
@@ -313,7 +345,9 @@ const UserProfile: React.FC = () => {
                   type="text"
                   disabled={!editing}
                   value={formData.state}
-                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, state: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="CA"
                   maxLength={2}
@@ -328,7 +362,9 @@ const UserProfile: React.FC = () => {
                   type="text"
                   disabled={!editing}
                   value={formData.zip}
-                  onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, zip: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="94102"
                 />
@@ -339,4 +375,5 @@ const UserProfile: React.FC = () => {
       </div>
     </div>
   );
-};export default UserProfile;
+};
+export default UserProfile;

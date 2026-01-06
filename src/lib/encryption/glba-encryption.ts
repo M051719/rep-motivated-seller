@@ -1,136 +1,196 @@
-import crypto from 'crypto'
-import { promisify } from 'util'
+/**
+ * GLBA Encryption Library
+ * Provides AES-256-GCM encryption for sensitive financial data
+ * Compliant with GLBA Safeguards Rule and FIPS 140-2 standards
+ */
+
+export interface EncryptedData {
+  ciphertext: string;
+  iv: string;
+  authTag: string;
+  algorithm: 'aes-256-gcm';
+  keyId?: string;
+  timestamp: string;
+}
+
+export interface EncryptionMetadata {
+  algorithm: string;
+  keyLength: number;
+  ivLength: number;
+  authTagLength: number;
+  fipsCompliant: boolean;
+}
 
 export class GLBAEncryption {
-  // AES-256-GCM for GLBA compliance (FIPS 140-2 approved)
-  private static readonly ALGORITHM = 'aes-256-gcm'
-  private static readonly KEY_LENGTH = 32 // 256 bits
-  private static readonly IV_LENGTH = 16 // 128 bits
-  private static readonly TAG_LENGTH = 16 // 128 bits
+  private static readonly ALGORITHM = 'aes-256-gcm';
+  private static readonly KEY_LENGTH = 32;
+  private static readonly IV_LENGTH = 16;
+  private static readonly AUTH_TAG_LENGTH = 16;
+  private static readonly PBKDF2_ITERATIONS = 100000;
 
-  // Generate FIPS 140-2 compliant encryption key
-  static generateEncryptionKey(): Buffer {
-    return crypto.randomBytes(this.KEY_LENGTH)
+  private static getMasterKey(): string {
+    const key = import.meta.env?.VITE_GLBA_MASTER_KEY || 
+                process.env?.GLBA_MASTER_KEY ||
+                process.env?.VITE_GLBA_MASTER_KEY;
+    
+    if (!key) {
+      throw new Error('GLBA_MASTER_KEY not configured');
+    }
+
+    try {
+      const decoded = this.base64ToBuffer(key);
+      if (decoded.length !== this.KEY_LENGTH) {
+        throw new Error(`Invalid key length: expected ${this.KEY_LENGTH}, got ${decoded.length}`);
+      }
+      return key;
+    } catch (error) {
+      throw new Error(`Invalid GLBA_MASTER_KEY format: ${error instanceof Error ? error.message : 'unknown'}`);
+    }
   }
 
-  // Encrypt sensitive NPI data
-  static encryptNPI(data: string, key: Buffer): {
-    encrypted: string
-    iv: string
-    authTag: string
-    algorithm: string
-  } {
+  public static isEnabled(): boolean {
+    const enabled = import.meta.env?.VITE_GLBA_ENCRYPTION_ENABLED ||
+                   process.env?.GLBA_ENCRYPTION_ENABLED;
+    return enabled === 'true' || enabled === true;
+  }
+
+  public static async encryptNPI(plaintext: string, keyId?: string): Promise<EncryptedData> {
+    if (!this.isEnabled()) throw new Error('GLBA encryption not enabled');
+
     try {
-      if (!data || !key) {
-        throw new Error('Data and encryption key are required')
-      }
+      const key = this.base64ToBuffer(this.getMasterKey());
+      const iv = crypto.getRandomValues(new Uint8Array(this.IV_LENGTH));
+      const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, ['encrypt']);
+      const plaintextBuffer = new TextEncoder().encode(plaintext);
+      const encryptedBuffer = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv, tagLength: this.AUTH_TAG_LENGTH * 8 },
+        cryptoKey,
+        plaintextBuffer
+      );
 
-      if (key.length !== this.KEY_LENGTH) {
-        throw new Error(`Key must be ${this.KEY_LENGTH} bytes for AES-256`)
-      }
-
-      const iv = crypto.randomBytes(this.IV_LENGTH)
-      const cipher = crypto.createCipher(this.ALGORITHM, key, { iv })
-      
-      let encrypted = cipher.update(data, 'utf8', 'base64')
-      encrypted += cipher.final('base64')
-      
-      const authTag = cipher.getAuthTag()
+      const encryptedArray = new Uint8Array(encryptedBuffer);
+      const ciphertext = encryptedArray.slice(0, -this.AUTH_TAG_LENGTH);
+      const authTag = encryptedArray.slice(-this.AUTH_TAG_LENGTH);
 
       return {
-        encrypted,
-        iv: iv.toString('base64'),
-        authTag: authTag.toString('base64'),
-        algorithm: this.ALGORITHM
-      }
-
+        ciphertext: this.bufferToBase64(ciphertext),
+        iv: this.bufferToBase64(iv),
+        authTag: this.bufferToBase64(authTag),
+        algorithm: this.ALGORITHM,
+        keyId: keyId || 'master',
+        timestamp: new Date().toISOString()
+      };
     } catch (error) {
-      throw new Error(`GLBA encryption failed: ${error.message}`)
+      throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'unknown'}`);
     }
   }
 
-  // Decrypt sensitive NPI data
-  static decryptNPI(encryptedData: {
-    encrypted: string
-    iv: string
-    authTag: string
-    algorithm: string
-  }, key: Buffer): string {
+  public static async decryptNPI(encryptedData: EncryptedData): Promise<string> {
+    if (!this.isEnabled()) throw new Error('GLBA encryption not enabled');
+    if (encryptedData.algorithm !== this.ALGORITHM) throw new Error(`Unsupported algorithm: ${encryptedData.algorithm}`);
+
     try {
-      if (encryptedData.algorithm !== this.ALGORITHM) {
-        throw new Error('Invalid encryption algorithm')
-      }
+      const key = this.base64ToBuffer(this.getMasterKey());
+      const ciphertext = this.base64ToBuffer(encryptedData.ciphertext);
+      const iv = this.base64ToBuffer(encryptedData.iv);
+      const authTag = this.base64ToBuffer(encryptedData.authTag);
 
-      const iv = Buffer.from(encryptedData.iv, 'base64')
-      const authTag = Buffer.from(encryptedData.authTag, 'base64')
-      
-      const decipher = crypto.createDecipher(this.ALGORITHM, key, { iv })
-      decipher.setAuthTag(authTag)
-      
-      let decrypted = decipher.update(encryptedData.encrypted, 'base64', 'utf8')
-      decrypted += decipher.final('utf8')
-      
-      return decrypted
+      const combined = new Uint8Array(ciphertext.length + authTag.length);
+      combined.set(ciphertext, 0);
+      combined.set(authTag, ciphertext.length);
 
+      const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'AES-GCM' }, false, ['decrypt']);
+      const decryptedBuffer = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv, tagLength: this.AUTH_TAG_LENGTH * 8 },
+        cryptoKey,
+        combined
+      );
+
+      return new TextDecoder().decode(decryptedBuffer);
     } catch (error) {
-      throw new Error(`GLBA decryption failed: ${error.message}`)
+      throw new Error(`Decryption failed: ${error instanceof Error ? error.message : 'authentication failed'}`);
     }
   }
 
-  // Hash sensitive data for indexing (PBKDF2 with high iterations)
-  static async hashForIndex(data: string, salt?: Buffer): Promise<{
-    hash: string
-    salt: string
-  }> {
-    const actualSalt = salt || crypto.randomBytes(32)
-    const iterations = 100000 // NIST recommended minimum
-    
-    const hash = await promisify(crypto.pbkdf2)(
-      data, 
-      actualSalt, 
-      iterations, 
-      64, 
-      'sha512'
-    )
+  public static async hashForIndex(data: string, salt?: string): Promise<{ hash: string; salt: string }> {
+    const saltBuffer = salt ? this.base64ToBuffer(salt) : crypto.getRandomValues(new Uint8Array(16));
+    const keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(data), 'PBKDF2', false, ['deriveBits']);
+    const hashBuffer = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: saltBuffer, iterations: this.PBKDF2_ITERATIONS, hash: 'SHA-256' },
+      keyMaterial,
+      256
+    );
 
     return {
-      hash: hash.toString('base64'),
-      salt: actualSalt.toString('base64')
-    }
+      hash: this.bufferToBase64(new Uint8Array(hashBuffer)),
+      salt: this.bufferToBase64(saltBuffer)
+    };
   }
 
-  // Secure key derivation for different purposes
-  static deriveKey(masterKey: Buffer, purpose: string, info?: string): Buffer {
-    const hkdf = crypto.createHash('sha256')
-    hkdf.update(masterKey)
-    hkdf.update(purpose)
-    if (info) hkdf.update(info)
-    
-    return hkdf.digest().slice(0, this.KEY_LENGTH)
+  public static async deriveKey(info: string, length = 32): Promise<string> {
+    const masterKey = this.base64ToBuffer(this.getMasterKey());
+    const keyMaterial = await crypto.subtle.importKey('raw', masterKey, 'HKDF', false, ['deriveBits']);
+    const derivedBits = await crypto.subtle.deriveBits(
+      { name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(0), info: new TextEncoder().encode(info) },
+      keyMaterial,
+      length * 8
+    );
+    return this.bufferToBase64(new Uint8Array(derivedBits));
   }
 
-  // Validate encryption compliance
-  static validateCompliance(): {
-    isCompliant: boolean
-    checks: Record<string, boolean>
-    errors: string[]
-  } {
-    const checks = {
-      fips140_2_algorithm: this.ALGORITHM.includes('aes-256'),
-      adequate_key_length: this.KEY_LENGTH >= 32,
-      secure_iv_generation: true, // crypto.randomBytes is cryptographically secure
-      authentication_tag: this.TAG_LENGTH >= 16
-    }
-
-    const errors = []
-    if (!checks.fips140_2_algorithm) errors.push('Algorithm not FIPS 140-2 compliant')
-    if (!checks.adequate_key_length) errors.push('Key length insufficient for AES-256')
-    if (!checks.authentication_tag) errors.push('Authentication tag too short')
+  public static validateCompliance(): EncryptionMetadata {
+    try { this.getMasterKey(); } catch { throw new Error('GLBA_MASTER_KEY not configured'); }
+    if (!this.isEnabled()) throw new Error('GLBA encryption not enabled');
 
     return {
-      isCompliant: Object.values(checks).every(Boolean),
-      checks,
-      errors
-    }
+      algorithm: this.ALGORITHM,
+      keyLength: this.KEY_LENGTH,
+      ivLength: this.IV_LENGTH,
+      authTagLength: this.AUTH_TAG_LENGTH,
+      fipsCompliant: true
+    };
   }
+
+  public static getComplianceInfo() {
+    return {
+      enabled: this.isEnabled(),
+      algorithm: this.ALGORITHM,
+      keyRotationDays: parseInt(import.meta.env?.VITE_GLBA_KEY_ROTATION_DAYS || process.env?.GLBA_KEY_ROTATION_DAYS || '90'),
+      auditRetentionDays: parseInt(import.meta.env?.VITE_GLBA_AUDIT_RETENTION_DAYS || process.env?.GLBA_AUDIT_RETENTION_DAYS || '2555'),
+      tlsMinVersion: import.meta.env?.VITE_TLS_MIN_VERSION || process.env?.TLS_MIN_VERSION || '1.3'
+    };
+  }
+
+  private static bufferToBase64(buffer: ArrayBuffer | Uint8Array): string {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  private static base64ToBuffer(base64: string): Uint8Array {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+}
+
+export async function encryptSSN(ssn: string): Promise<EncryptedData> {
+  if (!/^\d{3}-?\d{2}-?\d{4}$/.test(ssn)) throw new Error('Invalid SSN format');
+  return GLBAEncryption.encryptNPI(ssn, 'ssn');
+}
+
+export async function encryptBankAccount(accountNumber: string): Promise<EncryptedData> {
+  return GLBAEncryption.encryptNPI(accountNumber, 'bank_account');
+}
+
+export async function encryptCreditCard(cardNumber: string): Promise<EncryptedData> {
+  const cleanCard = cardNumber.replace(/\s/g, '');
+  if (!/^\d{13,19}$/.test(cleanCard)) throw new Error('Invalid credit card format');
+  return GLBAEncryption.encryptNPI(cleanCard, 'credit_card');
+}
+
+export async function encryptFinancialData(data: object): Promise<EncryptedData> {
+  return GLBAEncryption.encryptNPI(JSON.stringify(data), 'financial_data');
 }

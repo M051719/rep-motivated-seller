@@ -1,0 +1,325 @@
+-- GLBA Compliance Tables Migration
+-- Creates 7 tables required for GLBA compliance
+-- Implements encryption key management, document security, access control, and audit logging
+
+-- Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Table 1: Encryption Keys Storage
+-- PCI DSS Requirement 3.6: Key management
+CREATE TABLE IF NOT EXISTS encryption_keys (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    key_id VARCHAR(255) UNIQUE NOT NULL,
+    key_data TEXT NOT NULL, -- Encrypted key material
+    algorithm VARCHAR(50) DEFAULT 'AES-256-GCM',
+    key_length INTEGER DEFAULT 256,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    last_used_at TIMESTAMPTZ,
+    rotation_count INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_by UUID REFERENCES auth.users(id),
+    metadata JSONB DEFAULT '{}'::jsonb,
+    CONSTRAINT valid_expiry CHECK (expires_at > created_at)
+);
+
+-- Table 2: Secure Documents Storage
+-- GLBA Safeguards Rule: Protect customer information
+CREATE TABLE IF NOT EXISTS secure_documents (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    filename VARCHAR(500) NOT NULL,
+    file_size BIGINT NOT NULL,
+    file_type VARCHAR(100),
+    encrypted_data JSONB NOT NULL, -- Contains: encryptedContent, iv, authTag, keyId
+    encryption_key_id UUID REFERENCES encryption_keys(id),
+    uploaded_by UUID REFERENCES auth.users(id) NOT NULL,
+    uploaded_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ,
+    is_revoked BOOLEAN DEFAULT false,
+    revoked_at TIMESTAMPTZ,
+    revoked_by UUID REFERENCES auth.users(id),
+    revoked_reason TEXT,
+    access_count INTEGER DEFAULT 0,
+    last_accessed_at TIMESTAMPTZ,
+    metadata JSONB DEFAULT '{}'::jsonb,
+    CONSTRAINT valid_file_size CHECK (file_size > 0 AND file_size <= 104857600) -- 100MB max
+);
+
+-- Table 3: NPI Access Permissions
+-- GLBA Privacy Rule: Control access to customer information
+CREATE TABLE IF NOT EXISTS npi_access_permissions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL,
+    npi_type VARCHAR(100) NOT NULL, -- 'ssn', 'bank_account', 'credit_card', 'financial_data', 'document'
+    resource_id VARCHAR(255), -- Specific resource being accessed
+    access_level VARCHAR(50) NOT NULL, -- 'read', 'write', 'admin'
+    granted_by UUID REFERENCES auth.users(id) NOT NULL,
+    granted_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ,
+    is_active BOOLEAN DEFAULT true,
+    revoked_at TIMESTAMPTZ,
+    revoked_by UUID REFERENCES auth.users(id),
+    revoked_reason TEXT,
+    purpose TEXT, -- Business justification
+    metadata JSONB DEFAULT '{}'::jsonb,
+    CONSTRAINT valid_access_level CHECK (access_level IN ('read', 'write', 'admin')),
+    CONSTRAINT valid_npi_type CHECK (npi_type IN ('ssn', 'bank_account', 'credit_card', 'financial_data', 'document', 'personal_info'))
+);
+
+-- Table 4: GLBA Audit Log
+-- GLBA Requirement: Maintain 7-year audit trail
+CREATE TABLE IF NOT EXISTS glba_audit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    user_id UUID REFERENCES auth.users(id),
+    npi_type VARCHAR(100) NOT NULL,
+    resource_id VARCHAR(255),
+    action VARCHAR(100) NOT NULL, -- 'access', 'encrypt', 'decrypt', 'export', 'delete', 'permission_grant', 'permission_revoke'
+    purpose TEXT, -- Business justification for access
+    granted BOOLEAN NOT NULL, -- Whether access was granted or denied
+    denial_reason TEXT,
+    ip_address INET,
+    user_agent TEXT,
+    session_id VARCHAR(255),
+    metadata JSONB DEFAULT '{}'::jsonb,
+    severity VARCHAR(20) DEFAULT 'info', -- 'info', 'warning', 'error', 'critical'
+    CONSTRAINT valid_action CHECK (action IN ('access', 'encrypt', 'decrypt', 'export', 'delete', 'permission_grant', 'permission_revoke', 'view', 'download', 'upload'))
+);
+
+-- Table 5: Document Audit Log
+-- Track all document operations
+CREATE TABLE IF NOT EXISTS document_audit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    document_id UUID REFERENCES secure_documents(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id),
+    action VARCHAR(100) NOT NULL, -- 'upload', 'download', 'view', 'delete', 'revoke'
+    success BOOLEAN NOT NULL,
+    error_message TEXT,
+    ip_address INET,
+    user_agent TEXT,
+    file_size BIGINT,
+    metadata JSONB DEFAULT '{}'::jsonb
+);
+
+-- Table 6: Key Audit Log
+-- Track encryption key usage
+CREATE TABLE IF NOT EXISTS key_audit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    key_id UUID REFERENCES encryption_keys(id) ON DELETE CASCADE,
+    operation VARCHAR(100) NOT NULL, -- 'create', 'rotate', 'use', 'expire', 'revoke'
+    performed_by UUID REFERENCES auth.users(id),
+    success BOOLEAN NOT NULL,
+    error_message TEXT,
+    metadata JSONB DEFAULT '{}'::jsonb,
+    CONSTRAINT valid_key_operation CHECK (operation IN ('create', 'rotate', 'use', 'expire', 'revoke', 'access'))
+);
+
+-- Table 7: Compliance Metrics
+-- Real-time compliance monitoring
+CREATE TABLE IF NOT EXISTS compliance_metrics (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    recorded_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    metric_name VARCHAR(255) NOT NULL,
+    metric_value NUMERIC NOT NULL,
+    metric_type VARCHAR(50) DEFAULT 'counter', -- 'counter', 'gauge', 'histogram'
+    category VARCHAR(100) DEFAULT 'general', -- 'encryption', 'access', 'audit', 'documents', 'keys'
+    metadata JSONB DEFAULT '{}'::jsonb
+);
+
+-- Create Indexes for Performance
+CREATE INDEX IF NOT EXISTS idx_encryption_keys_active ON encryption_keys(is_active, expires_at);
+CREATE INDEX IF NOT EXISTS idx_encryption_keys_created ON encryption_keys(created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_secure_documents_user ON secure_documents(uploaded_by, uploaded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_secure_documents_expires ON secure_documents(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_secure_documents_revoked ON secure_documents(is_revoked);
+
+CREATE INDEX IF NOT EXISTS idx_npi_access_user ON npi_access_permissions(user_id, is_active);
+CREATE INDEX IF NOT EXISTS idx_npi_access_expires ON npi_access_permissions(expires_at) WHERE expires_at IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_glba_audit_timestamp ON glba_audit_log(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_glba_audit_user ON glba_audit_log(user_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_glba_audit_resource ON glba_audit_log(resource_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_glba_audit_action ON glba_audit_log(action, timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_document_audit_timestamp ON document_audit_log(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_document_audit_document ON document_audit_log(document_id, timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_key_audit_timestamp ON key_audit_log(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_key_audit_key ON key_audit_log(key_id, timestamp DESC);
+
+CREATE INDEX IF NOT EXISTS idx_compliance_metrics_name ON compliance_metrics(metric_name, recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_compliance_metrics_category ON compliance_metrics(category, recorded_at DESC);
+
+-- Row Level Security (RLS) Policies
+
+-- Enable RLS on all tables
+ALTER TABLE encryption_keys ENABLE ROW LEVEL SECURITY;
+ALTER TABLE secure_documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE npi_access_permissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE glba_audit_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE document_audit_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE key_audit_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE compliance_metrics ENABLE ROW LEVEL SECURITY;
+
+-- Encryption Keys: Only service role and key administrators
+CREATE POLICY encryption_keys_service_role ON encryption_keys
+    FOR ALL USING (auth.role() = 'service_role');
+
+CREATE POLICY encryption_keys_admin ON encryption_keys
+    FOR SELECT USING (
+        auth.uid() IN (
+            SELECT user_id FROM npi_access_permissions 
+            WHERE access_level = 'admin' AND is_active = true
+        )
+    );
+
+-- Secure Documents: Users can only access their own documents
+CREATE POLICY secure_documents_owner ON secure_documents
+    FOR ALL USING (
+        auth.uid() = uploaded_by
+        OR auth.uid() IN (
+            SELECT user_id FROM npi_access_permissions 
+            WHERE npi_type = 'document' 
+            AND (resource_id = id::text OR resource_id IS NULL)
+            AND is_active = true
+        )
+    );
+
+-- NPI Access Permissions: Users can view their own permissions, admins can manage
+CREATE POLICY npi_access_own ON npi_access_permissions
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY npi_access_admin ON npi_access_permissions
+    FOR ALL USING (
+        auth.uid() IN (
+            SELECT user_id FROM npi_access_permissions 
+            WHERE access_level = 'admin' AND is_active = true
+        )
+    );
+
+-- GLBA Audit Log: Read-only for users to view their own logs, admins see all
+CREATE POLICY glba_audit_own ON glba_audit_log
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY glba_audit_admin ON glba_audit_log
+    FOR SELECT USING (
+        auth.uid() IN (
+            SELECT user_id FROM npi_access_permissions 
+            WHERE access_level = 'admin' AND is_active = true
+        )
+    );
+
+-- Document Audit Log: Read-only, users see their own, admins see all
+CREATE POLICY document_audit_own ON document_audit_log
+    FOR SELECT USING (
+        auth.uid() = user_id
+        OR auth.uid() IN (
+            SELECT uploaded_by FROM secure_documents WHERE id = document_id
+        )
+    );
+
+-- Key Audit Log: Admin only
+CREATE POLICY key_audit_admin ON key_audit_log
+    FOR SELECT USING (
+        auth.uid() IN (
+            SELECT user_id FROM npi_access_permissions 
+            WHERE access_level = 'admin' AND is_active = true
+        )
+    );
+
+-- Compliance Metrics: Service role and admins
+CREATE POLICY compliance_metrics_admin ON compliance_metrics
+    FOR SELECT USING (
+        auth.uid() IN (
+            SELECT user_id FROM npi_access_permissions 
+            WHERE access_level = 'admin' AND is_active = true
+        )
+    );
+
+-- Functions for Compliance
+
+-- Function: Cleanup expired logs (maintain 7-year retention per GLBA)
+CREATE OR REPLACE FUNCTION cleanup_expired_glba_logs()
+RETURNS INTEGER AS $$
+DECLARE
+    deleted_count INTEGER;
+    retention_days INTEGER := 2555; -- 7 years
+BEGIN
+    DELETE FROM glba_audit_log
+    WHERE timestamp < NOW() - (retention_days || ' days')::INTERVAL;
+    
+    GET DIAGNOSTICS deleted_count = ROW_COUNT;
+    
+    INSERT INTO compliance_metrics (metric_name, metric_value, category, metadata)
+    VALUES ('logs_cleaned_up', deleted_count, 'audit', 
+            jsonb_build_object('retention_days', retention_days, 'timestamp', NOW()));
+    
+    RETURN deleted_count;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function: Check if key needs rotation (90-day rotation per GLBA)
+CREATE OR REPLACE FUNCTION check_key_rotation_needed()
+RETURNS TABLE (
+    key_id UUID,
+    key_name VARCHAR,
+    days_old INTEGER,
+    needs_rotation BOOLEAN
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        ek.id,
+        ek.key_id,
+        EXTRACT(DAY FROM NOW() - ek.created_at)::INTEGER,
+        EXTRACT(DAY FROM NOW() - ek.created_at) > 83 -- 7 days early warning
+    FROM encryption_keys ek
+    WHERE ek.is_active = true
+    ORDER BY ek.created_at ASC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function: Get compliance statistics
+CREATE OR REPLACE FUNCTION get_compliance_statistics(days_back INTEGER DEFAULT 30)
+RETURNS TABLE (
+    total_access_attempts BIGINT,
+    successful_access BIGINT,
+    denied_access BIGINT,
+    total_documents BIGINT,
+    expired_documents BIGINT,
+    active_keys BIGINT,
+    keys_needing_rotation BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        (SELECT COUNT(*) FROM glba_audit_log WHERE timestamp > NOW() - (days_back || ' days')::INTERVAL),
+        (SELECT COUNT(*) FROM glba_audit_log WHERE granted = true AND timestamp > NOW() - (days_back || ' days')::INTERVAL),
+        (SELECT COUNT(*) FROM glba_audit_log WHERE granted = false AND timestamp > NOW() - (days_back || ' days')::INTERVAL),
+        (SELECT COUNT(*) FROM secure_documents WHERE is_revoked = false),
+        (SELECT COUNT(*) FROM secure_documents WHERE expires_at < NOW() AND is_revoked = false),
+        (SELECT COUNT(*) FROM encryption_keys WHERE is_active = true),
+        (SELECT COUNT(*) FROM encryption_keys WHERE is_active = true AND created_at < NOW() - INTERVAL '83 days');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Add comments for documentation
+COMMENT ON TABLE encryption_keys IS 'GLBA Safeguards Rule: Stores encryption keys with 90-day rotation';
+COMMENT ON TABLE secure_documents IS 'GLBA Safeguards Rule: Encrypted document storage with access control';
+COMMENT ON TABLE npi_access_permissions IS 'GLBA Privacy Rule: Role-based access control for NPI data';
+COMMENT ON TABLE glba_audit_log IS 'GLBA Compliance: 7-year audit trail for all NPI access';
+COMMENT ON TABLE document_audit_log IS 'GLBA Compliance: Document operation tracking';
+COMMENT ON TABLE key_audit_log IS 'GLBA Compliance: Encryption key usage audit trail';
+COMMENT ON TABLE compliance_metrics IS 'GLBA Compliance: Real-time compliance monitoring';
+
+-- Insert initial compliance metrics
+INSERT INTO compliance_metrics (metric_name, metric_value, category, metadata)
+VALUES 
+    ('glba_compliance_enabled', 1, 'general', '{"timestamp": "now"}'::jsonb),
+    ('encryption_algorithm', 256, 'encryption', '{"algorithm": "AES-256-GCM"}'::jsonb),
+    ('audit_retention_days', 2555, 'audit', '{"years": 7}'::jsonb),
+    ('key_rotation_days', 90, 'keys', '{"policy": "GLBA"}'::jsonb);

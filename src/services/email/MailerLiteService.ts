@@ -1,6 +1,6 @@
 /**
  * MailerLite Email Service
- * 
+ *
  * Handles email notifications and subscriber management using MailerLite API
  * API Docs: https://developers.mailerlite.com/docs/
  */
@@ -33,17 +33,20 @@ interface EmailNotification {
 
 export class MailerLiteService {
   private apiKey: string;
-  private baseUrl: string = 'https://connect.mailerlite.com/api';
+  private baseUrl: string = "https://connect.mailerlite.com/api";
   private senderEmail: string;
   private senderName: string;
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_MAILERLITE_API_KEY || '';
-    this.senderEmail = import.meta.env.VITE_MAILERLITE_SENDER_EMAIL || 'noreply@repmotivatedseller.com';
-    this.senderName = import.meta.env.VITE_MAILERLITE_SENDER_NAME || 'RepMotivatedSeller';
+    this.apiKey = import.meta.env.VITE_MAILERLITE_API_KEY || "";
+    this.senderEmail =
+      import.meta.env.VITE_MAILERLITE_SENDER_EMAIL ||
+      "noreply@repmotivatedseller.com";
+    this.senderName =
+      import.meta.env.VITE_MAILERLITE_SENDER_NAME || "RepMotivatedSeller";
 
     if (!this.apiKey) {
-      console.warn('MailerLite API key not configured');
+      console.warn("MailerLite API key not configured");
     }
   }
 
@@ -52,31 +55,35 @@ export class MailerLiteService {
    */
   private getHeaders(): HeadersInit {
     return {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${this.apiKey}`
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
     };
   }
 
   /**
    * Create or update a subscriber
    */
-  async createOrUpdateSubscriber(subscriber: MailerLiteSubscriber): Promise<any> {
+  async createOrUpdateSubscriber(
+    subscriber: MailerLiteSubscriber,
+  ): Promise<any> {
     try {
       const response = await fetch(`${this.baseUrl}/subscribers`, {
-        method: 'POST',
+        method: "POST",
         headers: this.getHeaders(),
-        body: JSON.stringify(subscriber)
+        body: JSON.stringify(subscriber),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(`MailerLite API error: ${error.message || response.statusText}`);
+        throw new Error(
+          `MailerLite API error: ${error.message || response.statusText}`,
+        );
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error creating/updating subscriber:', error);
+      console.error("Error creating/updating subscriber:", error);
       throw error;
     }
   }
@@ -90,9 +97,9 @@ export class MailerLiteService {
       const response = await fetch(
         `${this.baseUrl}/groups?filter[name]=${encodeURIComponent(groupName)}`,
         {
-          method: 'GET',
-          headers: this.getHeaders()
-        }
+          method: "GET",
+          headers: this.getHeaders(),
+        },
       );
 
       if (!response.ok) {
@@ -100,16 +107,16 @@ export class MailerLiteService {
       }
 
       const result = await response.json();
-      
+
       if (result.data && result.data.length > 0) {
         return result.data[0];
       }
 
       // Create new group if not found
       const createResponse = await fetch(`${this.baseUrl}/groups`, {
-        method: 'POST',
+        method: "POST",
         headers: this.getHeaders(),
-        body: JSON.stringify({ name: groupName })
+        body: JSON.stringify({ name: groupName }),
       });
 
       if (!createResponse.ok) {
@@ -119,7 +126,7 @@ export class MailerLiteService {
       const newGroup = await createResponse.json();
       return newGroup.data;
     } catch (error) {
-      console.error('Error getting/creating group:', error);
+      console.error("Error getting/creating group:", error);
       throw error;
     }
   }
@@ -127,21 +134,26 @@ export class MailerLiteService {
   /**
    * Add subscriber to a group
    */
-  async addSubscriberToGroup(subscriberId: string, groupId: string): Promise<void> {
+  async addSubscriberToGroup(
+    subscriberId: string,
+    groupId: string,
+  ): Promise<void> {
     try {
       const response = await fetch(
         `${this.baseUrl}/subscribers/${subscriberId}/groups/${groupId}`,
         {
-          method: 'POST',
-          headers: this.getHeaders()
-        }
+          method: "POST",
+          headers: this.getHeaders(),
+        },
       );
 
       if (!response.ok) {
-        throw new Error(`Failed to add subscriber to group: ${response.statusText}`);
+        throw new Error(
+          `Failed to add subscriber to group: ${response.statusText}`,
+        );
       }
     } catch (error) {
-      console.error('Error adding subscriber to group:', error);
+      console.error("Error adding subscriber to group:", error);
       throw error;
     }
   }
@@ -151,36 +163,40 @@ export class MailerLiteService {
    */
   async sendEmail(notification: EmailNotification): Promise<void> {
     try {
-      const recipients = Array.isArray(notification.to) 
-        ? notification.to 
+      const recipients = Array.isArray(notification.to)
+        ? notification.to
         : [notification.to];
 
       const campaignData = {
         name: `Notification - ${notification.subject} - ${new Date().toISOString()}`,
-        type: 'regular',
-        emails: [{
-          subject: notification.subject,
-          from: notification.from || this.senderEmail,
-          from_name: notification.fromName || this.senderName,
-          content: {
-            html: notification.html
-          }
-        }],
+        type: "regular",
+        emails: [
+          {
+            subject: notification.subject,
+            from: notification.from || this.senderEmail,
+            from_name: notification.fromName || this.senderName,
+            content: {
+              html: notification.html,
+            },
+          },
+        ],
         recipients: {
-          type: 'email',
-          emails: recipients
-        }
+          type: "email",
+          emails: recipients,
+        },
       };
 
       const response = await fetch(`${this.baseUrl}/campaigns`, {
-        method: 'POST',
+        method: "POST",
         headers: this.getHeaders(),
-        body: JSON.stringify(campaignData)
+        body: JSON.stringify(campaignData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(`Failed to create campaign: ${error.message || response.statusText}`);
+        throw new Error(
+          `Failed to create campaign: ${error.message || response.statusText}`,
+        );
       }
 
       const campaign = await response.json();
@@ -189,19 +205,21 @@ export class MailerLiteService {
       const scheduleResponse = await fetch(
         `${this.baseUrl}/campaigns/${campaign.data.id}/schedule`,
         {
-          method: 'POST',
+          method: "POST",
           headers: this.getHeaders(),
           body: JSON.stringify({
-            delivery: 'instant'
-          })
-        }
+            delivery: "instant",
+          }),
+        },
       );
 
       if (!scheduleResponse.ok) {
-        throw new Error(`Failed to schedule campaign: ${scheduleResponse.statusText}`);
+        throw new Error(
+          `Failed to schedule campaign: ${scheduleResponse.statusText}`,
+        );
       }
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
       throw error;
     }
   }
@@ -214,7 +232,7 @@ export class MailerLiteService {
     name: string;
     phone?: string;
     address?: string;
-    urgency: 'low' | 'medium' | 'high';
+    urgency: "low" | "medium" | "high";
     submissionId: string;
   }): Promise<void> {
     // Create/update subscriber
@@ -225,47 +243,57 @@ export class MailerLiteService {
         phone: data.phone,
         address: data.address,
         urgency: data.urgency,
-        status: 'new',
-        submission_date: new Date().toISOString()
-      }
+        status: "new",
+        submission_date: new Date().toISOString(),
+      },
     });
 
     // Store subscriber ID in submission for HubSpot sync
     const subscriberId = subscriber.data?.id;
     if (subscriberId) {
       // Import dynamically to avoid circular dependencies
-      const { MailerLiteHubSpotSyncService } = await import('../sync/MailerLiteHubSpotSyncService');
-      await MailerLiteHubSpotSyncService.updateMailerLiteSubscriberId(data.submissionId, subscriberId);
-      
+      const { MailerLiteHubSpotSyncService } = await import(
+        "../sync/MailerLiteHubSpotSyncService"
+      );
+      await MailerLiteHubSpotSyncService.updateMailerLiteSubscriberId(
+        data.submissionId,
+        subscriberId,
+      );
+
       // Trigger sync to HubSpot
-      await MailerLiteHubSpotSyncService.syncSubmissionData(data.submissionId, subscriberId);
+      await MailerLiteHubSpotSyncService.syncSubmissionData(
+        data.submissionId,
+        subscriberId,
+      );
     }
 
     // Add to new_leads group
-    const newLeadsGroup = await this.getOrCreateGroup('new_leads');
+    const newLeadsGroup = await this.getOrCreateGroup("new_leads");
     await this.addSubscriberToGroup(subscriber.data.id, newLeadsGroup.id);
 
     // Add to urgent_cases group if high urgency
-    if (data.urgency === 'high') {
-      const urgentGroup = await this.getOrCreateGroup('urgent_cases');
+    if (data.urgency === "high") {
+      const urgentGroup = await this.getOrCreateGroup("urgent_cases");
       await this.addSubscriberToGroup(subscriber.data.id, urgentGroup.id);
     }
 
     // Add to foreclosure_clients group
-    const clientsGroup = await this.getOrCreateGroup('foreclosure_clients');
+    const clientsGroup = await this.getOrCreateGroup("foreclosure_clients");
     await this.addSubscriberToGroup(subscriber.data.id, clientsGroup.id);
 
     // Send notification email to admin
-    const adminEmails = (import.meta.env.VITE_MAILERLITE_NOTIFICATION_EMAILS || '')
-      .split(',')
-      .map(e => e.trim())
-      .filter(e => e);
+    const adminEmails = (
+      import.meta.env.VITE_MAILERLITE_NOTIFICATION_EMAILS || ""
+    )
+      .split(",")
+      .map((e) => e.trim())
+      .filter((e) => e);
 
     if (adminEmails.length > 0) {
       await this.sendEmail({
         to: adminEmails,
         subject: `New Foreclosure Submission - ${data.urgency.toUpperCase()} Priority`,
-        html: this.generateNewSubmissionEmail(data)
+        html: this.generateNewSubmissionEmail(data),
       });
     }
   }
@@ -281,11 +309,12 @@ export class MailerLiteService {
     urgency: string;
     submissionId: string;
   }): string {
-    const urgencyColor = {
-      low: '#10B981',
-      medium: '#F59E0B',
-      high: '#EF4444'
-    }[data.urgency] || '#6B7280';
+    const urgencyColor =
+      {
+        low: "#10B981",
+        medium: "#F59E0B",
+        high: "#EF4444",
+      }[data.urgency] || "#6B7280";
 
     return `
       <!DOCTYPE html>
@@ -317,18 +346,26 @@ export class MailerLiteService {
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;"><strong>Email:</strong></td>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;">${data.email}</td>
                 </tr>
-                ${data.phone ? `
+                ${
+                  data.phone
+                    ? `
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;"><strong>Phone:</strong></td>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;">${data.phone}</td>
                 </tr>
-                ` : ''}
-                ${data.address ? `
+                `
+                    : ""
+                }
+                ${
+                  data.address
+                    ? `
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;"><strong>Address:</strong></td>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;">${data.address}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ""
+                }
                 <tr>
                   <td style="padding: 10px 0;"><strong>Submission ID:</strong></td>
                   <td style="padding: 10px 0; font-family: monospace;">${data.submissionId}</td>
@@ -361,13 +398,13 @@ export class MailerLiteService {
   async testConnection(): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/subscribers?limit=1`, {
-        method: 'GET',
-        headers: this.getHeaders()
+        method: "GET",
+        headers: this.getHeaders(),
       });
 
       return response.ok;
     } catch (error) {
-      console.error('MailerLite connection test failed:', error);
+      console.error("MailerLite connection test failed:", error);
       return false;
     }
   }

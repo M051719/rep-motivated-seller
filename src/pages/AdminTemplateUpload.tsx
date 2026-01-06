@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { Upload, FileText, Trash2, Edit2, Eye, Download, FolderUp, X } from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import FileUploader from '../components/FileUploader';
-import BulkFileUploader from '../components/BulkFileUploader';
-import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import {
+  Upload,
+  FileText,
+  Trash2,
+  Edit2,
+  Eye,
+  Download,
+  FolderUp,
+  X,
+} from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import FileUploader from "../components/FileUploader";
+import BulkFileUploader from "../components/BulkFileUploader";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 interface TemplateForm {
   id: string;
@@ -31,36 +40,55 @@ const AdminTemplateUpload: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [showBulkUpload, setShowBulkUpload] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [bulkUploadCategory, setBulkUploadCategory] = useState('contract');
-  const [bulkUploadSubcategory, setBulkUploadSubcategory] = useState('');
-  
+  const [bulkUploadCategory, setBulkUploadCategory] = useState("contract");
+  const [bulkUploadSubcategory, setBulkUploadSubcategory] = useState("");
+
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    category: 'contract',
-    subcategory: '',
-    file_url: '',
-    file_name: '',
-    file_type: '',
+    name: "",
+    description: "",
+    category: "contract",
+    subcategory: "",
+    file_url: "",
+    file_name: "",
+    file_type: "",
     file_size: 0,
-    thumbnail_url: '',
-    canva_template_id: '',
+    thumbnail_url: "",
+    canva_template_id: "",
     is_featured: false,
-    is_active: true
+    is_active: true,
   });
 
   const categories = [
-    { value: 'contract', label: 'Contract' },
-    { value: 'template', label: 'Template' },
-    { value: 'form', label: 'Form' },
-    { value: 'canva-template', label: 'Canva Template' }
+    { value: "contract", label: "Contract" },
+    { value: "template", label: "Template" },
+    { value: "form", label: "Form" },
+    { value: "canva-template", label: "Canva Template" },
   ];
 
   const subcategories: { [key: string]: string[] } = {
-    contract: ['Legal', 'Wholesale', 'Options', 'Financing', 'Marketing', 'Education'],
-    template: ['Postcard', 'Flyer', 'Business Card', 'Social Media', 'Presentation'],
-    form: ['Application', 'Agreement', 'Checklist', 'Worksheet'],
-    'canva-template': ['Postcard', 'Flyer', 'Business Card', 'Social Media', 'Presentation']
+    contract: [
+      "Legal",
+      "Wholesale",
+      "Options",
+      "Financing",
+      "Marketing",
+      "Education",
+    ],
+    template: [
+      "Postcard",
+      "Flyer",
+      "Business Card",
+      "Social Media",
+      "Presentation",
+    ],
+    form: ["Application", "Agreement", "Checklist", "Worksheet"],
+    "canva-template": [
+      "Postcard",
+      "Flyer",
+      "Business Card",
+      "Social Media",
+      "Presentation",
+    ],
   };
 
   useEffect(() => {
@@ -71,48 +99,54 @@ const AdminTemplateUpload: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('templates_forms')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("templates_forms")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setTemplates(data || []);
     } catch (error: any) {
-      console.error('Error fetching templates:', error);
-      toast.error('Failed to load templates');
+      console.error("Error fetching templates:", error);
+      toast.error("Failed to load templates");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFileUploaded = (url: string, fileName: string, fileSize: number) => {
-    const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
-    setFormData(prev => ({
+  const handleFileUploaded = (
+    url: string,
+    fileName: string,
+    fileSize: number,
+  ) => {
+    const fileExt = fileName.split(".").pop()?.toLowerCase() || "";
+    setFormData((prev) => ({
       ...prev,
       file_url: url,
       file_name: fileName,
       file_type: fileExt,
-      file_size: fileSize
+      file_size: fileSize,
     }));
   };
 
   const handleFileRemoved = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      file_url: '',
-      file_name: '',
-      file_type: '',
-      file_size: 0
+      file_url: "",
+      file_name: "",
+      file_type: "",
+      file_size: 0,
     }));
   };
 
-  const handleBulkFilesUploaded = async (files: Array<{ url: string; fileName: string; fileSize: number }>) => {
+  const handleBulkFilesUploaded = async (
+    files: Array<{ url: string; fileName: string; fileSize: number }>,
+  ) => {
     try {
-      const bulkInserts = files.map(file => {
-        const fileExt = file.fileName.split('.').pop()?.toLowerCase() || '';
+      const bulkInserts = files.map((file) => {
+        const fileExt = file.fileName.split(".").pop()?.toLowerCase() || "";
         return {
-          name: file.fileName.replace(/\.[^/.]+$/, ''), // Remove extension
-          description: '',
+          name: file.fileName.replace(/\.[^/.]+$/, ""), // Remove extension
+          description: "",
           category: bulkUploadCategory,
           subcategory: bulkUploadSubcategory,
           file_url: file.url,
@@ -120,12 +154,12 @@ const AdminTemplateUpload: React.FC = () => {
           file_type: fileExt,
           file_size: file.fileSize,
           is_active: true,
-          is_featured: false
+          is_featured: false,
         };
       });
 
       const { error } = await supabase
-        .from('templates_forms')
+        .from("templates_forms")
         .insert(bulkInserts);
 
       if (error) throw error;
@@ -134,8 +168,8 @@ const AdminTemplateUpload: React.FC = () => {
       fetchTemplates();
       setShowBulkUpload(false);
     } catch (error: any) {
-      console.error('Error saving bulk upload:', error);
-      toast.error('Failed to save some uploads');
+      console.error("Error saving bulk upload:", error);
+      toast.error("Failed to save some uploads");
     }
   };
 
@@ -143,7 +177,7 @@ const AdminTemplateUpload: React.FC = () => {
     e.preventDefault();
 
     if (!formData.name || !formData.file_url) {
-      toast.error('Please fill in required fields');
+      toast.error("Please fill in required fields");
       return;
     }
 
@@ -151,31 +185,31 @@ const AdminTemplateUpload: React.FC = () => {
       if (editingId) {
         // Update existing template
         const { error } = await supabase
-          .from('templates_forms')
+          .from("templates_forms")
           .update({
             ...formData,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
-          .eq('id', editingId);
+          .eq("id", editingId);
 
         if (error) throw error;
-        toast.success('Template updated successfully!');
+        toast.success("Template updated successfully!");
       } else {
         // Insert new template
         const { error } = await supabase
-          .from('templates_forms')
+          .from("templates_forms")
           .insert([formData]);
 
         if (error) throw error;
-        toast.success('Template uploaded successfully!');
+        toast.success("Template uploaded successfully!");
       }
 
       // Reset form and refresh list
       resetForm();
       fetchTemplates();
     } catch (error: any) {
-      console.error('Error saving template:', error);
-      toast.error(error.message || 'Failed to save template');
+      console.error("Error saving template:", error);
+      toast.error(error.message || "Failed to save template");
     }
   };
 
@@ -183,94 +217,92 @@ const AdminTemplateUpload: React.FC = () => {
     setEditingId(template.id);
     setFormData({
       name: template.name,
-      description: template.description || '',
+      description: template.description || "",
       category: template.category,
-      subcategory: template.subcategory || '',
+      subcategory: template.subcategory || "",
       file_url: template.file_url,
       file_name: template.file_name,
       file_type: template.file_type,
       file_size: template.file_size,
-      thumbnail_url: template.thumbnail_url || '',
-      canva_template_id: template.canva_template_id || '',
+      thumbnail_url: template.thumbnail_url || "",
+      canva_template_id: template.canva_template_id || "",
       is_featured: template.is_featured,
-      is_active: template.is_active
+      is_active: template.is_active,
     });
     setShowForm(true);
   };
 
   const handleDelete = async (id: string, fileUrl: string) => {
-    if (!confirm('Are you sure you want to delete this template?')) {
+    if (!confirm("Are you sure you want to delete this template?")) {
       return;
     }
 
     try {
       // Delete from database
       const { error } = await supabase
-        .from('templates_forms')
+        .from("templates_forms")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
 
       // Delete file from storage
       const url = new URL(fileUrl);
-      const pathParts = url.pathname.split('/');
-      const bucket = 'templates-forms';
-      const filePath = pathParts.slice(pathParts.indexOf(bucket) + 1).join('/');
+      const pathParts = url.pathname.split("/");
+      const bucket = "templates-forms";
+      const filePath = pathParts.slice(pathParts.indexOf(bucket) + 1).join("/");
 
-      await supabase.storage
-        .from(bucket)
-        .remove([filePath]);
+      await supabase.storage.from(bucket).remove([filePath]);
 
-      toast.success('Template deleted successfully!');
+      toast.success("Template deleted successfully!");
       fetchTemplates();
     } catch (error: any) {
-      console.error('Error deleting template:', error);
-      toast.error('Failed to delete template');
+      console.error("Error deleting template:", error);
+      toast.error("Failed to delete template");
     }
   };
 
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('templates_forms')
+        .from("templates_forms")
         .update({ is_active: !currentStatus })
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
-      toast.success(`Template ${!currentStatus ? 'activated' : 'deactivated'}`);
+      toast.success(`Template ${!currentStatus ? "activated" : "deactivated"}`);
       fetchTemplates();
     } catch (error: any) {
-      console.error('Error updating status:', error);
-      toast.error('Failed to update status');
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
     }
   };
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      description: '',
-      category: 'contract',
-      subcategory: '',
-      file_url: '',
-      file_name: '',
-      file_type: '',
+      name: "",
+      description: "",
+      category: "contract",
+      subcategory: "",
+      file_url: "",
+      file_name: "",
+      file_type: "",
       file_size: 0,
-      thumbnail_url: '',
-      canva_template_id: '',
+      thumbnail_url: "",
+      canva_template_id: "",
       is_featured: false,
-      is_active: true
+      is_active: true,
     });
     setEditingId(null);
     setShowForm(false);
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   return (
@@ -294,18 +326,24 @@ const AdminTemplateUpload: React.FC = () => {
         {/* Upload Buttons */}
         <div className="mb-8 flex justify-center gap-4">
           <button
-            onClick={() => { setShowForm(!showForm); setShowBulkUpload(false); }}
+            onClick={() => {
+              setShowForm(!showForm);
+              setShowBulkUpload(false);
+            }}
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg"
           >
             <Upload className="w-5 h-5" />
-            {showForm ? 'Cancel' : 'Upload Single Template'}
+            {showForm ? "Cancel" : "Upload Single Template"}
           </button>
           <button
-            onClick={() => { setShowBulkUpload(!showBulkUpload); setShowForm(false); }}
+            onClick={() => {
+              setShowBulkUpload(!showBulkUpload);
+              setShowForm(false);
+            }}
             className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-lg"
           >
             <FolderUp className="w-5 h-5" />
-            {showBulkUpload ? 'Cancel' : 'Bulk Upload'}
+            {showBulkUpload ? "Cancel" : "Bulk Upload"}
           </button>
         </div>
 
@@ -329,11 +367,16 @@ const AdminTemplateUpload: React.FC = () => {
                   </label>
                   <select
                     value={bulkUploadCategory}
-                    onChange={(e) => { setBulkUploadCategory(e.target.value); setBulkUploadSubcategory(''); }}
+                    onChange={(e) => {
+                      setBulkUploadCategory(e.target.value);
+                      setBulkUploadSubcategory("");
+                    }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    {categories.map(cat => (
-                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    {categories.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -348,8 +391,10 @@ const AdminTemplateUpload: React.FC = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select subcategory</option>
-                    {subcategories[bulkUploadCategory]?.map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
+                    {subcategories[bulkUploadCategory]?.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -369,8 +414,10 @@ const AdminTemplateUpload: React.FC = () => {
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                  <strong>Tip:</strong> All uploaded files will be automatically named based on their filenames. 
-                  You can edit individual templates after upload to add descriptions and customize settings.
+                  <strong>Tip:</strong> All uploaded files will be automatically
+                  named based on their filenames. You can edit individual
+                  templates after upload to add descriptions and customize
+                  settings.
                 </p>
               </div>
             </div>
@@ -385,7 +432,7 @@ const AdminTemplateUpload: React.FC = () => {
             className="bg-white rounded-lg shadow-lg p-8 mb-8"
           >
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {editingId ? 'Edit Template' : 'Upload New Template'}
+              {editingId ? "Edit Template" : "Upload New Template"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -408,7 +455,9 @@ const AdminTemplateUpload: React.FC = () => {
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Assignment Agreement Template"
                   required
@@ -422,7 +471,9 @@ const AdminTemplateUpload: React.FC = () => {
                 </label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
                   placeholder="Brief description of the template..."
@@ -437,12 +488,20 @@ const AdminTemplateUpload: React.FC = () => {
                   </label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value, subcategory: '' })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        category: e.target.value,
+                        subcategory: "",
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   >
-                    {categories.map(cat => (
-                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    {categories.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -453,19 +512,23 @@ const AdminTemplateUpload: React.FC = () => {
                   </label>
                   <select
                     value={formData.subcategory}
-                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subcategory: e.target.value })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select subcategory</option>
-                    {subcategories[formData.category]?.map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
+                    {subcategories[formData.category]?.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
 
               {/* Canva Template ID (for Canva templates) */}
-              {formData.category === 'canva-template' && (
+              {formData.category === "canva-template" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Canva Template ID
@@ -473,7 +536,12 @@ const AdminTemplateUpload: React.FC = () => {
                   <input
                     type="text"
                     value={formData.canva_template_id}
-                    onChange={(e) => setFormData({ ...formData, canva_template_id: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        canva_template_id: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="DAF8nN9QX8o"
                   />
@@ -486,20 +554,31 @@ const AdminTemplateUpload: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={formData.is_featured}
-                    onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        is_featured: e.target.checked,
+                      })
+                    }
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-gray-700">Featured</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Featured
+                  </span>
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.is_active}
-                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, is_active: e.target.checked })
+                    }
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-gray-700">Active</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Active
+                  </span>
                 </label>
               </div>
 
@@ -510,7 +589,7 @@ const AdminTemplateUpload: React.FC = () => {
                   disabled={!formData.file_url || !formData.name}
                   className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-semibold"
                 >
-                  {editingId ? 'Update Template' : 'Upload Template'}
+                  {editingId ? "Update Template" : "Upload Template"}
                 </button>
                 <button
                   type="button"
@@ -575,7 +654,9 @@ const AdminTemplateUpload: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <FileText className="w-5 h-5 text-blue-600" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{template.name}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {template.name}
+                            </p>
                             {template.is_featured && (
                               <span className="inline-block px-2 py-0.5 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded">
                                 Featured
@@ -588,7 +669,9 @@ const AdminTemplateUpload: React.FC = () => {
                         <div>
                           <p className="font-medium">{template.category}</p>
                           {template.subcategory && (
-                            <p className="text-xs text-gray-500">{template.subcategory}</p>
+                            <p className="text-xs text-gray-500">
+                              {template.subcategory}
+                            </p>
                           )}
                         </div>
                       </td>
@@ -603,20 +686,24 @@ const AdminTemplateUpload: React.FC = () => {
                       </td>
                       <td className="px-4 py-4">
                         <button
-                          onClick={() => toggleActive(template.id, template.is_active)}
+                          onClick={() =>
+                            toggleActive(template.id, template.is_active)
+                          }
                           className={`px-3 py-1 text-xs font-semibold rounded-full ${
                             template.is_active
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {template.is_active ? 'Active' : 'Inactive'}
+                          {template.is_active ? "Active" : "Inactive"}
                         </button>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => window.open(template.file_url, '_blank')}
+                            onClick={() =>
+                              window.open(template.file_url, "_blank")
+                            }
                             className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
                             title="View file"
                           >
@@ -630,7 +717,9 @@ const AdminTemplateUpload: React.FC = () => {
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(template.id, template.file_url)}
+                            onClick={() =>
+                              handleDelete(template.id, template.file_url)
+                            }
                             className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
                             title="Delete"
                           >

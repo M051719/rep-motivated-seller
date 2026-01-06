@@ -1,20 +1,57 @@
-import React from 'react';
-import { membershipPlans } from '../types/membership';
-import { PricingCard } from '../components/Membership/PricingCard';
-import { SubscriptionManager } from '../components/Membership/SubscriptionManager';
-import { useAuthStore } from '../store/authStore';
-import { DollarSign, AlertTriangle, Home, MapPin, Building } from 'lucide-react';
+import React from "react";
+import { membershipPlans } from "../types/membership";
+import { PricingCard } from "../components/Membership/PricingCard";
+import { SubscriptionManager } from "../components/Membership/SubscriptionManager";
+import { useAuthStore } from "../store/authStore";
+import {
+  DollarSign,
+  AlertTriangle,
+  Home,
+  MapPin,
+  Building,
+} from "lucide-react";
 
 export const PricingPage: React.FC = () => {
   const { user, isAuthenticated } = useAuthStore();
 
   const availableStates = [
-    'Washington', 'Montana', 'Wyoming', 'Colorado', 'New Mexico', 'Texas', 'Oklahoma', 
-    'Kansas', 'Nebraska', 'Iowa', 'Missouri', 'Arkansas', 'Louisiana', 'Mississippi', 
-    'Tennessee', 'Illinois', 'Wisconsin', 'Indiana', 'Maine', 'Michigan', 'Kentucky', 
-    'Virginia', 'West Virginia', 'Pennsylvania', 'Alabama', 'Georgia', 'South Carolina', 
-    'Florida', 'Delaware', 'Washington DC', 'New Hampshire', 'Massachusetts', 
-    'Connecticut', 'Rhode Island', 'Maryland', 'Alaska', 'Hawaii'
+    "Washington",
+    "Montana",
+    "Wyoming",
+    "Colorado",
+    "New Mexico",
+    "Texas",
+    "Oklahoma",
+    "Kansas",
+    "Nebraska",
+    "Iowa",
+    "Missouri",
+    "Arkansas",
+    "Louisiana",
+    "Mississippi",
+    "Tennessee",
+    "Illinois",
+    "Wisconsin",
+    "Indiana",
+    "Maine",
+    "Michigan",
+    "Kentucky",
+    "Virginia",
+    "West Virginia",
+    "Pennsylvania",
+    "Alabama",
+    "Georgia",
+    "South Carolina",
+    "Florida",
+    "Delaware",
+    "Washington DC",
+    "New Hampshire",
+    "Massachusetts",
+    "Connecticut",
+    "Rhode Island",
+    "Maryland",
+    "Alaska",
+    "Hawaii",
   ];
 
   return (
@@ -26,7 +63,8 @@ export const PricingPage: React.FC = () => {
             Choose Your Plan
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Unlock powerful real estate analysis tools and take your investment decisions to the next level
+            Unlock powerful real estate analysis tools and take your investment
+            decisions to the next level
           </p>
         </div>
 
@@ -38,13 +76,16 @@ export const PricingPage: React.FC = () => {
               🏦 All Deals Financed Through RepMotivatedSeller
             </h2>
             <p className="text-xl mb-6 text-blue-100">
-              Private Money Opportunity: Residential & Multifamily Investment Properties
+              Private Money Opportunity: Residential & Multifamily Investment
+              Properties
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <div className="bg-white/10 rounded-lg p-6">
                 <div className="font-semibold text-lg mb-2">Loan Amount</div>
-                <div className="text-yellow-200 text-xl">$30,000 to FHA Cap</div>
+                <div className="text-yellow-200 text-xl">
+                  $30,000 to FHA Cap
+                </div>
               </div>
               <div className="bg-white/10 rounded-lg p-6">
                 <div className="font-semibold text-lg mb-2">Interest Rate</div>
@@ -70,7 +111,9 @@ export const PricingPage: React.FC = () => {
                   <li>• Single Family Residences</li>
                   <li>• Duplexes, Triplexes, Fourplexes</li>
                   <li>• Price ≤ FHA cap for area</li>
-                  <li>• Max 1/2 acre, 5BR/3BA per unit, 2,800 sq ft per unit</li>
+                  <li>
+                    • Max 1/2 acre, 5BR/3BA per unit, 2,800 sq ft per unit
+                  </li>
                 </ul>
               </div>
               <div className="bg-white/10 rounded-lg p-6">
@@ -86,7 +129,9 @@ export const PricingPage: React.FC = () => {
                 </ul>
               </div>
               <div className="bg-white/10 rounded-lg p-6">
-                <div className="font-semibold text-lg mb-2">Loan Parameters</div>
+                <div className="font-semibold text-lg mb-2">
+                  Loan Parameters
+                </div>
                 <ul className="text-blue-100 text-sm space-y-1 text-left">
                   <li>• 90% Purchase (1-4 units)</li>
                   <li>• 80% Purchase (5+ units)</li>
@@ -100,13 +145,33 @@ export const PricingPage: React.FC = () => {
               <div className="flex items-start">
                 <AlertTriangle className="w-6 h-6 text-yellow-300 mr-3 mt-0.5" />
                 <div className="text-left">
-                  <div className="font-semibold text-yellow-100 mb-2">Important Requirements</div>
+                  <div className="font-semibold text-yellow-100 mb-2">
+                    Important Requirements
+                  </div>
                   <ul className="text-sm text-yellow-200 space-y-1">
-                    <li>• <strong>Non-Owner Occupied Investment Properties Only</strong></li>
-                    <li>• <strong>Must be made through a borrower entity</strong></li>
-                    <li>• <strong>Residential and Commercial Loans Available</strong></li>
-                    <li>• No minimum credit score (680+ and 20%+ down strengthen applications)</li>
-                    <li>• Broker fees paid subject to final underwriting and compliance with applicable law</li>
+                    <li>
+                      •{" "}
+                      <strong>
+                        Non-Owner Occupied Investment Properties Only
+                      </strong>
+                    </li>
+                    <li>
+                      • <strong>Must be made through a borrower entity</strong>
+                    </li>
+                    <li>
+                      •{" "}
+                      <strong>
+                        Residential and Commercial Loans Available
+                      </strong>
+                    </li>
+                    <li>
+                      • No minimum credit score (680+ and 20%+ down strengthen
+                      applications)
+                    </li>
+                    <li>
+                      • Broker fees paid subject to final underwriting and
+                      compliance with applicable law
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -119,14 +184,18 @@ export const PricingPage: React.FC = () => {
               </h3>
               <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-2 text-xs">
                 {availableStates.map((state) => (
-                  <div key={state} className="bg-green-500/20 text-green-100 px-2 py-1 rounded text-center">
+                  <div
+                    key={state}
+                    className="bg-green-500/20 text-green-100 px-2 py-1 rounded text-center"
+                  >
                     {state}
                   </div>
                 ))}
               </div>
               <div className="mt-4 text-center">
                 <span className="text-red-200 text-sm">
-                  <strong>Excluded States:</strong> Minnesota, Nevada, South Dakota, Utah, Vermont
+                  <strong>Excluded States:</strong> Minnesota, Nevada, South
+                  Dakota, Utah, Vermont
                 </span>
               </div>
             </div>
@@ -138,7 +207,7 @@ export const PricingPage: React.FC = () => {
         </div>
 
         {/* Subscription Manager for existing subscribers */}
-        {isAuthenticated && user && user.membershipTier !== 'free' && (
+        {isAuthenticated && user && user.membershipTier !== "free" && (
           <div className="mb-12">
             <SubscriptionManager />
           </div>
@@ -147,11 +216,7 @@ export const PricingPage: React.FC = () => {
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {membershipPlans.map((plan, index) => (
-            <PricingCard
-              key={plan.id}
-              plan={plan}
-              isPopular={index === 1}
-            />
+            <PricingCard key={plan.id} plan={plan} isPopular={index === 1} />
           ))}
         </div>
 
@@ -160,14 +225,15 @@ export const PricingPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             Frequently Asked Questions
           </h2>
-          
+
           <div className="space-y-8">
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Can I change my plan at any time?
               </h3>
               <p className="text-gray-600">
-                Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated and reflected in your next billing cycle.
+                Yes, you can upgrade or downgrade your plan at any time. Changes
+                will be prorated and reflected in your next billing cycle.
               </p>
             </div>
 
@@ -176,7 +242,9 @@ export const PricingPage: React.FC = () => {
                 Is there a free trial available?
               </h3>
               <p className="text-gray-600">
-                Our Basic plan is completely free and includes essential features. You can upgrade to Pro or Enterprise at any time to access advanced features.
+                Our Basic plan is completely free and includes essential
+                features. You can upgrade to Pro or Enterprise at any time to
+                access advanced features.
               </p>
             </div>
 
@@ -185,7 +253,10 @@ export const PricingPage: React.FC = () => {
                 What about financing for my deals?
               </h3>
               <p className="text-gray-600">
-                All deals can be financed through RepMotivatedSeller's private money program. We offer residential and multifamily investment property loans from $30,000 to FHA caps with competitive rates and flexible terms for qualified borrowers.
+                All deals can be financed through RepMotivatedSeller's private
+                money program. We offer residential and multifamily investment
+                property loans from $30,000 to FHA caps with competitive rates
+                and flexible terms for qualified borrowers.
               </p>
             </div>
 
@@ -194,7 +265,10 @@ export const PricingPage: React.FC = () => {
                 Do you finance apartment buildings and multifamily properties?
               </h3>
               <p className="text-gray-600">
-                Yes! We provide financing for both residential properties (1-4 units) and commercial multifamily properties including apartment buildings, multifamily dwelling complexes, student housing, and senior living facilities.
+                Yes! We provide financing for both residential properties (1-4
+                units) and commercial multifamily properties including apartment
+                buildings, multifamily dwelling complexes, student housing, and
+                senior living facilities.
               </p>
             </div>
 
@@ -203,7 +277,9 @@ export const PricingPage: React.FC = () => {
                 What payment methods do you accept?
               </h3>
               <p className="text-gray-600">
-                We accept all major credit cards (Visa, MasterCard, American Express) and PayPal through our secure Stripe payment processing.
+                We accept all major credit cards (Visa, MasterCard, American
+                Express) and PayPal through our secure Stripe payment
+                processing.
               </p>
             </div>
 
@@ -212,7 +288,9 @@ export const PricingPage: React.FC = () => {
                 Can I cancel my subscription?
               </h3>
               <p className="text-gray-600">
-                Yes, you can cancel your subscription at any time. You'll continue to have access to paid features until the end of your current billing period.
+                Yes, you can cancel your subscription at any time. You'll
+                continue to have access to paid features until the end of your
+                current billing period.
               </p>
             </div>
           </div>
@@ -221,5 +299,3 @@ export const PricingPage: React.FC = () => {
     </div>
   );
 };
-
-

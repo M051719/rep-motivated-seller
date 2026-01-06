@@ -1,5 +1,5 @@
-import React from 'react';
-import BackButton from './BackButton';
+import React from "react";
+import BackButton from "./BackButton";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -8,19 +8,19 @@ interface PageLayoutProps {
   showBackButton?: boolean;
   backButtonLabel?: string;
   backButtonPath?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '7xl' | 'full';
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "7xl" | "full";
   className?: string;
 }
 
 const maxWidthClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-  '4xl': 'max-w-4xl',
-  '7xl': 'max-w-7xl',
-  full: 'max-w-full'
+  sm: "max-w-sm",
+  md: "max-w-md",
+  lg: "max-w-lg",
+  xl: "max-w-xl",
+  "2xl": "max-w-2xl",
+  "4xl": "max-w-4xl",
+  "7xl": "max-w-7xl",
+  full: "max-w-full",
 };
 
 export const PageLayout: React.FC<PageLayoutProps> = ({
@@ -28,10 +28,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   title,
   subtitle,
   showBackButton = true,
-  backButtonLabel = '← Back',
-  backButtonPath = '/',
-  maxWidth = '7xl',
-  className = ''
+  backButtonLabel = "← Back",
+  backButtonPath = "/",
+  maxWidth = "7xl",
+  className = "",
 }) => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -49,17 +49,11 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
                 {title}
               </h1>
             )}
-            {subtitle && (
-              <p className="text-lg text-gray-600">
-                {subtitle}
-              </p>
-            )}
+            {subtitle && <p className="text-lg text-gray-600">{subtitle}</p>}
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          {children}
-        </div>
+        <div className="bg-white rounded-lg shadow-md p-6">{children}</div>
       </div>
     </div>
   );

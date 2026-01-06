@@ -1,8 +1,11 @@
 // src/components/professional/DrivingForDollars.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const DrivingForDollars: React.FC = () => {
-  const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [properties, setProperties] = useState<any[]>([]);
   const [tracking, setTracking] = useState(false);
 
@@ -12,7 +15,7 @@ const DrivingForDollars: React.FC = () => {
       navigator.geolocation.watchPosition((position) => {
         setCurrentLocation({
           lat: position.coords.latitude,
-          lng: position.coords.longitude
+          lng: position.coords.longitude,
         });
       });
     }
@@ -20,38 +23,41 @@ const DrivingForDollars: React.FC = () => {
 
   const markProperty = () => {
     if (!currentLocation) return;
-    
+
     const property = {
       id: Date.now(),
       lat: currentLocation.lat,
       lng: currentLocation.lng,
       timestamp: new Date().toISOString(),
-      notes: '',
+      notes: "",
       photos: [],
-      condition: 'unknown',
-      type: 'single-family'
+      condition: "unknown",
+      type: "single-family",
     };
-    
+
     setProperties([...properties, property]);
-    
+
     // Save to local storage
-    localStorage.setItem('driving-properties', JSON.stringify([...properties, property]));
+    localStorage.setItem(
+      "driving-properties",
+      JSON.stringify([...properties, property]),
+    );
   };
 
   const takePhoto = async (propertyId: number) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       // Implementation for photo capture
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
     } catch (error) {
-      console.error('Camera error:', error);
+      console.error("Camera error:", error);
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">🚗 Driving for Dollars (Free)</h1>
-      
+
       {/* Map View */}
       <div className="bg-gray-200 h-64 rounded-lg mb-4 relative">
         {currentLocation && (
@@ -59,13 +65,14 @@ const DrivingForDollars: React.FC = () => {
             <div>
               <p className="text-sm">Current Location:</p>
               <p className="font-mono text-xs">
-                {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
+                {currentLocation.lat.toFixed(6)},{" "}
+                {currentLocation.lng.toFixed(6)}
               </p>
             </div>
           </div>
         )}
       </div>
-      
+
       {/* Quick Add Button */}
       <button
         onClick={markProperty}
@@ -73,10 +80,10 @@ const DrivingForDollars: React.FC = () => {
       >
         📍 Mark Property
       </button>
-      
+
       {/* Property List */}
       <div className="space-y-3">
-        {properties.map(property => (
+        {properties.map((property) => (
           <div key={property.id} className="bg-white p-4 rounded-lg shadow">
             <div className="flex justify-between items-start">
               <div>

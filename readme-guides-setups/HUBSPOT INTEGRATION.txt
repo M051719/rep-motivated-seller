@@ -1,0 +1,116 @@
+Created Required Tables:
+
+submissions - Stores form submissions with contact info and HubSpot sync status
+sync_errors - Tracks synchronization errors
+hubspot.hubspot_contacts - Foreign table for HubSpot contacts
+hubspot.hubspot_deals - Foreign table for HubSpot deals
+Created Database Functions:
+
+validate_hubspot_connection() - Tests database connectivity and sync status
+trigger_hubspot_sync() - Trigger function for new submissions
+bulk_sync_to_hubspot(batch_size) - Processes multiple submissions in batch
+manual_sync_submission(submission_id) - Manually triggers a sync for a specific submission
+sync_submission_to_hubspot(submission_id) - Wrapper function for manual sync
+retry_failed_syncs(max_retries) - Retries all failed syncs that haven't exceeded max retries
+get_recent_sync_errors(limit_count) - Lists recent sync errors
+resolve_sync_error(error_id) - Marks an error as resolved
+retry_sync_error(error_id) - Retries a specific failed sync
+test_hubspot_connection() - Tests the HubSpot API connection
+get_detailed_hubspot_stats(days_back) - Comprehensive sync analytics
+create_sample_submission(urgency) - Creates a sample submission for testingCreated Database Views:
+
+hubspot_integration_dashboard - Dashboard for monitoring sync status
+Created Edge Functions:
+
+hubspot-notification-listener - Processes sync requests and includes a test endpoint
+hubspot-sync-listener - Listens for database notifications and processes pending submissions
+Created Triggers:
+
+Trigger on submissions table - Automatically queues new submissions for sync
+
+
+
+How to Use This Integration:
+Set up environment variables:
+
+Add HUBSPOT_API_KEY to your Supabase project environment variables
+Deploy the Edge Functions:
+
+Deploy hubspot-notification-listener
+Deploy hubspot-sync-listener
+Test the connection:
+
+Run SELECT * FROM test_hubspot_connection();
+Create a sample submission:
+
+Run SELECT * FROM create_sample_submission('high'); (options: 'low', 'medium', 'high')
+Manually sync a submission:
+
+Run SELECT * FROM sync_submission_to_hubspot('submission-uuid-here');
+Monitor the integration:
+
+View the dashboard: SELECT * FROM hubspot_integration_dashboard;
+Get detailed stats: SELECT * FROM get_detailed_hubspot_stats();
+Check for errors: SELECT * FROM get_recent_sync_errors();
+Troubleshoot issues:
+
+Resolve errors: SELECT * FROM resolve_sync_error('error-uuid-here');
+Retry failed syncs: SELECT * FROM retry_sync_error('error-uuid-here');
+Retry all failed syncs: SELECT * FROM retry_failed_syncs();
+
+
+
+Created all the necessary functions:
+
+manual_sync_submission(uuid) - Core function to sync a submission to HubSpot
+sync_submission_to_hubspot(uuid) - Public wrapper for manual sync
+bulk_sync_to_hubspot(integer) - Sync multiple submissions at once
+retry_failed_syncs(integer) - Retry submissions that failed to sync
+get_recent_sync_errors(integer) - Get a list of recent sync errors
+resolve_sync_error(uuid) - Mark an error as resolved
+retry_sync_error(uuid) - Retry a specific error
+test_hubspot_connection() - Test the HubSpot API connection
+get_hubspot_dashboard() - Get dashboard statistics
+check_hubspot_integration_setup() - Check if the integration is properly set up
+create_sample_submission(text) - Create a test submission
+Added missing columns to the submissions table:
+
+sync_started_at - When the sync process started
+sync_completed_at - When the sync process completed
+Created an Edge Function for HubSpot integration:
+
+hubspot-notification-listener - Handles the actual API calls to HubSpot
+Includes a test endpoint at /test
+Properly handles contact creation/update and deal creation
+Created an automatic trigger to sync submissions:
+
+auto_sync_submission_to_hubspot() - Trigger function
+auto_sync_hubspot_trigger - Trigger on submissions table
+
+I've provided a complete Edge Function implementation for your HubSpot integration. This Edge Function should be deployed separately from your database functions. Here's what it does:
+
+Creates a connection to both Supabase (using the service role key) and HubSpot
+
+Handles three main actions:
+
+sync_submission: Syncs a single submission to HubSpot
+test_connection: Tests the connection to HubSpot
+bulk_sync: Syncs multiple pending submissions to HubSpot
+For each submission, it:
+
+Creates or updates a contact in HubSpot
+Creates a deal in HubSpot
+Associates the deal with the contact
+Updates the submission status in your database
+Handles errors gracefully and logs them to your sync_errors table
+
+To deploy this Edge Function:
+
+Create a new file named hubspot-sync.ts in your Supabase Edge Functions directory
+Copy the code I provided into this file
+Set the HUBSPOT_API_KEY environment variable in your Supabase project
+Deploy the function using the Supabase CLI:
+supabase 
+functions
+ deploy hubspot-sync
+

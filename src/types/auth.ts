@@ -1,7 +1,7 @@
 // Authentication types
-import { MembershipTier } from './membership';
+import { MembershipTier } from "./membership";
 
-export type AuthMode = 'login' | 'signup' | 'reset-password';
+export type AuthMode = "login" | "signup" | "reset-password";
 
 export interface User {
   id: string;

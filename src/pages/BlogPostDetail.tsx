@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
-import { supabase } from '../lib/supabase';
-import BlogComments from '../components/BlogComments';
-import { BackButton } from '../components/ui/BackButton';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { supabase } from "../lib/supabase";
+import BlogComments from "../components/BlogComments";
+import { BackButton } from "../components/ui/BackButton";
 import {
   ArrowLeft,
   Calendar,
@@ -15,9 +15,9 @@ import {
   Facebook,
   Twitter,
   Linkedin,
-  Link2
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+  Link2,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 interface BlogPost {
   id: string;
@@ -63,10 +63,10 @@ const BlogPostDetail: React.FC = () => {
 
       // Fetch the blog post by slug
       const { data: postData, error: postError } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', slug)
-        .eq('published', true)
+        .from("blog_posts")
+        .select("*")
+        .eq("slug", slug)
+        .eq("published", true)
         .single();
 
       if (postError) throw postError;
@@ -76,12 +76,14 @@ const BlogPostDetail: React.FC = () => {
       // Fetch related posts from the same category
       if (postData) {
         const { data: relatedData, error: relatedError } = await supabase
-          .from('blog_posts')
-          .select('id, title, excerpt, author_name, published_at, category, read_time, tags, slug, featured_image_url')
-          .eq('published', true)
-          .eq('category', postData.category)
-          .neq('id', postData.id)
-          .order('published_at', { ascending: false })
+          .from("blog_posts")
+          .select(
+            "id, title, excerpt, author_name, published_at, category, read_time, tags, slug, featured_image_url",
+          )
+          .eq("published", true)
+          .eq("category", postData.category)
+          .neq("id", postData.id)
+          .order("published_at", { ascending: false })
           .limit(3);
 
         if (!relatedError && relatedData) {
@@ -89,42 +91,42 @@ const BlogPostDetail: React.FC = () => {
         }
       }
     } catch (error: any) {
-      console.error('Error fetching blog post:', error);
-      toast.error('Failed to load blog post');
-      navigate('/blog');
+      console.error("Error fetching blog post:", error);
+      toast.error("Failed to load blog post");
+      navigate("/blog");
     } finally {
       setLoading(false);
     }
   };
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const shareTitle = post?.title || '';
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareTitle = post?.title || "";
 
   const handleShare = (platform: string) => {
     const encodedUrl = encodeURIComponent(shareUrl);
     const encodedTitle = encodeURIComponent(shareTitle);
 
-    let shareLink = '';
+    let shareLink = "";
 
     switch (platform) {
-      case 'facebook':
+      case "facebook":
         shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
         break;
-      case 'twitter':
+      case "twitter":
         shareLink = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
         break;
-      case 'linkedin':
+      case "linkedin":
         shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
         break;
-      case 'copy':
+      case "copy":
         navigator.clipboard.writeText(shareUrl);
-        toast.success('Link copied to clipboard!');
+        toast.success("Link copied to clipboard!");
         setShowShareMenu(false);
         return;
     }
 
     if (shareLink) {
-      window.open(shareLink, '_blank', 'width=600,height=400');
+      window.open(shareLink, "_blank", "width=600,height=400");
       setShowShareMenu(false);
     }
   };
@@ -145,8 +147,12 @@ const BlogPostDetail: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="text-6xl mb-4">📝</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Post Not Found</h2>
-          <p className="text-gray-600 mb-6">The blog post you're looking for doesn't exist.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Post Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The blog post you're looking for doesn't exist.
+          </p>
           <Link
             to="/blog"
             className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold"
@@ -166,7 +172,10 @@ const BlogPostDetail: React.FC = () => {
         <title>{post.meta_title || post.title} | RepMotivatedSeller Blog</title>
 
         {/* Meta Description */}
-        <meta name="description" content={post.meta_description || post.excerpt} />
+        <meta
+          name="description"
+          content={post.meta_description || post.excerpt}
+        />
 
         {/* Meta Keywords */}
         {post.meta_keywords && (
@@ -179,53 +188,63 @@ const BlogPostDetail: React.FC = () => {
         )}
 
         {/* Robots Meta */}
-        {post.robots_meta && (
-          <meta name="robots" content={post.robots_meta} />
-        )}
+        {post.robots_meta && <meta name="robots" content={post.robots_meta} />}
 
         {/* Open Graph / Facebook */}
         <meta property="og:title" content={post.og_title || post.title} />
-        <meta property="og:description" content={post.og_description || post.excerpt} />
-        <meta property="og:image" content={post.og_image_url || post.featured_image_url || ''} />
+        <meta
+          property="og:description"
+          content={post.og_description || post.excerpt}
+        />
+        <meta
+          property="og:image"
+          content={post.og_image_url || post.featured_image_url || ""}
+        />
         <meta property="og:url" content={shareUrl} />
         <meta property="og:type" content="article" />
         <meta property="article:published_time" content={post.published_at} />
         <meta property="article:author" content={post.author_name} />
         {post.tags && post.tags.length > 0 && (
-          <meta property="article:tag" content={post.tags.join(', ')} />
+          <meta property="article:tag" content={post.tags.join(", ")} />
         )}
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={post.og_title || post.title} />
-        <meta name="twitter:description" content={post.og_description || post.excerpt} />
-        <meta name="twitter:image" content={post.og_image_url || post.featured_image_url || ''} />
+        <meta
+          name="twitter:description"
+          content={post.og_description || post.excerpt}
+        />
+        <meta
+          name="twitter:image"
+          content={post.og_image_url || post.featured_image_url || ""}
+        />
 
         {/* Schema.org Article Markup */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            "headline": post.title,
-            "description": post.excerpt,
-            "image": post.featured_image_url || post.og_image_url,
-            "datePublished": post.published_at,
-            "author": {
+            headline: post.title,
+            description: post.excerpt,
+            image: post.featured_image_url || post.og_image_url,
+            datePublished: post.published_at,
+            author: {
               "@type": "Person",
-              "name": post.author_name
+              name: post.author_name,
             },
-            "publisher": {
+            publisher: {
               "@type": "Organization",
-              "name": "RepMotivatedSeller",
-              "logo": {
+              name: "RepMotivatedSeller",
+              logo: {
                 "@type": "ImageObject",
-                "url": "https://repmotivatedseller.com/logo.png"
-              }
+                url: "https://repmotivatedseller.com/logo.png",
+              },
             },
-            "mainEntityOfPage": {
+            mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": shareUrl
-            }
+              "@id": shareUrl,
+            },
           })}
         </script>
       </Helmet>
@@ -265,10 +284,10 @@ const BlogPostDetail: React.FC = () => {
               <div className="flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />
                 <span>
-                  {new Date(post.published_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
+                  {new Date(post.published_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </span>
               </div>
@@ -295,28 +314,28 @@ const BlogPostDetail: React.FC = () => {
                   className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10"
                 >
                   <button
-                    onClick={() => handleShare('facebook')}
+                    onClick={() => handleShare("facebook")}
                     className="w-full px-4 py-2 hover:bg-gray-50 flex items-center text-gray-700"
                   >
                     <Facebook className="w-4 h-4 mr-3 text-blue-600" />
                     Facebook
                   </button>
                   <button
-                    onClick={() => handleShare('twitter')}
+                    onClick={() => handleShare("twitter")}
                     className="w-full px-4 py-2 hover:bg-gray-50 flex items-center text-gray-700"
                   >
                     <Twitter className="w-4 h-4 mr-3 text-sky-500" />
                     Twitter
                   </button>
                   <button
-                    onClick={() => handleShare('linkedin')}
+                    onClick={() => handleShare("linkedin")}
                     className="w-full px-4 py-2 hover:bg-gray-50 flex items-center text-gray-700"
                   >
                     <Linkedin className="w-4 h-4 mr-3 text-blue-700" />
                     LinkedIn
                   </button>
                   <button
-                    onClick={() => handleShare('copy')}
+                    onClick={() => handleShare("copy")}
                     className="w-full px-4 py-2 hover:bg-gray-50 flex items-center text-gray-700"
                   >
                     <Link2 className="w-4 h-4 mr-3 text-gray-600" />
@@ -342,9 +361,9 @@ const BlogPostDetail: React.FC = () => {
               className="prose prose-lg max-w-none mb-12"
               dangerouslySetInnerHTML={{ __html: post.content }}
               style={{
-                lineHeight: '1.8',
-                fontSize: '1.125rem',
-                color: '#374151'
+                lineHeight: "1.8",
+                fontSize: "1.125rem",
+                color: "#374151",
               }}
             />
 
@@ -375,7 +394,9 @@ const BlogPostDetail: React.FC = () => {
         {relatedPosts.length > 0 && (
           <section className="bg-white py-12 border-t">
             <div className="max-w-7xl mx-auto px-4">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">Related Articles</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                Related Articles
+              </h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {relatedPosts.map((relatedPost) => (
                   <Link
@@ -424,9 +445,12 @@ const BlogPostDetail: React.FC = () => {
         {/* CTA Section */}
         <section className="bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 text-white py-16">
           <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Need Help with Foreclosure?</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Need Help with Foreclosure?
+            </h2>
             <p className="text-lg text-indigo-100 mb-8">
-              Get expert guidance and support to save your home. Schedule a free consultation today.
+              Get expert guidance and support to save your home. Schedule a free
+              consultation today.
             </p>
             <Link
               to="/consultation"
