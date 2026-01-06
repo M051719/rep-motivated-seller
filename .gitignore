@@ -182,3 +182,6 @@ rep-motivated-seller@0.1.0
 # Large installer files
 *.exe
 *.msi
+# Large audio files - store locally only
+capcut-templates/assets/music/*.mp3
+capcut-templates/assets/music/**/*.mp3
