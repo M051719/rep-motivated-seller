@@ -29,6 +29,8 @@
 *apikey*
 !package-lock.json
 !yarn.lock
+!rotate-api-keys.ps1
+!*-stackhawk-*.ps1
 
 # Dependencies
 node_modules/
