@@ -1,218 +1,208 @@
-/**
- * Book Consultation Page
- * Allows users to schedule foreclosure prevention consultations via Calendly
- */
-
 import React from 'react';
-import CalendlyWidget, { CalendlyFeatures, ConsultationTypes } from '../components/calendly/CalendlyWidget';
-import { Calendar, Shield, Users, MessageCircle } from 'lucide-react';
+import { InlineWidget } from 'react-calendly';
+import { Calendar, Clock, CheckCircle, Users } from 'lucide-react';
 
-export default function BookConsultation() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Hero Section */}
-      <div className="bg-blue-600 text-white py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-            Schedule Your Free Consultation
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 mb-8">
-            Get expert guidance on foreclosure prevention and credit repair
-          </p>
-          <div className="flex flex-wrap justify-center gap-8 text-left">
-            <div className="flex items-start">
-              <Shield className="h-6 w-6 mr-2 mt-1" />
-              <div>
-                <div className="font-semibold">100% Confidential</div>
-                <div className="text-sm opacity-80">Your information is secure</div>
+const BookConsultation: React.FC = () => {
+  // Get Calendly URL from environment variable
+  const calendlyUrl = import.meta.env.VITE_CALENDLY_URL;
+
+  if (!calendlyUrl) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
               </div>
-            </div>
-            <div className="flex items-start">
-              <Users className="h-6 w-6 mr-2 mt-1" />
-              <div>
-                <div className="font-semibold">Expert Advisors</div>
-                <div className="text-sm opacity-80">15+ years experience</div>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <MessageCircle className="h-6 w-6 mr-2 mt-1" />
-              <div>
-                <div className="font-semibold">Real Solutions</div>
-                <div className="text-sm opacity-80">Actionable strategies</div>
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  <strong>Configuration Required:</strong> VITE_CALENDLY_URL is not set in your environment variables. 
+                  Please add your Calendly scheduling page URL to continue.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
+    );
+  }
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Features */}
-        <CalendlyFeatures />
-
-        {/* Consultation Types */}
-        <ConsultationTypes />
-
-        {/* Calendly Widget */}
-        <div className="bg-white rounded-xl shadow-2xl p-8 mb-12">
-          <div className="text-center mb-8">
-            <Calendar className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Choose Your Available Time
-            </h2>
-            <p className="text-gray-600">
-              Select a time that works best for you - all times shown in your local timezone
-            </p>
-          </div>
-          
-          <CalendlyWidget type="inline" />
-        </div>
-
-        {/* What to Expect */}
-        <div className="bg-blue-50 rounded-xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            What to Expect
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="text-blue-600 font-bold text-lg mb-3">
-                1. Before Your Call
-              </div>
-              <ul className="space-y-2 text-gray-700">
-                <li>• Confirmation email with Zoom link</li>
-                <li>• Calendar invite added automatically</li>
-                <li>• Preparation checklist sent</li>
-                <li>• Document upload instructions</li>
-              </ul>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="text-blue-600 font-bold text-lg mb-3">
-                2. During Your Call
-              </div>
-              <ul className="space-y-2 text-gray-700">
-                <li>• One-on-one video consultation</li>
-                <li>• Screen sharing for document review</li>
-                <li>• Personalized recommendations</li>
-                <li>• Q&A with expert advisor</li>
-              </ul>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="text-blue-600 font-bold text-lg mb-3">
-                3. After Your Call
-              </div>
-              <ul className="space-y-2 text-gray-700">
-                <li>• Written action plan summary</li>
-                <li>• Resource links and templates</li>
-                <li>• Follow-up email support</li>
-                <li>• Next steps checklist</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Preparation Tips */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            How to Prepare for Your Consultation
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Documents to Have Ready:</h3>
-              <ul className="space-y-2 text-gray-700">
-                <li>• Recent mortgage statements</li>
-                <li>• Notice of default or foreclosure notice (if received)</li>
-                <li>• Recent pay stubs or income documentation</li>
-                <li>• Monthly expense summary</li>
-                <li>• Credit reports (if available)</li>
-                <li>• Property tax statements</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Questions to Consider:</h3>
-              <ul className="space-y-2 text-gray-700">
-                <li>• What is your current financial situation?</li>
-                <li>• How many months behind are you?</li>
-                <li>• Have you contacted your lender?</li>
-                <li>• What are your goals (keep home, sell, etc.)?</li>
-                <li>• What is your timeline?</li>
-                <li>• Do you have any other debts?</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* FAQ */}
-        <div className="bg-gray-50 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-4">
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Is the initial consultation really free?
-              </h3>
-              <p className="text-gray-700">
-                Yes! The 15-minute quick assessment is completely free with no obligation. 
-                We want to understand your situation and see if we can help before you commit.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                What happens if I need to reschedule?
-              </h3>
-              <p className="text-gray-700">
-                You can reschedule or cancel your appointment up to 24 hours in advance 
-                through the confirmation email. We understand emergencies happen.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Do I need to pay before the consultation?
-              </h3>
-              <p className="text-gray-700">
-                Payment is required at booking for 30-minute and 60-minute consultations. 
-                The 15-minute assessment is free. Paid consultations are fully refundable 
-                if cancelled 24+ hours in advance.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Will my information be kept confidential?
-              </h3>
-              <p className="text-gray-700">
-                Absolutely. All consultations are completely confidential. We comply with 
-                GLBA privacy requirements and never share your information without consent.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-12 bg-blue-600 text-white rounded-xl p-8">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Take Control of Your Financial Future?
-          </h2>
-          <p className="text-xl mb-6 opacity-90">
-            Book your free assessment now and start your journey to financial recovery
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Calendar className="w-16 h-16 mx-auto mb-6" />
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Schedule Your Free Consultation
+          </h1>
+          <p className="text-xl md:text-2xl text-blue-100 mb-8">
+            Let's discuss how we can help you achieve your financial goals
           </p>
-          <a 
-            href="#calendly-widget"
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector('.calendly-widget-container')?.scrollIntoView({ 
-                behavior: 'smooth' 
-              });
-            }}
-            className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
-          >
-            Schedule Now - It's Free
-          </a>
+          
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <Clock className="w-10 h-10 mx-auto mb-3" />
+              <h3 className="text-lg font-semibold mb-2">30-Minute Call</h3>
+              <p className="text-blue-100 text-sm">
+                Personalized consultation to understand your needs
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <Users className="w-10 h-10 mx-auto mb-3" />
+              <h3 className="text-lg font-semibold mb-2">Expert Guidance</h3>
+              <p className="text-blue-100 text-sm">
+                Work with experienced financial professionals
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <CheckCircle className="w-10 h-10 mx-auto mb-3" />
+              <h3 className="text-lg font-semibold mb-2">No Obligation</h3>
+              <p className="text-blue-100 text-sm">
+                Free consultation with no strings attached
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Calendly Widget Section */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* What to Expect Section */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 border-b border-gray-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+              What to Expect During Your Consultation
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-600 text-white font-bold">
+                    1
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Discovery Call
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    We'll discuss your current situation, goals, and challenges
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-600 text-white font-bold">
+                    2
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Solution Overview
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    We'll outline potential strategies and solutions tailored to you
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-purple-600 text-white font-bold">
+                    3
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Q&A Session
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Ask any questions you have about our services and approach
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-purple-600 text-white font-bold">
+                    4
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Next Steps
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Decide if we're a good fit and discuss how to move forward
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Embedded Calendly Widget */}
+          <div className="p-4 bg-white">
+            <InlineWidget
+              url={calendlyUrl}
+              styles={{
+                height: '700px',
+                width: '100%',
+              }}
+              pageSettings={{
+                backgroundColor: 'ffffff',
+                hideEventTypeDetails: false,
+                hideLandingPageDetails: false,
+                primaryColor: '2563eb',
+                textColor: '1f2937',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
+            <div className="text-gray-600">Clients Served</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">98%</div>
+            <div className="text-gray-600">Satisfaction Rate</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">24/7</div>
+            <div className="text-gray-600">Support Available</div>
+          </div>
+        </div>
+
+        {/* Privacy Notice */}
+        <div className="mt-12 bg-blue-50 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+            <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Your Privacy is Protected
+          </h3>
+          <p className="text-gray-700 text-sm">
+            All information shared during your consultation is kept strictly confidential and complies with 
+            GLBA Privacy Rules and industry best practices. We never share your personal information without 
+            your explicit consent. Read our{' '}
+            <a href="/compliance/glba" className="text-blue-600 hover:text-blue-800 underline">
+              GLBA Compliance Policy
+            </a>{' '}
+            for more details.
+          </p>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default BookConsultation;

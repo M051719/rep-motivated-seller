@@ -4,6 +4,16 @@
 !.env.example
 !.env.sample
 
+# Dotenvx - Encrypted environment files are SAFE to commit
+# .env (encrypted) - COMMIT THIS
+# .env.production (encrypted) - COMMIT THIS
+# .env.staging (encrypted) - COMMIT THIS
+# But NEVER commit the decryption keys:
+.env.keys
+*.keys
+.env.vault
+.env.me
+
 # API Keys, Secrets, Credentials
 *secret*
 *SECRET*

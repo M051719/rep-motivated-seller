@@ -1,476 +1,500 @@
-import React, { useState } from "react";
-import { Mail, MapPin, CreditCard, Send, CheckCircle } from "lucide-react";
-import { BackButton } from "../components/ui/BackButton";
-import { toast } from "react-hot-toast";
+/**
+ * Direct Mail Campaign Management Page
+ * Integrated with Lob API for sending physical mailers
+ * With tier-based access control
+ */
 
-interface MailingAddress {
-  name: string;
-  address_line1: string;
-  address_line2?: string;
-  address_city: string;
-  address_state: string;
-  address_zip: string;
-}
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Mail, Send, FileText, TrendingUp, DollarSign, 
+  MapPin, Calendar, CheckCircle, AlertCircle,
+  Download, Eye, Lock, ArrowRight
+} from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { toast } from 'react-hot-toast';
+import { TIERS, hasAccess, getUpgradeMessage, getDirectMailLimits } from '../utils/tierAccess';
 
-interface MailTemplate {
+interface Campaign {
   id: string;
   name: string;
-  description: string;
-  thumbnail: string;
-  type: "postcard" | "letter";
-  size: string;
+  template_type: 'foreclosure' | 'cash_offer' | 'land_acquisition' | 'loan_modification';
+  status: 'draft' | 'active' | 'completed' | 'cancelled';
+  sent_count: number;
+  delivered_count: number;
+  responded_count: number;
+  total_cost: number;
+  created_at: string;
 }
 
-const DirectMailPage: React.FC = () => {
-  const [step, setStep] = useState<
-    "template" | "address" | "preview" | "success"
-  >("template");
-  const [selectedTemplate, setSelectedTemplate] = useState<MailTemplate | null>(
-    null,
-  );
-  const [recipient, setRecipient] = useState<MailingAddress>({
-    name: "",
-    address_line1: "",
-    address_line2: "",
-    address_city: "",
-    address_state: "",
-    address_zip: "",
-  });
-  const [message, setMessage] = useState("");
-  const [sending, setSending] = useState(false);
+const TEMPLATES = [
+  {
+    id: 'foreclosure',
+    name: 'Foreclosure Prevention',
+    description: 'Help homeowners avoid foreclosure with our in-house loan processing',
+    icon: '🏠',
+    color: 'blue'
+  },
+  {
+    id: 'cash_offer',
+    name: 'Cash Offer (24hr)',
+    description: 'Fast cash offers with 24-hour response guarantee',
+    icon: '💰',
+    color: 'green'
+  },
+  {
+    id: 'land_acquisition',
+    name: 'Land Acquisition',
+    description: 'We buy land directly - no agents, no fees',
+    icon: '🌳',
+    color: 'purple'
+  },
+  {
+    id: 'loan_modification',
+    name: 'Loan Modification',
+    description: 'Reduce your mortgage payments with our loan modification services',
+    icon: '📋',
+    color: 'orange'
+  }
+];
 
-  const templates: MailTemplate[] = [
-    {
-      id: "postcard_intro",
-      name: "Introduction Postcard",
-      description: "Introduce your services to property owners",
-      thumbnail: "📬",
-      type: "postcard",
-      size: "6x9",
-    },
-    {
-      id: "postcard_followup",
-      name: "Follow-up Postcard",
-      description: "Follow up with potential leads",
-      thumbnail: "📮",
-      type: "postcard",
-      size: "6x9",
-    },
-    {
-      id: "letter_offer",
-      name: "Property Offer Letter",
-      description: "Professional offer letter for properties",
-      thumbnail: "✉️",
-      type: "letter",
-      size: "8.5x11",
-    },
-    {
-      id: "postcard_foreclosure",
-      name: "Foreclosure Assistance",
-      description: "Offer help to homeowners facing foreclosure",
-      thumbnail: "🏠",
-      type: "postcard",
-      size: "6x9",
-    },
-  ];
+interface DirectMailPageProps {
+  userTier?: string;
+}
 
-  const handleTemplateSelect = (template: MailTemplate) => {
-    setSelectedTemplate(template);
-    setStep("address");
-  };
+export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPageProps) {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [monthlyUsage, setMonthlyUsage] = useState({ postcards: 0, campaigns: 0 });
 
-  const handleAddressSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep("preview");
-  };
+  const hasPremiumAccess = hasAccess(userTier, TIERS.PREMIUM);
+  const tierLimits = getDirectMailLimits(userTier);
+  const isUnlimited = tierLimits.postcards === -1;
 
-  const handleSendMail = async () => {
-    setSending(true);
+  useEffect(() => {
+    loadCampaigns();
+    loadMonthlyUsage();
+  }, []);
+
+  const loadCampaigns = async () => {
     try {
-      // Call LOB API through your backend
-      const response = await fetch("/api/send-mail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          template: selectedTemplate?.id,
-          recipient,
-          message,
-        }),
-      });
+      const { data, error } = await supabase
+        .from('direct_mail_campaigns')
+        .select('*')
+    
 
-      if (!response.ok) throw new Error("Failed to send mail");
+  const loadMonthlyUsage = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-      setStep("success");
-      toast.success("Mail sent successfully!");
-    } catch (error) {
-      console.error("Error sending mail:", error);
-      toast.error("Failed to send mail. Please try again.");
-    } finally {
-      setSending(false);
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { data: monthCampaigns, error } = await supabase
+        .from('direct_mail_campaigns')
+        .select('sent_count')
+        .gte('created_at', startOfMonth.toISOString());
+
+      if (error) throw error;
+
+      const totalPostcards = monthCampaigns?.reduce((sum, c) => sum + (c.sent_count || 0), 0) || 0;
+      setMonthlyUsage({
+      // Check tier limits
+      if (!isUnlimited && monthlyUsage.campaigns >= tierLimits.campaigns) {
+        toast.error(`You've reached your monthly limit of ${tierLimits.campaigns} campaigns. ${getUpgradeMessage(TIERS.PREMIUM)}`);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('direct_mail_campaigns')
+        .insert({
+          name: campaignName,
+          template_type: templateType,
+          user_id: user.id,
+          status: 'draft'
+        });
+
+      if (error) throw error;
+
+      toast.success('Campaign created successfully!');
+      setShowCreateModal(false);
+      loadCampaigns();
+      loadMonthlyUsage
+      setLoading(false);
     }
   };
 
-  const resetForm = () => {
-    setStep("template");
-    setSelectedTemplate(null);
-    setRecipient({
-      name: "",
-      address_line1: "",
-      address_line2: "",
-      address_city: "",
-      address_state: "",
-      address_zip: "",
-    });
-    setMessage("");
+  const createCampaign = async (templateType: string, campaignName: string) => {
+    try {
+  // Show upgrade prompt for free users
+  if (!hasPremiumAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl p-12 shadow-2xl text-center"
+          >
+            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-10 h-10 text-blue-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Direct Mail Campaigns
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              {getUpgradeMessage(TIERS.PREMIUM)}
+            </p>
+            
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Premium Features Include:</h2>
+              <div className="grid md:grid-cols-2 gap-4 text-left">
+                {[
+                  '📬 100 postcards per month',
+                  '📊 10 campaigns per month',
+                  '🎨 Professional templates',
+                  '📈 Campaign analytics',
+                  '✅ Legal compliance built-in',
+                  '🚀 Lob API integration'
+                ].map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                    <span className="text-gray-700">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => window.location.href = '/pricing'}
+              className="flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-all shadow-lg mx-auto"
+            >
+              Upgrade to Premium <ArrowRight className="w-5 h-5" />
+            </button>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                📬 Direct Mail Campaigns
+              </h1>
+              <p className="text-gray-600">
+                Send professional mailers powered by Lob API with built-in legal protection
+              </p>
+              {/* Usage indicator */}
+              <div className="mt-3 flex items-center gap-4 text-sm">
+                <span className={`font-semibold ${isUnlimited ? 'text-green-600' : monthlyUsage.postcards >= tierLimits.postcards ? 'text-red-600' : 'text-blue-600'}`}>
+                  {isUnlimited ? '∞ Unlimited' : `${monthlyUsage.postcards}/${tierLimits.postcards} postcards`} this month
+                </span>
+                <span className="text-gray-400">•</span>
+                <span className="text-gray-600">
+                  {isUnlimited ? '∞ Unlimited' : `${monthlyUsage.campaigns}/${tierLimits.campaigns} campaigns`}
+                </span>
+                {userTier && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold uppercase">
+                      {tierLimits.name} Plan
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              disabled={!isUnlimited && monthlyUsage.campaigns >= tierLimits.campaigns}
+              className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
+      toast.error('Failed to create campaign');
+    }
+  };
+
+  const calculateROI = (campaign: Campaign) => {
+    if (campaign.total_cost === 0) return 0;
+    const avgDealValue = 5000; // Estimated average deal value
+    const revenue = campaign.responded_count * avgDealValue;
+    return ((revenue - campaign.total_cost) / campaign.total_cost * 100).toFixed(1);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <BackButton />
-
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            📮 Direct Mail Service
-          </h1>
-          <p className="text-xl text-gray-600">
-            Send professional postcards and letters to property owners
-          </p>
-        </div>
-
-        {/* Progress Steps */}
-        <div className="mb-12">
-          <div className="flex items-center justify-center space-x-4">
-            <div
-              className={`flex items-center ${step === "template" ? "text-blue-600" : "text-gray-400"}`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "template" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-              >
-                1
-              </div>
-              <span className="ml-2 font-medium">Template</span>
-            </div>
-            <div className="w-16 h-1 bg-gray-200"></div>
-            <div
-              className={`flex items-center ${step === "address" ? "text-blue-600" : "text-gray-400"}`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "address" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-              >
-                2
-              </div>
-              <span className="ml-2 font-medium">Address</span>
-            </div>
-            <div className="w-16 h-1 bg-gray-200"></div>
-            <div
-              className={`flex items-center ${step === "preview" ? "text-blue-600" : "text-gray-400"}`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "preview" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
-              >
-                3
-              </div>
-              <span className="ml-2 font-medium">Preview & Send</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Step 1: Template Selection */}
-        {step === "template" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                onClick={() => handleTemplateSelect(template)}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer p-6 border-2 border-transparent hover:border-blue-500"
-              >
-                <div className="text-6xl mb-4 text-center">
-                  {template.thumbnail}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {template.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  {template.description}
-                </p>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    {template.type}
-                  </span>
-                  <span>{template.size}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Step 2: Address Form */}
-        {step === "address" && (
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Recipient Information
-            </h2>
-            <form onSubmit={handleAddressSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Recipient Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={recipient.name}
-                  onChange={(e) =>
-                    setRecipient({ ...recipient, name: e.target.value })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="John Smith"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address Line 1 *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={recipient.address_line1}
-                  onChange={(e) =>
-                    setRecipient({
-                      ...recipient,
-                      address_line1: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="123 Main Street"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address Line 2
-                </label>
-                <input
-                  type="text"
-                  value={recipient.address_line2}
-                  onChange={(e) =>
-                    setRecipient({
-                      ...recipient,
-                      address_line2: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Apt 4B"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    City *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={recipient.address_city}
-                    onChange={(e) =>
-                      setRecipient({
-                        ...recipient,
-                        address_city: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="San Francisco"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    State *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={recipient.address_state}
-                    onChange={(e) =>
-                      setRecipient({
-                        ...recipient,
-                        address_state: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="CA"
-                    maxLength={2}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ZIP Code *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={recipient.address_zip}
-                    onChange={(e) =>
-                      setRecipient({
-                        ...recipient,
-                        address_zip: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="94102"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Personal Message (Optional)
-                </label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Add a personal message..."
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setStep("template")}
-                  className="flex-1 px-6 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Preview
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Step 3: Preview & Send */}
-        {step === "preview" && (
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Review & Send
-            </h2>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Template</h3>
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">{selectedTemplate?.thumbnail}</span>
-                <div>
-                  <p className="font-medium">{selectedTemplate?.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {selectedTemplate?.size} {selectedTemplate?.type}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                Recipient
-              </h3>
-              <div className="text-gray-700">
-                <p className="font-medium">{recipient.name}</p>
-                <p>{recipient.address_line1}</p>
-                {recipient.address_line2 && <p>{recipient.address_line2}</p>}
-                <p>
-                  {recipient.address_city}, {recipient.address_state}{" "}
-                  {recipient.address_zip}
-                </p>
-              </div>
-            </div>
-
-            {message && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
-                <h3 className="font-semibold text-gray-900 mb-3">
-                  Personal Message
-                </h3>
-                <p className="text-gray-700 italic">{message}</p>
-              </div>
-            )}
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-yellow-800">
-                <strong>Estimated Cost:</strong> $0.75 - $2.50 per piece
-                depending on type and quantity
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                📬 Direct Mail Campaigns
+              </h1>
+              <p className="text-gray-600">
+                Send professional mailers powered by Lob API with built-in legal protection
               </p>
             </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg"
+            >
+              <Send className="w-5 h-5" />
+              Create Campaign
+            </button>
+          </div>
+        </motion.div>
 
-            <div className="flex gap-4">
-              <button
-                onClick={() => setStep("address")}
-                className="flex-1 px-6 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {[
+            {
+              label: 'Total Sent',
+              value: campaigns.reduce((sum, c) => sum + c.sent_count, 0),
+              icon: Mail,
+              color: 'blue'
+            },
+            {
+              label: 'Delivered',
+              value: campaigns.reduce((sum, c) => sum + c.delivered_count, 0),
+              icon: CheckCircle,
+              color: 'green'
+            },
+            {
+              label: 'Responses',
+              value: campaigns.reduce((sum, c) => sum + c.responded_count, 0),
+              icon: TrendingUp,
+              color: 'purple'
+            },
+            {
+              label: 'Total Cost',
+              value: `$${campaigns.reduce((sum, c) => sum + c.total_cost, 0).toFixed(2)}`,
+              icon: DollarSign,
+              color: 'orange'
+            }
+          ].map((stat, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              className="bg-white rounded-xl p-6 shadow-lg border border-gray-200"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm font-medium">{stat.label}</span>
+                <stat.icon className={`w-5 h-5 text-${stat.color}-600`} />
+              </div>
+              <div className={`text-3xl font-bold text-${stat.color}-600`}>
+                {stat.value}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Template Selection */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 mb-8"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            📝 Available Templates
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TEMPLATES.map((template) => (
+              <motion.div
+                key={template.id}
+                whileHover={{ scale: 1.05 }}
+                className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
+                  selectedTemplate === template.id
+                    ? `border-${template.color}-600 bg-${template.color}-50`
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                onClick={() => setSelectedTemplate(template.id)}
               >
-                Edit
-              </button>
+                <div className="text-4xl mb-3">{template.icon}</div>
+                <h3 className="font-bold text-gray-900 mb-2">{template.name}</h3>
+                <p className="text-sm text-gray-600">{template.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Campaigns List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl p-8 shadow-lg border border-gray-200"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            📊 Campaign History
+          </h2>
+
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading campaigns...</p>
+            </div>
+          ) : campaigns.length === 0 ? (
+            <div className="text-center py-12">
+              <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">No campaigns yet</p>
               <button
-                onClick={handleSendMail}
-                disabled={sending}
-                className="flex-1 px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                onClick={() => setShowCreateModal(true)}
+                className="text-blue-600 hover:text-blue-700 font-semibold"
               >
-                {sending ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Send Mail
-                  </>
-                )}
+                Create your first campaign →
               </button>
             </div>
+          ) : (
+            <div className="space-y-4">
+              {campaigns.map((campaign) => (
+                <motion.div
+                  key={campaign.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-all"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-1">
+                        {campaign.name}
+                      </h3>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        {campaign.template_type.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      campaign.status === 'active' ? 'bg-green-100 text-green-800' :
+                      campaign.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {campaign.status}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Sent</p>
+                      <p className="text-lg font-bold text-gray-900">{campaign.sent_count}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Delivered</p>
+                      <p className="text-lg font-bold text-green-600">{campaign.delivered_count}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Responses</p>
+                      <p className="text-lg font-bold text-purple-600">{campaign.responded_count}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Cost</p>
+                      <p className="text-lg font-bold text-orange-600">${campaign.total_cost.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">ROI</p>
+                      <p className="text-lg font-bold text-blue-600">{calculateROI(campaign)}%</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Create Campaign Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Create New Campaign
+              </h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Campaign Name
+                  </label>
+                  <input
+                    type="text"
+                    id="campaign-name"
+                    placeholder="e.g., Q1 Foreclosure Outreach"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Select Template
+                  </label>
+                  <select
+                    id="template-select"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Choose a template...</option>
+                    {TEMPLATES.map(t => (
+                      <option key={t.id} value={t.id}>{t.icon} {t.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-yellow-800">
+                      All templates include required legal disclaimers and FTC compliance language.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    const name = (document.getElementById('campaign-name') as HTMLInputElement)?.value;
+                    const template = (document.getElementById('template-select') as HTMLSelectElement)?.value;
+                    if (name && template) {
+                      createCampaign(template, name);
+                    } else {
+                      toast.error('Please fill in all fields');
+                    }
+                  }}
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all"
+                >
+                  Create Campaign
+                </button>
+              </div>
+            </motion.div>
           </div>
         )}
 
-        {/* Success State */}
-        {step === "success" && (
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="mb-6">
-              <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Mail Sent Successfully!
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Your {selectedTemplate?.type} will be printed and mailed within
-              1-2 business days.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={resetForm}
-                className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Send Another
-              </button>
-              <button
-                onClick={() => window.history.back()}
-                className="px-6 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Back to Dashboard
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
-};
-
-export default DirectMailPage;
+}

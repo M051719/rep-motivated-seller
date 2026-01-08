@@ -1,0 +1,97 @@
+Migration started: 01/08/2026 05:25:42
+COPIED: 0001_create_apis.sql
+COPIED: 0001-create-apis.js
+COPIED: 0002-create-users.js
+COPIED: 0003-create-api-keys.js
+COPIED: 0004-create-usage-logs.js
+COPIED: 0005-drop-legacy-schema-migrations.js
+COPIED: 0006-seed-initial-data.js
+COPIED: 0007-add-unique-constraints.js
+COPIED: 0008-make-api-keys-key-not-null.js
+SKIPPED (identical): 0009-create-knowledge-base.sql
+SKIPPED (identical): 001-seed-knowledge-base.sql
+COPIED: 002-comprehensive-kb-seed.sql
+COPIED: development.js
+COPIED: production.js
+COPIED: archive_pg_cron.sql
+COPIED: backup-nightly.ps1
+COPIED: backup.config.psd1.example
+COPIED: check_extensions.sql
+COPIED: create-public-dump.ps1
+COPIED: export_job_run_details.ps1
+COPIED: extension-backup-docker.ps1
+COPIED: extension-backup.ps1
+COPIED: extension-recovery.ps1
+COPIED: extract-kb-content.ps1
+COPIED: list-envs.js
+COPIED: migrate_md5_roles.sql
+COPIED: migrate-netlify-files.ps1
+COPIED: migrate.js
+COPIED: openssl-decrypt.ps1
+COPIED: openssl-encrypt.ps1
+COPIED: openssl-passphrase-store.ps1
+COPIED: prune_pg_cron_batch_delete.sql
+COPIED: report_extensions.ps1
+COPIED: report_extensions.sh
+COPIED: run-backup-upload-verify.ps1
+COPIED: schedule-nightly-backups.ps1
+COPIED: seed.js
+COPIED: send-backup-alert.ps1
+COPIED: simple-upgrade-prep.ps1
+COPIED: sops-decrypt.sh
+COPIED: sops-encrypt.sh
+COPIED: staging_restore.ps1
+COPIED: staging_upgrade_prep.ps1
+COPIED: start.sh
+COPIED: switch-env.js
+COPIED: switch-env.ps1
+COPIED: test-mcp-integration.ps1
+COPIED: test-restore.ps1
+COPIED: upgrade-pg15-to-pg17.ps1
+COPIED: upgrade-to-pg17.ps1
+COPIED: upload-backup-s3.ps1
+COPIED: validate-env.js
+COPIED: verify-backup-integrity.ps1
+COPIED: wal-prune.ps1
+COPIED: tests\Extensions.Tests.ps1
+COPIED: tests\Pester test.txt
+COPIED: tests\Tests.ps1
+COPIED: tests\common\database-helpers.ps1
+COPIED: .env.template
+SKIPPED (identical): calendly-zoom-integration-guide.md
+SKIPPED (identical): ENVIRONMENT.md
+SKIPPED (identical): EXECUTIVE_SUMMARY.md
+SKIPPED (identical): EXTENSION_UPGRADE_PLAN.md
+SKIPPED (identical): IMPLEMENTATION-CHECKLIST.md
+SKIPPED (identical): INDEX.md
+SKIPPED (identical): MCP_INTEGRATION_HOWTO.md
+SKIPPED (identical): MIGRATION_README.md
+SKIPPED (identical): MIGRATION_SCRIPTS.md
+SKIPPED (identical): NETLIFY_TO_SUPABASE_MIGRATION_ANALYSIS.md
+SKIPPED (identical): PAYMENT-INTEGRATION-MASTER-GUIDE.md
+SKIPPED (identical): paypal-integration-guide.md
+SKIPPED (identical): QUICK_REFERENCE.md
+SKIPPED (identical): QUICK-REFERENCE.md
+SKIPPED (identical): r2-storage-analytics-review.md
+SKIPPED (identical): README-PAYMENT-INTEGRATION.md
+SKIPPED (identical): SECRETS.md
+SKIPPED (identical): stripe-integration-guide.md
+SKIPPED (identical): SUPABASE_UPGRADE_HOWTO.md
+SKIPPED (identical): UPGRADE_POSTGRES.md
+OVERWROTE (backed up): components\AIAssistant.tsx
+COPIED: config\directMailNavigation.ts
+OVERWROTE (backed up): pages\BookConsultation.tsx
+OVERWROTE (backed up): pages\DirectMailPage.tsx
+OVERWROTE (backed up): pages\KnowledgeBasePage.tsx
+SKIPPED (identical): services\knowledgeBaseService.ts
+OVERWROTE (backed up): utils\tierAccess.ts
+COPIED: INDEX.md
+COPIED: install-payment-integration.ps1
+COPIED: package.json
+COPIED: PAYMENT-INTEGRATION-SUMMARY.md
+COPIED: QUICK-START.md
+COPIED: README.md
+COPIED: server.js
+COPIED: api\paypal.js
+COPIED: api\stripe.js
+COPIED: routes\payment.js

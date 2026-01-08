@@ -1,0 +1,218 @@
+/**
+ * Book Consultation Page
+ * Allows users to schedule foreclosure prevention consultations via Calendly
+ */
+
+import React from 'react';
+import CalendlyWidget, { CalendlyFeatures, ConsultationTypes } from '../components/calendly/CalendlyWidget';
+import { Calendar, Shield, Users, MessageCircle } from 'lucide-react';
+
+export default function BookConsultation() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Hero Section */}
+      <div className="bg-blue-600 text-white py-16 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+            Schedule Your Free Consultation
+          </h1>
+          <p className="text-xl md:text-2xl opacity-90 mb-8">
+            Get expert guidance on foreclosure prevention and credit repair
+          </p>
+          <div className="flex flex-wrap justify-center gap-8 text-left">
+            <div className="flex items-start">
+              <Shield className="h-6 w-6 mr-2 mt-1" />
+              <div>
+                <div className="font-semibold">100% Confidential</div>
+                <div className="text-sm opacity-80">Your information is secure</div>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Users className="h-6 w-6 mr-2 mt-1" />
+              <div>
+                <div className="font-semibold">Expert Advisors</div>
+                <div className="text-sm opacity-80">15+ years experience</div>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <MessageCircle className="h-6 w-6 mr-2 mt-1" />
+              <div>
+                <div className="font-semibold">Real Solutions</div>
+                <div className="text-sm opacity-80">Actionable strategies</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Features */}
+        <CalendlyFeatures />
+
+        {/* Consultation Types */}
+        <ConsultationTypes />
+
+        {/* Calendly Widget */}
+        <div className="bg-white rounded-xl shadow-2xl p-8 mb-12">
+          <div className="text-center mb-8">
+            <Calendar className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Choose Your Available Time
+            </h2>
+            <p className="text-gray-600">
+              Select a time that works best for you - all times shown in your local timezone
+            </p>
+          </div>
+          
+          <CalendlyWidget type="inline" />
+        </div>
+
+        {/* What to Expect */}
+        <div className="bg-blue-50 rounded-xl p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            What to Expect
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="text-blue-600 font-bold text-lg mb-3">
+                1. Before Your Call
+              </div>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Confirmation email with Zoom link</li>
+                <li>• Calendar invite added automatically</li>
+                <li>• Preparation checklist sent</li>
+                <li>• Document upload instructions</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="text-blue-600 font-bold text-lg mb-3">
+                2. During Your Call
+              </div>
+              <ul className="space-y-2 text-gray-700">
+                <li>• One-on-one video consultation</li>
+                <li>• Screen sharing for document review</li>
+                <li>• Personalized recommendations</li>
+                <li>• Q&A with expert advisor</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="text-blue-600 font-bold text-lg mb-3">
+                3. After Your Call
+              </div>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Written action plan summary</li>
+                <li>• Resource links and templates</li>
+                <li>• Follow-up email support</li>
+                <li>• Next steps checklist</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Preparation Tips */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            How to Prepare for Your Consultation
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Documents to Have Ready:</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Recent mortgage statements</li>
+                <li>• Notice of default or foreclosure notice (if received)</li>
+                <li>• Recent pay stubs or income documentation</li>
+                <li>• Monthly expense summary</li>
+                <li>• Credit reports (if available)</li>
+                <li>• Property tax statements</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Questions to Consider:</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• What is your current financial situation?</li>
+                <li>• How many months behind are you?</li>
+                <li>• Have you contacted your lender?</li>
+                <li>• What are your goals (keep home, sell, etc.)?</li>
+                <li>• What is your timeline?</li>
+                <li>• Do you have any other debts?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="bg-gray-50 rounded-xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Is the initial consultation really free?
+              </h3>
+              <p className="text-gray-700">
+                Yes! The 15-minute quick assessment is completely free with no obligation. 
+                We want to understand your situation and see if we can help before you commit.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                What happens if I need to reschedule?
+              </h3>
+              <p className="text-gray-700">
+                You can reschedule or cancel your appointment up to 24 hours in advance 
+                through the confirmation email. We understand emergencies happen.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Do I need to pay before the consultation?
+              </h3>
+              <p className="text-gray-700">
+                Payment is required at booking for 30-minute and 60-minute consultations. 
+                The 15-minute assessment is free. Paid consultations are fully refundable 
+                if cancelled 24+ hours in advance.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Will my information be kept confidential?
+              </h3>
+              <p className="text-gray-700">
+                Absolutely. All consultations are completely confidential. We comply with 
+                GLBA privacy requirements and never share your information without consent.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-12 bg-blue-600 text-white rounded-xl p-8">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to Take Control of Your Financial Future?
+          </h2>
+          <p className="text-xl mb-6 opacity-90">
+            Book your free assessment now and start your journey to financial recovery
+          </p>
+          <a 
+            href="#calendly-widget"
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector('.calendly-widget-container')?.scrollIntoView({ 
+                behavior: 'smooth' 
+              });
+            }}
+            className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+          >
+            Schedule Now - It's Free
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
