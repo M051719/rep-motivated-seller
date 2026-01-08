@@ -10,20 +10,19 @@ $archiveRoot = ".\ARCHIVED_$timestamp"
 
 # Define cleanup categories
 $cleanupPlan = @{
-    "Massive Unused Directories" = @(
-        "repmotivatedsellershoprealestatespaceorg"  # 287 MB - appears to be old/duplicate
+    "Massive Unused Directories"  = @(
         "expo-user-management"                       # 242 MB - React Native/Expo (not relevant)
         "welcome-to-docker"                          # 0.68 MB - Docker tutorial files
     )
     
-    "Old Backup Directories" = @(
+    "Old Backup Directories"      = @(
         "backups\20250720_*"
         "backups\20250727_*"
         "backups\scripts_*"
         "pre_upgrade_backups"
     )
     
-    "Old Configuration Files" = @(
+    "Old Configuration Files"     = @(
         "etc"                    # nginx configs for old setup
         "netlify.toml"          # Not using Netlify
         "nginx.conf.txt"
@@ -55,7 +54,7 @@ $cleanupPlan = @{
         "SMS_MONITORING_DEPLOYMENT_COMPLETE.md"
     )
     
-    "Old Batch Scripts" = @(
+    "Old Batch Scripts"           = @(
         "auth-test.bat"
         "backup-and-deploy.bat"
         "build-and-deploy-react.bat"
@@ -79,7 +78,7 @@ $cleanupPlan = @{
         "view-admin-dashboard.bat"
     )
     
-    "Old HTML Test Files" = @(
+    "Old HTML Test Files"         = @(
         "admin-dashboard-client.html"
         "admin-dashboard.html"
         "cloudflare-config-guide.html"
@@ -116,14 +115,37 @@ $keepFiles = @(
     "CREDIT_REPAIR_SUCCESS.md"
     "FEATURE_ROADMAP.md"
     "SESSION_NOTES.md"
+    "PROJECT_STATUS_READY.md"
     
     # Current setup guides
     "SMS_COMPLIANCE_GUIDE.md"
     "SMS_MONITORING_SYSTEM_GUIDE.md"
     "TWILIO_TOLL_FREE_VERIFICATION.md"
     
-    # Security
+    # Security - StackHawk
+    "stackhawk.yml"
+    "STACKHAWK_IMPLEMENTATION_COMPLETE.md"
+    "STACKHAWK_VERIFICATION_GUIDE.md"
+    "STACKHAWK_QUICKSTART.md"
+    "STACKHAWK_STATUS_VERIFIED.md"
+    "verify-stackhawk-implementation.ps1"
+    
+    # Security - Dotenvx
+    "DOTENVX_SETUP_GUIDE.md"
+    "DOTENVX_IMPLEMENTATION_COMPLETE.md"
+    "setup-dotenvx.ps1"
+    
+    # Security - Snyk
+    "SNYK_SETUP_COMPLETE.md"
+    "SNYK_QUICK_START.md"
+    
+    # Security - API Key Rotation
+    "API_KEY_ROTATION_CHECKLIST.md"
+    "rotate-api-keys.ps1"
+    
+    # Security - General
     "scan-secrets.ps1"
+    "security-cleanup.ps1"
     
     # Production directories
     "src"
@@ -133,6 +155,7 @@ $keepFiles = @(
     ".github"
     "dist"
     "scripts"  # Keep scripts folder but can clean inside
+    "docs"     # Keep docs folder (contains security docs)
 )
 
 Write-Host "📊 Cleanup Analysis:" -ForegroundColor Yellow
@@ -170,7 +193,8 @@ foreach ($category in $cleanupPlan.Keys) {
                     $movedCount++
                 }
             }
-        } catch {
+        }
+        catch {
             $errors += "Failed to move $item : $_"
         }
     }
