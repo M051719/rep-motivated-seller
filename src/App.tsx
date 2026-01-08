@@ -76,6 +76,10 @@ import UserFavoritesPage from "./pages/UserFavoritesPage";
 import TestPage from "./pages/TestPage";
 import MarketingDashboard from './pages/MarketingDashboard';
 
+// Security components
+import SecurityHeaders from './components/security/SecurityHeaders';
+const SecurityDashboard = React.lazy(() => import('./components/security/SecurityDashboard'));
+
 // State management
 import { useAuthStore, fetchUserProfile } from "./store/authStore";
 import { supabase } from "./lib/supabase";
@@ -228,6 +232,7 @@ function App() {
 
   return (
     <Elements stripe={stripePromise}>
+      <SecurityHeaders />
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ScrollToTop />
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -306,6 +311,12 @@ function App() {
                 path="/canva-templates"
                 element={<CanvaTemplatesPage />}
               />
+              
+              {/* Security Dashboard (Development Only) */}
+              {import.meta.env.DEV && (
+                <Route path="/security" element={<SecurityDashboard />} />
+              )}
+              
               {/* Protected Routes */}
               <Route
                 path="/dashboard"

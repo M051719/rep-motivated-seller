@@ -93,7 +93,8 @@ const FloatingAIChat: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 flex items-center justify-center z-50 group"
+            className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/50 flex items-center justify-center z-[9999] group"
+            style={{ position: 'fixed', bottom: '24px', right: '24px' }}
           >
             <MessageCircle className="w-8 h-8" />
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse"></span>
@@ -118,8 +119,14 @@ const FloatingAIChat: React.FC = () => {
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
             className={`fixed ${
               isMinimized ? 'bottom-6 right-6' : 'bottom-6 right-6'
-            } w-96 bg-white rounded-2xl shadow-2xl z-50 border border-gray-200 flex flex-col`}
-            style={{ maxHeight: isMinimized ? '60px' : '600px', height: isMinimized ? '60px' : '600px' }}
+            } w-96 bg-white rounded-2xl shadow-2xl z-[9999] border border-gray-200 flex flex-col`}
+            style={{ 
+              maxHeight: isMinimized ? '60px' : '600px', 
+              height: isMinimized ? '60px' : '600px',
+              position: 'fixed',
+              bottom: '24px',
+              right: '24px'
+            }}
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
