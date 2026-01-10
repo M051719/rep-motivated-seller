@@ -1,0 +1,36 @@
+name: Sync to mcp-api-gateway
+
+on: 
+  push:
+    branches: 
+      - main
+
+jobs:
+  sync:
+    # Prevent infinite loops - skip if commit was made by GitHub Actions
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user. email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add target repository as remote
+        run: |
+          git remote add target https://${{ secrets.GH_TOKEN }}@github.com/M051719/mcp-api-gateway.git
+
+      - name: Fetch target repository
+        run: |
+          git fetch target main
+
+      - name: Push changes to mcp-api-gateway
+        run: |
+          git push target main: main
+        continue-on-error: false
