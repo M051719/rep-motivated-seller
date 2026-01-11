@@ -1,18 +1,27 @@
 name: Snyk Security Scan
 
+# TO ENABLE AUTOMATIC RUNS:
+# 1. Configure the required secrets in GitHub Settings > Secrets and variables > Actions
+# 2. Uncomment the automatic triggers below
+# 3. Remove the workflow_dispatch line if desired (or keep it for manual runs)
+
+# Required Secrets:
+# - SNYK_TOKEN: Your Snyk API token (get from https://app.snyk.io/ under Account Settings > API Token)
+
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
-      - develop
-  schedule:
-    # Run weekly on Mondays at 9 AM UTC
-    - cron: '0 9 * * 1'
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only - uncomment automatic triggers when secrets are configured
+  # Uncomment when ready:
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  # pull_request:
+  #   branches:
+  #     - main
+  #     - develop
+  # schedule:
+  #   # Run weekly on Mondays at 9 AM UTC
+  #   - cron: '0 9 * * 1'
 
 permissions:
   contents: read

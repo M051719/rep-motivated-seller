@@ -1,10 +1,24 @@
 name: Supabase Deployment
 
+# TO ENABLE AUTOMATIC RUNS:
+# 1. Configure the required secrets in GitHub Settings > Secrets and variables > Actions
+# 2. Uncomment the automatic triggers below
+# 3. Comment out or remove the workflow_dispatch line
+
+# Required Secrets:
+# - SUPABASE_ACCESS_TOKEN: Personal access token from Supabase dashboard (https://supabase.com/dashboard/account/tokens)
+# - MAILERLITE_API_KEY: API key from MailerLite (https://dashboard.mailerlite.com/integrations/api)
+# - TWILIO_ACCOUNT_SID: Account SID from Twilio Console (https://console.twilio.com/)
+# - TWILIO_AUTH_TOKEN: Auth Token from Twilio Console
+# - OPENAI_API_KEY: API key from OpenAI (https://platform.openai.com/api-keys)
+
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:  # Manual trigger only - uncomment automatic triggers when secrets are configured
+  # Uncomment when ready:
+  # push:
+  #   branches: [main]
+  # pull_request:
+  #   branches: [main]
 
 jobs:
   deploy:
