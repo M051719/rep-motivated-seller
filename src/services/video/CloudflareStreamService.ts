@@ -1,4 +1,3 @@
-```typescript
 // src/services/video/CloudflareStreamService.ts
 export interface StreamVideo {
   uid: string;
@@ -211,4 +210,3 @@ class CloudflareStreamService {
 }
 
 export default new CloudflareStreamService();
-```
