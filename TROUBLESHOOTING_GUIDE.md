@@ -281,26 +281,27 @@ PowerShell requires scripts to have a `.ps1` extension, but git hooks cannot hav
    ```bash
    #!/bin/sh
    # Git pre-commit hook
-   powershell.exe -ExecutionPolicy Bypass -File "$(dirname "$0")/pre-commit.ps1"
+   # Calls PowerShell script - adjust path as needed
+   HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+   powershell.exe -ExecutionPolicy Bypass -File "$HOOK_DIR/pre-commit.ps1"
    ```
 3. Move the PowerShell code to `.git/hooks/pre-commit.ps1`
-4. Make the shell script executable: `chmod +x .git/hooks/pre-commit`
+4. In Git Bash, make the shell script executable: `chmod +x .git/hooks/pre-commit`
 
 **Option 2: Use Git Bash**
 - Commit using Git Bash instead of PowerShell
 - Git Bash can execute shell scripts without requiring PowerShell
 
 **Option 3: Temporarily Disable the Hook**
-If the hook is not critical:
+If the hook is not critical (⚠️ **Warning:** This bypasses all git hooks including security checks):
 ```bash
 git commit --no-verify -m "Your commit message"
 ```
 
 **Option 4: Remove the Hook**
 If you don't need the pre-commit hook:
-```bash
-rm .git/hooks/pre-commit
-```
+- **Git Bash/Unix:** `rm .git/hooks/pre-commit`
+- **Windows CMD/PowerShell:** `del .git\hooks\pre-commit`
 
 **Note:** The `.git/hooks/` directory is local to your repository and not tracked by git. Each developer needs to set up hooks individually.
 
