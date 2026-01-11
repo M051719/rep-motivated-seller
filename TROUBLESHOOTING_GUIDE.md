@@ -264,6 +264,46 @@ This guide provides solutions for common issues you might encounter when working
 2. Check if paths in scripts are correct
 3. Ensure required tools (curl, etc.) are installed and in PATH
 
+### Issue: Pre-commit hook fails with PowerShell extension error
+
+**Symptoms:**
+- Error message during git commit: "Processing -File '.git/hooks/pre-commit' failed because the file does not have a '.ps1' extension"
+- Commits are blocked by hook failures
+
+**Root Cause:**
+PowerShell requires scripts to have a `.ps1` extension, but git hooks cannot have file extensions.
+
+**Solutions:**
+
+**Option 1: Convert to Shell Script (Recommended)**
+1. Open `.git/hooks/pre-commit` in a text editor
+2. If it contains PowerShell code, wrap it in a bash/sh script:
+   ```bash
+   #!/bin/sh
+   # Git pre-commit hook
+   powershell.exe -ExecutionPolicy Bypass -File "$(dirname "$0")/pre-commit.ps1"
+   ```
+3. Move the PowerShell code to `.git/hooks/pre-commit.ps1`
+4. Make the shell script executable: `chmod +x .git/hooks/pre-commit`
+
+**Option 2: Use Git Bash**
+- Commit using Git Bash instead of PowerShell
+- Git Bash can execute shell scripts without requiring PowerShell
+
+**Option 3: Temporarily Disable the Hook**
+If the hook is not critical:
+```bash
+git commit --no-verify -m "Your commit message"
+```
+
+**Option 4: Remove the Hook**
+If you don't need the pre-commit hook:
+```bash
+rm .git/hooks/pre-commit
+```
+
+**Note:** The `.git/hooks/` directory is local to your repository and not tracked by git. Each developer needs to set up hooks individually.
+
 ---
 
 ## Getting Additional Help
