@@ -1,0 +1,118 @@
+# Git Attributes Configuration
+# Ensures consistent line endings across Windows, macOS, and Linux
+
+# Auto detect text files and normalize line endings to LF in repository
+* text=auto
+
+# Source code - enforce LF line endings
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.svg text eol=lf
+
+# Configuration files
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+.env* text eol=lf
+*.config.* text eol=lf
+
+# Shell scripts - enforce LF (required for Unix/Linux)
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Windows scripts - allow CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# SQL files
+*.sql text eol=lf
+
+# Documentation
+*.txt text eol=lf
+*.pdf binary
+*.doc binary
+*.docx binary
+
+# Images - binary files (no line ending conversion)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.svg text eol=lf
+
+# Videos - binary
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.webm binary
+
+# Audio - binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+
+# Fonts - binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
+
+# Archives - binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.rar binary
+*.7z binary
+
+# Packages - binary
+*.exe binary
+*.msi binary
+*.dmg binary
+*.pkg binary
+
+# Git hooks - enforce LF for compatibility
+.git/hooks/* text eol=lf
+
+# GitHub workflows - enforce LF
+.github/workflows/*.yml text eol=lf
+.github/workflows/*.yaml text eol=lf
+
+# Docker files
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+
+# Lock files - keep as-is to avoid merge conflicts
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+pnpm-lock.yaml text eol=lf
+
+# Supabase files
+supabase/migrations/*.sql text eol=lf
+supabase/seed.sql text eol=lf
+supabase/functions/**/*.ts text eol=lf
+
+# Linguist language detection overrides (for GitHub statistics)
+*.sql linguist-language=SQL
+*.md linguist-documentation
+docs/** linguist-documentation
+*.config.js linguist-language=JavaScript
+*.config.ts linguist-language=TypeScript
+
+# Diff settings
+*.lock binary
+*.lockb binary
