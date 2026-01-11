@@ -39,6 +39,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Orphaned git submodule directory
+scripts/
+
 # Build outputs
 dist/
 build/
