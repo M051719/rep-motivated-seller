@@ -24,7 +24,6 @@ CLOUDFLARE_API_TOKEN           # Cloudflare API token with Pages permissions
 CLOUDFLARE_ACCOUNT_ID          # Your Cloudflare account ID
 
 # Optional but recommended
-SNYK_TOKEN                     # Snyk API token for vulnerability scanning
 GITLEAKS_LICENSE               # Gitleaks Pro license (optional)
 ```
 
@@ -54,13 +53,6 @@ supabase login
 # 2. Get Account ID
 # Go to: https://dash.cloudflare.com/
 # Copy from URL or Account Overview
-```
-
-### Snyk Token (Optional):
-```powershell
-# 1. Sign up at: https://snyk.io
-# 2. Go to: Account Settings → Auth Token
-# 3. Copy your token
 ```
 
 ## 🎯 Workflow Triggers
@@ -101,7 +93,6 @@ supabase login
 ✅ **TruffleHog** - Advanced secret detection
 ✅ **Trivy** - Vulnerability scanning
 ✅ **npm audit** - Dependency checks
-✅ **Snyk** - Comprehensive security analysis
 ✅ **Custom patterns** - Project-specific checks
 
 ## 🚀 Quick Start

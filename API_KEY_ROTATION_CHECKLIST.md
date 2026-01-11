@@ -151,12 +151,10 @@ CLOUDFLARE_ZONE_ID=[keep-same]
 - [ ] Navigate to: Settings → Developer settings → Personal access tokens
 - [ ] **Delete old tokens**
 - [ ] **Generate new fine-grained token**
-- [ ] Update Snyk GitHub Actions with new token
 
 **Environment Variables:**
 ```bash
 GITHUB_TOKEN=[new-token]
-SNYK_TOKEN=[rotate-in-snyk-dashboard]
 ```
 
 ---

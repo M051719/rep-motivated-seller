@@ -8,12 +8,11 @@
 
 ## Security Scanning
 
-This project uses **Snyk** for automated security scanning:
+This project uses automated security scanning:
 
 - **Dependency Scanning**: Automated checks on every push and PR
-- **Code Scanning (SAST)**: Static analysis for security vulnerabilities
-- **Weekly Scans**: Scheduled every Monday at 9 AM UTC
-- **Continuous Monitoring**: Dependencies monitored on main branch
+- **Code Scanning**: Static analysis for security vulnerabilities
+- **Continuous Monitoring**: Dependencies monitored regularly
 
 ## Reporting a Vulnerability
 
@@ -33,8 +32,8 @@ We will respond within **48 hours** and provide updates every **5 business days*
 
 This project follows these security practices:
 
-- ✅ Automated dependency scanning with Snyk
-- ✅ Code scanning for vulnerabilities (SAST)
+- ✅ Automated dependency scanning
+- ✅ Code scanning for vulnerabilities
 - ✅ GitHub Code Scanning integration
 - ✅ Regular security updates
 - ✅ Secure environment variable handling
@@ -53,7 +52,7 @@ This project follows these security practices:
 
 ## Dependencies
 
-We regularly update dependencies to patch security vulnerabilities. Automated PRs from Dependabot and Snyk are reviewed and merged promptly.
+We regularly update dependencies to patch security vulnerabilities. Automated PRs from Dependabot are reviewed and merged promptly.
 
 ## Contact
 

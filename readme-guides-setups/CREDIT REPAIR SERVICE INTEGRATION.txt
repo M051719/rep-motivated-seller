@@ -919,15 +919,6 @@ jobs:
         run: npm audit --audit-level=moderate
         continue-on-error: true
 
-      - name: Install Snyk
-        run: npm install -g snyk
-
-      - name: Run Snyk security scan
-        run: snyk test --all-projects
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
   results:
     name: Scan Results Summary
     runs-on: ubuntu-latest
@@ -1029,7 +1020,6 @@ CLOUDFLARE_API_TOKEN           # Cloudflare API token with Pages permissions
 CLOUDFLARE_ACCOUNT_ID          # Your Cloudflare account ID
 
 # Optional but recommended
-SNYK_TOKEN                     # Snyk API token for vulnerability scanning
 GITLEAKS_LICENSE               # Gitleaks Pro license (optional)
 ```
 
@@ -1059,13 +1049,6 @@ supabase login
 # 2. Get Account ID
 # Go to: https://dash.cloudflare.com/
 # Copy from URL or Account Overview
-```
-
-### Snyk Token (Optional):
-```powershell
-# 1. Sign up at: https://snyk.io
-# 2. Go to: Account Settings → Auth Token
-# 3. Copy your token
 ```
 
 ## 🎯 Workflow Triggers
@@ -1106,7 +1089,6 @@ supabase login
 ✅ **TruffleHog** - Advanced secret detection
 ✅ **Trivy** - Vulnerability scanning
 ✅ **npm audit** - Dependency checks
-✅ **Snyk** - Comprehensive security analysis
 ✅ **Custom patterns** - Project-specific checks
 
 ## 🚀 Quick Start
@@ -1281,7 +1263,6 @@ Perfect! I've set up a complete GitHub Actions CI/CD pipeline with comprehensive
    - TruffleHog scanning
    - Custom PowerShell scanner
    - npm audit for vulnerabilities
-   - Snyk integration
    - Runs on every push + daily at 2 AM
 
 3. **`.git/hooks/pre-commit`** - Local hook that:
@@ -1303,7 +1284,6 @@ SUPABASE_ACCESS_TOKEN
 SUPABASE_PROJECT_REF
 CLOUDFLARE_API_TOKEN
 CLOUDFLARE_ACCOUNT_ID
-SNYK_TOKEN (optional)
 ```
 
 ## 🚀 **Quick Start:**

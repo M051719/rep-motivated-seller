@@ -378,19 +378,6 @@ npm audit fix
 npm audit fix --force
 ```
 
-### Use Snyk (already configured)
-
-```powershell
-# Test for vulnerabilities
-npm run snyk:test
-
-# Test code quality and security
-npm run snyk:code
-
-# Run full security scan
-npm run security:scan
-```
-
 ---
 
 ## 📊 SUCCESS CRITERIA
@@ -427,14 +414,6 @@ npm run dev
 # Visit: http://localhost:5173/security
 ```
 
-### Option 3: Focus on Snyk Integration
-
-You already have Snyk configured:
-
-```powershell
-npm run security:scan
-```
-
 ---
 
 ## 📝 NEXT STEPS
@@ -455,7 +434,6 @@ Even without StackHawk CLI locally, you have:
 - ✅ Security headers implemented
 - ✅ Client-side security dashboard
 - ✅ Automated GitHub Actions scanning
-- ✅ Snyk vulnerability detection
 - ✅ Comprehensive security configuration
 
 The StackHawk CLI is optional for local development. The real value comes from:
