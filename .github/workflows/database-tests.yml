@@ -1,10 +1,24 @@
 name: Database Tests
 
+# WORKFLOW DISABLED - Manual trigger only until secrets are configured
+#
+# Required Secrets:
+#   - SUPABASE_ACCESS_TOKEN: Your Supabase access token for CLI operations
+#   - SUPABASE_PROJECT_REF: Your Supabase project reference ID
+#   - SUPABASE_URL: Your Supabase project URL
+#   - SUPABASE_ANON_KEY: Your Supabase anonymous/public key
+#
+# To re-enable automatic runs:
+#   1. Add all required secrets in GitHub Settings > Secrets and variables > Actions
+#   2. Uncomment the 'push' and 'pull_request' triggers below
+#   3. Remove the 'workflow_dispatch' trigger if you don't want manual runs
+#
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+  # push:
+  #   branches: [ main, develop ]
+  # pull_request:
+  #   branches: [ main ]
 
 jobs:
   test-database:
