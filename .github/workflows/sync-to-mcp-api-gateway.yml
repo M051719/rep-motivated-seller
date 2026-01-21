@@ -20,7 +20,7 @@ jobs:
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
-          git config user. email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Add target repository as remote
         run: |
@@ -32,5 +32,5 @@ jobs:
 
       - name: Push changes to mcp-api-gateway
         run: |
-          git push target main: main
+          git push target main:main
         continue-on-error: false
