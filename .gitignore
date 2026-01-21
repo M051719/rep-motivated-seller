@@ -199,7 +199,8 @@ rep-motivated-seller@0.1.0
 capcut-templates/assets/music/*.mp3
 capcut-templates/assets/music/**/*.mp3
 
-# Orphaned git submodule - DO NOT re-add to git index
-# This directory was causing "fatal: No url found for submodule path 'scripts'"
+# Orphaned git submodules - DO NOT re-add to git index
+# These directories were causing "fatal: No url found for submodule path" errors
 # See GIT_CLEANUP_GUIDE.md for removal instructions
 scripts/
+ARCHIVED_20260108_163712/
