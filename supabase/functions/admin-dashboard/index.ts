@@ -34,10 +34,27 @@ serve(async (req) => {
     // Extract the token
     const token = authHeader.replace('Bearer ', '')
 
+    // Get required environment variables
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Server configuration error',
+          message: 'Missing required Supabase environment variables'
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
     // Create Supabase client using the JWT token
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? 'https://ltxqodqlexvojqqxquew.supabase.co',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg',
+      supabaseUrl,
+      supabaseAnonKey,
       {
         global: {
           headers: { Authorization: `Bearer ${token}` }
