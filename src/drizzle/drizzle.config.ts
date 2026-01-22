@@ -7,6 +7,6 @@ export default {
   dbCredentials: {
     connectionString:
       process.env.DATABASE_URL ||
-      "postgresql://postgres.ltxqodqlexvojqqxquew:Lamage02#007@aws-0-us-east-2.pooler.supabase.com:6543/postgres",
+      "postgresql://postgres:postgres@localhost:54322/postgres", // Local development default
   },
 } satisfies Config;

@@ -4,8 +4,7 @@ import { Client } from "pg";
 
 export default defineConfig({
   adapter: async () => {
-    const client = new Client(/* postgresql://postgres:Lamage02#007@db.ltxqodqlexvojqqxquew.supabase.co:5432/postgres
- */);
+    const client = new Client(/* Use DATABASE_URL environment variable */);
     await client.connect();
     return new SeedPg(client);
   },
