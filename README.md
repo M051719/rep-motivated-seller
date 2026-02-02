@@ -87,3 +87,9 @@ A concise guide for getting started quickly with the essential setup steps.
 
 ### Production Readiness Checklist
 A comprehensive checklist of items to verify before going live.
+
+## GitHub Tokens & Secrets (Quick Reference)
+
+- **Create a GitHub token (PAT):** GitHub → **Settings** → **Developer settings** → **Personal access tokens** (choose **Fine-grained** or **Classic**) → **Generate new token**, select scopes (for CI, `repo` is usually sufficient), then copy the value.
+- **Use the token with GitHub API:** Add header `Authorization: Bearer <your_token>` and `Accept: application/vnd.github+json` when calling `https://api.github.com/...`.
+- **Store tokens as repo secrets for CI:** Repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**. Name it (e.g., `SNYK_TOKEN`, `GITHUB_TOKEN_CUSTOM`) and paste the PAT. Workflows can then access it via `${{ secrets.SECRET_NAME }}`.
