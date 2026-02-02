@@ -90,6 +90,6 @@ A comprehensive checklist of items to verify before going live.
 
 ## GitHub Tokens & Secrets (Quick Reference)
 
-- **Create a GitHub token (PAT):** GitHub → **Settings** → **Developer settings** → **Personal access tokens** (choose **Fine-grained** or **Classic**) → **Generate new token**, select scopes (for CI, `repo` is usually sufficient), then copy the value.
-- **Use the token with GitHub API:** Add header `Authorization: Bearer <your_token>` and `Accept: application/vnd.github+json` when calling `https://api.github.com/...`.
-- **Store tokens as repo secrets for CI:** Repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**. Name it (e.g., `SNYK_TOKEN`, `GITHUB_TOKEN_CUSTOM`) and paste the PAT. Workflows can then access it via `${{ secrets.SECRET_NAME }}`.
+- **Create a GitHub token (PAT):** Navigate to GitHub **Settings** → **Developer settings** → **Personal access tokens** → choose **Fine-grained** or **Classic** → **Generate new token** → select scopes (for CI, `repo` is usually sufficient) → copy the token value.
+- **Use the token with GitHub API:** Include headers `Authorization: Bearer <your_token>` (for fine-grained tokens; classic PATs also accept `token <your_token>`) and `Accept: application/vnd.github+json` when calling `https://api.github.com/...`. Replace `<your_token>` with the actual token string and keep it secret.
+- **Store tokens as repo secrets for CI:** Go to repository **Settings** → **Secrets and variables** → **Actions** → **New repository secret**. Name it (e.g., `SNYK_TOKEN`, `GITHUB_TOKEN_CUSTOM`) and paste the PAT. Workflows can access it via `${{ secrets.SECRET_NAME }}`.
