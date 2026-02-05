@@ -1,0 +1,16 @@
+default_stages: [pre-commit]
+
+exclude: |
+  ^(dist/|dist-ssr/|build/|out/|\.next/|node_modules/|RepDeploy/|deploy/|deployment/|DLLs/|SECURE_BACKUP.*/|.*_BACKUP.*/|backup/|backups/|evaluation/|\.supabase/)
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ["--fix=auto"]
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
