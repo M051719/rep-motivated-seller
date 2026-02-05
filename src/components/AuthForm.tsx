@@ -42,8 +42,10 @@ export default function AuthForm() {
     setIsLoading(true);
     setMessage("");
 
-    // Verify Turnstile token
-    if (!turnstileToken) {
+    // Make Turnstile optional in development
+    const isDevelopment = import.meta.env.DEV;
+    
+    if (!isDevelopment && !turnstileToken) {
       setMessage("Please complete the captcha verification");
       setIsLoading(false);
       return;
