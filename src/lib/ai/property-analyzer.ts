@@ -1,5 +1,5 @@
 export class PropertyAnalyzer {
-  static async analyzeTrends(properties: Property[]) {
+  static async analyzeTrends(properties: any[]) {
     const response = await fetch("/api/ai/analyze-trends", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -13,7 +13,7 @@ export class PropertyAnalyzer {
     // AI-generated market analysis
   }
 
-  static async predictForeclosureRisk(propertyData: PropertyData) {
+  static async predictForeclosureRisk(propertyData: any) {
     // ML-based risk assessment
   }
 }

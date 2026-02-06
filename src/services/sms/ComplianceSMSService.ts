@@ -29,6 +29,11 @@ class ComplianceSMSService {
     // TODO: Check if phone number is opted in
     return false;
   }
+
+  async processIncomingSMS(from: string, body: string): Promise<void> {
+    // TODO: Add Twilio webhook handling and compliance checks
+    console.info("Received SMS", { from, body });
+  }
 }
 
 export default new ComplianceSMSService();

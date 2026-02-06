@@ -8,10 +8,12 @@ const FunctionTest = () => {
   const testHealthCheck = async () => {
     setLoading(true);
     try {
-      const { data, error } = await api.healthCheck();
+      const { data, error, status } = await api.get<{ status: string }>(
+        "/api/health",
+      );
       setResults(
         error
-          ? `❌ Error: ${error.message}`
+          ? `❌ Error (${status}): ${error}`
           : `✅ Health: ${JSON.stringify(data)}`,
       );
     } catch (err) {
@@ -23,13 +25,13 @@ const FunctionTest = () => {
   const testSMS = async () => {
     setLoading(true);
     try {
-      const { data, error } = await api.sendSMS(
-        "+1234567890",
-        "Test from RepMotivatedSeller",
+      const { data, error, status } = await api.post<{ success: boolean }>(
+        "/api/sms/send",
+        { to: "+1234567890", message: "Test from RepMotivatedSeller" },
       );
       setResults(
         error
-          ? `❌ SMS Error: ${error.message}`
+          ? `❌ SMS Error (${status}): ${error}`
           : `✅ SMS: ${JSON.stringify(data)}`,
       );
     } catch (err) {

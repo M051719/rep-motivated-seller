@@ -34,7 +34,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         user.id,
         feature,
       );
-      setHasAccess(canAccess);
+      setHasAccess(canAccess.hasAccess);
     } else {
       const subscription = await SubscriptionService.getUserSubscription(
         user.id,

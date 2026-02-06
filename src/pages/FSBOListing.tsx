@@ -758,14 +758,15 @@ const FSBOListing: React.FC = () => {
                 <ImageUploader
                   bucket="fsbo-listings"
                   folder="properties"
-                  onUpload={(url) =>
+                  onImageUploaded={(url) =>
                     setFormData({
                       ...formData,
                       featured_image_url: url,
                       images: [...formData.images, url],
                     })
                   }
-                  currentImageUrl={formData.featured_image_url}
+                  onImageRemoved={() => {}}
+                  currentImage={formData.featured_image_url}
                   maxSizeMB={10}
                 />
                 <p className="text-sm text-gray-600 mt-2">

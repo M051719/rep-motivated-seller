@@ -241,8 +241,8 @@ class FreeAttomAlternative {
       bedrooms: sources.assessorCard?.bedrooms || "Unknown",
       bathrooms: sources.assessorCard?.bathrooms || "Unknown",
       squareFootage:
-        sources.assessorCard?.squareFootage || sources.gisData?.SQFT,
-      lotSize: sources.gisData?.LOT_SIZE,
+        sources.assessorCard?.squareFootage || (sources.gisData as any)?.SQFT,
+      lotSize: (sources.gisData as any)?.LOT_SIZE,
       yearBuilt: sources.assessorCard?.yearBuilt || sources.permits?.[0]?.year,
       stories: sources.assessorCard?.stories,
       construction: sources.assessorCard?.construction,

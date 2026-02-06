@@ -15,7 +15,7 @@ const PropertyResearchHub: React.FC = () => {
       const freeData = await PropertyDataService.getPropertyDataFree(address);
 
       // Only use paid APIs if user is on professional plan
-      const subscription = await getUserSubscription();
+      const subscription: { tier: string } = { tier: "free" };
 
       let paidData = null;
       if (

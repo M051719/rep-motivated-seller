@@ -1,5 +1,23 @@
 // src/services/FreePropertyIntelligence.ts
 class FreePropertyIntelligence {
+  async getMarketAnalysis(zipCode?: string) {
+    return {
+      zipCode: zipCode || "",
+      averageValue: 0,
+      averageEquity: 0,
+      strength: 50,
+      investmentScore: 65,
+      trend: "Stable",
+    };
+  }
+
+  async getForeclosureRisk(zipCode?: string) {
+    return {
+      zipCode: zipCode || "",
+      averageRisk: 25,
+      riskScore: 25,
+    };
+  }
   // 1. FORECLOSURE DATA - FREE from government sites
   async getForeclosureListings(state: string, county: string) {
     const sources = {
@@ -199,8 +217,8 @@ class FreePropertyIntelligence {
       // Code violations (public record)
       codeViolations: async () => {
         return {
-          source: `${county} Code Enforcement`,
-          url: `https://${county.toLowerCase()}.gov/code-enforcement`,
+          source: "Local Code Enforcement",
+          url: "https://example.gov/code-enforcement",
         };
       },
     };

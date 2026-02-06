@@ -77,7 +77,7 @@ interface ScenarioResults {
 
 export const ProfessionalUnderwriting: React.FC = () => {
   const { user } = useAuthStore();
-  const userTier = user?.subscription_tier || "free";
+  const userTier = user?.membershipTier || "free";
 
   const [inputs, setInputs] = useState<UnderwritingInputs>({
     propertyPrice: 300000,
@@ -316,11 +316,7 @@ export const ProfessionalUnderwriting: React.FC = () => {
     toast.success("PDF export functionality coming soon!");
   };
 
-  if (
-    userTier === "free" ||
-    userTier === "basic" ||
-    userTier === "professional"
-  ) {
+  if (userTier !== "enterprise") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">

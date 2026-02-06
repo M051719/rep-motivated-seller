@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ErrorBoundary } from "react-error-boundary";

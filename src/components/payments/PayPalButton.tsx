@@ -75,7 +75,7 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({
               }
             },
             onCancel: (data: any) => {
-              toast.info("Payment cancelled");
+              toast("Payment cancelled");
               onCancel?.();
             },
             onError: (err: any) => {

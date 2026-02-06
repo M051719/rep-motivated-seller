@@ -1,8 +1,8 @@
 import { supabase } from "../../lib/supabase";
-import { FreePropertyDataService } from "../FreePropertyDataService";
-import { FreePropertyIntelligence } from "../FreePropertyIntelligence";
-import { hubspotService } from "../hubspotService";
-import { SubscriptionService } from "../SubscriptionService";
+import FreePropertyDataService from "../FreePropertyDataService";
+import FreePropertyIntelligence from "../FreePropertyIntelligence";
+import { HubSpotService } from "../hubspotService";
+import SubscriptionService from "../SubscriptionService";
 
 export interface MasterAnalytics {
   overview: {
@@ -33,15 +33,15 @@ export interface MasterAnalytics {
 }
 
 class MasterAnalyticsService {
-  private propertyService: FreePropertyDataService;
-  private intelligenceService: FreePropertyIntelligence;
+  private propertyService: any;
+  private intelligenceService: any;
   private hubspotService: any;
-  private subscriptionService: SubscriptionService;
+  private subscriptionService: any;
 
   constructor() {
-    this.propertyService = new FreePropertyDataService();
-    this.intelligenceService = new FreePropertyIntelligence();
-    this.hubspotService = hubspotService;
+    this.propertyService = FreePropertyDataService;
+    this.intelligenceService = FreePropertyIntelligence;
+    this.hubspotService = HubSpotService;
     this.subscriptionService = SubscriptionService;
   }
 

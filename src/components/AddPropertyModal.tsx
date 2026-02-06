@@ -491,8 +491,14 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({
                       <ImageUploader
                         bucket="property-images"
                         folder="featured"
-                        onUpload={handleImageUpload}
-                        currentImageUrl={formData.featured_image_url}
+                        onImageUploaded={handleImageUpload}
+                        onImageRemoved={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            featured_image_url: "",
+                          }))
+                        }
+                        currentImage={formData.featured_image_url}
                         maxSizeMB={10}
                       />
                     </div>

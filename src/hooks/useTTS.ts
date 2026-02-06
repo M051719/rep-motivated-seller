@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TTSService } from "@/lib/tts-service";
+import { TTSService } from "../lib/tts-service";
 
 interface UseTTSOptions {
   voice_id?: string;
@@ -20,56 +20,6 @@ export function useTTS(options: UseTTSOptions = {}) {
   );
 
   const ttsService = TTSService.getInstance();
-
-  const synthesize = useCallback(
-    async (text: string) => {
-      if (!text.trim()) {
-        setError("Text is required");
-        return null;
-      }
-
-      setIsLoading(true);
-      setError("");
-      setAudioUrl("");
-
-      try {
-        const result = await ttsService.synthesizeText({
-          text: text.trim(),
-          voice_id: options.voice_id,
-          speed: options.speed,
-          pitch: options.pitch,
-        });
-
-        if (result.success && result.audio_url) {
-          setAudioUrl(result.audio_url);
-          setDuration(result.duration || 0);
-
-          // Preload audio if requested
-          if (options.preload) {
-            await ttsService.preloadAudio(result.audio_url);
-          }
-
-          // Auto-play if requested
-          if (options.autoPlay) {
-            await playAudio(result.audio_url);
-          }
-
-          return result;
-        } else {
-          throw new Error(result.error || "TTS synthesis failed");
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Unknown error";
-        setError(errorMessage);
-        console.error("TTS Error:", errorMessage);
-        return null;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [options, playAudio, ttsService],
-  );
 
   const playAudio = useCallback(
     async (url?: string) => {
@@ -108,6 +58,54 @@ export function useTTS(options: UseTTSOptions = {}) {
       }
     },
     [audioUrl, currentAudio],
+  );
+
+  const synthesize = useCallback(
+    async (text: string) => {
+      if (!text.trim()) {
+        setError("Text is required");
+        return null;
+      }
+
+      setIsLoading(true);
+      setError("");
+      setAudioUrl("");
+
+      try {
+        const result = await ttsService.synthesizeText({
+          text: text.trim(),
+          voice_id: options.voice_id,
+          speed: options.speed,
+          pitch: options.pitch,
+        });
+
+        if (result.success && result.audio_url) {
+          setAudioUrl(result.audio_url);
+          setDuration(result.duration || 0);
+
+          if (options.preload) {
+            await ttsService.preloadAudio(result.audio_url);
+          }
+
+          if (options.autoPlay) {
+            await playAudio(result.audio_url);
+          }
+
+          return result;
+        }
+
+        throw new Error(result.error || "TTS synthesis failed");
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        setError(errorMessage);
+        console.error("TTS Error:", errorMessage);
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [options, playAudio, ttsService],
   );
 
   const stopAudio = useCallback(() => {
