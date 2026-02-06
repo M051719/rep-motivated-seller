@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTTS } from "@/hooks/useTTS";
+import { useTTS } from "../hooks/useTTS";
 import {
   Play,
   Pause,

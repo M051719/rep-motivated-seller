@@ -1,4 +1,12 @@
-import { ForeclosureResponse } from "./supabase";
+interface ForeclosureResponse {
+  name: string;
+  phone: string;
+  urgency_level?: string;
+  received_nod?: boolean;
+  missed_payments?: number;
+  status: string;
+  notes?: string;
+}
 
 // Check if SMS notifications are enabled
 function isSMSEnabled(): boolean {
@@ -101,7 +109,7 @@ export async function sendStatusUpdateSMS(
       RepMotivatedSeller: Your foreclosure assistance request has been updated.
       Current Status: ${foreclosureResponse.status.toString().toUpperCase()}
       ${foreclosureResponse.notes ? `Notes: ${foreclosureResponse.notes}` : ""}
-      
+
       Questions? Call us at 555-123-4567
     `.trim();
 

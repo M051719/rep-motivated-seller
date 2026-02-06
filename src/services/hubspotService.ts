@@ -252,7 +252,6 @@ class HubSpotServiceClass {
       return {
         success: true,
         contactId: contact.id,
-        message: "Lead synced successfully",
         recordsProcessed: 1,
         recordsCreated: 1,
         recordsUpdated: 0,
@@ -284,6 +283,14 @@ class HubSpotServiceClass {
       console.error("Error fetching contacts:", error);
       return [];
     }
+  }
+
+  async syncLead(leadData: any): Promise<SyncResult> {
+    return HubSpotServiceClass.syncLead(leadData);
+  }
+
+  async getRecentContacts(limit?: number): Promise<any[]> {
+    return HubSpotServiceClass.getRecentContacts(limit);
   }
 }
 

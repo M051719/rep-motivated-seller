@@ -34,6 +34,7 @@ export interface HubSpotDeal {
 
 export interface SyncResult {
   success: boolean;
+  contactId?: string;
   recordsProcessed: number;
   recordsCreated: number;
   recordsUpdated: number;

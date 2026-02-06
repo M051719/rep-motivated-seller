@@ -6,7 +6,8 @@ const ALGORITHM = "aes-256-gcm";
 // Encrypt sensitive data (PCI DSS Requirement 3)
 export const encryptSensitiveData = (text: string): string => {
   const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipher(ALGORITHM, ENCRYPTION_KEY);
+  const key = Buffer.from(ENCRYPTION_KEY, "utf8").subarray(0, 32);
+  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
   cipher.setAAD(Buffer.from("rep-motivated-seller", "utf8"));
 
   let encrypted = cipher.update(text, "utf8", "hex");
@@ -23,7 +24,8 @@ export const decryptSensitiveData = (encryptedText: string): string => {
 
   const iv = Buffer.from(ivHex, "hex");
   const authTag = Buffer.from(authTagHex, "hex");
-  const decipher = crypto.createDecipher(ALGORITHM, ENCRYPTION_KEY);
+  const key = Buffer.from(ENCRYPTION_KEY, "utf8").subarray(0, 32);
+  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
 
   decipher.setAuthTag(authTag);
   decipher.setAAD(Buffer.from("rep-motivated-seller", "utf8"));

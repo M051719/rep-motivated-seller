@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useSubscription } from "../hooks/useSubscription";
-import SubscriptionCard from "../components/subscription/SubscriptionCard";
+import { useSubscription } from "../../hooks/useSubscription";
+import SubscriptionCard from "../../components/subscription/SubscriptionCard";
 
 const Dashboard: React.FC = () => {
   const { subscription, checkFeatureAccess, trackApiUsage } = useSubscription();

@@ -22,4 +22,4 @@ export const validateInput = (data: unknown) => {
 };
 
 // Usage in Edge Functions:
-const validatedData = validateInput(formData);
+// const validatedData = validateInput(incomingData);

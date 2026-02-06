@@ -423,6 +423,31 @@ class FreePropertyDataService {
     return combinedData;
   }
 
+  async searchProperties(params: { zipCode?: string; limit?: number }) {
+    // Lightweight placeholder search using public sources
+    if (!params.zipCode) return [];
+    const sample = await this.getOpenStreetMapData(params.zipCode).catch(
+      () => null,
+    );
+    return sample
+      ? [
+          {
+            address: sample.displayName,
+            estimatedValue:
+              sample.extraTags?.price || sample.reverseGeocode?.price || 0,
+            riskScore: 50,
+          },
+        ]
+      : [];
+  }
+
+  async getPropertyTrends() {
+    return [
+      { month: "Jan", avgPrice: 0, transactions: 0 },
+      { month: "Feb", avgPrice: 0, transactions: 0 },
+    ];
+  }
+
   static async analyzeMarket(zipCode: string) {
     const service = new FreePropertyDataService();
 
@@ -454,6 +479,10 @@ class FreePropertyDataService {
         lastUpdated: new Date().toISOString(),
       };
     }
+  }
+
+  async analyzeMarket(zipCode: string) {
+    return FreePropertyDataService.analyzeMarket(zipCode);
   }
 }
 

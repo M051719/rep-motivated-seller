@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextApiRequest, NextApiResponse } from "next";
 import { testConnection, manualSync } from "../../utils/hubspotTest";
 

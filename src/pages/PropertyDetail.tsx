@@ -617,7 +617,8 @@ const PropertyDetail: React.FC = () => {
                   <ImageUploader
                     bucket="property-images"
                     folder={`properties/${property.id}`}
-                    onUpload={handleImageUpload}
+                    onImageUploaded={handleImageUpload}
+                    onImageRemoved={() => {}}
                     maxSizeMB={10}
                   />
                 </div>

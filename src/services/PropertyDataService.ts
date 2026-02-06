@@ -9,7 +9,9 @@ class PropertyDataService {
     const response = await fetch(
       `https://realty-mole-property-api.p.rapidapi.com/properties`,
       {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "X-RapidAPI-Key": "your-key", // $50/month
           "X-RapidAPI-Host": "realty-mole-property-api.p.rapidapi.com",
         },
@@ -23,13 +25,12 @@ class PropertyDataService {
   // 2. AFFORDABLE: Attom Data API ($99/month starter)
   async getAttomData(address: string) {
     const response = await fetch(
-      `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/detail`,
+      `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/detail?address=${encodeURIComponent(address)}`,
       {
         headers: {
           apikey: process.env.VITE_ATTOM_API_KEY!,
           Accept: "application/json",
         },
-        params: { address },
       },
     );
 
@@ -59,31 +60,26 @@ class PropertyDataService {
 
   // 4. MLS DATA: Through Rentspree or similar
   async getMLSData(address: string) {
-    // Rentspree API - $29/month
-    const response = await fetch(
-      "https://api.rentspree.com/properties/search",
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.VITE_RENTSPREE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ address }),
+    const response = await fetch("https://api.rentspree.com/properties/search", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.VITE_RENTSPREE_API_KEY}`,
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({ address }),
+    });
 
     return response.json();
   }
 
   // 5. FORECLOSURE DATA: PropertyRadar or RealtyTrac
   async getForeclosureData(address: string) {
-    // PropertyRadar API - $99/month
     const response = await fetch(
-      "https://api.propertyradar.com/v1/properties",
+      `https://api.propertyradar.com/v1/properties?address=${encodeURIComponent(address)}&include_foreclosure=true`,
       {
         headers: {
           "X-API-Key": process.env.VITE_PROPERTYRADAR_API_KEY!,
         },
-        params: { address, include_foreclosure: true },
       },
     );
 
@@ -145,6 +141,15 @@ class PropertyDataService {
       `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(address)}&benchmark=2020&format=json`,
     );
     return response.json();
+  }
+
+  async searchPublicRecords(address: string) {
+    // Placeholder hook for county/state record search
+    return { address, records: [] };
+  }
+
+  mergePropertyData(data: Record<string, any>) {
+    return data;
   }
 }
 

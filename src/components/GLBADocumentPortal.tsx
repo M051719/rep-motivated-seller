@@ -74,18 +74,16 @@ const GLBADocumentPortal: React.FC = () => {
       const fileBase64 = Buffer.from(fileContent).toString("base64");
 
       // Get encryption key for document encryption
-      const encryptionKey = await GLBAKeyManagement.getActiveKey(
-        "document_encryption",
-      );
-      if (!encryptionKey) {
+      const encryptionKey = await GLBAKeyManagement.getActiveKey();
+      if (!encryptionKey?.key_data) {
         alert("❌ Encryption key not available - contact administrator");
         return;
       }
 
       // Encrypt the document content
-      const encryptedDocument = GLBAEncryption.encryptNPI(
+      const encryptedDocument = await GLBAEncryption.encryptNPI(
         fileBase64,
-        encryptionKey,
+        encryptionKey.id,
       );
 
       // Set expiration if specified
@@ -131,53 +129,51 @@ const GLBADocumentPortal: React.FC = () => {
     }
   };
 
-  const downloadSecureDocument = async (document: SecureDocument) => {
+  const downloadSecureDocument = async (doc: SecureDocument) => {
     try {
       // Get decryption key
-      const decryptionKey = await GLBAKeyManagement.getActiveKey(
-        "document_encryption",
-      );
-      if (!decryptionKey) {
+      const decryptionKey = await GLBAKeyManagement.getActiveKey();
+      if (!decryptionKey?.key_data) {
         alert("❌ Decryption key not available");
         return;
       }
 
       // Decrypt document
-      const encryptedData = JSON.parse(document.encrypted_content);
-      const decryptedBase64 = GLBAEncryption.decryptNPI(
-        encryptedData,
-        decryptionKey,
+      const encryptedData = JSON.parse(doc.encrypted_content);
+      const decryptedBase64 = await GLBAEncryption.decryptNPI(encryptedData);
+      const decryptedBytes = Uint8Array.from(
+        atob(decryptedBase64),
+        (c) => c.charCodeAt(0),
       );
-      const decryptedContent = Buffer.from(decryptedBase64, "base64");
 
       // Create download blob
-      const blob = new Blob([decryptedContent], {
-        type: document.content_type,
+      const blob = new Blob([decryptedBytes.buffer], {
+        type: doc.content_type,
       });
       const url = URL.createObjectURL(blob);
 
       // Trigger download
-      const a = document.createElement("a");
+      const a = window.document.createElement("a");
       a.href = url;
-      a.download = document.filename;
-      document.body.appendChild(a);
+      a.download = doc.filename;
+      window.document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
+      window.document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
       // Update access count
       await supabase
         .from("secure_documents")
-        .update({ access_count: document.access_count + 1 })
-        .eq("id", document.id);
+        .update({ access_count: doc.access_count + 1 })
+        .eq("id", doc.id);
 
       // Audit log
       await supabase.from("document_audit_log").insert({
         action: "download",
-        filename: document.filename,
+        filename: doc.filename,
         user_id: (await supabase.auth.getUser()).data.user?.id,
         timestamp: new Date().toISOString(),
-        document_id: document.id,
+        document_id: doc.id,
       });
     } catch (error) {
       alert(`❌ Download failed: ${error.message}`);

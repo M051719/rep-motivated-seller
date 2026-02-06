@@ -105,13 +105,15 @@ describe("Phase 1: Core Service Integration Testing", () => {
     it("HubSpotService should validate connection", async () => {
       const isValid = await HubSpotService.validateConnection();
 
-      if (isValid) {
+      if (isValid && typeof isValid === "object" && "isValid" in isValid) {
         console.log("✅ HubSpot connection validated");
       } else {
         console.log("⚠️ HubSpot API key not configured");
       }
 
-      expect(typeof isValid === "boolean" || typeof isValid === "object").toBe(true);
+      expect(
+        typeof isValid === "boolean" || typeof isValid === "object",
+      ).toBe(true);
       if (typeof isValid === "object") {
         expect(isValid).toHaveProperty("isValid");
       }

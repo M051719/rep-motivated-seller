@@ -358,7 +358,20 @@ Recommended Strategy: ${propertyData.estimatedValue > avgCompPrice ? "Premium pr
       const presentationData = {
         property: propertyData,
         comparables: includeComparables ? comparables : [],
-        aiContent: includeAIContent ? aiContent : null,
+        aiContent: includeAIContent
+          ? {
+              marketingSummary:
+                (aiContent as any)?.marketingSummary ||
+                (aiContent as any)?.propertyDescription ||
+                "",
+              keyFeatures: (aiContent as any)?.keyFeatures || [],
+              targetAudience: (aiContent as any)?.targetAudience || "",
+              callToAction:
+                (aiContent as any)?.callToAction ||
+                (aiContent as any)?.marketingLetter ||
+                "",
+            }
+          : null,
         calculatorResults: includeCalculations ? calculatorResults : null,
         includeMap,
         format,
@@ -461,7 +474,7 @@ Recommended Strategy: ${propertyData.estimatedValue > avgCompPrice ? "Premium pr
   // Import calculator results
   const importCalculatorData = () => {
     // This would open a modal to select and import from existing calculator results
-    toast.info("Calculator import coming soon!");
+          toast("Calculator import coming soon!");
   };
 
   return (

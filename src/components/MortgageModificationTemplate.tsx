@@ -165,11 +165,11 @@ const MortgageModificationTemplate: React.FC = () => {
     return housing + utilities + debt + other;
   };
 
-  const calculateDebtToIncome = () => {
+  const calculateDebtToIncome = (): number => {
     const income = parseFloat(formData.monthlyGrossIncome) || 0;
     const payment = parseFloat(formData.monthlyPayment) || 0;
     if (income === 0) return 0;
-    return ((payment / income) * 100).toFixed(1);
+    return parseFloat(((payment / income) * 100).toFixed(1));
   };
 
   const sections = [
@@ -659,7 +659,7 @@ const MortgageModificationTemplate: React.FC = () => {
                     {calculateDebtToIncome()}%
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {parseFloat(calculateDebtToIncome()) > 31
+                    {calculateDebtToIncome() > 31
                       ? "⚠️ Above recommended 31%"
                       : "✅ Within recommended range"}
                   </p>

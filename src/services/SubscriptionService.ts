@@ -66,6 +66,7 @@ class SubscriptionService {
       // Feature access hierarchy
       const tierHierarchy: Record<SubscriptionTier, number> = {
         free: 0,
+        entrepreneur: 1,
         professional: 1,
         enterprise: 2,
       };

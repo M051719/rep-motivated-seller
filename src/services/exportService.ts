@@ -347,9 +347,6 @@ export async function generatePPTX(data: PresentationData): Promise<Blob> {
       border: { type: "solid", color: "CCCCCC", pt: 1 },
       fill: { color: "F3F4F6" },
       color: "1F2937",
-      headerRowFill: "6366F1",
-      headerRowColor: "FFFFFF",
-      headerRowBold: true,
     });
 
     // Market summary

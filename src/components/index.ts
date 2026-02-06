@@ -31,7 +31,6 @@ export { default as PricingCards } from "./credit-repair/PricingCards";
 
 // Compliance Components
 export { default as SMSOptInComponent } from "./compliance/SMSOptInComponent";
-export { default as SMSConsentCheckbox } from "./compliance/SMSConsentCheckbox";
 
 // Analytics Components
 export { default as PropertyIntelligenceDashboard } from "./analytics/PropertyIntelligenceDashboard";

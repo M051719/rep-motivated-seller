@@ -1,4 +1,21 @@
-import { ForeclosureResponse } from "./supabase";
+interface ForeclosureResponse {
+  email: string;
+  name: string;
+  phone: string;
+  property_address: string;
+  status: string;
+  urgency_level?: string;
+  missed_payments?: number;
+  received_nod?: boolean;
+  property_value?: number;
+  mortgage_balance?: number;
+  challenges?: string;
+  difficulties?: string;
+  family_impact?: string;
+  financial_impact?: string;
+  preferred_solution?: string;
+  openness_to_options?: string;
+}
 
 // CRM Integration Types
 type CRMType = "hubspot" | "salesforce" | "pipedrive" | "custom";

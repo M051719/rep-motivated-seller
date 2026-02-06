@@ -81,7 +81,9 @@ const BlogPostDetail: React.FC = () => {
           .limit(3);
 
         if (!relatedError && relatedData) {
-          setRelatedPosts(relatedData);
+          setRelatedPosts(
+            relatedData.map((post) => ({ content: "", ...post })),
+          );
         }
       }
     } catch (error: any) {

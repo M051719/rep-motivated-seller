@@ -63,7 +63,6 @@ const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
         text={buttonText}
         textColor="#ffffff"
         color="#2563eb"
-        className={buttonClassName || "calendly-popup-button"}
       />
     );
   }

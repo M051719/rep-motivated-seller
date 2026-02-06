@@ -11,11 +11,8 @@ const PropertyIntelligenceDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedZipCode, setSelectedZipCode] = useState<string>("");
 
-  const propertyService = useMemo(() => new FreePropertyDataService(), []);
-  const intelligenceService = useMemo(
-    () => new FreePropertyIntelligence(),
-    [],
-  );
+  const propertyService = useMemo(() => FreePropertyDataService, []);
+  const intelligenceService = useMemo(() => FreePropertyIntelligence, []);
 
   const loadPropertyIntelligence = useCallback(async () => {
     try {

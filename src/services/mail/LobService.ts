@@ -90,6 +90,33 @@ class LobService {
       return { success: false, error: (error as Error).message };
     }
   }
+
+  calculateCost(recipientCount: number) {
+    const unitCost = 0.55;
+    const totalCost = unitCost * recipientCount;
+    return {
+      unitCost,
+      totalCost,
+      estimatedDelivery: "5-7 business days",
+    };
+  }
+
+  async sendBulkMail(
+    addresses: MailingAddress[],
+    templateUrl: string,
+    campaignName: string,
+  ) {
+    // Placeholder bulk send simulation
+    return {
+      campaign: campaignName,
+      templateUrl,
+      results: addresses.map((address, idx) => ({
+        address,
+        mailId: `mock-${idx}`,
+        error: null,
+      })),
+    };
+  }
 }
 
 export default new LobService();
