@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -39,11 +39,7 @@ const AdminCommentModeration: React.FC = () => {
   >("pending");
   const [expandedComment, setExpandedComment] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchComments();
-  }, [filter]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -75,7 +71,11 @@ const AdminCommentModeration: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const updateCommentStatus = async (
     commentId: string,

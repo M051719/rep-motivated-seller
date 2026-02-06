@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuthStore } from "../store/authStore";
 import SubscriptionService from "../services/SubscriptionService";
 import { UserSubscription, FeatureAccess } from "../types/subscription";
@@ -12,15 +12,7 @@ export function useSubscription() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchSubscription();
-    } else {
-      setLoading(false);
-    }
-  }, [user?.id]);
-
-  const fetchSubscription = async () => {
+  const fetchSubscription = useCallback(async () => {
     try {
       setLoading(true);
       const sub = await SubscriptionService.getUserSubscription(user!.id);
@@ -33,7 +25,15 @@ export function useSubscription() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchSubscription();
+    } else {
+      setLoading(false);
+    }
+  }, [fetchSubscription, user?.id]);
 
   const checkFeatureAccess = async (
     feature: string,

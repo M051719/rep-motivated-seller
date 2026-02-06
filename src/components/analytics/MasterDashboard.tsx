@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Line, Bar, Doughnut, Scatter } from "react-chartjs-2";
 import {
@@ -41,11 +41,7 @@ const MasterDashboard: React.FC = () => {
   >("overview");
   const [timeRange, setTimeRange] = useState("30d");
 
-  useEffect(() => {
-    loadAllAnalytics();
-  }, [timeRange]);
-
-  const loadAllAnalytics = async () => {
+  const loadAllAnalytics = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -73,7 +69,11 @@ const MasterDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [timeRange]);
+
+  useEffect(() => {
+    loadAllAnalytics();
+  }, [loadAllAnalytics]);
 
   if (loading || !analytics) {
     return (

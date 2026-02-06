@@ -5,6 +5,7 @@ import React, {
   useEffect,
   createContext,
   useContext,
+  useCallback,
 } from "react";
 import {
   BrowserRouter as Router,
@@ -114,6 +115,93 @@ const AppEnhancementWrapper: React.FC<{ children: React.ReactNode }> = ({
   });
   const systemHealth = useSystemMonitor();
 
+  const loadUserNotifications = useCallback(async (userId: string) => {
+    const notifications = [] as any[];
+
+    const { data: foreclosureData } = await supabase
+      .from("foreclosure_responses")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (foreclosureData?.[0]?.urgency_level === "high") {
+      notifications.push({
+        id: "foreclosure_urgent",
+        type: "urgent",
+        title: "Critical Foreclosure Deadline",
+        message: "You have urgent deadlines approaching. Take action now.",
+        timestamp: new Date(),
+        action: "/foreclosure-help",
+      });
+    }
+
+    const { data: progressData } = await supabase
+      .from("user_progress")
+      .select("*")
+      .eq("user_id", userId)
+      .is("completed_at", null);
+
+    if (progressData?.length > 0) {
+      notifications.push({
+        id: "course_incomplete",
+        type: "education",
+        title: "Continue Your Learning",
+        message: `You have ${progressData.length} courses in progress`,
+        timestamp: new Date(),
+        action: "/education/dashboard",
+      });
+    }
+
+    return notifications;
+  }, []);
+
+  const loadRealTimeData = useCallback(async (userId: string) => {
+    const [progress, campaigns, subscriptions] = await Promise.all([
+      supabase.from("user_progress").select("*").eq("user_id", userId),
+      supabase.from("mail_campaigns").select("*").limit(5),
+      supabase.from("subscriptions").select("*").eq("user_id", userId),
+    ]);
+
+    return {
+      progress: progress.data || [],
+      campaigns: campaigns.data || [],
+      subscriptions: subscriptions.data || [],
+    };
+  }, []);
+
+  const loadAIHistory = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from("ai_interactions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("timestamp", { ascending: false })
+      .limit(50);
+
+    return data || [];
+  }, []);
+
+  const loadUserData = useCallback(
+    async (userId: string) => {
+      try {
+        const notificationsData = await loadUserNotifications(userId);
+        setNotifications(notificationsData);
+
+        const realTime = await loadRealTimeData(userId);
+        setRealTimeData(realTime);
+
+        const aiHistory = await loadAIHistory(userId);
+        setAiAssistant((prev) => ({
+          ...prev,
+          conversationHistory: aiHistory,
+        }));
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    },
+    [loadAIHistory, loadRealTimeData, loadUserNotifications],
+  );
+
   useEffect(() => {
     // Enhanced authentication monitoring
     const initializeAuth = async () => {
@@ -143,98 +231,7 @@ const AppEnhancementWrapper: React.FC<{ children: React.ReactNode }> = ({
     };
 
     initializeAuth();
-  }, []);
-
-  const loadUserData = async (userId: string) => {
-    try {
-      // Load notifications
-      const notificationsData = await loadUserNotifications(userId);
-      setNotifications(notificationsData);
-
-      // Load real-time data
-      const realTimeData = await loadRealTimeData(userId);
-      setRealTimeData(realTimeData);
-
-      // Initialize AI assistant history
-      const aiHistory = await loadAIHistory(userId);
-      setAiAssistant((prev) => ({
-        ...prev,
-        conversationHistory: aiHistory,
-      }));
-    } catch (error) {
-      console.error("Error loading user data:", error);
-    }
-  };
-
-  const loadUserNotifications = async (userId: string) => {
-    // Enhanced notification system
-    const notifications = [];
-
-    // Check for urgent foreclosure deadlines
-    const { data: foreclosureData } = await supabase
-      .from("foreclosure_responses")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1);
-
-    if (foreclosureData?.[0]?.urgency_level === "high") {
-      notifications.push({
-        id: "foreclosure_urgent",
-        type: "urgent",
-        title: "Critical Foreclosure Deadline",
-        message: "You have urgent deadlines approaching. Take action now.",
-        timestamp: new Date(),
-        action: "/foreclosure-help",
-      });
-    }
-
-    // Check for incomplete courses
-    const { data: progressData } = await supabase
-      .from("user_progress")
-      .select("*")
-      .eq("user_id", userId)
-      .is("completed_at", null);
-
-    if (progressData?.length > 0) {
-      notifications.push({
-        id: "course_incomplete",
-        type: "education",
-        title: "Continue Your Learning",
-        message: `You have ${progressData.length} courses in progress`,
-        timestamp: new Date(),
-        action: "/education/dashboard",
-      });
-    }
-
-    return notifications;
-  };
-
-  const loadRealTimeData = async (userId: string) => {
-    // Real-time data aggregation
-    const [progress, campaigns, subscriptions] = await Promise.all([
-      supabase.from("user_progress").select("*").eq("user_id", userId),
-      supabase.from("mail_campaigns").select("*").limit(5),
-      supabase.from("subscriptions").select("*").eq("user_id", userId),
-    ]);
-
-    return {
-      progress: progress.data || [],
-      campaigns: campaigns.data || [],
-      subscriptions: subscriptions.data || [],
-    };
-  };
-
-  const loadAIHistory = async (userId: string) => {
-    const { data } = await supabase
-      .from("ai_interactions")
-      .select("*")
-      .eq("user_id", userId)
-      .order("timestamp", { ascending: false })
-      .limit(50);
-
-    return data || [];
-  };
+  }, [loadUserData]);
 
   const contextValue: AppEnhancementContext = {
     user,

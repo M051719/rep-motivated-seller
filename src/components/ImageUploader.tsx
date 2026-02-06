@@ -33,76 +33,87 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   }, []);
 
-  const validateImage = (file: File): boolean => {
-    // Check file type
-    const validTypes = [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-    ];
-    if (!validTypes.includes(file.type)) {
-      toast.error("Please upload a valid image file (JPEG, PNG, GIF, or WebP)");
-      return false;
-    }
+  const validateImage = useCallback(
+    (file: File): boolean => {
+      // Check file type
+      const validTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!validTypes.includes(file.type)) {
+        toast.error(
+          "Please upload a valid image file (JPEG, PNG, GIF, or WebP)",
+        );
+        return false;
+      }
 
-    // Check file size
-    const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
-    if (file.size > maxSize) {
-      toast.error(`File size must be less than ${maxSizeMB}MB`);
-      return false;
-    }
+      // Check file size
+      const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
+      if (file.size > maxSize) {
+        toast.error(`File size must be less than ${maxSizeMB}MB`);
+        return false;
+      }
 
-    return true;
-  };
+      return true;
+    },
+    [maxSizeMB],
+  );
 
-  const uploadImage = async (file: File) => {
-    if (!validateImage(file)) {
-      return;
-    }
+  const uploadImage = useCallback(
+    async (file: File) => {
+      if (!validateImage(file)) {
+        return;
+      }
 
-    try {
-      setUploading(true);
+      try {
+        setUploading(true);
 
-      // Generate unique filename
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        // Generate unique filename
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from(bucket)
+          .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from(bucket).getPublicUrl(fileName);
+        // Get public URL
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from(bucket).getPublicUrl(fileName);
 
-      toast.success("Image uploaded successfully!");
-      onImageUploaded(publicUrl);
-    } catch (error: any) {
-      console.error("Error uploading image:", error);
-      toast.error(error.message || "Failed to upload image");
-    } finally {
-      setUploading(false);
-    }
-  };
+        toast.success("Image uploaded successfully!");
+        onImageUploaded(publicUrl);
+      } catch (error: any) {
+        console.error("Error uploading image:", error);
+        toast.error(error.message || "Failed to upload image");
+      } finally {
+        setUploading(false);
+      }
+    },
+    [bucket, folder, onImageUploaded, validateImage],
+  );
 
-  const handleDrop = useCallback(async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      await uploadImage(e.dataTransfer.files[0]);
-    }
-  }, []);
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        await uploadImage(e.dataTransfer.files[0]);
+      }
+    },
+    [uploadImage],
+  );
 
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

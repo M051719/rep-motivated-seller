@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { loadStripe, Stripe, StripeElements } from "@stripe/stripe-js";
 import {
   Elements,
@@ -87,12 +87,7 @@ const CheckoutForm: React.FC<{
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState<string>("");
 
-  useEffect(() => {
-    // Create payment intent on component mount
-    createPaymentIntent();
-  }, [selectedTier]);
-
-  const createPaymentIntent = async () => {
+  const createPaymentIntent = useCallback(async () => {
     try {
       const {
         data: { user },
@@ -118,7 +113,12 @@ const CheckoutForm: React.FC<{
       console.error("Error creating payment intent:", error);
       toast.error("Failed to initialize payment");
     }
-  };
+  }, [selectedTier]);
+
+  useEffect(() => {
+    // Create payment intent on component mount
+    createPaymentIntent();
+  }, [createPaymentIntent]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

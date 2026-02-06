@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
@@ -23,11 +23,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    checkAuthAndFavorite();
-  }, [templateId]);
-
-  const checkAuthAndFavorite = async () => {
+  const checkAuthAndFavorite = useCallback(async () => {
     try {
       const {
         data: { user },
@@ -51,7 +47,11 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
       // Not favorited or error
       setIsFavorited(false);
     }
-  };
+  }, [templateId]);
+
+  useEffect(() => {
+    checkAuthAndFavorite();
+  }, [checkAuthAndFavorite]);
 
   const toggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();

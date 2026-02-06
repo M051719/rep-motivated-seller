@@ -1,5 +1,5 @@
 // src/components/ProtectedRoute.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import SubscriptionService from "../services/SubscriptionService";
@@ -18,11 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkAccess();
-  }, []);
-
-  const checkAccess = async () => {
+  const checkAccess = useCallback(async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -48,7 +44,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     setLoading(false);
-  };
+  }, [feature, requiredTier]);
+
+  useEffect(() => {
+    checkAccess();
+  }, [checkAccess]);
 
   if (loading) {
     return (

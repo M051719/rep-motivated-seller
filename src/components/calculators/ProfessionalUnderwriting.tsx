@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../../store/authStore";
 import {
@@ -99,56 +99,58 @@ export const ProfessionalUnderwriting: React.FC = () => {
     depreciationYears: 27.5,
   });
 
-  const scenarios: Scenario[] = [
-    {
-      name: "Pessimistic",
-      type: "pessimistic",
-      color: "red",
-      adjustments: {
-        appreciationRate: -2,
-        vacancyRate: 5,
-        rentGrowth: -1,
-        expenseInflation: 2,
+  const scenarios: Scenario[] = useMemo(
+    () => [
+      {
+        name: "Pessimistic",
+        type: "pessimistic",
+        color: "red",
+        adjustments: {
+          appreciationRate: -2,
+          vacancyRate: 5,
+          rentGrowth: -1,
+          expenseInflation: 2,
+        },
       },
-    },
-    {
-      name: "Base Case",
-      type: "base",
-      color: "blue",
-      adjustments: {
-        appreciationRate: 0,
-        vacancyRate: 0,
-        rentGrowth: 0,
-        expenseInflation: 0,
+      {
+        name: "Base Case",
+        type: "base",
+        color: "blue",
+        adjustments: {
+          appreciationRate: 0,
+          vacancyRate: 0,
+          rentGrowth: 0,
+          expenseInflation: 0,
+        },
       },
-    },
-    {
-      name: "Optimistic",
-      type: "optimistic",
-      color: "green",
-      adjustments: {
-        appreciationRate: 2,
-        vacancyRate: -3,
-        rentGrowth: 2,
-        expenseInflation: -1,
+      {
+        name: "Optimistic",
+        type: "optimistic",
+        color: "green",
+        adjustments: {
+          appreciationRate: 2,
+          vacancyRate: -3,
+          rentGrowth: 2,
+          expenseInflation: -1,
+        },
       },
-    },
-  ];
+    ],
+    [],
+  );
 
-  const calculateMonthlyPayment = (
-    principal: number,
-    rate: number,
-    years: number,
-  ): number => {
+  const calculateMonthlyPayment = useCallback(
+    (principal: number, rate: number, years: number): number => {
     const monthlyRate = rate / 100 / 12;
     const numPayments = years * 12;
     return (
       (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
       (Math.pow(1 + monthlyRate, numPayments) - 1)
     );
-  };
+    },
+    [],
+  );
 
-  const calculateIRR = (cashFlows: number[]): number => {
+  const calculateIRR = useCallback((cashFlows: number[]): number => {
     // Newton-Raphson method for IRR calculation
     let irr = 0.1; // Initial guess 10%
     const maxIterations = 100;
@@ -173,9 +175,10 @@ export const ProfessionalUnderwriting: React.FC = () => {
     }
 
     return irr * 100;
-  };
+  }, []);
 
-  const analyzeScenario = (scenario: Scenario): ScenarioResults => {
+  const analyzeScenario = useCallback(
+    (scenario: Scenario): ScenarioResults => {
     const downPaymentAmount = inputs.propertyPrice * (inputs.downPayment / 100);
     const loanAmount = inputs.propertyPrice - downPaymentAmount;
     const monthlyPayment = calculateMonthlyPayment(
@@ -301,11 +304,13 @@ export const ProfessionalUnderwriting: React.FC = () => {
       grade,
       gradeColor,
     };
-  };
+    },
+    [calculateIRR, calculateMonthlyPayment, inputs],
+  );
 
   const results = useMemo(() => {
     return scenarios.map(analyzeScenario);
-  }, [inputs]);
+  }, [analyzeScenario, scenarios]);
 
   const handleExportPDF = () => {
     toast.success("PDF export functionality coming soon!");

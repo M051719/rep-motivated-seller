@@ -33,7 +33,7 @@ What can I help you with today?`,
       };
       setMessages([welcomeMessage]);
     }
-  }, []);
+  }, [messages.length]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;

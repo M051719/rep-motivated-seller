@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
@@ -18,107 +18,104 @@ const ForeclosureQuestionnaireEnhancement: React.FC<
   const [showAIInsights, setShowAIInsights] = useState(false);
 
   // Enhanced questionnaire steps building on your existing structure
-  const enhancedSteps = [
-    {
-      id: 1,
-      title: "🏠 Property Information",
-      description: "Tell us about your property situation",
-      questions: [
-        {
-          id: "property_value",
-          text: "What is your estimated property value?",
-          type: "number",
-          required: true,
-          aiWeight: 0.2,
-        },
-        {
-          id: "mortgage_balance",
-          text: "What is your current mortgage balance?",
-          type: "number",
-          required: true,
-          aiWeight: 0.25,
-        },
-        {
-          id: "monthly_payment",
-          text: "What is your monthly mortgage payment?",
-          type: "number",
-          required: true,
-          aiWeight: 0.15,
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "⏰ Timeline & Status",
-      description: "Help us understand your current situation",
-      questions: [
-        {
-          id: "months_behind",
-          text: "How many months behind are you on payments?",
-          type: "select",
-          options: [
-            { value: "0", label: "Current on payments" },
-            { value: "1", label: "1 month behind" },
-            { value: "2", label: "2 months behind" },
-            { value: "3", label: "3 months behind" },
-            { value: "4+", label: "4 or more months behind" },
-          ],
-          required: true,
-          aiWeight: 0.3,
-        },
-        {
-          id: "notice_received",
-          text: "Have you received any foreclosure notices?",
-          type: "select",
-          options: [
-            { value: "none", label: "No notices received" },
-            { value: "intent", label: "Notice of Intent to Foreclose" },
-            { value: "default", label: "Notice of Default" },
-            { value: "sale", label: "Notice of Sale" },
-            { value: "other", label: "Other legal notice" },
-          ],
-          required: true,
-          aiWeight: 0.25,
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "💰 Financial Situation",
-      description: "Your income and expenses",
-      questions: [
-        {
-          id: "monthly_income",
-          text: "What is your total monthly household income?",
-          type: "number",
-          required: true,
-          aiWeight: 0.2,
-        },
-        {
-          id: "job_stability",
-          text: "How would you describe your employment situation?",
-          type: "select",
-          options: [
-            { value: "stable", label: "Stable full-time employment" },
-            { value: "unstable", label: "Unstable or part-time work" },
-            { value: "unemployed", label: "Currently unemployed" },
-            { value: "retired", label: "Retired/Fixed income" },
-            { value: "self_employed", label: "Self-employed" },
-          ],
-          required: true,
-          aiWeight: 0.15,
-        },
-      ],
-    },
-  ];
+  const enhancedSteps = useMemo(
+    () => [
+      {
+        id: 1,
+        title: "🏠 Property Information",
+        description: "Tell us about your property situation",
+        questions: [
+          {
+            id: "property_value",
+            text: "What is your estimated property value?",
+            type: "number",
+            required: true,
+            aiWeight: 0.2,
+          },
+          {
+            id: "mortgage_balance",
+            text: "What is your current mortgage balance?",
+            type: "number",
+            required: true,
+            aiWeight: 0.25,
+          },
+          {
+            id: "monthly_payment",
+            text: "What is your monthly mortgage payment?",
+            type: "number",
+            required: true,
+            aiWeight: 0.15,
+          },
+        ],
+      },
+      {
+        id: 2,
+        title: "⏰ Timeline & Status",
+        description: "Help us understand your current situation",
+        questions: [
+          {
+            id: "months_behind",
+            text: "How many months behind are you on payments?",
+            type: "select",
+            options: [
+              { value: "0", label: "Current on payments" },
+              { value: "1", label: "1 month behind" },
+              { value: "2", label: "2 months behind" },
+              { value: "3", label: "3 months behind" },
+              { value: "4+", label: "4 or more months behind" },
+            ],
+            required: true,
+            aiWeight: 0.3,
+          },
+          {
+            id: "notice_received",
+            text: "Have you received any foreclosure notices?",
+            type: "select",
+            options: [
+              { value: "none", label: "No notices received" },
+              { value: "intent", label: "Notice of Intent to Foreclose" },
+              { value: "default", label: "Notice of Default" },
+              { value: "sale", label: "Notice of Sale" },
+              { value: "other", label: "Other legal notice" },
+            ],
+            required: true,
+            aiWeight: 0.25,
+          },
+        ],
+      },
+      {
+        id: 3,
+        title: "💰 Financial Situation",
+        description: "Your income and expenses",
+        questions: [
+          {
+            id: "monthly_income",
+            text: "What is your total monthly household income?",
+            type: "number",
+            required: true,
+            aiWeight: 0.2,
+          },
+          {
+            id: "job_stability",
+            text: "How would you describe your employment situation?",
+            type: "select",
+            options: [
+              { value: "stable", label: "Stable full-time employment" },
+              { value: "unstable", label: "Unstable or part-time work" },
+              { value: "unemployed", label: "Currently unemployed" },
+              { value: "retired", label: "Retired/Fixed income" },
+              { value: "self_employed", label: "Self-employed" },
+            ],
+            required: true,
+            aiWeight: 0.15,
+          },
+        ],
+      },
+    ],
+    [],
+  );
 
-  useEffect(() => {
-    // AI-powered risk assessment based on responses
-    calculateRiskScore();
-    generateAIRecommendations();
-  }, [responses]);
-
-  const calculateRiskScore = () => {
+  const calculateRiskScore = useCallback(() => {
     let score = 0;
     let totalWeight = 0;
 
@@ -177,9 +174,9 @@ const ForeclosureQuestionnaireEnhancement: React.FC<
     if (finalScore >= 70) setUrgencyLevel("high");
     else if (finalScore >= 40) setUrgencyLevel("medium");
     else setUrgencyLevel("low");
-  };
+  }, [enhancedSteps, responses]);
 
-  const generateAIRecommendations = () => {
+  const generateAIRecommendations = useCallback(() => {
     const recommendations = [];
 
     // AI-powered recommendations based on responses
@@ -229,7 +226,12 @@ const ForeclosureQuestionnaireEnhancement: React.FC<
     });
 
     setAIRecommendations(recommendations);
-  };
+  }, [responses]);
+
+  useEffect(() => {
+    calculateRiskScore();
+    generateAIRecommendations();
+  }, [calculateRiskScore, generateAIRecommendations]);
 
   const handleResponseChange = (questionId: string, value: any) => {
     setResponses((prev) => ({

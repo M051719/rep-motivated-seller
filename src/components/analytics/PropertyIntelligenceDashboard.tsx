@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Scatter, Bar, Line } from "react-chartjs-2";
 import FreePropertyDataService from "../../services/FreePropertyDataService";
@@ -11,14 +11,13 @@ const PropertyIntelligenceDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedZipCode, setSelectedZipCode] = useState<string>("");
 
-  const propertyService = new FreePropertyDataService();
-  const intelligenceService = new FreePropertyIntelligence();
+  const propertyService = useMemo(() => new FreePropertyDataService(), []);
+  const intelligenceService = useMemo(
+    () => new FreePropertyIntelligence(),
+    [],
+  );
 
-  useEffect(() => {
-    loadPropertyIntelligence();
-  }, [selectedZipCode]);
-
-  const loadPropertyIntelligence = async () => {
+  const loadPropertyIntelligence = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -39,7 +38,11 @@ const PropertyIntelligenceDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [intelligenceService, propertyService, selectedZipCode]);
+
+  useEffect(() => {
+    loadPropertyIntelligence();
+  }, [loadPropertyIntelligence]);
 
   if (loading) {
     return (

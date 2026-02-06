@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -203,11 +203,7 @@ const EducationDashboard: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    loadUserProgress();
-  }, [user]);
-
-  const loadUserProgress = async () => {
+  const loadUserProgress = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -240,7 +236,11 @@ const EducationDashboard: React.FC = () => {
     } catch (error) {
       console.error("Error loading progress:", error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadUserProgress();
+  }, [loadUserProgress]);
 
   const handleModuleComplete = async (courseId: string, moduleId: string) => {
     if (!user) {

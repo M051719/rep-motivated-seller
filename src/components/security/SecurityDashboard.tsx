@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 
 interface SecurityCheck {
@@ -14,11 +14,7 @@ const SecurityDashboard: React.FC = () => {
   const [securityChecks, setSecurityChecks] = useState<SecurityCheck[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    performSecurityChecks();
-  }, []);
-
-  const performSecurityChecks = async () => {
+  const performSecurityChecks = useCallback(async () => {
     setLoading(true);
 
     const checks: SecurityCheck[] = [
@@ -98,7 +94,11 @@ const SecurityDashboard: React.FC = () => {
 
     setSecurityChecks(checks);
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    performSecurityChecks();
+  }, [performSecurityChecks]);
 
   const checkLocalStorageSecurity = (): "pass" | "fail" | "warning" => {
     try {

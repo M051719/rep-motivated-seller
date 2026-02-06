@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 
@@ -29,14 +29,7 @@ const CoursePlayer: React.FC = () => {
   );
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (courseId) {
-      fetchCourseData();
-      fetchUserProgress();
-    }
-  }, [courseId]);
-
-  const fetchCourseData = async () => {
+  const fetchCourseData = useCallback(async () => {
     const { data: courseData, error: courseError } = await supabase
       .from("courses")
       .select("*")
@@ -64,9 +57,9 @@ const CoursePlayer: React.FC = () => {
       lessons: lessonsData || [],
     });
     setLoading(false);
-  };
+  }, [courseId]);
 
-  const fetchUserProgress = async () => {
+  const fetchUserProgress = useCallback(async () => {
     try {
       const {
         data: { user },
@@ -92,7 +85,14 @@ const CoursePlayer: React.FC = () => {
     } catch (error) {
       console.error("Error in fetchUserProgress:", error);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    if (courseId) {
+      fetchCourseData();
+      fetchUserProgress();
+    }
+  }, [courseId, fetchCourseData, fetchUserProgress]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

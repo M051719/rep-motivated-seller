@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
@@ -51,13 +51,7 @@ const BlogPostDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showShareMenu, setShowShareMenu] = useState(false);
 
-  useEffect(() => {
-    if (slug) {
-      fetchBlogPost();
-    }
-  }, [slug]);
-
-  const fetchBlogPost = async () => {
+  const fetchBlogPost = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -97,7 +91,13 @@ const BlogPostDetail: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug, navigate]);
+
+  useEffect(() => {
+    if (slug) {
+      fetchBlogPost();
+    }
+  }, [slug, fetchBlogPost]);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareTitle = post?.title || "";

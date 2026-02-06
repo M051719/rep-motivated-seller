@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -61,11 +61,7 @@ const Dashboard: React.FC = () => {
   });
   const [loanProgress, setLoanProgress] = useState<LoanProgress[]>([]);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [user]);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -133,7 +129,11 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error("Error loading dashboard data:", error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const getProgressPercentage = (status: string): number => {
     switch (status) {

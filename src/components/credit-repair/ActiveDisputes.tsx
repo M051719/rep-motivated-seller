@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 interface Dispute {
   id: string;
@@ -20,11 +20,7 @@ const ActiveDisputes: React.FC<ActiveDisputesProps> = ({ limit }) => {
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadDisputes();
-  }, []);
-
-  const loadDisputes = async () => {
+  const loadDisputes = useCallback(async () => {
     try {
       const response = await fetch("/api/credit-repair/disputes", {
         headers: {
@@ -65,7 +61,11 @@ const ActiveDisputes: React.FC<ActiveDisputesProps> = ({ limit }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit]);
+
+  useEffect(() => {
+    loadDisputes();
+  }, [loadDisputes]);
 
   const getStatusClass = (status: string): string => {
     const statusClasses = {
