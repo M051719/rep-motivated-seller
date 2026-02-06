@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabase";
@@ -21,14 +21,7 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
     questionnairesCompleted: 0,
   });
 
-  useEffect(() => {
-    if (user) {
-      loadUserNotifications();
-      loadUserProgress();
-    }
-  }, [user]);
-
-  const loadUserNotifications = async () => {
+  const loadUserNotifications = useCallback(async () => {
     try {
       // Enhanced notifications system
       const notifications = [
@@ -53,9 +46,9 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
     } catch (error) {
       console.error("Error loading notifications:", error);
     }
-  };
+  }, []);
 
-  const loadUserProgress = async () => {
+  const loadUserProgress = useCallback(async () => {
     try {
       const [coursesData, certificatesData, questionnairesData] =
         await Promise.all([
@@ -79,7 +72,14 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
     } catch (error) {
       console.error("Error loading user progress:", error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadUserNotifications();
+      loadUserProgress();
+    }
+  }, [user, loadUserNotifications, loadUserProgress]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {

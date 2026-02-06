@@ -4,7 +4,7 @@
  * All documents are encrypted with AES-256-GCM before storage
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Upload,
   Download,
@@ -47,25 +47,7 @@ export default function GLBADocumentPortal() {
   const [success, setSuccess] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>("");
 
-  useEffect(() => {
-    loadUserAndDocuments();
-  }, []);
-
-  const loadUserAndDocuments = async () => {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-        await loadDocuments(user.id);
-      }
-    } catch (err) {
-      console.error("Failed to load user:", err);
-    }
-  };
-
-  const loadDocuments = async (uid: string) => {
+  const loadDocuments = useCallback(async (uid: string) => {
     try {
       const { data, error: fetchError } = await supabase
         .from("secure_documents")
@@ -78,7 +60,25 @@ export default function GLBADocumentPortal() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load documents");
     }
-  };
+  }, []);
+
+  const loadUserAndDocuments = useCallback(async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        await loadDocuments(user.id);
+      }
+    } catch (err) {
+      console.error("Failed to load user:", err);
+    }
+  }, [loadDocuments]);
+
+  useEffect(() => {
+    loadUserAndDocuments();
+  }, [loadUserAndDocuments]);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "../lib/supabase";
 import { toast } from "react-hot-toast";
@@ -61,6 +61,80 @@ const AdminSMSDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Load conversations
+  const loadConversations = useCallback(async () => {
+    try {
+      let query = supabase
+        .from("sms_conversations")
+        .select("*")
+        .order("last_message_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false });
+
+      // Apply filters
+      if (filterStatus !== "all") {
+        query = query.eq("status", filterStatus);
+      }
+      if (filterContactType !== "all") {
+        query = query.eq("contact_type", filterContactType);
+      }
+      if (searchQuery) {
+        query = query.or(
+          `phone_number.ilike.%${searchQuery}%,contact_name.ilike.%${searchQuery}%`,
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      setConversations(data || []);
+    } catch (error) {
+      console.error("Error loading conversations:", error);
+      toast.error("Failed to load conversations");
+    } finally {
+      setLoading(false);
+    }
+  }, [filterContactType, filterStatus, searchQuery]);
+
+  const loadMessages = useCallback(
+    async (phoneNumber: string) => {
+      try {
+        const { data, error } = await supabase
+          .from("sms_message_log")
+          .select("*")
+          .eq("phone_number", phoneNumber)
+          .order("created_at", { ascending: true });
+
+        if (error) throw error;
+        setMessages(data || []);
+
+        // Mark as read
+        if (selectedConversation) {
+          await supabase.rpc("mark_conversation_read", {
+            p_conversation_id: selectedConversation.id,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading messages:", error);
+        toast.error("Failed to load messages");
+      }
+    },
+    [selectedConversation],
+  );
+
+  const loadQuickReplies = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("sms_quick_replies")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+
+      if (error) throw error;
+      setQuickReplies(data || []);
+    } catch (error) {
+      console.error("Error loading quick replies:", error);
+    }
+  }, []);
+
   useEffect(() => {
     loadConversations();
     loadQuickReplies();
@@ -92,78 +166,7 @@ const AdminSMSDashboard = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedConversation]);
-
-  const loadConversations = async () => {
-    try {
-      let query = supabase
-        .from("sms_conversations")
-        .select("*")
-        .order("last_message_at", { ascending: false, nullsFirst: false })
-        .order("created_at", { ascending: false });
-
-      // Apply filters
-      if (filterStatus !== "all") {
-        query = query.eq("status", filterStatus);
-      }
-      if (filterContactType !== "all") {
-        query = query.eq("contact_type", filterContactType);
-      }
-      if (searchQuery) {
-        query = query.or(
-          `phone_number.ilike.%${searchQuery}%,contact_name.ilike.%${searchQuery}%`,
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setConversations(data || []);
-    } catch (error) {
-      console.error("Error loading conversations:", error);
-      toast.error("Failed to load conversations");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadMessages = async (phoneNumber: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("sms_message_log")
-        .select("*")
-        .eq("phone_number", phoneNumber)
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-      setMessages(data || []);
-
-      // Mark as read
-      if (selectedConversation) {
-        await supabase.rpc("mark_conversation_read", {
-          p_conversation_id: selectedConversation.id,
-        });
-      }
-    } catch (error) {
-      console.error("Error loading messages:", error);
-      toast.error("Failed to load messages");
-    }
-  };
-
-  const loadQuickReplies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("sms_quick_replies")
-        .select("*")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true });
-
-      if (error) throw error;
-      setQuickReplies(data || []);
-    } catch (error) {
-      console.error("Error loading quick replies:", error);
-    }
-  };
+  }, [loadConversations, loadMessages, loadQuickReplies, selectedConversation]);
 
   const selectConversation = async (conversation: SMSConversation) => {
     setSelectedConversation(conversation);
@@ -217,7 +220,7 @@ const AdminSMSDashboard = () => {
     }
   };
 
-  const useQuickReply = (reply: QuickReply) => {
+  const handleQuickReply = (reply: QuickReply) => {
     let message = reply.message_template;
 
     // Replace variables
@@ -627,7 +630,7 @@ const AdminSMSDashboard = () => {
                         {quickReplies.map((reply) => (
                           <button
                             key={reply.id}
-                            onClick={() => useQuickReply(reply)}
+                            onClick={() => handleQuickReply(reply)}
                             className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-100 transition-colors"
                           >
                             {reply.title}

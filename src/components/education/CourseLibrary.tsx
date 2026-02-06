@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
 
 interface Course {
@@ -16,11 +16,7 @@ const CourseLibrary: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  useEffect(() => {
-    fetchCourses();
-  }, [selectedCategory]);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     let query = supabase
       .from("courses")
       .select("*")
@@ -39,7 +35,11 @@ const CourseLibrary: React.FC = () => {
       setCourses(data || []);
     }
     setLoading(false);
-  };
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
   const categories = [
     { value: "all", label: "All Courses" },

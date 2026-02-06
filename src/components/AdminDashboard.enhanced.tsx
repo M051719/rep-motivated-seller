@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
@@ -32,12 +32,21 @@ const AdminDashboardEnhancement: React.FC<AdminEnhancementProps> = ({
     integrations: "healthy",
   });
 
-  useEffect(() => {
-    loadEnhancedMetrics();
-    setupRealtimeUpdates();
+  const loadHubSpotMetrics = useCallback(async () => {
+    try {
+      const response = await fetch("/api/hubspot/contacts-count");
+      const data = await response.json();
+
+      setEnhancedMetrics((prev) => ({
+        ...prev,
+        hubspotContacts: data.total || 0,
+      }));
+    } catch (error) {
+      console.error("HubSpot metrics error:", error);
+    }
   }, []);
 
-  const loadEnhancedMetrics = async () => {
+  const loadEnhancedMetrics = useCallback(async () => {
     try {
       // Enhance your existing admin metrics with new data sources
       const [
@@ -86,24 +95,9 @@ const AdminDashboardEnhancement: React.FC<AdminEnhancementProps> = ({
     } catch (error) {
       console.error("Error loading enhanced metrics:", error);
     }
-  };
+  }, [loadHubSpotMetrics]);
 
-  const loadHubSpotMetrics = async () => {
-    try {
-      // Integration with your existing HubSpot service
-      const response = await fetch("/api/hubspot/contacts-count");
-      const data = await response.json();
-
-      setEnhancedMetrics((prev) => ({
-        ...prev,
-        hubspotContacts: data.total || 0,
-      }));
-    } catch (error) {
-      console.error("HubSpot metrics error:", error);
-    }
-  };
-
-  const setupRealtimeUpdates = () => {
+  const setupRealtimeUpdates = useCallback(() => {
     // Real-time activity feed
     const subscription = supabase
       .channel("admin_activity")
@@ -144,7 +138,15 @@ const AdminDashboardEnhancement: React.FC<AdminEnhancementProps> = ({
     return () => {
       subscription.unsubscribe();
     };
-  };
+  }, []);
+
+  useEffect(() => {
+    loadEnhancedMetrics();
+    const cleanup = setupRealtimeUpdates();
+    return () => {
+      cleanup?.();
+    };
+  }, [loadEnhancedMetrics, setupRealtimeUpdates]);
 
   const calculateConversionRate = (
     questionnaires: number,

@@ -2,7 +2,7 @@
 // Allows users to manage their SMS opt-in/opt-out preferences
 // TCPA Compliance UI
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
 import toast from "react-hot-toast";
 
@@ -34,13 +34,7 @@ export const SMSConsentManager: React.FC<SMSConsentManagerProps> = ({
   const [showHistory, setShowHistory] = useState(false);
   const [consentHistory, setConsentHistory] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (initialPhoneNumber) {
-      checkConsentStatus(initialPhoneNumber);
-    }
-  }, [initialPhoneNumber]);
-
-  const checkConsentStatus = async (phone: string) => {
+  const checkConsentStatus = useCallback(async (phone: string) => {
     if (!phone) return;
 
     setLoading(true);
@@ -62,7 +56,13 @@ export const SMSConsentManager: React.FC<SMSConsentManagerProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [onConsentChange]);
+
+  useEffect(() => {
+    if (initialPhoneNumber) {
+      checkConsentStatus(initialPhoneNumber);
+    }
+  }, [checkConsentStatus, initialPhoneNumber]);
 
   const handleOptIn = async () => {
     if (!phoneNumber) {

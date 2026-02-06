@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -43,11 +43,7 @@ const SchedulingDashboard: React.FC = () => {
       "https://calendly.com/repmotivatedseller/enterprise-consultation",
   };
 
-  useEffect(() => {
-    loadUserData();
-  }, [user]);
-
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     if (!user) {
       setLoading(false);
       return;
@@ -97,7 +93,11 @@ const SchedulingDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, userTier]);
+
+  useEffect(() => {
+    loadUserData();
+  }, [loadUserData]);
 
   const handleScheduleNew = (tier: string) => {
     const url = calendlyLinks[tier as keyof typeof calendlyLinks];

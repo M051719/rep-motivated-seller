@@ -6,8 +6,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Mail, Send, FileText, TrendingUp, DollarSign, 
+import {
+  Mail, Send, FileText, TrendingUp, DollarSign,
   MapPin, Calendar, CheckCircle, AlertCircle,
   Download, Eye, Lock, ArrowRight
 } from 'lucide-react';
@@ -73,17 +73,24 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
   const tierLimits = getDirectMailLimits(userTier);
   const isUnlimited = tierLimits.postcards === -1;
 
-  useEffect(() => {
-    loadCampaigns();
-    loadMonthlyUsage();
-  }, []);
-
   const loadCampaigns = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('direct_mail_campaigns')
         .select('*')
-    
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setCampaigns(data || []);
+    } catch (error) {
+      console.error('Error loading campaigns:', error);
+      toast.error('Failed to load campaigns');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadMonthlyUsage = async () => {
     try {
@@ -97,15 +104,43 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
       const { data: monthCampaigns, error } = await supabase
         .from('direct_mail_campaigns')
         .select('sent_count')
-        .gte('created_at', startOfMonth.toISOString());
+        .gte('created_at', startOfMonth.toISOString())
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
-      const totalPostcards = monthCampaigns?.reduce((sum, c) => sum + (c.sent_count || 0), 0) || 0;
+      const totalPostcards =
+        monthCampaigns?.reduce((sum, c) => sum + (c.sent_count || 0), 0) || 0;
+
+      const { count: campaignCount, error: countError } = await supabase
+        .from('direct_mail_campaigns')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', startOfMonth.toISOString())
+        .eq('user_id', user.id);
+
+      if (countError) throw countError;
+
       setMonthlyUsage({
-      // Check tier limits
+        postcards: totalPostcards,
+        campaigns: campaignCount || 0,
+      });
+    } catch (error) {
+      console.error('Error loading monthly usage:', error);
+    }
+  };
+
+  const createCampaign = async (templateType: string, campaignName: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('Please sign in to create a campaign');
+        return;
+      }
+
       if (!isUnlimited && monthlyUsage.campaigns >= tierLimits.campaigns) {
-        toast.error(`You've reached your monthly limit of ${tierLimits.campaigns} campaigns. ${getUpgradeMessage(TIERS.PREMIUM)}`);
+        toast.error(
+          `You've reached your monthly limit of ${tierLimits.campaigns} campaigns. ${getUpgradeMessage(TIERS.PREMIUM)}`,
+        );
         return;
       }
 
@@ -115,21 +150,37 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
           name: campaignName,
           template_type: templateType,
           user_id: user.id,
-          status: 'draft'
+          status: 'draft',
+          sent_count: 0,
+          delivered_count: 0,
+          responded_count: 0,
+          total_cost: 0,
         });
 
       if (error) throw error;
 
       toast.success('Campaign created successfully!');
       setShowCreateModal(false);
-      loadCampaigns();
-      loadMonthlyUsage
-      setLoading(false);
+      await loadCampaigns();
+      await loadMonthlyUsage();
+    } catch (error) {
+      console.error('Failed to create campaign:', error);
+      toast.error('Failed to create campaign');
     }
   };
 
-  const createCampaign = async (templateType: string, campaignName: string) => {
-    try {
+  const calculateROI = (campaign: Campaign) => {
+    if (campaign.total_cost === 0) return 0;
+    const avgDealValue = 5000; // Estimated average deal value
+    const revenue = campaign.responded_count * avgDealValue;
+    return ((revenue - campaign.total_cost) / campaign.total_cost * 100).toFixed(1);
+  };
+
+  useEffect(() => {
+    loadCampaigns();
+    loadMonthlyUsage();
+  }, []);
+
   // Show upgrade prompt for free users
   if (!hasPremiumAccess) {
     return (
@@ -149,7 +200,7 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
             <p className="text-xl text-gray-600 mb-8">
               {getUpgradeMessage(TIERS.PREMIUM)}
             </p>
-            
+
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Premium Features Include:</h2>
               <div className="grid md:grid-cols-2 gap-4 text-left">
@@ -184,7 +235,7 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -221,40 +272,7 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
             <button
               onClick={() => setShowCreateModal(true)}
               disabled={!isUnlimited && monthlyUsage.campaigns >= tierLimits.campaigns}
-              className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
-      toast.error('Failed to create campaign');
-    }
-  };
-
-  const calculateROI = (campaign: Campaign) => {
-    if (campaign.total_cost === 0) return 0;
-    const avgDealValue = 5000; // Estimated average deal value
-    const revenue = campaign.responded_count * avgDealValue;
-    return ((revenue - campaign.total_cost) / campaign.total_cost * 100).toFixed(1);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                📬 Direct Mail Campaigns
-              </h1>
-              <p className="text-gray-600">
-                Send professional mailers powered by Lob API with built-in legal protection
-              </p>
-            </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg"
+              className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="w-5 h-5" />
               Create Campaign
@@ -429,7 +447,7 @@ export default function DirectMailPage({ userTier = TIERS.FREE }: DirectMailPage
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 Create New Campaign
               </h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">

@@ -4,7 +4,7 @@
  * Tier-based access control
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -114,11 +114,6 @@ const KnowledgeBasePage: React.FC = () => {
     fetchUserTier();
   }, []);
 
-  // Filter articles when category or search changes
-  useEffect(() => {
-    filterArticles();
-  }, [selectedCategory, searchQuery, articles]);
-
   const fetchArticles = async () => {
     try {
       setIsLoading(true);
@@ -159,7 +154,7 @@ const KnowledgeBasePage: React.FC = () => {
     }
   };
 
-  const filterArticles = () => {
+  const filterArticles = useCallback(() => {
     let filtered = articles;
 
     // Filter by category
@@ -182,7 +177,12 @@ const KnowledgeBasePage: React.FC = () => {
     }
 
     setFilteredArticles(filtered);
-  };
+  }, [articles, searchQuery, selectedCategory]);
+
+  // Filter articles when category or search changes
+  useEffect(() => {
+    filterArticles();
+  }, [filterArticles]);
 
   const canAccessArticle = (
     articleTier: "basic" | "premium" | "elite",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { Heart, Download, FileText, Trash2 } from "lucide-react";
 import { BackButton } from "../components/ui/BackButton";
@@ -22,11 +22,22 @@ const UserFavoritesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    checkAuthAndFetchFavorites();
+  const fetchFavorites = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.rpc("get_user_favorites");
+
+      if (error) throw error;
+      setFavorites(data || []);
+    } catch (error: any) {
+      console.error("Error fetching favorites:", error);
+      toast.error("Failed to load favorites");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const checkAuthAndFetchFavorites = async () => {
+  const checkAuthAndFetchFavorites = useCallback(async () => {
     try {
       const {
         data: { user },
@@ -44,22 +55,11 @@ const UserFavoritesPage: React.FC = () => {
       console.error("Error checking auth:", error);
       setLoading(false);
     }
-  };
+  }, [fetchFavorites]);
 
-  const fetchFavorites = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase.rpc("get_user_favorites");
-
-      if (error) throw error;
-      setFavorites(data || []);
-    } catch (error: any) {
-      console.error("Error fetching favorites:", error);
-      toast.error("Failed to load favorites");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    checkAuthAndFetchFavorites();
+  }, [checkAuthAndFetchFavorites]);
 
   const handleRemoveFavorite = async (templateId: string) => {
     try {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
@@ -94,17 +94,7 @@ const PropertyDetail: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [editedProperty, setEditedProperty] = useState<Partial<Property>>({});
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    if (id) {
-      fetchPropertyDetails();
-    }
-  }, [id, user, navigate]);
-
-  const fetchPropertyDetails = async () => {
+  const fetchPropertyDetails = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -150,7 +140,17 @@ const PropertyDetail: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate, user?.id]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    if (id) {
+      fetchPropertyDetails();
+    }
+  }, [fetchPropertyDetails, id, navigate, user]);
 
   const handleSave = async () => {
     if (!property) return;

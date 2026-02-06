@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -71,13 +71,7 @@ export default function AIChatPage() {
   }, [messages]);
 
   // Load chat history on mount
-  useEffect(() => {
-    if (user) {
-      loadChatHistory();
-    }
-  }, [user]);
-
-  const loadChatHistory = async () => {
+  const loadChatHistory = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -125,7 +119,13 @@ export default function AIChatPage() {
     } catch (error) {
       console.error("Error loading chat history:", error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadChatHistory();
+    }
+  }, [user, loadChatHistory]);
 
   const createNewSession = async () => {
     if (!user) return null;

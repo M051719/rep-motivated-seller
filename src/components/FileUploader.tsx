@@ -67,103 +67,112 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     return typeMap[type] || "File";
   };
 
-  const validateFile = (file: File): boolean => {
-    // Check file type
-    if (!acceptedTypes.includes(file.type)) {
-      const acceptedExtensions = acceptedTypes
-        .map((type) => {
-          if (type.includes("pdf")) return "PDF";
-          if (type.includes("word")) return "DOC/DOCX";
-          if (type.includes("excel")) return "XLS/XLSX";
-          if (type.includes("image")) return "Images";
-          return "";
-        })
-        .filter(Boolean)
-        .join(", ");
+  const validateFile = useCallback(
+    (file: File): boolean => {
+      // Check file type
+      if (!acceptedTypes.includes(file.type)) {
+        const acceptedExtensions = acceptedTypes
+          .map((type) => {
+            if (type.includes("pdf")) return "PDF";
+            if (type.includes("word")) return "DOC/DOCX";
+            if (type.includes("excel")) return "XLS/XLSX";
+            if (type.includes("image")) return "Images";
+            return "";
+          })
+          .filter(Boolean)
+          .join(", ");
 
-      toast.error(`Please upload a valid file type: ${acceptedExtensions}`);
-      return false;
-    }
+        toast.error(`Please upload a valid file type: ${acceptedExtensions}`);
+        return false;
+      }
 
-    // Check file size
-    const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
-    if (file.size > maxSize) {
-      toast.error(`File size must be less than ${maxSizeMB}MB`);
-      return false;
-    }
+      // Check file size
+      const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
+      if (file.size > maxSize) {
+        toast.error(`File size must be less than ${maxSizeMB}MB`);
+        return false;
+      }
 
-    return true;
-  };
+      return true;
+    },
+    [acceptedTypes, maxSizeMB],
+  );
 
-  const uploadFile = async (file: File) => {
-    if (!validateFile(file)) {
-      return;
-    }
+  const uploadFile = useCallback(
+    async (file: File) => {
+      if (!validateFile(file)) {
+        return;
+      }
 
-    try {
-      setUploading(true);
-      setUploadProgress(0);
-
-      // Generate unique filename
-      const fileExt = getFileExtension(file.name);
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(7);
-      const fileName = `${folder}/${timestamp}-${randomString}.${fileExt}`;
-
-      // Simulate upload progress
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
-
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      clearInterval(progressInterval);
-
-      if (error) throw error;
-
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from(bucket).getPublicUrl(fileName);
-
-      setUploadProgress(100);
-
-      // Call the callback with file info
-      onFileUploaded(publicUrl, file.name, file.size);
-
-      toast.success("File uploaded successfully!");
-    } catch (error: any) {
-      console.error("Upload error:", error);
-      toast.error(error.message || "Failed to upload file");
-    } finally {
-      setTimeout(() => {
-        setUploading(false);
+      try {
+        setUploading(true);
         setUploadProgress(0);
-      }, 1000);
-    }
-  };
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+        // Generate unique filename
+        const fileExt = getFileExtension(file.name);
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(7);
+        const fileName = `${folder}/${timestamp}-${randomString}.${fileExt}`;
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      uploadFile(e.dataTransfer.files[0]);
-    }
-  }, []);
+        // Simulate upload progress
+        const progressInterval = setInterval(() => {
+          setUploadProgress((prev) => {
+            if (prev >= 90) {
+              clearInterval(progressInterval);
+              return 90;
+            }
+            return prev + 10;
+          });
+        }, 200);
+
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from(bucket)
+          .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        clearInterval(progressInterval);
+
+        if (error) throw error;
+
+        // Get public URL
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from(bucket).getPublicUrl(fileName);
+
+        setUploadProgress(100);
+
+        // Call the callback with file info
+        onFileUploaded(publicUrl, file.name, file.size);
+
+        toast.success("File uploaded successfully!");
+      } catch (error: any) {
+        console.error("Upload error:", error);
+        toast.error(error.message || "Failed to upload file");
+      } finally {
+        setTimeout(() => {
+          setUploading(false);
+          setUploadProgress(0);
+        }, 1000);
+      }
+    },
+    [bucket, folder, onFileUploaded, validateFile],
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
+
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        uploadFile(e.dataTransfer.files[0]);
+      }
+    },
+    [uploadFile],
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();

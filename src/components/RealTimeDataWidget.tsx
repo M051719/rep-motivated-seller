@@ -3,7 +3,7 @@
  * Displays real-time market data powered by Dappier
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TrendingUp, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
 import { useDappier } from "../hooks/useDappier";
 
@@ -30,27 +30,27 @@ export default function RealTimeDataWidget({
   } = useDappier();
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (location) {
       await getMarketData(location);
     } else if (topic) {
       await searchRealTime(topic);
     }
     setLastRefresh(new Date());
-  };
+  }, [getMarketData, location, searchRealTime, topic]);
 
   useEffect(() => {
     if (isConfigured && (location || topic)) {
       fetchData();
     }
-  }, [location, topic, isConfigured]);
+  }, [fetchData, isConfigured, location, topic]);
 
   useEffect(() => {
     if (autoRefresh && isConfigured) {
       const interval = setInterval(fetchData, refreshInterval);
       return () => clearInterval(interval);
     }
-  }, [autoRefresh, refreshInterval, isConfigured]);
+  }, [autoRefresh, fetchData, isConfigured, refreshInterval]);
 
   if (!isConfigured) {
     return (

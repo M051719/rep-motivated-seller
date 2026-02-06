@@ -3,7 +3,7 @@
  * Handles subscription payments with Stripe Elements
  */
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -193,11 +193,7 @@ export default function StripeCheckout({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  React.useEffect(() => {
-    createPaymentIntent();
-  }, [planId]);
-
-  const createPaymentIntent = async () => {
+  const createPaymentIntent = useCallback(async () => {
     try {
       const {
         data: { user },
@@ -228,7 +224,11 @@ export default function StripeCheckout({
     } finally {
       setLoading(false);
     }
-  };
+  }, [planId, planPrice]);
+
+  React.useEffect(() => {
+    createPaymentIntent();
+  }, [createPaymentIntent]);
 
   if (loading) {
     return (

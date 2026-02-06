@@ -68,7 +68,7 @@ export function useTTS(options: UseTTSOptions = {}) {
         setIsLoading(false);
       }
     },
-    [options, ttsService],
+    [options, playAudio, ttsService],
   );
 
   const playAudio = useCallback(

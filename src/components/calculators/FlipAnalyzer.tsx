@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { DollarSign } from "lucide-react";
 
 export function FlipAnalyzer() {
@@ -11,7 +11,7 @@ export function FlipAnalyzer() {
     sellingCosts: 6,
   });
 
-  const calculate = () => {
+  const calculate = useCallback(() => {
     const totalCosts =
       inputs.purchasePrice + inputs.repairCosts + inputs.closingCosts;
     const sellingCostsDollar = (inputs.arv * inputs.sellingCosts) / 100;
@@ -20,9 +20,9 @@ export function FlipAnalyzer() {
     const annualizedROI = (roi / inputs.holdingMonths) * 12;
 
     return { totalCosts, sellingCostsDollar, profit, roi, annualizedROI };
-  };
+  }, [inputs]);
 
-  const results = useMemo(() => calculate(), [inputs]);
+  const results = useMemo(() => calculate(), [calculate]);
 
   return (
     <div>

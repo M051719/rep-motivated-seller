@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuthStore } from "../store/authStore";
 import {
@@ -40,11 +40,7 @@ const BlogComments: React.FC<BlogCommentsProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [commentCount, setCommentCount] = useState(initialCommentCount);
 
-  useEffect(() => {
-    fetchComments();
-  }, [blogPostId]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -65,7 +61,11 @@ const BlogComments: React.FC<BlogCommentsProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [blogPostId]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();

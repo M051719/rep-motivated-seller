@@ -73,182 +73,191 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
     return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
   };
 
-  const validateFile = (file: File): boolean => {
-    // Check file type
-    if (!acceptedTypes.includes(file.type)) {
-      const acceptedExtensions = acceptedTypes
-        .map((type) => {
-          if (type.includes("pdf")) return "PDF";
-          if (type.includes("word")) return "DOC/DOCX";
-          if (type.includes("excel")) return "XLS/XLSX";
-          if (type.includes("image")) return "Images";
-          return "";
-        })
-        .filter(Boolean)
-        .join(", ");
+  const validateFile = useCallback(
+    (file: File): boolean => {
+      // Check file type
+      if (!acceptedTypes.includes(file.type)) {
+        const acceptedExtensions = acceptedTypes
+          .map((type) => {
+            if (type.includes("pdf")) return "PDF";
+            if (type.includes("word")) return "DOC/DOCX";
+            if (type.includes("excel")) return "XLS/XLSX";
+            if (type.includes("image")) return "Images";
+            return "";
+          })
+          .filter(Boolean)
+          .join(", ");
 
-      toast.error(
-        `${file.name}: Invalid file type. Accepted: ${acceptedExtensions}`,
-      );
-      return false;
-    }
+        toast.error(
+          `${file.name}: Invalid file type. Accepted: ${acceptedExtensions}`,
+        );
+        return false;
+      }
 
-    // Check file size
-    const maxSize = maxSizeMB * 1024 * 1024;
-    if (file.size > maxSize) {
-      toast.error(`${file.name}: File size must be less than ${maxSizeMB}MB`);
-      return false;
-    }
+      // Check file size
+      const maxSize = maxSizeMB * 1024 * 1024;
+      if (file.size > maxSize) {
+        toast.error(`${file.name}: File size must be less than ${maxSizeMB}MB`);
+        return false;
+      }
 
-    return true;
-  };
+      return true;
+    },
+    [acceptedTypes, maxSizeMB],
+  );
 
-  const uploadSingleFile = async (
-    file: File,
-    index: number,
-  ): Promise<{ url: string; fileName: string; fileSize: number } | null> => {
-    if (!validateFile(file)) {
-      setUploadStatuses((prev) =>
-        prev.map((status, i) =>
-          i === index
-            ? {
-                ...status,
-                status: "error" as const,
-                error: "Validation failed",
-              }
-            : status,
-        ),
-      );
-      return null;
-    }
-
-    try {
-      // Update status to uploading
-      setUploadStatuses((prev) =>
-        prev.map((status, i) =>
-          i === index
-            ? { ...status, status: "uploading" as const, progress: 0 }
-            : status,
-        ),
-      );
-
-      // Generate unique filename
-      const fileExt = getFileExtension(file.name);
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(7);
-      const fileName = `${folder}/${timestamp}-${randomString}.${fileExt}`;
-
-      // Simulate progress
-      const progressInterval = setInterval(() => {
+  const uploadSingleFile = useCallback(
+    async (
+      file: File,
+      index: number,
+    ): Promise<{ url: string; fileName: string; fileSize: number } | null> => {
+      if (!validateFile(file)) {
         setUploadStatuses((prev) =>
-          prev.map((status, i) => {
-            if (i === index && status.progress < 90) {
-              return {
-                ...status,
-                progress: Math.min(status.progress + 10, 90),
-              };
-            }
-            return status;
-          }),
+          prev.map((status, i) =>
+            i === index
+              ? {
+                  ...status,
+                  status: "error" as const,
+                  error: "Validation failed",
+                }
+              : status,
+          ),
         );
-      }, 200);
+        return null;
+      }
 
-      // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      try {
+        // Update status to uploading
+        setUploadStatuses((prev) =>
+          prev.map((status, i) =>
+            i === index
+              ? { ...status, status: "uploading" as const, progress: 0 }
+              : status,
+          ),
+        );
 
-      clearInterval(progressInterval);
+        // Generate unique filename
+        const fileExt = getFileExtension(file.name);
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(7);
+        const fileName = `${folder}/${timestamp}-${randomString}.${fileExt}`;
 
-      if (error) throw error;
-
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from(bucket).getPublicUrl(fileName);
-
-      // Update status to success
-      setUploadStatuses((prev) =>
-        prev.map((status, i) =>
-          i === index
-            ? {
-                ...status,
-                status: "success" as const,
-                progress: 100,
-                url: publicUrl,
-                size: file.size,
+        // Simulate progress
+        const progressInterval = setInterval(() => {
+          setUploadStatuses((prev) =>
+            prev.map((status, i) => {
+              if (i === index && status.progress < 90) {
+                return {
+                  ...status,
+                  progress: Math.min(status.progress + 10, 90),
+                };
               }
-            : status,
-        ),
-      );
+              return status;
+            }),
+          );
+        }, 200);
 
-      return { url: publicUrl, fileName: file.name, fileSize: file.size };
-    } catch (error: any) {
-      console.error("Upload error:", error);
-      setUploadStatuses((prev) =>
-        prev.map((status, i) =>
-          i === index
-            ? { ...status, status: "error" as const, error: error.message }
-            : status,
-        ),
-      );
-      return null;
-    }
-  };
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from(bucket)
+          .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
 
-  const uploadFiles = async (files: FileList) => {
-    setUploading(true);
+        clearInterval(progressInterval);
 
-    // Initialize upload statuses
-    const initialStatuses: UploadStatus[] = Array.from(files).map((file) => ({
-      fileName: file.name,
-      status: "uploading" as const,
-      progress: 0,
-    }));
-    setUploadStatuses(initialStatuses);
+        if (error) throw error;
 
-    if (allowMultiple && files.length > 1) {
-      // Bulk upload
-      const uploadPromises = Array.from(files).map((file, index) =>
-        uploadSingleFile(file, index),
-      );
+        // Get public URL
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from(bucket).getPublicUrl(fileName);
 
-      const results = await Promise.all(uploadPromises);
-      const successfulUploads = results.filter(
-        (r): r is { url: string; fileName: string; fileSize: number } =>
-          r !== null,
-      );
-
-      if (successfulUploads.length > 0 && onBulkFilesUploaded) {
-        onBulkFilesUploaded(successfulUploads);
-        toast.success(
-          `Successfully uploaded ${successfulUploads.length} of ${files.length} files!`,
+        // Update status to success
+        setUploadStatuses((prev) =>
+          prev.map((status, i) =>
+            i === index
+              ? {
+                  ...status,
+                  status: "success" as const,
+                  progress: 100,
+                  url: publicUrl,
+                  size: file.size,
+                }
+              : status,
+          ),
         );
+
+        return { url: publicUrl, fileName: file.name, fileSize: file.size };
+      } catch (error: any) {
+        console.error("Upload error:", error);
+        setUploadStatuses((prev) =>
+          prev.map((status, i) =>
+            i === index
+              ? { ...status, status: "error" as const, error: error.message }
+              : status,
+          ),
+        );
+        return null;
+      }
+    },
+    [bucket, folder, validateFile],
+  );
+
+  const uploadFiles = useCallback(
+    async (files: FileList) => {
+      setUploading(true);
+
+      // Initialize upload statuses
+      const initialStatuses: UploadStatus[] = Array.from(files).map((file) => ({
+        fileName: file.name,
+        status: "uploading" as const,
+        progress: 0,
+      }));
+      setUploadStatuses(initialStatuses);
+
+      if (allowMultiple && files.length > 1) {
+        // Bulk upload
+        const uploadPromises = Array.from(files).map((file, index) =>
+          uploadSingleFile(file, index),
+        );
+
+        const results = await Promise.all(uploadPromises);
+        const successfulUploads = results.filter(
+          (r): r is { url: string; fileName: string; fileSize: number } =>
+            r !== null,
+        );
+
+        if (successfulUploads.length > 0 && onBulkFilesUploaded) {
+          onBulkFilesUploaded(successfulUploads);
+          toast.success(
+            `Successfully uploaded ${successfulUploads.length} of ${files.length} files!`,
+          );
+        }
+
+        if (successfulUploads.length < files.length) {
+          const failedCount = files.length - successfulUploads.length;
+          toast.error(`${failedCount} file(s) failed to upload`);
+        }
+      } else {
+        // Single file upload
+        const result = await uploadSingleFile(files[0], 0);
+        if (result) {
+          onFileUploaded(result.url, result.fileName, result.fileSize);
+          toast.success("File uploaded successfully!");
+        }
       }
 
-      if (successfulUploads.length < files.length) {
-        const failedCount = files.length - successfulUploads.length;
-        toast.error(`${failedCount} file(s) failed to upload`);
-      }
-    } else {
-      // Single file upload
-      const result = await uploadSingleFile(files[0], 0);
-      if (result) {
-        onFileUploaded(result.url, result.fileName, result.fileSize);
-        toast.success("File uploaded successfully!");
-      }
-    }
-
-    setTimeout(() => {
-      setUploading(false);
-      if (!allowMultiple || files.length === 1) {
-        setUploadStatuses([]);
-      }
-    }, 2000);
-  };
+      setTimeout(() => {
+        setUploading(false);
+        if (!allowMultiple || files.length === 1) {
+          setUploadStatuses([]);
+        }
+      }, 2000);
+    },
+    [allowMultiple, onBulkFilesUploaded, onFileUploaded, uploadSingleFile],
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -260,7 +269,7 @@ const BulkFileUploader: React.FC<FileUploaderProps> = ({
         uploadFiles(e.dataTransfer.files);
       }
     },
-    [allowMultiple],
+    [uploadFiles],
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

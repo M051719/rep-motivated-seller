@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabase";
 import { useAuthStore } from "../store/authStore";
@@ -65,15 +65,7 @@ const PropertyInventory: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
-    fetchProperties();
-  }, [user, navigate]);
-
-  const fetchProperties = async () => {
+  const fetchProperties = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -90,7 +82,15 @@ const PropertyInventory: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    fetchProperties();
+  }, [fetchProperties, navigate, user]);
 
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
