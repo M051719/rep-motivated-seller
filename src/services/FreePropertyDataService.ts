@@ -422,6 +422,39 @@ class FreePropertyDataService {
 
     return combinedData;
   }
+
+  static async analyzeMarket(zipCode: string) {
+    const service = new FreePropertyDataService();
+
+    try {
+      // Get market data from multiple free sources
+      const [censusData, osmData] = await Promise.all([
+        service.getCensusData(`zipcode:${zipCode}`),
+        service.getOpenStreetMapData(`zipcode:${zipCode}`),
+      ]);
+
+      return {
+        zipCode,
+        medianHomeValue: (censusData as any)?.medianHomeValue || 0,
+        medianIncome: (censusData as any)?.medianIncome || 0,
+        population: (censusData as any)?.population || 0,
+        amenities: (osmData as any)?.amenities || [],
+        marketTrend: "stable",
+        lastUpdated: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error("Market analysis error:", error);
+      return {
+        zipCode,
+        medianHomeValue: 0,
+        medianIncome: 0,
+        population: 0,
+        amenities: [],
+        marketTrend: "unknown",
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+  }
 }
 
 export default new FreePropertyDataService();

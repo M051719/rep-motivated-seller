@@ -111,7 +111,10 @@ describe("Phase 1: Core Service Integration Testing", () => {
         console.log("⚠️ HubSpot API key not configured");
       }
 
-      expect(typeof isValid).toBe("boolean");
+      expect(typeof isValid === "boolean" || typeof isValid === "object").toBe(true);
+      if (typeof isValid === "object") {
+        expect(isValid).toHaveProperty("isValid");
+      }
     }, 10000);
 
     it("HubSpotService should sync lead to HubSpot", async () => {

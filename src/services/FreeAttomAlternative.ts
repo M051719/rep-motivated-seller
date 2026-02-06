@@ -316,6 +316,31 @@ class FreeAttomAlternative {
     return response.json();
   }
 
+  private async getCensusHousingData(address: string) {
+    try {
+      // Census Housing API is free and public
+      const response = await fetch(
+        `https://api.census.gov/data/2021/acs/acs5?get=NAME,B25001_001E,B25003_002E,B25003_003E&for=tract:*`,
+      );
+      const data = await response.json();
+
+      return {
+        totalUnits: data?.[1]?.[1] || 0,
+        ownerOccupied: data?.[1]?.[2] || 0,
+        renterOccupied: data?.[1]?.[3] || 0,
+        vacancyRate: 0,
+      };
+    } catch (error) {
+      console.error("Census housing data error:", error);
+      return {
+        totalUnits: 0,
+        ownerOccupied: 0,
+        renterOccupied: 0,
+        vacancyRate: 0,
+      };
+    }
+  }
+
   private async getCrimeData(address: string) {
     // Many police departments provide free crime APIs
     const crimeAPIs = {
