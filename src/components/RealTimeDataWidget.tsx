@@ -3,9 +3,9 @@
  * Displays real-time market data powered by Dappier
  */
 
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
-import { useDappier } from '../hooks/useDappier';
+import React, { useState, useEffect } from "react";
+import { TrendingUp, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
+import { useDappier } from "../hooks/useDappier";
 
 interface RealTimeDataWidgetProps {
   location?: string;
@@ -18,9 +18,16 @@ export default function RealTimeDataWidget({
   location,
   topic,
   autoRefresh = false,
-  refreshInterval = 300000 // 5 minutes default
+  refreshInterval = 300000, // 5 minutes default
 }: RealTimeDataWidgetProps) {
-  const { data, isLoading, error, searchRealTime, getMarketData, isConfigured } = useDappier();
+  const {
+    data,
+    isLoading,
+    error,
+    searchRealTime,
+    getMarketData,
+    isConfigured,
+  } = useDappier();
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   const fetchData = async () => {
@@ -51,9 +58,12 @@ export default function RealTimeDataWidget({
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-yellow-900 mb-1">Real-Time Data Not Configured</h4>
+            <h4 className="font-semibold text-yellow-900 mb-1">
+              Real-Time Data Not Configured
+            </h4>
             <p className="text-sm text-yellow-800">
-              Add your Dappier API key to enable real-time market data and insights.
+              Add your Dappier API key to enable real-time market data and
+              insights.
             </p>
           </div>
         </div>
@@ -78,7 +88,9 @@ export default function RealTimeDataWidget({
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-red-900 mb-1">Error Loading Data</h4>
+            <h4 className="font-semibold text-red-900 mb-1">
+              Error Loading Data
+            </h4>
             <p className="text-sm text-red-800">{error}</p>
             <button
               onClick={fetchData}
@@ -108,7 +120,7 @@ export default function RealTimeDataWidget({
           disabled={isLoading}
           className="text-sm text-blue-600 hover:text-blue-700 disabled:text-gray-400 flex items-center gap-1"
         >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
           Refresh
         </button>
       </div>
@@ -116,15 +128,15 @@ export default function RealTimeDataWidget({
       <div className="space-y-4">
         {/* Main Content */}
         {data.content && (
-          <div className="text-gray-700 leading-relaxed">
-            {data.content}
-          </div>
+          <div className="text-gray-700 leading-relaxed">{data.content}</div>
         )}
 
         {/* Sources */}
         {data.sources && data.sources.length > 0 && (
           <div className="pt-4 border-t border-blue-200">
-            <h4 className="text-sm font-semibold text-gray-900 mb-2">Sources:</h4>
+            <h4 className="text-sm font-semibold text-gray-900 mb-2">
+              Sources:
+            </h4>
             <div className="space-y-2">
               {data.sources.map((source, idx) => (
                 <a
@@ -136,9 +148,13 @@ export default function RealTimeDataWidget({
                 >
                   <ExternalLink className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium group-hover:underline">{source.title}</div>
+                    <div className="font-medium group-hover:underline">
+                      {source.title}
+                    </div>
                     {source.snippet && (
-                      <div className="text-gray-600 text-xs mt-1">{source.snippet}</div>
+                      <div className="text-gray-600 text-xs mt-1">
+                        {source.snippet}
+                      </div>
                     )}
                   </div>
                 </a>
@@ -151,7 +167,9 @@ export default function RealTimeDataWidget({
         <div className="text-xs text-gray-500 pt-2 border-t border-blue-100">
           Last updated: {new Date(lastRefresh).toLocaleString()}
           {autoRefresh && (
-            <span className="ml-2">• Auto-refreshing every {refreshInterval / 60000} minutes</span>
+            <span className="ml-2">
+              • Auto-refreshing every {refreshInterval / 60000} minutes
+            </span>
           )}
         </div>
       </div>

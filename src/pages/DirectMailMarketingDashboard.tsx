@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Mail, 
-  FileText, 
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Mail,
+  FileText,
   DollarSign,
   Send,
   CreditCard,
@@ -10,10 +10,10 @@ import {
   Download,
   Calculator,
   CheckCircle,
-  Home
-} from 'lucide-react';
-import { BackButton } from '../components/ui/BackButton';
-import toast from 'react-hot-toast';
+  Home,
+} from "lucide-react";
+import { BackButton } from "../components/ui/BackButton";
+import toast from "react-hot-toast";
 
 interface PropertyInfo {
   address: string;
@@ -28,56 +28,62 @@ interface PropertyInfo {
 interface DesignTemplate {
   id: string;
   name: string;
-  style: 'minimal' | 'professional';
+  style: "minimal" | "professional";
   preview: string;
 }
 
-type MailingService = 'lob' | 'canva';
-type PaymentMethod = 'stripe' | 'paypal';
+type MailingService = "lob" | "canva";
+type PaymentMethod = "stripe" | "paypal";
 
 const MarketingDashboard: React.FC = () => {
-  const [step, setStep] = useState<'design' | 'content' | 'pricing' | 'payment'>('design');
-  const [selectedDesign, setSelectedDesign] = useState<DesignTemplate | null>(null);
-  const [mailingService, setMailingService] = useState<MailingService>('lob');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe');
-  const [documentType, setDocumentType] = useState<'postcard' | 'offer-letter'>('postcard');
+  const [step, setStep] = useState<
+    "design" | "content" | "pricing" | "payment"
+  >("design");
+  const [selectedDesign, setSelectedDesign] = useState<DesignTemplate | null>(
+    null,
+  );
+  const [mailingService, setMailingService] = useState<MailingService>("lob");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("stripe");
+  const [documentType, setDocumentType] = useState<"postcard" | "offer-letter">(
+    "postcard",
+  );
   const [propertyInfo, setPropertyInfo] = useState<PropertyInfo>({
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
     estimatedValue: 0,
     investorOffer: 0,
-    sellerAskingPrice: 0
+    sellerAskingPrice: 0,
   });
   const [quantity, setQuantity] = useState(100);
 
   // Design templates
   const designTemplates: DesignTemplate[] = [
     {
-      id: 'minimal-empathic',
-      name: 'Minimal & Empathic',
-      style: 'minimal',
-      preview: '🏠 Simple, clean design with compassionate messaging'
+      id: "minimal-empathic",
+      name: "Minimal & Empathic",
+      style: "minimal",
+      preview: "🏠 Simple, clean design with compassionate messaging",
     },
     {
-      id: 'professional-caring',
-      name: 'Professional & Caring',
-      style: 'professional',
-      preview: '💼 Professional layout with understanding tone'
+      id: "professional-caring",
+      name: "Professional & Caring",
+      style: "professional",
+      preview: "💼 Professional layout with understanding tone",
     },
     {
-      id: 'minimal-direct',
-      name: 'Minimal & Direct',
-      style: 'minimal',
-      preview: '📬 Clean, straightforward, empathetic CTA'
+      id: "minimal-direct",
+      name: "Minimal & Direct",
+      style: "minimal",
+      preview: "📬 Clean, straightforward, empathetic CTA",
     },
     {
-      id: 'professional-supportive',
-      name: 'Professional & Supportive',
-      style: 'professional',
-      preview: '🤝 Trustworthy design with supportive language'
-    }
+      id: "professional-supportive",
+      name: "Professional & Supportive",
+      style: "professional",
+      preview: "🤝 Trustworthy design with supportive language",
+    },
   ];
 
   // Pricing calculator
@@ -85,15 +91,18 @@ const MarketingDashboard: React.FC = () => {
     const baseCosts = {
       lob: {
         postcard: 0.65,
-        letter: 0.95
+        letter: 0.95,
       },
       canva: {
         postcard: 0.45,
-        letter: 0.75
-      }
+        letter: 0.75,
+      },
     };
 
-    const costPerPiece = baseCosts[mailingService][documentType === 'postcard' ? 'postcard' : 'letter'];
+    const costPerPiece =
+      baseCosts[mailingService][
+        documentType === "postcard" ? "postcard" : "letter"
+      ];
     const subtotal = costPerPiece * quantity;
     const tax = subtotal * 0.08;
     const total = subtotal + tax;
@@ -102,7 +111,7 @@ const MarketingDashboard: React.FC = () => {
       costPerPiece,
       subtotal,
       tax,
-      total
+      total,
     };
   };
 
@@ -110,31 +119,39 @@ const MarketingDashboard: React.FC = () => {
 
   const handleDesignSelect = (template: DesignTemplate) => {
     setSelectedDesign(template);
-    setStep('content');
+    setStep("content");
   };
 
   const handleContentSubmit = () => {
-    if (documentType === 'offer-letter') {
-      if (!propertyInfo.address || !propertyInfo.investorOffer || !propertyInfo.sellerAskingPrice) {
-        toast.error('Please complete all property information');
+    if (documentType === "offer-letter") {
+      if (
+        !propertyInfo.address ||
+        !propertyInfo.investorOffer ||
+        !propertyInfo.sellerAskingPrice
+      ) {
+        toast.error("Please complete all property information");
         return;
       }
     }
-    setStep('pricing');
+    setStep("pricing");
   };
 
   const handlePricingConfirm = () => {
-    setStep('payment');
+    setStep("payment");
   };
 
   const handlePayment = async () => {
-    toast.success(`Processing payment via ${paymentMethod === 'stripe' ? 'Stripe' : 'PayPal'}...`);
-    
+    toast.success(
+      `Processing payment via ${paymentMethod === "stripe" ? "Stripe" : "PayPal"}...`,
+    );
+
     // In production, integrate actual payment processing
     setTimeout(() => {
-      toast.success(`Campaign created! ${quantity} ${documentType}s will be sent via ${mailingService === 'lob' ? 'Lob' : 'Canva'}`);
+      toast.success(
+        `Campaign created! ${quantity} ${documentType}s will be sent via ${mailingService === "lob" ? "Lob" : "Canva"}`,
+      );
       // Reset to design step
-      setStep('design');
+      setStep("design");
       setSelectedDesign(null);
     }, 2000);
   };
@@ -154,43 +171,54 @@ const MarketingDashboard: React.FC = () => {
             📬 Direct Mail Marketing System
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Create empathic, professional direct mail campaigns to help families facing foreclosure
+            Create empathic, professional direct mail campaigns to help families
+            facing foreclosure
           </p>
         </motion.div>
 
         {/* Progress Steps */}
         <div className="mb-12">
           <div className="flex justify-center items-center gap-4">
-            {['design', 'content', 'pricing', 'payment'].map((stepName, index) => (
-              <React.Fragment key={stepName}>
-                <div className="flex items-center">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                      step === stepName
-                        ? 'bg-blue-600 text-white'
-                        : step > stepName || ['design', 'content', 'pricing', 'payment'].indexOf(step) > index
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}
-                  >
-                    {['design', 'content', 'pricing', 'payment'].indexOf(step) > index ? (
-                      <CheckCircle className="w-6 h-6" />
-                    ) : (
-                      index + 1
-                    )}
+            {["design", "content", "pricing", "payment"].map(
+              (stepName, index) => (
+                <React.Fragment key={stepName}>
+                  <div className="flex items-center">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                        step === stepName
+                          ? "bg-blue-600 text-white"
+                          : step > stepName ||
+                              [
+                                "design",
+                                "content",
+                                "pricing",
+                                "payment",
+                              ].indexOf(step) > index
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-300 text-gray-600"
+                      }`}
+                    >
+                      {["design", "content", "pricing", "payment"].indexOf(
+                        step,
+                      ) > index ? (
+                        <CheckCircle className="w-6 h-6" />
+                      ) : (
+                        index + 1
+                      )}
+                    </div>
+                    <span className="ml-2 text-sm font-medium text-gray-700 capitalize">
+                      {stepName}
+                    </span>
                   </div>
-                  <span className="ml-2 text-sm font-medium text-gray-700 capitalize">
-                    {stepName}
-                  </span>
-                </div>
-                {index < 3 && <div className="w-12 h-0.5 bg-gray-300" />}
-              </React.Fragment>
-            ))}
+                  {index < 3 && <div className="w-12 h-0.5 bg-gray-300" />}
+                </React.Fragment>
+              ),
+            )}
           </div>
         </div>
 
         {/* Step 1: Design Selection */}
-        {step === 'design' && (
+        {step === "design" && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -208,11 +236,11 @@ const MarketingDashboard: React.FC = () => {
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    onClick={() => setDocumentType('postcard')}
+                    onClick={() => setDocumentType("postcard")}
                     className={`p-6 rounded-xl border-2 transition-all ${
-                      documentType === 'postcard'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
+                      documentType === "postcard"
+                        ? "border-blue-600 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
                     }`}
                   >
                     <Mail className="w-12 h-12 text-blue-600 mb-3 mx-auto" />
@@ -222,15 +250,17 @@ const MarketingDashboard: React.FC = () => {
                     </p>
                   </button>
                   <button
-                    onClick={() => setDocumentType('offer-letter')}
+                    onClick={() => setDocumentType("offer-letter")}
                     className={`p-6 rounded-xl border-2 transition-all ${
-                      documentType === 'offer-letter'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
+                      documentType === "offer-letter"
+                        ? "border-blue-600 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
                     }`}
                   >
                     <FileText className="w-12 h-12 text-green-600 mb-3 mx-auto" />
-                    <h3 className="font-bold text-gray-900 mb-2">Offer Letter</h3>
+                    <h3 className="font-bold text-gray-900 mb-2">
+                      Offer Letter
+                    </h3>
                     <p className="text-sm text-gray-600">
                       Professional property offer with pricing details
                     </p>
@@ -247,13 +277,17 @@ const MarketingDashboard: React.FC = () => {
                     className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-6 cursor-pointer hover:border-blue-500 hover:shadow-lg transition-all"
                   >
                     <div className="text-center mb-4">
-                      <div className="text-5xl mb-3">{template.style === 'minimal' ? '📄' : '💼'}</div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{template.name}</h3>
+                      <div className="text-5xl mb-3">
+                        {template.style === "minimal" ? "📄" : "💼"}
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {template.name}
+                      </h3>
                       <span
                         className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                          template.style === 'minimal'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-purple-100 text-purple-700'
+                          template.style === "minimal"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-purple-100 text-purple-700"
                         }`}
                       >
                         {template.style}
@@ -268,7 +302,7 @@ const MarketingDashboard: React.FC = () => {
         )}
 
         {/* Step 2: Content Creation */}
-        {step === 'content' && (
+        {step === "content" && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -277,10 +311,12 @@ const MarketingDashboard: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                 <FileText className="w-8 h-8 text-green-600" />
-                {documentType === 'postcard' ? 'Postcard Content' : 'Offer Letter Details'}
+                {documentType === "postcard"
+                  ? "Postcard Content"
+                  : "Offer Letter Details"}
               </h2>
 
-              {documentType === 'offer-letter' && (
+              {documentType === "offer-letter" && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -290,38 +326,64 @@ const MarketingDashboard: React.FC = () => {
                       <input
                         type="text"
                         value={propertyInfo.address}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, address: e.target.value })}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            address: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="123 Main St"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City
+                      </label>
                       <input
                         type="text"
                         value={propertyInfo.city}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, city: e.target.value })}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            city: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Springfield"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        State
+                      </label>
                       <input
                         type="text"
                         value={propertyInfo.state}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, state: e.target.value })}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            state: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="IL"
                         maxLength={2}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">ZIP Code</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ZIP Code
+                      </label>
                       <input
                         type="text"
                         value={propertyInfo.zip}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, zip: e.target.value })}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            zip: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="62701"
                       />
@@ -336,8 +398,13 @@ const MarketingDashboard: React.FC = () => {
                       </label>
                       <input
                         type="number"
-                        value={propertyInfo.estimatedValue || ''}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, estimatedValue: parseFloat(e.target.value) })}
+                        value={propertyInfo.estimatedValue || ""}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            estimatedValue: parseFloat(e.target.value),
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="250000"
                       />
@@ -349,8 +416,13 @@ const MarketingDashboard: React.FC = () => {
                       </label>
                       <input
                         type="number"
-                        value={propertyInfo.investorOffer || ''}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, investorOffer: parseFloat(e.target.value) })}
+                        value={propertyInfo.investorOffer || ""}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            investorOffer: parseFloat(e.target.value),
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="200000"
                       />
@@ -362,8 +434,13 @@ const MarketingDashboard: React.FC = () => {
                       </label>
                       <input
                         type="number"
-                        value={propertyInfo.sellerAskingPrice || ''}
-                        onChange={(e) => setPropertyInfo({ ...propertyInfo, sellerAskingPrice: parseFloat(e.target.value) })}
+                        value={propertyInfo.sellerAskingPrice || ""}
+                        onChange={(e) =>
+                          setPropertyInfo({
+                            ...propertyInfo,
+                            sellerAskingPrice: parseFloat(e.target.value),
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="225000"
                       />
@@ -372,24 +449,33 @@ const MarketingDashboard: React.FC = () => {
                 </div>
               )}
 
-              {documentType === 'postcard' && (
+              {documentType === "postcard" && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                  <h3 className="font-bold text-gray-900 mb-3">Empathic Messaging Preview</h3>
+                  <h3 className="font-bold text-gray-900 mb-3">
+                    Empathic Messaging Preview
+                  </h3>
                   <p className="text-gray-700 leading-relaxed">
-                    "We understand facing foreclosure is overwhelming. You're not alone, and there are options to help. 
-                    RepMotivatedSeller provides compassionate guidance, resources, and support to protect your home and family. 
-                    Let us help you navigate this challenge with dignity and hope."
+                    "We understand facing foreclosure is overwhelming. You're
+                    not alone, and there are options to help. RepMotivatedSeller
+                    provides compassionate guidance, resources, and support to
+                    protect your home and family. Let us help you navigate this
+                    challenge with dignity and hope."
                   </p>
                   <div className="mt-4 p-4 bg-white rounded border border-blue-200">
-                    <p className="text-sm font-medium text-blue-800">Call-to-Action:</p>
-                    <p className="text-gray-700 mt-1">"Schedule a free consultation today. We're here to listen and help."</p>
+                    <p className="text-sm font-medium text-blue-800">
+                      Call-to-Action:
+                    </p>
+                    <p className="text-gray-700 mt-1">
+                      "Schedule a free consultation today. We're here to listen
+                      and help."
+                    </p>
                   </div>
                 </div>
               )}
 
               <div className="flex gap-4 mt-8">
                 <button
-                  onClick={() => setStep('design')}
+                  onClick={() => setStep("design")}
                   className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
                 >
                   Back
@@ -406,7 +492,7 @@ const MarketingDashboard: React.FC = () => {
         )}
 
         {/* Step 3: Pricing Calculator */}
-        {step === 'pricing' && (
+        {step === "pricing" && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -425,31 +511,37 @@ const MarketingDashboard: React.FC = () => {
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    onClick={() => setMailingService('lob')}
+                    onClick={() => setMailingService("lob")}
                     className={`p-6 rounded-xl border-2 transition-all ${
-                      mailingService === 'lob'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
+                      mailingService === "lob"
+                        ? "border-blue-600 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
                     }`}
                   >
                     <h3 className="font-bold text-gray-900 mb-2">📮 Lob</h3>
-                    <p className="text-sm text-gray-600 mb-2">Premium delivery service</p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Premium delivery service
+                    </p>
                     <p className="text-2xl font-bold text-blue-600">
-                      ${documentType === 'postcard' ? '0.65' : '0.95'}/piece
+                      ${documentType === "postcard" ? "0.65" : "0.95"}/piece
                     </p>
                   </button>
                   <button
-                    onClick={() => setMailingService('canva')}
+                    onClick={() => setMailingService("canva")}
                     className={`p-6 rounded-xl border-2 transition-all ${
-                      mailingService === 'canva'
-                        ? 'border-purple-600 bg-purple-50'
-                        : 'border-gray-200 hover:border-purple-300'
+                      mailingService === "canva"
+                        ? "border-purple-600 bg-purple-50"
+                        : "border-gray-200 hover:border-purple-300"
                     }`}
                   >
-                    <h3 className="font-bold text-gray-900 mb-2">🎨 Canva Print</h3>
-                    <p className="text-sm text-gray-600 mb-2">Affordable design & print</p>
+                    <h3 className="font-bold text-gray-900 mb-2">
+                      🎨 Canva Print
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Affordable design & print
+                    </p>
                     <p className="text-2xl font-bold text-purple-600">
-                      ${documentType === 'postcard' ? '0.45' : '0.75'}/piece
+                      ${documentType === "postcard" ? "0.45" : "0.75"}/piece
                     </p>
                   </button>
                 </div>
@@ -471,18 +563,27 @@ const MarketingDashboard: React.FC = () => {
                 />
                 <div className="flex justify-between mt-2">
                   <span className="text-sm text-gray-600">50</span>
-                  <span className="text-2xl font-bold text-blue-600">{quantity} pieces</span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    {quantity} pieces
+                  </span>
                   <span className="text-sm text-gray-600">10,000</span>
                 </div>
               </div>
 
               {/* Cost Breakdown */}
               <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Cost Breakdown</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Cost Breakdown
+                </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-700">Cost per piece ({mailingService === 'lob' ? 'Lob' : 'Canva'})</span>
-                    <span className="font-semibold">${pricing.costPerPiece.toFixed(2)}</span>
+                    <span className="text-gray-700">
+                      Cost per piece (
+                      {mailingService === "lob" ? "Lob" : "Canva"})
+                    </span>
+                    <span className="font-semibold">
+                      ${pricing.costPerPiece.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-700">Quantity</span>
@@ -490,22 +591,28 @@ const MarketingDashboard: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-lg">
                     <span className="text-gray-700">Subtotal</span>
-                    <span className="font-bold text-blue-600">${pricing.subtotal.toFixed(2)}</span>
+                    <span className="font-bold text-blue-600">
+                      ${pricing.subtotal.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-700">Tax (8%)</span>
-                    <span className="font-semibold">${pricing.tax.toFixed(2)}</span>
+                    <span className="font-semibold">
+                      ${pricing.tax.toFixed(2)}
+                    </span>
                   </div>
                   <div className="border-t-2 border-gray-300 pt-3 flex justify-between text-2xl">
                     <span className="font-bold text-gray-900">Total</span>
-                    <span className="font-bold text-green-600">${pricing.total.toFixed(2)}</span>
+                    <span className="font-bold text-green-600">
+                      ${pricing.total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-4">
                 <button
-                  onClick={() => setStep('content')}
+                  onClick={() => setStep("content")}
                   className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
                 >
                   Back
@@ -522,7 +629,7 @@ const MarketingDashboard: React.FC = () => {
         )}
 
         {/* Step 4: Payment */}
-        {step === 'payment' && (
+        {step === "payment" && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -537,11 +644,11 @@ const MarketingDashboard: React.FC = () => {
               <div className="mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    onClick={() => setPaymentMethod('stripe')}
+                    onClick={() => setPaymentMethod("stripe")}
                     className={`p-6 rounded-xl border-2 transition-all ${
-                      paymentMethod === 'stripe'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
+                      paymentMethod === "stripe"
+                        ? "border-blue-600 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
                     }`}
                   >
                     <CreditCard className="w-12 h-12 text-blue-600 mb-3 mx-auto" />
@@ -549,11 +656,11 @@ const MarketingDashboard: React.FC = () => {
                     <p className="text-sm text-gray-600">Credit/Debit Card</p>
                   </button>
                   <button
-                    onClick={() => setPaymentMethod('paypal')}
+                    onClick={() => setPaymentMethod("paypal")}
                     className={`p-6 rounded-xl border-2 transition-all ${
-                      paymentMethod === 'paypal'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
+                      paymentMethod === "paypal"
+                        ? "border-blue-600 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
                     }`}
                   >
                     <DollarSign className="w-12 h-12 text-blue-600 mb-3 mx-auto" />
@@ -565,19 +672,27 @@ const MarketingDashboard: React.FC = () => {
 
               {/* Order Summary */}
               <div className="bg-gray-50 rounded-xl p-6 mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Order Summary</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Order Summary
+                </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Document Type:</span>
-                    <span className="font-semibold capitalize">{documentType.replace('-', ' ')}</span>
+                    <span className="font-semibold capitalize">
+                      {documentType.replace("-", " ")}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Design:</span>
-                    <span className="font-semibold">{selectedDesign?.name}</span>
+                    <span className="font-semibold">
+                      {selectedDesign?.name}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Mailing Service:</span>
-                    <span className="font-semibold">{mailingService === 'lob' ? 'Lob' : 'Canva Print'}</span>
+                    <span className="font-semibold">
+                      {mailingService === "lob" ? "Lob" : "Canva Print"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Quantity:</span>
@@ -585,14 +700,16 @@ const MarketingDashboard: React.FC = () => {
                   </div>
                   <div className="border-t border-gray-300 pt-2 mt-2 flex justify-between text-lg">
                     <span className="font-bold">Total Amount:</span>
-                    <span className="font-bold text-green-600">${pricing.total.toFixed(2)}</span>
+                    <span className="font-bold text-green-600">
+                      ${pricing.total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-4">
                 <button
-                  onClick={() => setStep('pricing')}
+                  onClick={() => setStep("pricing")}
                   className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
                 >
                   Back
@@ -617,9 +734,12 @@ const MarketingDashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-bold mb-2">📄 Download Template Samples</h3>
+              <h3 className="text-2xl font-bold mb-2">
+                📄 Download Template Samples
+              </h3>
               <p className="opacity-90">
-                Get pre-designed postcard and offer letter templates to customize
+                Get pre-designed postcard and offer letter templates to
+                customize
               </p>
             </div>
             <button className="px-6 py-3 bg-white text-purple-600 rounded-lg hover:bg-gray-100 transition-colors font-semibold flex items-center gap-2">

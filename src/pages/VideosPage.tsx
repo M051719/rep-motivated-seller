@@ -32,13 +32,13 @@ const VideosPage: React.FC = () => {
   // Handle ESC key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedVideo) {
+      if (e.key === "Escape" && selectedVideo) {
         setSelectedVideo(null);
       }
     };
-    
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
   }, [selectedVideo]);
 
   const loadVideos = async () => {
@@ -378,7 +378,7 @@ VITE_YOUTUBE_CHANNEL_ID=your_channel_id_here`}
               <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-4 py-2 rounded-full pointer-events-none">
                 Click anywhere outside to close • Press ESC
               </div>
-              
+
               <motion.div
                 className="bg-white rounded-xl max-w-4xl w-full shadow-2xl overflow-hidden relative my-8"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -428,7 +428,7 @@ VITE_YOUTUBE_CHANNEL_ID=your_channel_id_here`}
                         {formatDate(selectedVideo.publishedAt)}
                       </span>
                     </div>
-                    
+
                     {/* Back to Library Button */}
                     <button
                       onClick={() => setSelectedVideo(null)}

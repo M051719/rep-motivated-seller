@@ -252,9 +252,8 @@ export class MailerLiteService {
     const subscriberId = subscriber.data?.id;
     if (subscriberId) {
       // Import dynamically to avoid circular dependencies
-      const { MailerLiteHubSpotSyncService } = await import(
-        "../sync/MailerLiteHubSpotSyncService"
-      );
+      const { MailerLiteHubSpotSyncService } =
+        await import("../sync/MailerLiteHubSpotSyncService");
       await MailerLiteHubSpotSyncService.updateMailerLiteSubscriberId(
         data.submissionId,
         subscriberId,
@@ -328,15 +327,15 @@ export class MailerLiteService {
           <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px;">New Foreclosure Submission</h1>
           </div>
-          
+
           <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
             <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
               <div style="display: inline-block; background: ${urgencyColor}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 20px;">
                 ${data.urgency.toUpperCase()} PRIORITY
               </div>
-              
+
               <h2 style="color: #1f2937; margin: 20px 0 15px 0; font-size: 20px;">Contact Information</h2>
-              
+
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;"><strong>Name:</strong></td>
@@ -372,15 +371,15 @@ export class MailerLiteService {
                 </tr>
               </table>
             </div>
-            
+
             <div style="text-align: center; margin-top: 30px;">
-              <a href="https://repmotivatedseller.com/admin/submissions/${data.submissionId}" 
+              <a href="https://repmotivatedseller.com/admin/submissions/${data.submissionId}"
                  style="display: inline-block; background: #10B981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
                 View Full Submission
               </a>
             </div>
           </div>
-          
+
           <div style="text-align: center; padding: 20px; color: #6b7280; font-size: 14px;">
             <p>RepMotivatedSeller - Foreclosure Assistance Platform</p>
             <p style="margin: 5px 0;">

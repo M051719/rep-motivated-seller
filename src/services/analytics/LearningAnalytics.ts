@@ -26,7 +26,7 @@ class LearningAnalyticsService {
       totalWatchTime: 0,
       lessonsCompleted: 0,
       averageScore: 0,
-      currentStreak: 0
+      currentStreak: 0,
     };
   }
 
@@ -34,15 +34,26 @@ class LearningAnalyticsService {
     return [];
   }
 
-  async getLearningActivity(userId: string, days: number): Promise<LearningActivity[]> {
+  async getLearningActivity(
+    userId: string,
+    days: number,
+  ): Promise<LearningActivity[]> {
     return [];
   }
 
-  async trackLessonView(userId: string, lessonId: string, duration: number): Promise<void> {
+  async trackLessonView(
+    userId: string,
+    lessonId: string,
+    duration: number,
+  ): Promise<void> {
     // Track lesson view
   }
 
-  async trackLessonComplete(userId: string, lessonId: string, score?: number): Promise<void> {
+  async trackLessonComplete(
+    userId: string,
+    lessonId: string,
+    score?: number,
+  ): Promise<void> {
     // Track lesson completion
   }
 }

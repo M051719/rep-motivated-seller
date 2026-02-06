@@ -326,7 +326,7 @@ const ResourcesPage: React.FC = () => {
                   Investment Calculators
                 </h3>
                 <p className="text-gray-600 mb-4">Used 12,300+ times</p>
-                <Link 
+                <Link
                   to="/calculators"
                   className="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
                 >
@@ -377,5 +377,3 @@ const ResourcesPage: React.FC = () => {
 };
 
 export default ResourcesPage;
-
-

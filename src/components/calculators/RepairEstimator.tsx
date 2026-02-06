@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Wrench, Plus, Trash2, Calculator } from 'lucide-react';
+import React, { useState } from "react";
+import { Wrench, Plus, Trash2, Calculator } from "lucide-react";
 
 interface RepairItem {
   id: string;
@@ -11,21 +11,21 @@ interface RepairItem {
 
 export const RepairEstimator: React.FC = () => {
   const [items, setItems] = useState<RepairItem[]>([
-    { id: '1', category: 'Kitchen', description: '', quantity: 1, unitCost: 0 },
+    { id: "1", category: "Kitchen", description: "", quantity: 1, unitCost: 0 },
   ]);
 
   const categories = [
-    'Kitchen',
-    'Bathroom',
-    'Flooring',
-    'Paint/Drywall',
-    'Roofing',
-    'HVAC',
-    'Plumbing',
-    'Electrical',
-    'Windows/Doors',
-    'Landscaping',
-    'Other',
+    "Kitchen",
+    "Bathroom",
+    "Flooring",
+    "Paint/Drywall",
+    "Roofing",
+    "HVAC",
+    "Plumbing",
+    "Electrical",
+    "Windows/Doors",
+    "Landscaping",
+    "Other",
   ];
 
   const addItem = () => {
@@ -33,8 +33,8 @@ export const RepairEstimator: React.FC = () => {
       ...items,
       {
         id: Date.now().toString(),
-        category: 'Kitchen',
-        description: '',
+        category: "Kitchen",
+        description: "",
         quantity: 1,
         unitCost: 0,
       },
@@ -48,8 +48,8 @@ export const RepairEstimator: React.FC = () => {
   const updateItem = (id: string, field: keyof RepairItem, value: any) => {
     setItems(
       items.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
+        item.id === id ? { ...item, [field]: value } : item,
+      ),
     );
   };
 
@@ -97,11 +97,18 @@ export const RepairEstimator: React.FC = () => {
           if (categoryItems.length === 0) return null;
 
           return (
-            <div key={category} className="border-2 border-gray-200 rounded-lg p-4">
+            <div
+              key={category}
+              className="border-2 border-gray-200 rounded-lg p-4"
+            >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-gray-800">{category}</h3>
                 <div className="text-lg font-semibold text-blue-600">
-                  ${categoryTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  $
+                  {categoryTotal.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </div>
               </div>
 
@@ -113,7 +120,9 @@ export const RepairEstimator: React.FC = () => {
                   >
                     <select
                       value={item.category}
-                      onChange={(e) => updateItem(item.id, 'category', e.target.value)}
+                      onChange={(e) =>
+                        updateItem(item.id, "category", e.target.value)
+                      }
                       className="col-span-3 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {categories.map((cat) => (
@@ -127,23 +136,37 @@ export const RepairEstimator: React.FC = () => {
                       type="text"
                       placeholder="Description"
                       value={item.description}
-                      onChange={(e) => updateItem(item.id, 'description', e.target.value)}
+                      onChange={(e) =>
+                        updateItem(item.id, "description", e.target.value)
+                      }
                       className="col-span-4 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
 
                     <input
                       type="number"
                       placeholder="Qty"
-                      value={item.quantity || ''}
-                      onChange={(e) => updateItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                      value={item.quantity || ""}
+                      onChange={(e) =>
+                        updateItem(
+                          item.id,
+                          "quantity",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
                       className="col-span-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
 
                     <input
                       type="number"
                       placeholder="Unit Cost"
-                      value={item.unitCost || ''}
-                      onChange={(e) => updateItem(item.id, 'unitCost', parseFloat(e.target.value) || 0)}
+                      value={item.unitCost || ""}
+                      onChange={(e) =>
+                        updateItem(
+                          item.id,
+                          "unitCost",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
                       className="col-span-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
 
@@ -177,21 +200,37 @@ export const RepairEstimator: React.FC = () => {
           <div className="bg-white rounded-lg p-4 text-center">
             <div className="text-sm text-gray-600 mb-1">Estimated Cost</div>
             <div className="text-2xl font-bold text-blue-600">
-              ${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {calculateTotal().toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
 
           <div className="bg-white rounded-lg p-4 text-center">
-            <div className="text-sm text-gray-600 mb-1">+ Contingency (10%)</div>
+            <div className="text-sm text-gray-600 mb-1">
+              + Contingency (10%)
+            </div>
             <div className="text-2xl font-bold text-orange-600">
-              ${(calculateTotal() * 0.1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {(calculateTotal() * 0.1).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
 
           <div className="bg-white rounded-lg p-4 text-center">
-            <div className="text-sm text-gray-600 mb-1">Total with Contingency</div>
+            <div className="text-sm text-gray-600 mb-1">
+              Total with Contingency
+            </div>
             <div className="text-2xl font-bold text-green-600">
-              ${(calculateTotal() * 1.1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              $
+              {(calculateTotal() * 1.1).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
         </div>

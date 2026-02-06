@@ -1,23 +1,26 @@
 // src/components/compliance/SMSOptInComponent.tsx
-import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import React, { useState } from "react";
+import { supabase } from "../../lib/supabase";
 
 interface SMSOptInProps {
   onOptInComplete?: (success: boolean, phoneNumber?: string) => void;
   className?: string;
 }
 
-const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className }) => {
+const SMSOptInComponent: React.FC<SMSOptInProps> = ({
+  onOptInComplete,
+  className,
+}) => {
   const [step, setStep] = useState(1);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showDetails, setShowDetails] = useState(false);
 
   const formatPhoneNumber = (value: string) => {
-    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumber = value.replace(/[^\d]/g, "");
     const phoneNumberLength = phoneNumber.length;
 
     if (phoneNumberLength < 4) return phoneNumber;
@@ -34,38 +37,38 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
 
   const handleInitialOptIn = async () => {
     if (!phoneNumber || !agreedToTerms) {
-      setError('Please enter your phone number and agree to the terms');
+      setError("Please enter your phone number and agree to the terms");
       return;
     }
 
-    const cleanPhone = phoneNumber.replace(/[^\d]/g, '');
+    const cleanPhone = phoneNumber.replace(/[^\d]/g, "");
     if (cleanPhone.length !== 10) {
-      setError('Please enter a valid 10-digit phone number');
+      setError("Please enter a valid 10-digit phone number");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
-      const response = await fetch('/api/sms/send-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/sms/send-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phoneNumber: `+1${cleanPhone}`,
-          message: `RepMotivatedSeller verification code: ${verificationCode}. Reply STOP to opt out.`
-        })
+          message: `RepMotivatedSeller verification code: ${verificationCode}. Reply STOP to opt out.`,
+        }),
       });
 
       if (response.ok) {
         setStep(2);
       } else {
-        throw new Error('Failed to send verification code');
+        throw new Error("Failed to send verification code");
       }
     } catch (error) {
-      console.error('Opt-in error:', error);
-      setError('Failed to send verification code. Please try again.');
+      console.error("Opt-in error:", error);
+      setError("Failed to send verification code. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,50 +76,53 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
 
   const handleVerification = async () => {
     if (!verificationCode || verificationCode.length !== 6) {
-      setError('Please enter the 6-digit verification code');
+      setError("Please enter the 6-digit verification code");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const ipResponse = await fetch("https://api.ipify.org?format=json");
       const ipData = await ipResponse.json();
-      
-      const response = await fetch('/api/sms/verify-opt-in', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+
+      const response = await fetch("/api/sms/verify-opt-in", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          phoneNumber: `+1${phoneNumber.replace(/[^\d]/g, '')}`,
+          phoneNumber: `+1${phoneNumber.replace(/[^\d]/g, "")}`,
           verificationCode,
           consentTimestamp: new Date().toISOString(),
-          ipAddress: ipData.ip
-        })
+          ipAddress: ipData.ip,
+        }),
       });
 
       if (response.ok) {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-        await supabase.from('sms_opt_ins').insert({
+        await supabase.from("sms_opt_ins").insert({
           user_id: user?.id || null,
-          phone_number: `+1${phoneNumber.replace(/[^\d]/g, '')}`,
+          phone_number: `+1${phoneNumber.replace(/[^\d]/g, "")}`,
           opted_in_at: new Date().toISOString(),
-          consent_method: 'double_opt_in',
+          consent_method: "double_opt_in",
           ip_address: ipData.ip,
           user_agent: navigator.userAgent,
-          consent_text: 'I agree to receive text messages from RepMotivatedSeller about foreclosure assistance and educational resources.',
-          verified: true
+          consent_text:
+            "I agree to receive text messages from RepMotivatedSeller about foreclosure assistance and educational resources.",
+          verified: true,
         });
 
         setStep(3);
         onOptInComplete?.(true, phoneNumber);
       } else {
-        throw new Error('Invalid verification code');
+        throw new Error("Invalid verification code");
       }
     } catch (error) {
-      console.error('Verification error:', error);
-      setError('Invalid verification code. Please try again.');
+      console.error("Verification error:", error);
+      setError("Invalid verification code. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -131,12 +137,18 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
       {step === 1 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">📱 SMS Notifications (Optional)</h3>
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">OPTIONAL</span>
+            <h3 className="text-lg font-semibold text-gray-900">
+              📱 SMS Notifications (Optional)
+            </h3>
+            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+              OPTIONAL
+            </span>
           </div>
 
           <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-500">
-            <h4 className="font-medium text-blue-900 mb-2">🛡️ Why SMS Notifications?</h4>
+            <h4 className="font-medium text-blue-900 mb-2">
+              🛡️ Why SMS Notifications?
+            </h4>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• Get urgent foreclosure deadline reminders</li>
               <li>• Receive time-sensitive assistance updates</li>
@@ -147,7 +159,9 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mobile Phone Number
+              </label>
               <input
                 type="tel"
                 value={phoneNumber}
@@ -167,22 +181,41 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
                   onChange={(e) => setAgreedToTerms(e.target.checked)}
                   className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label htmlFor="sms-consent" className="ml-3 text-sm text-gray-700">
+                <label
+                  htmlFor="sms-consent"
+                  className="ml-3 text-sm text-gray-700"
+                >
                   <div className="space-y-2">
-                    <p className="font-medium">✅ I consent to receive text messages from RepMotivatedSeller</p>
+                    <p className="font-medium">
+                      ✅ I consent to receive text messages from
+                      RepMotivatedSeller
+                    </p>
                     <div className="text-xs space-y-1">
-                      <p>• <strong>Frequency:</strong> Up to 4 messages per month</p>
-                      <p>• <strong>Message Types:</strong> Foreclosure alerts, educational content, appointment reminders</p>
-                      <p>• <strong>Opt-Out:</strong> Reply STOP at any time</p>
-                      <p>• <strong>Help:</strong> Reply HELP for assistance</p>
-                      <p>• <strong>Rates:</strong> Message and data rates may apply</p>
+                      <p>
+                        • <strong>Frequency:</strong> Up to 4 messages per month
+                      </p>
+                      <p>
+                        • <strong>Message Types:</strong> Foreclosure alerts,
+                        educational content, appointment reminders
+                      </p>
+                      <p>
+                        • <strong>Opt-Out:</strong> Reply STOP at any time
+                      </p>
+                      <p>
+                        • <strong>Help:</strong> Reply HELP for assistance
+                      </p>
+                      <p>
+                        • <strong>Rates:</strong> Message and data rates may
+                        apply
+                      </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setShowDetails(!showDetails)}
                       className="text-blue-600 hover:text-blue-700 text-xs underline"
                     >
-                      {showDetails ? 'Hide' : 'View'} Full Terms & Privacy Policy
+                      {showDetails ? "Hide" : "View"} Full Terms & Privacy
+                      Policy
                     </button>
                   </div>
                 </label>
@@ -191,19 +224,52 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
 
             {showDetails && (
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-gray-600 space-y-2">
-                <h5 className="font-medium text-gray-900">📋 Complete SMS Terms:</h5>
-                <p><strong>Consent:</strong> By checking this box and providing your mobile number, you expressly consent to receive automated marketing text messages from RepMotivatedSeller at the number provided. Consent is not required to purchase or use our services.</p>
-                <p><strong>Message Frequency:</strong> You may receive up to 4 messages per month. Message frequency varies based on your interaction and account activity.</p>
-                <p><strong>Message Content:</strong> Messages may include foreclosure prevention tips, deadline reminders, educational resources, appointment confirmations, and service updates.</p>
-                <p><strong>Opt-Out:</strong> You may opt-out at any time by replying STOP to any message. You will receive a confirmation message. No further messages will be sent after opt-out.</p>
-                <p><strong>Support:</strong> For help, reply HELP or contact us at (555) 123-4567.</p>
-                <p><strong>Carriers:</strong> Supported carriers include Verizon, AT&T, T-Mobile, Sprint, and others. Message and data rates may apply based on your cellular plan.</p>
-                <p><strong>Privacy:</strong> We respect your privacy. View our full Privacy Policy at repmotivatedseller.org/privacy for information about data collection and use.</p>
+                <h5 className="font-medium text-gray-900">
+                  📋 Complete SMS Terms:
+                </h5>
+                <p>
+                  <strong>Consent:</strong> By checking this box and providing
+                  your mobile number, you expressly consent to receive automated
+                  marketing text messages from RepMotivatedSeller at the number
+                  provided. Consent is not required to purchase or use our
+                  services.
+                </p>
+                <p>
+                  <strong>Message Frequency:</strong> You may receive up to 4
+                  messages per month. Message frequency varies based on your
+                  interaction and account activity.
+                </p>
+                <p>
+                  <strong>Message Content:</strong> Messages may include
+                  foreclosure prevention tips, deadline reminders, educational
+                  resources, appointment confirmations, and service updates.
+                </p>
+                <p>
+                  <strong>Opt-Out:</strong> You may opt-out at any time by
+                  replying STOP to any message. You will receive a confirmation
+                  message. No further messages will be sent after opt-out.
+                </p>
+                <p>
+                  <strong>Support:</strong> For help, reply HELP or contact us
+                  at (555) 123-4567.
+                </p>
+                <p>
+                  <strong>Carriers:</strong> Supported carriers include Verizon,
+                  AT&T, T-Mobile, Sprint, and others. Message and data rates may
+                  apply based on your cellular plan.
+                </p>
+                <p>
+                  <strong>Privacy:</strong> We respect your privacy. View our
+                  full Privacy Policy at repmotivatedseller.org/privacy for
+                  information about data collection and use.
+                </p>
               </div>
             )}
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600">{error}</div>
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+                {error}
+              </div>
             )}
 
             <div className="flex space-x-3">
@@ -218,15 +284,21 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
                     Sending Code...
                   </>
                 ) : (
-                  '📱 Send Verification Code'
+                  "📱 Send Verification Code"
                 )}
               </button>
-              <button onClick={handleSkip} className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button
+                onClick={handleSkip}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 Skip for Now
               </button>
             </div>
 
-            <p className="text-xs text-gray-500 text-center">SMS notifications are completely optional. You can still use all our services without providing a phone number.</p>
+            <p className="text-xs text-gray-500 text-center">
+              SMS notifications are completely optional. You can still use all
+              our services without providing a phone number.
+            </p>
           </div>
         </div>
       )}
@@ -235,17 +307,27 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
         <div>
           <div className="text-center mb-6">
             <div className="text-4xl mb-2">📲</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Verification Code Sent</h3>
-            <p className="text-gray-600">We sent a 6-digit code to <strong>{phoneNumber}</strong></p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Verification Code Sent
+            </h3>
+            <p className="text-gray-600">
+              We sent a 6-digit code to <strong>{phoneNumber}</strong>
+            </p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Enter Verification Code</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Verification Code
+              </label>
               <input
                 type="text"
                 value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                onChange={(e) =>
+                  setVerificationCode(
+                    e.target.value.replace(/[^\d]/g, "").slice(0, 6),
+                  )
+                }
                 placeholder="123456"
                 className="w-full px-3 py-2 text-center text-2xl font-mono border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                 maxLength={6}
@@ -253,7 +335,9 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600">{error}</div>
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+                {error}
+              </div>
             )}
 
             <div className="flex space-x-3">
@@ -268,16 +352,23 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
                     Verifying...
                   </>
                 ) : (
-                  '✅ Verify & Complete'
+                  "✅ Verify & Complete"
                 )}
               </button>
-              <button onClick={() => setStep(1)} className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button
+                onClick={() => setStep(1)}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 ← Back
               </button>
             </div>
 
             <div className="text-center">
-              <button onClick={handleInitialOptIn} disabled={loading} className="text-sm text-blue-600 hover:text-blue-700 underline">
+              <button
+                onClick={handleInitialOptIn}
+                disabled={loading}
+                className="text-sm text-blue-600 hover:text-blue-700 underline"
+              >
                 Didn't receive code? Resend
               </button>
             </div>
@@ -288,8 +379,13 @@ const SMSOptInComponent: React.FC<SMSOptInProps> = ({ onOptInComplete, className
       {step === 3 && (
         <div className="text-center">
           <div className="text-6xl mb-4">🎉</div>
-          <h3 className="text-lg font-semibold text-green-900 mb-2">SMS Notifications Enabled!</h3>
-          <p className="text-green-700 mb-4">You'll now receive helpful foreclosure prevention updates and reminders.</p>
+          <h3 className="text-lg font-semibold text-green-900 mb-2">
+            SMS Notifications Enabled!
+          </h3>
+          <p className="text-green-700 mb-4">
+            You'll now receive helpful foreclosure prevention updates and
+            reminders.
+          </p>
 
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm">
             <h4 className="font-medium text-green-900 mb-2">📋 What's Next?</h4>

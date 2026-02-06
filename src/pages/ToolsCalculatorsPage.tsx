@@ -11,6 +11,7 @@ import { BackButton } from "../components/ui/BackButton";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
+import { exportDealMemoWorkbook } from "../utils/dealMemoExport";
 
 interface AmortizationRow {
   payment: number;
@@ -30,6 +31,13 @@ const ToolsCalculatorsPage: React.FC = () => {
     setModalOpen(true);
   };
   const [activeCalculator, setActiveCalculator] = useState<string>("mortgage");
+
+  const [dealId, setDealId] = useState<string>(() => `DEAL-${Date.now()}`);
+  const [propertyName, setPropertyName] = useState<string>("");
+  const [propertyCity, setPropertyCity] = useState<string>("");
+  const [propertyState, setPropertyState] = useState<string>("");
+  const [assetType, setAssetType] = useState<string>("Single-Family");
+  const [strategy, setStrategy] = useState<string>("Fix & Flip");
 
   // Mortgage Calculator State
   const [loanAmount, setLoanAmount] = useState<number>(200000);
@@ -130,6 +138,41 @@ const ToolsCalculatorsPage: React.FC = () => {
       roi,
       monthlyROI,
       annualROI,
+    });
+  };
+
+  const gradeToScore = (grade: string) => {
+    switch (grade) {
+      case "Excellent":
+        return 5;
+      case "Good":
+        return 4;
+      case "Fair":
+        return 3;
+      default:
+        return 2;
+    }
+  };
+
+  const exportDealMemo = async () => {
+    if (!dealMetrics) {
+      alert("Analyze a deal first to export the memo.");
+      return;
+    }
+
+    await exportDealMemoWorkbook({
+      dealId: dealId || `DEAL-${Date.now()}`,
+      property: propertyName || "Deal Property",
+      city: propertyCity,
+      state: propertyState,
+      assetType,
+      strategy,
+      purchasePrice,
+      totalBasis: purchasePrice + rehabCost,
+      exitValue: afterRepairValue,
+      targetReturnPercent: Number(dealMetrics.netROI.toFixed(2)),
+      dealScore: gradeToScore(dealMetrics.dealGrade),
+      filename: `${(dealId || "Deal_Memo_System").replace(/\s+/g, "_")}.xlsx`,
     });
   };
 
@@ -407,6 +450,96 @@ const ToolsCalculatorsPage: React.FC = () => {
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Deal ID
+                      </label>
+                      <input
+                        type="text"
+                        value={dealId}
+                        onChange={(e) => setDealId(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                        placeholder="DEAL-12345"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Property Name / Address
+                      </label>
+                      <input
+                        type="text"
+                        value={propertyName}
+                        onChange={(e) => setPropertyName(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                        placeholder="123 Main St"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          City
+                        </label>
+                        <input
+                          type="text"
+                          value={propertyCity}
+                          onChange={(e) => setPropertyCity(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                          placeholder="Phoenix"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          State
+                        </label>
+                        <input
+                          type="text"
+                          value={propertyState}
+                          onChange={(e) => setPropertyState(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                          placeholder="AZ"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Asset Type
+                        </label>
+                        <select
+                          value={assetType}
+                          onChange={(e) => setAssetType(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="Single-Family">Single-Family</option>
+                          <option value="Multi-Family">Multi-Family</option>
+                          <option value="Commercial">Commercial</option>
+                          <option value="Mixed-Use">Mixed-Use</option>
+                          <option value="Land">Land</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Strategy
+                        </label>
+                        <select
+                          value={strategy}
+                          onChange={(e) => setStrategy(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="Fix & Flip">Fix & Flip</option>
+                          <option value="Wholesale">Wholesale</option>
+                          <option value="Buy & Hold">Buy & Hold</option>
+                          <option value="BRRRR">BRRRR</option>
+                          <option value="Short-Term Rental">
+                            Short-Term Rental
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Purchase Price
                       </label>
                       <div className="relative">
@@ -559,6 +692,13 @@ const ToolsCalculatorsPage: React.FC = () => {
                             </div>
                           </div>
                         </div>
+
+                        <button
+                          onClick={exportDealMemo}
+                          className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+                        >
+                          📊 Download Deal Memo Excel
+                        </button>
                       </div>
                     ) : (
                       <div className="text-center py-8 text-gray-500">

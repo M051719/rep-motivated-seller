@@ -2,9 +2,16 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
-import { Send, Sparkles, Loader2, Calculator, FileText, Home, TrendingUp } from "lucide-react";
-import { dappierService } from '../services/dappierService';
-
+import {
+  Send,
+  Sparkles,
+  Loader2,
+  Calculator,
+  FileText,
+  Home,
+  TrendingUp,
+} from "lucide-react";
+import { dappierService } from "../services/dappierService";
 
 interface Message {
   id: string;
@@ -27,23 +34,23 @@ const suggestedQuestions: SuggestedQuestion[] = [
   {
     text: "How much time do I have before foreclosure?",
     icon: <Home className="w-4 h-4" />,
-    category: "Timeline"
+    category: "Timeline",
   },
   {
     text: "Calculate my monthly savings options",
     icon: <Calculator className="w-4 h-4" />,
-    category: "Finance"
+    category: "Finance",
   },
   {
     text: "What's the difference between short sale and foreclosure?",
     icon: <FileText className="w-4 h-4" />,
-    category: "Options"
+    category: "Options",
   },
   {
     text: "Analyze my property value and equity",
     icon: <TrendingUp className="w-4 h-4" />,
-    category: "Property"
-  }
+    category: "Property",
+  },
 ];
 
 export default function AIChatPage() {
@@ -110,8 +117,8 @@ export default function AIChatPage() {
               role: msg.role,
               content: msg.content,
               timestamp: new Date(msg.created_at),
-              tool_calls: msg.tool_calls || undefined
-            }))
+              tool_calls: msg.tool_calls || undefined,
+            })),
           );
         }
       }
@@ -128,7 +135,7 @@ export default function AIChatPage() {
         .from("chat_sessions")
         .insert({
           user_id: user.id,
-          title: "New Chat"
+          title: "New Chat",
         })
         .select()
         .single();
@@ -157,7 +164,7 @@ export default function AIChatPage() {
       id: `temp-${Date.now()}`,
       role: "user",
       content: textToSend,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
@@ -178,8 +185,8 @@ export default function AIChatPage() {
         body: {
           message: textToSend,
           session_id: currentSessionId,
-          user_id: user.id
-        }
+          user_id: user.id,
+        },
       });
 
       if (error) throw error;
@@ -190,18 +197,19 @@ export default function AIChatPage() {
         role: "assistant",
         content: data.response,
         timestamp: new Date(),
-        tool_calls: data.tool_calls
+        tool_calls: data.tool_calls,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
-      
+
       // Add error message
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         role: "assistant",
-        content: "I apologize, but I encountered an error. Please try again or contact support if the issue persists.",
-        timestamp: new Date()
+        content:
+          "I apologize, but I encountered an error. Please try again or contact support if the issue persists.",
+        timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -237,8 +245,9 @@ export default function AIChatPage() {
             </h1>
           </div>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Get instant answers about foreclosure timelines, options, and calculations. 
-            Powered by advanced AI with access to your property data and tools.
+            Get instant answers about foreclosure timelines, options, and
+            calculations. Powered by advanced AI with access to your property
+            data and tools.
           </p>
           {messages.length > 0 && (
             <button
@@ -265,7 +274,8 @@ export default function AIChatPage() {
                   How can I help you today?
                 </h3>
                 <p className="text-gray-500 mb-6 text-center max-w-md">
-                  Ask me anything about foreclosure, your property, financial options, or use the suggested questions below.
+                  Ask me anything about foreclosure, your property, financial
+                  options, or use the suggested questions below.
                 </p>
 
                 {/* Suggested Questions */}
@@ -283,7 +293,9 @@ export default function AIChatPage() {
                         {question.icon}
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">{question.category}</div>
+                        <div className="text-xs text-gray-500 mb-1">
+                          {question.category}
+                        </div>
                         <div className="text-sm font-medium text-gray-700 group-hover:text-blue-700 transition-colors">
                           {question.text}
                         </div>
@@ -309,13 +321,18 @@ export default function AIChatPage() {
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      <div className="whitespace-pre-wrap">{message.content}</div>
-                      
+                      <div className="whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+
                       {/* Tool Calls Display */}
                       {message.tool_calls && message.tool_calls.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-gray-300 space-y-2">
                           {message.tool_calls.map((tool, idx) => (
-                            <div key={idx} className="text-xs bg-white/50 rounded-lg p-2">
+                            <div
+                              key={idx}
+                              className="text-xs bg-white/50 rounded-lg p-2"
+                            >
                               <div className="font-semibold mb-1 flex items-center gap-1">
                                 <Calculator className="w-3 h-3" />
                                 Used: {tool.name}
@@ -331,7 +348,7 @@ export default function AIChatPage() {
                       <div className="text-xs mt-2 opacity-70">
                         {message.timestamp.toLocaleTimeString([], {
                           hour: "2-digit",
-                          minute: "2-digit"
+                          minute: "2-digit",
                         })}
                       </div>
                     </div>
@@ -387,7 +404,8 @@ export default function AIChatPage() {
               </button>
             </form>
             <p className="text-xs text-gray-500 mt-2 text-center">
-              AI responses are informational. For legal advice, consult a professional.
+              AI responses are informational. For legal advice, consult a
+              professional.
             </p>
           </div>
         </motion.div>

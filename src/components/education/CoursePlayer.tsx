@@ -68,7 +68,9 @@ const CoursePlayer: React.FC = () => {
 
   const fetchUserProgress = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user || !courseId) return;
 
       const { data, error } = await supabase

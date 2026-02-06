@@ -31,9 +31,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       if (!file) return;
 
       // Validate file type
-      const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+      const validTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
       if (!validTypes.includes(file.type)) {
-        toast.error("Please upload a valid image file (JPEG, PNG, GIF, or WebP)");
+        toast.error(
+          "Please upload a valid image file (JPEG, PNG, GIF, or WebP)",
+        );
         return;
       }
 
@@ -149,7 +157,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         style={{ minHeight: "300px" }}
       />
       <p className="text-xs text-gray-500 mt-2">
-        💡 Click the image icon in the toolbar to upload images directly from your computer
+        💡 Click the image icon in the toolbar to upload images directly from
+        your computer
       </p>
     </div>
   );

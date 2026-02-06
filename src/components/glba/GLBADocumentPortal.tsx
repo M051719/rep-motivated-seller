@@ -4,15 +4,27 @@
  * All documents are encrypted with AES-256-GCM before storage
  */
 
-import React, { useState, useEffect } from 'react';
-import { Upload, Download, Trash2, Lock, FileText, AlertCircle, CheckCircle, Clock, Shield } from 'lucide-react';
-import { GLBAEncryption } from '../../lib/encryption/glba-encryption';
-import { GLBAAccessControl } from '../../lib/security/glba-access-control';
-import { createClient } from '@supabase/supabase-js';
+import React, { useState, useEffect } from "react";
+import {
+  Upload,
+  Download,
+  Trash2,
+  Lock,
+  FileText,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Shield,
+} from "lucide-react";
+import { GLBAEncryption } from "../../lib/encryption/glba-encryption";
+import { GLBAAccessControl } from "../../lib/security/glba-access-control";
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-  import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || ''
+  import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || "",
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+    process.env.VITE_SUPABASE_ANON_KEY ||
+    "",
 );
 
 interface SecureDocument {
@@ -33,7 +45,7 @@ export default function GLBADocumentPortal() {
   const [downloading, setDownloading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>('');
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
     loadUserAndDocuments();
@@ -41,32 +53,36 @@ export default function GLBADocumentPortal() {
 
   const loadUserAndDocuments = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
         await loadDocuments(user.id);
       }
     } catch (err) {
-      console.error('Failed to load user:', err);
+      console.error("Failed to load user:", err);
     }
   };
 
   const loadDocuments = async (uid: string) => {
     try {
       const { data, error: fetchError } = await supabase
-        .from('secure_documents')
-        .select('*')
-        .eq('uploaded_by', uid)
-        .order('uploaded_at', { ascending: false });
+        .from("secure_documents")
+        .select("*")
+        .eq("uploaded_by", uid)
+        .order("uploaded_at", { ascending: false });
 
       if (fetchError) throw fetchError;
       setDocuments(data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load documents');
+      setError(err instanceof Error ? err.message : "Failed to load documents");
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -78,24 +94,29 @@ export default function GLBADocumentPortal() {
       // Check access permission
       const hasAccess = await GLBAAccessControl.checkNPIAccess({
         userId,
-        npiType: 'document',
+        npiType: "document",
         resourceId: file.name,
-        purpose: 'Document upload',
+        purpose: "Document upload",
       });
 
       if (!hasAccess) {
-        throw new Error('Access denied: You do not have permission to upload documents');
+        throw new Error(
+          "Access denied: You do not have permission to upload documents",
+        );
       }
 
       // Read file content
       const fileContent = await readFileAsBase64(file);
 
       // Encrypt the file content
-      const encryptedData = await GLBAEncryption.encryptNPI(fileContent, 'document');
+      const encryptedData = await GLBAEncryption.encryptNPI(
+        fileContent,
+        "document",
+      );
 
       // Store encrypted document in database
       const { data, error: uploadError } = await supabase
-        .from('secure_documents')
+        .from("secure_documents")
         .insert({
           filename: file.name,
           file_size: file.size,
@@ -113,9 +134,11 @@ export default function GLBADocumentPortal() {
       await loadDocuments(userId);
 
       // Clear file input
-      event.target.value = '';
+      event.target.value = "";
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to upload document');
+      setError(
+        err instanceof Error ? err.message : "Failed to upload document",
+      );
     } finally {
       setUploading(false);
     }
@@ -129,22 +152,26 @@ export default function GLBADocumentPortal() {
       // Check access permission
       const hasAccess = await GLBAAccessControl.checkNPIAccess({
         userId,
-        npiType: 'document',
+        npiType: "document",
         resourceId: doc.id,
-        purpose: 'Document download',
+        purpose: "Document download",
       });
 
       if (!hasAccess) {
-        throw new Error('Access denied: You do not have permission to download this document');
+        throw new Error(
+          "Access denied: You do not have permission to download this document",
+        );
       }
 
       // Decrypt the document
-      const decryptedContent = await GLBAEncryption.decryptNPI(doc.encrypted_data);
+      const decryptedContent = await GLBAEncryption.decryptNPI(
+        doc.encrypted_data,
+      );
 
       // Convert base64 back to blob and trigger download
       const blob = base64ToBlob(decryptedContent);
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = doc.filename;
       document.body.appendChild(a);
@@ -154,50 +181,60 @@ export default function GLBADocumentPortal() {
 
       // Update access count
       await supabase
-        .from('secure_documents')
+        .from("secure_documents")
         .update({
           access_count: doc.access_count + 1,
           last_accessed_at: new Date().toISOString(),
         })
-        .eq('id', doc.id);
+        .eq("id", doc.id);
 
       await loadDocuments(userId);
       setSuccess(`Successfully downloaded: ${doc.filename}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to download document');
+      setError(
+        err instanceof Error ? err.message : "Failed to download document",
+      );
     } finally {
       setDownloading(null);
     }
   };
 
   const handleDelete = async (doc: SecureDocument) => {
-    if (!confirm(`Are you sure you want to delete ${doc.filename}? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete ${doc.filename}? This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
     try {
       const hasAccess = await GLBAAccessControl.checkNPIAccess({
         userId,
-        npiType: 'document',
+        npiType: "document",
         resourceId: doc.id,
-        purpose: 'Document deletion',
+        purpose: "Document deletion",
       });
 
       if (!hasAccess) {
-        throw new Error('Access denied: You do not have permission to delete this document');
+        throw new Error(
+          "Access denied: You do not have permission to delete this document",
+        );
       }
 
       const { error: deleteError } = await supabase
-        .from('secure_documents')
+        .from("secure_documents")
         .delete()
-        .eq('id', doc.id);
+        .eq("id", doc.id);
 
       if (deleteError) throw deleteError;
 
       setSuccess(`Successfully deleted: ${doc.filename}`);
       await loadDocuments(userId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete document');
+      setError(
+        err instanceof Error ? err.message : "Failed to delete document",
+      );
     }
   };
 
@@ -205,12 +242,12 @@ export default function GLBADocumentPortal() {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
-        if (typeof reader.result === 'string') {
+        if (typeof reader.result === "string") {
           // Extract base64 part after comma
-          const base64 = reader.result.split(',')[1];
+          const base64 = reader.result.split(",")[1];
           resolve(base64);
         } else {
-          reject(new Error('Failed to read file'));
+          reject(new Error("Failed to read file"));
         }
       };
       reader.onerror = reject;
@@ -229,9 +266,9 @@ export default function GLBADocumentPortal() {
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
   };
 
   const formatDate = (dateString: string): string => {
@@ -245,7 +282,9 @@ export default function GLBADocumentPortal() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <Shield className="h-12 w-12 text-blue-600 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900">Secure Document Portal</h1>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Secure Document Portal
+            </h1>
           </div>
           <p className="text-lg text-gray-600">
             All documents are encrypted with AES-256-GCM before storage
@@ -258,7 +297,9 @@ export default function GLBADocumentPortal() {
             <Lock className="h-5 w-5 text-green-600 mr-3" />
             <div>
               <p className="text-sm text-green-800">
-                <strong>GLBA Compliant:</strong> End-to-end encryption enabled. All documents are encrypted before upload and decrypted only when you download them.
+                <strong>GLBA Compliant:</strong> End-to-end encryption enabled.
+                All documents are encrypted before upload and decrypted only
+                when you download them.
               </p>
             </div>
           </div>
@@ -300,11 +341,13 @@ export default function GLBADocumentPortal() {
             />
             <label
               htmlFor="file-upload"
-              className={`cursor-pointer ${uploading || !userId ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`cursor-pointer ${uploading || !userId ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-lg font-medium text-gray-900 mb-2">
-                {uploading ? 'Encrypting and uploading...' : 'Click to upload a document'}
+                {uploading
+                  ? "Encrypting and uploading..."
+                  : "Click to upload a document"}
               </p>
               <p className="text-sm text-gray-600">
                 Documents are automatically encrypted with AES-256-GCM
@@ -363,7 +406,10 @@ export default function GLBADocumentPortal() {
                             {formatDate(doc.uploaded_at)}
                           </span>
                           <span>•</span>
-                          <span>Downloaded {doc.access_count} time{doc.access_count !== 1 ? 's' : ''}</span>
+                          <span>
+                            Downloaded {doc.access_count} time
+                            {doc.access_count !== 1 ? "s" : ""}
+                          </span>
                         </div>
 
                         {doc.last_accessed_at && (
@@ -381,7 +427,7 @@ export default function GLBADocumentPortal() {
                         className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        {downloading === doc.id ? 'Decrypting...' : 'Download'}
+                        {downloading === doc.id ? "Decrypting..." : "Download"}
                       </button>
 
                       <button
@@ -407,7 +453,9 @@ export default function GLBADocumentPortal() {
           <ul className="space-y-2 text-sm text-blue-800">
             <li className="flex items-start">
               <CheckCircle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-              <span>All documents encrypted with AES-256-GCM (FIPS 140-2 approved)</span>
+              <span>
+                All documents encrypted with AES-256-GCM (FIPS 140-2 approved)
+              </span>
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
@@ -419,7 +467,9 @@ export default function GLBADocumentPortal() {
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-              <span>All access attempts are logged for compliance (7-year retention)</span>
+              <span>
+                All access attempts are logged for compliance (7-year retention)
+              </span>
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />

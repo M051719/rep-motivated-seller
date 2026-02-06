@@ -1,6 +1,6 @@
 // src/components/marketing/direct-mail/CanvaUploader.tsx
-import React, { useState } from 'react';
-import { Upload, FileText, CheckCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { Upload, FileText, CheckCircle } from "lucide-react";
 
 interface CanvaUploaderProps {
   onFileUploaded: (fileUrl: string, fileName: string) => void;
@@ -10,20 +10,27 @@ const CanvaUploader: React.FC<CanvaUploaderProps> = ({ onFileUploaded }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Validate file type
-    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+    const validTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "application/pdf",
+    ];
     if (!validTypes.includes(file.type)) {
-      alert('Please upload a PNG, JPG, or PDF file');
+      alert("Please upload a PNG, JPG, or PDF file");
       return;
     }
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert('File size must be less than 10MB');
+      alert("File size must be less than 10MB");
       return;
     }
 
@@ -34,14 +41,14 @@ const CanvaUploader: React.FC<CanvaUploaderProps> = ({ onFileUploaded }) => {
       // In production, upload to Supabase Storage or your CDN
       const fileUrl = URL.createObjectURL(file);
       setUploadedFile(file.name);
-      
+
       // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       onFileUploaded(fileUrl, file.name);
     } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload file. Please try again.');
+      console.error("Upload error:", error);
+      alert("Failed to upload file. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -50,19 +57,23 @@ const CanvaUploader: React.FC<CanvaUploaderProps> = ({ onFileUploaded }) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-xl font-semibold mb-4">🎨 Upload Your Design</h2>
-      
+
       <div className="space-y-4">
         {/* Canva Integration Instructions */}
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="font-medium text-blue-900 mb-2">📐 Design with Canva</h3>
+          <h3 className="font-medium text-blue-900 mb-2">
+            📐 Design with Canva
+          </h3>
           <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-            <li>Create your postcard design in Canva (6" x 4.25" recommended)</li>
+            <li>
+              Create your postcard design in Canva (6" x 4.25" recommended)
+            </li>
             <li>Download as PNG or PDF (high quality)</li>
             <li>Upload the file below</li>
           </ol>
-          <a 
-            href="https://www.canva.com/create/postcards/" 
-            target="_blank" 
+          <a
+            href="https://www.canva.com/create/postcards/"
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-2 text-blue-600 hover:text-blue-700 underline"
           >
@@ -80,9 +91,9 @@ const CanvaUploader: React.FC<CanvaUploaderProps> = ({ onFileUploaded }) => {
             onChange={handleFileUpload}
             disabled={uploading}
           />
-          
-          <label 
-            htmlFor="file-upload" 
+
+          <label
+            htmlFor="file-upload"
             className="cursor-pointer flex flex-col items-center"
           >
             {uploading ? (
@@ -94,13 +105,19 @@ const CanvaUploader: React.FC<CanvaUploaderProps> = ({ onFileUploaded }) => {
               <>
                 <CheckCircle className="w-12 h-12 text-green-600 mb-4" />
                 <p className="text-gray-900 font-medium">{uploadedFile}</p>
-                <p className="text-sm text-gray-600 mt-2">Click to upload a different file</p>
+                <p className="text-sm text-gray-600 mt-2">
+                  Click to upload a different file
+                </p>
               </>
             ) : (
               <>
                 <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                <p className="text-gray-900 font-medium mb-1">Click to upload</p>
-                <p className="text-sm text-gray-600">PNG, JPG, or PDF (max 10MB)</p>
+                <p className="text-gray-900 font-medium mb-1">
+                  Click to upload
+                </p>
+                <p className="text-sm text-gray-600">
+                  PNG, JPG, or PDF (max 10MB)
+                </p>
               </>
             )}
           </label>
@@ -130,7 +147,9 @@ const CanvaUploader: React.FC<CanvaUploaderProps> = ({ onFileUploaded }) => {
           <div className="grid grid-cols-2 gap-3">
             <button className="p-3 border rounded-lg hover:bg-gray-50 text-left">
               <p className="font-medium text-sm">Foreclosure Prevention</p>
-              <p className="text-xs text-gray-600">Professional, compassionate</p>
+              <p className="text-xs text-gray-600">
+                Professional, compassionate
+              </p>
             </button>
             <button className="p-3 border rounded-lg hover:bg-gray-50 text-left">
               <p className="font-medium text-sm">Cash Offer</p>

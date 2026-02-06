@@ -91,8 +91,6 @@ const PricingCards: React.FC<PricingCardsProps> = ({ billingCycle }) => {
 
 export default PricingCards;
 
-
-
-  const handleSignup = (tierId: string) => {
-    navigate(`/auth?signup=true&tier=${tierId}&billing=${billingCycle}`);
-  };
+const handleSignup = (tierId: string) => {
+  navigate(`/auth?signup=true&tier=${tierId}&billing=${billingCycle}`);
+};

@@ -3,24 +3,24 @@
  * Handles subscription payments with Stripe Elements
  */
 
-import React, { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import React, { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
   PaymentElement,
   useStripe,
   useElements,
-} from '@stripe/react-stripe-js';
-import { motion } from 'framer-motion';
-import { Loader, CheckCircle, AlertCircle } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { toast } from 'react-hot-toast';
+} from "@stripe/react-stripe-js";
+import { motion } from "framer-motion";
+import { Loader, CheckCircle, AlertCircle } from "lucide-react";
+import { supabase } from "../../lib/supabase";
+import { toast } from "react-hot-toast";
 
 // Load Stripe (use your publishable key from env)
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 interface StripeCheckoutProps {
-  planId: 'basic' | 'premium' | 'vip';
+  planId: "basic" | "premium" | "vip";
   planName: string;
   planPrice: number;
   onSuccess?: () => void;
@@ -67,28 +67,30 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         confirmParams: {
           return_url: `${window.location.origin}/subscription/success`,
         },
-        redirect: 'if_required',
+        redirect: "if_required",
       });
 
       if (error) {
-        setErrorMessage(error.message || 'An error occurred');
-        toast.error(error.message || 'Payment failed');
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        setErrorMessage(error.message || "An error occurred");
+        toast.error(error.message || "Payment failed");
+      } else if (paymentIntent && paymentIntent.status === "succeeded") {
         setSucceeded(true);
-        
+
         // Update user subscription in database
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
-          await supabase
-            .from('subscriptions')
-            .upsert({
-              user_id: user.id,
-              tier: planId,
-              status: 'active',
-              stripe_subscription_id: paymentIntent.id,
-              current_period_start: new Date().toISOString(),
-              current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            });
+          await supabase.from("subscriptions").upsert({
+            user_id: user.id,
+            tier: planId,
+            status: "active",
+            stripe_subscription_id: paymentIntent.id,
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000,
+            ).toISOString(),
+          });
         }
 
         toast.success(`✅ Successfully subscribed to ${planName}!`);
@@ -97,9 +99,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         }, 2000);
       }
     } catch (err) {
-      console.error('Payment error:', err);
-      setErrorMessage('An unexpected error occurred');
-      toast.error('Payment failed. Please try again.');
+      console.error("Payment error:", err);
+      setErrorMessage("An unexpected error occurred");
+      toast.error("Payment failed. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -197,27 +199,32 @@ export default function StripeCheckout({
 
   const createPaymentIntent = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Please sign in to continue');
+        throw new Error("Please sign in to continue");
       }
 
       // Call your Edge Function to create payment intent
-      const { data, error } = await supabase.functions.invoke('create-payment-intent', {
-        body: {
-          planId,
-          planPrice: planPrice * 100, // Convert to cents
-          userId: user.id,
+      const { data, error } = await supabase.functions.invoke(
+        "create-payment-intent",
+        {
+          body: {
+            planId,
+            planPrice: planPrice * 100, // Convert to cents
+            userId: user.id,
+          },
         },
-      });
+      );
 
       if (error) throw error;
 
       setClientSecret(data.clientSecret);
     } catch (err: any) {
-      console.error('Error creating payment intent:', err);
-      setError(err.message || 'Failed to initialize payment');
-      toast.error('Failed to initialize payment. Please try again.');
+      console.error("Error creating payment intent:", err);
+      setError(err.message || "Failed to initialize payment");
+      toast.error("Failed to initialize payment. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -237,7 +244,7 @@ export default function StripeCheckout({
       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
         <AlertCircle className="w-8 h-8 text-red-600 mx-auto mb-4" />
         <p className="text-red-800 text-center mb-4">
-          {error || 'Failed to initialize payment'}
+          {error || "Failed to initialize payment"}
         </p>
         <button
           onClick={createPaymentIntent}
@@ -252,15 +259,15 @@ export default function StripeCheckout({
   const options = {
     clientSecret,
     appearance: {
-      theme: 'stripe' as const,
+      theme: "stripe" as const,
       variables: {
-        colorPrimary: '#2563eb',
-        colorBackground: '#ffffff',
-        colorText: '#1f2937',
-        colorDanger: '#ef4444',
-        fontFamily: 'system-ui, sans-serif',
-        spacingUnit: '4px',
-        borderRadius: '8px',
+        colorPrimary: "#2563eb",
+        colorBackground: "#ffffff",
+        colorText: "#1f2937",
+        colorDanger: "#ef4444",
+        fontFamily: "system-ui, sans-serif",
+        spacingUnit: "4px",
+        borderRadius: "8px",
       },
     },
   };

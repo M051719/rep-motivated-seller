@@ -1,12 +1,14 @@
-import React from 'react';
-import { Shield, AlertTriangle, FileText } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Shield, AlertTriangle, FileText } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface LegalNoticeBannerProps {
   onDismiss?: () => void;
 }
 
-export default function LegalNoticeBanner({ onDismiss }: LegalNoticeBannerProps) {
+export default function LegalNoticeBanner({
+  onDismiss,
+}: LegalNoticeBannerProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -23,15 +25,11 @@ export default function LegalNoticeBanner({ onDismiss }: LegalNoticeBannerProps)
           </div>
           <div className="flex items-center space-x-2 text-sm md:text-base">
             <AlertTriangle className="w-4 h-4" />
-            <span>
-              All loans must be processed through RepMotivatedSeller
-            </span>
+            <span>All loans must be processed through RepMotivatedSeller</span>
           </div>
           <div className="hidden md:flex items-center space-x-2 text-sm">
             <FileText className="w-4 h-4" />
-            <span>
-              Platform data protected by law
-            </span>
+            <span>Platform data protected by law</span>
           </div>
         </div>
       </div>

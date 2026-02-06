@@ -18,7 +18,7 @@ const AIAssistant: React.FC = () => {
 
 • **Foreclosure Questions** - Timeline, process, options
 • **Your Questionnaire** - Navigate your foreclosure questionnaire
-• **Education** - Recommend courses and learning paths  
+• **Education** - Recommend courses and learning paths
 • **Legal Documents** - Explain notices and paperwork
 • **Resources** - Find local assistance programs
 • **Marketing** - For admin users, campaign insights
@@ -105,7 +105,7 @@ Based on your situation, I recommend:
 
 **Advanced Path:**
 4. Loan Modification Strategies
-5. Credit Repair Fundamentals  
+5. Credit Repair Fundamentals
 6. Legal Rights and Protections
 
 **[Access Education Platform](/education)**
@@ -161,7 +161,7 @@ Are you looking to create a new campaign or review existing performance?`;
     }
 
     // Default helpful response
-    return `I understand you're asking about "${input}". 
+    return `I understand you're asking about "${input}".
 
 **I can help with:**
 • **Foreclosure Process** - Timeline, legal steps, your rights
@@ -338,4 +338,3 @@ What specific area would you like to explore?`;
 };
 
 export default AIAssistant;
-

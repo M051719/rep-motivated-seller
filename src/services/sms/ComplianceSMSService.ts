@@ -13,7 +13,7 @@ class ComplianceSMSService {
       totalOptIns: 0,
       activeOptIns: 0,
       optOuts: 0,
-      pendingVerification: 0
+      pendingVerification: 0,
     };
   }
 

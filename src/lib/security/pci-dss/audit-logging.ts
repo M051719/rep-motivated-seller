@@ -4,11 +4,11 @@
  * Maintains 1-year audit logs with secure storage
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL || '',
-  import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+  import.meta.env.VITE_SUPABASE_URL || "",
+  import.meta.env.VITE_SUPABASE_ANON_KEY || "",
 );
 
 export interface PCIAuditLog {
@@ -18,29 +18,29 @@ export interface PCIAuditLog {
   event_type: PCIEventType;
   resource_accessed: string;
   action: string;
-  result: 'success' | 'failure' | 'denied';
+  result: "success" | "failure" | "denied";
   ip_address: string;
   user_agent: string;
   metadata?: Record<string, any>;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
 }
 
 export type PCIEventType =
-  | 'payment_attempt'
-  | 'payment_success'
-  | 'payment_failure'
-  | 'token_created'
-  | 'token_used'
-  | 'subscription_created'
-  | 'subscription_updated'
-  | 'subscription_cancelled'
-  | 'refund_initiated'
-  | 'refund_completed'
-  | 'access_denied'
-  | 'security_violation'
-  | 'data_export'
-  | 'admin_access'
-  | 'configuration_change';
+  | "payment_attempt"
+  | "payment_success"
+  | "payment_failure"
+  | "token_created"
+  | "token_used"
+  | "subscription_created"
+  | "subscription_updated"
+  | "subscription_cancelled"
+  | "refund_initiated"
+  | "refund_completed"
+  | "access_denied"
+  | "security_violation"
+  | "data_export"
+  | "admin_access"
+  | "configuration_change";
 
 /**
  * PCI DSS Audit Logger
@@ -51,7 +51,9 @@ export class PCIAuditLogger {
    * Log a PCI-related event
    * PCI DSS 10.2: Implement automated audit trails for all system components
    */
-  static async logEvent(event: Omit<PCIAuditLog, 'timestamp' | 'ip_address' | 'user_agent'>): Promise<void> {
+  static async logEvent(
+    event: Omit<PCIAuditLog, "timestamp" | "ip_address" | "user_agent">,
+  ): Promise<void> {
     try {
       const auditLog: PCIAuditLog = {
         ...event,
@@ -62,21 +64,19 @@ export class PCIAuditLogger {
 
       // Log to console in development
       if (import.meta.env.DEV) {
-        console.log('[PCI DSS Audit]', auditLog);
+        console.log("[PCI DSS Audit]", auditLog);
       }
 
       // Store in database for compliance
-      const { error } = await supabase
-        .from('pci_audit_logs')
-        .insert(auditLog);
+      const { error } = await supabase.from("pci_audit_logs").insert(auditLog);
 
       if (error) {
-        console.error('Failed to log PCI audit event:', error);
+        console.error("Failed to log PCI audit event:", error);
         // Fallback: log to localStorage for recovery
         this.logToLocalStorage(auditLog);
       }
     } catch (error) {
-      console.error('Critical: PCI audit logging failed:', error);
+      console.error("Critical: PCI audit logging failed:", error);
     }
   }
 
@@ -95,11 +95,11 @@ export class PCIAuditLogger {
   }): Promise<void> {
     await this.logEvent({
       user_id: data.userId,
-      event_type: data.success ? 'payment_success' : 'payment_failure',
+      event_type: data.success ? "payment_success" : "payment_failure",
       resource_accessed: `payment_${data.provider}`,
       action: `Processed ${data.currency} ${data.amount} payment`,
-      result: data.success ? 'success' : 'failure',
-      severity: data.success ? 'low' : 'medium',
+      result: data.success ? "success" : "failure",
+      severity: data.success ? "low" : "medium",
       metadata: {
         amount: data.amount,
         currency: data.currency,
@@ -121,11 +121,11 @@ export class PCIAuditLogger {
   }): Promise<void> {
     await this.logEvent({
       user_id: data.userId,
-      event_type: 'access_denied',
+      event_type: "access_denied",
       resource_accessed: data.resource,
-      action: 'Access attempt denied',
-      result: 'denied',
-      severity: 'high',
+      action: "Access attempt denied",
+      result: "denied",
+      severity: "high",
       metadata: {
         reason: data.reason,
       },
@@ -140,15 +140,15 @@ export class PCIAuditLogger {
     userId: string;
     violationType: string;
     description: string;
-    severity?: 'low' | 'medium' | 'high' | 'critical';
+    severity?: "low" | "medium" | "high" | "critical";
   }): Promise<void> {
     await this.logEvent({
       user_id: data.userId,
-      event_type: 'security_violation',
-      resource_accessed: 'security_system',
+      event_type: "security_violation",
+      resource_accessed: "security_system",
       action: data.violationType,
-      result: 'failure',
-      severity: data.severity || 'critical',
+      result: "failure",
+      severity: data.severity || "critical",
       metadata: {
         description: data.description,
       },
@@ -161,11 +161,11 @@ export class PCIAuditLogger {
    */
   private static async getClientIP(): Promise<string> {
     try {
-      const response = await fetch('https://api.ipify.org?format=json');
+      const response = await fetch("https://api.ipify.org?format=json");
       const data = await response.json();
       return data.ip;
     } catch {
-      return 'Unknown';
+      return "Unknown";
     }
   }
 
@@ -175,15 +175,17 @@ export class PCIAuditLogger {
    */
   private static logToLocalStorage(log: PCIAuditLog): void {
     try {
-      const logs = JSON.parse(localStorage.getItem('pci_audit_fallback') || '[]');
+      const logs = JSON.parse(
+        localStorage.getItem("pci_audit_fallback") || "[]",
+      );
       logs.push(log);
       // Keep only last 100 logs in localStorage
       if (logs.length > 100) {
         logs.shift();
       }
-      localStorage.setItem('pci_audit_fallback', JSON.stringify(logs));
+      localStorage.setItem("pci_audit_fallback", JSON.stringify(logs));
     } catch (error) {
-      console.error('Failed to write to localStorage:', error);
+      console.error("Failed to write to localStorage:", error);
     }
   }
 
@@ -193,20 +195,20 @@ export class PCIAuditLogger {
    */
   static async getUserAuditLogs(
     userId: string,
-    limit: number = 50
+    limit: number = 50,
   ): Promise<PCIAuditLog[]> {
     try {
       const { data, error } = await supabase
-        .from('pci_audit_logs')
-        .select('*')
-        .eq('user_id', userId)
-        .order('timestamp', { ascending: false })
+        .from("pci_audit_logs")
+        .select("*")
+        .eq("user_id", userId)
+        .order("timestamp", { ascending: false })
         .limit(limit);
 
       if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error('Failed to fetch audit logs:', error);
+      console.error("Failed to fetch audit logs:", error);
       return [];
     }
   }
@@ -227,23 +229,31 @@ export class PCIAuditLogger {
       startDate.setDate(startDate.getDate() - days);
 
       const { data, error } = await supabase
-        .from('pci_audit_logs')
-        .select('event_type, result')
-        .gte('timestamp', startDate.toISOString());
+        .from("pci_audit_logs")
+        .select("event_type, result")
+        .gte("timestamp", startDate.toISOString());
 
       if (error) throw error;
 
       const stats = {
         totalEvents: data?.length || 0,
-        failedPayments: data?.filter((l: any) => l.event_type === 'payment_failure').length || 0,
-        accessDenials: data?.filter((l: any) => l.event_type === 'access_denied').length || 0,
-        securityViolations: data?.filter((l: any) => l.event_type === 'security_violation').length || 0,
-        successfulPayments: data?.filter((l: any) => l.event_type === 'payment_success').length || 0,
+        failedPayments:
+          data?.filter((l: any) => l.event_type === "payment_failure").length ||
+          0,
+        accessDenials:
+          data?.filter((l: any) => l.event_type === "access_denied").length ||
+          0,
+        securityViolations:
+          data?.filter((l: any) => l.event_type === "security_violation")
+            .length || 0,
+        successfulPayments:
+          data?.filter((l: any) => l.event_type === "payment_success").length ||
+          0,
       };
 
       return stats;
     } catch (error) {
-      console.error('Failed to get security statistics:', error);
+      console.error("Failed to get security statistics:", error);
       return {
         totalEvents: 0,
         failedPayments: 0,
@@ -263,21 +273,26 @@ export class PCIAuditLogger {
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
       const { error } = await supabase
-        .from('pci_audit_logs')
+        .from("pci_audit_logs")
         .delete()
-        .lt('timestamp', oneYearAgo.toISOString());
+        .lt("timestamp", oneYearAgo.toISOString());
 
       if (error) throw error;
-      console.log('PCI audit logs cleanup completed');
+      console.log("PCI audit logs cleanup completed");
     } catch (error) {
-      console.error('Failed to cleanup old logs:', error);
+      console.error("Failed to cleanup old logs:", error);
     }
   }
 }
 
 // Export convenience functions
-export const logPaymentAttempt = PCIAuditLogger.logPaymentAttempt.bind(PCIAuditLogger);
-export const logAccessDenied = PCIAuditLogger.logAccessDenied.bind(PCIAuditLogger);
-export const logSecurityViolation = PCIAuditLogger.logSecurityViolation.bind(PCIAuditLogger);
-export const getUserAuditLogs = PCIAuditLogger.getUserAuditLogs.bind(PCIAuditLogger);
-export const getSecurityStatistics = PCIAuditLogger.getSecurityStatistics.bind(PCIAuditLogger);
+export const logPaymentAttempt =
+  PCIAuditLogger.logPaymentAttempt.bind(PCIAuditLogger);
+export const logAccessDenied =
+  PCIAuditLogger.logAccessDenied.bind(PCIAuditLogger);
+export const logSecurityViolation =
+  PCIAuditLogger.logSecurityViolation.bind(PCIAuditLogger);
+export const getUserAuditLogs =
+  PCIAuditLogger.getUserAuditLogs.bind(PCIAuditLogger);
+export const getSecurityStatistics =
+  PCIAuditLogger.getSecurityStatistics.bind(PCIAuditLogger);

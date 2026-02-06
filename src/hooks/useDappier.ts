@@ -3,8 +3,11 @@
  * React hook for using Dappier real-time data in components
  */
 
-import { useState, useCallback } from 'react';
-import { dappierService, DappierRealTimeData } from '../services/dappierService';
+import { useState, useCallback } from "react";
+import {
+  dappierService,
+  DappierRealTimeData,
+} from "../services/dappierService";
 
 export function useDappier() {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,13 +17,14 @@ export function useDappier() {
   const searchRealTime = useCallback(async (query: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await dappierService.getRealTimeData(query);
       setData(result);
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch real-time data';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch real-time data";
       setError(errorMessage);
       return null;
     } finally {
@@ -31,16 +35,17 @@ export function useDappier() {
   const getMarketData = useCallback(async (location: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await dappierService.getMarketData(location);
       if (response.success) {
         return response.data;
       } else {
-        throw new Error(response.error || 'Failed to fetch market data');
+        throw new Error(response.error || "Failed to fetch market data");
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch market data';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch market data";
       setError(errorMessage);
       return null;
     } finally {
@@ -51,16 +56,17 @@ export function useDappier() {
   const getForeclosureData = useCallback(async (location: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await dappierService.getForeclosureData(location);
       if (response.success) {
         return response.data;
       } else {
-        throw new Error(response.error || 'Failed to fetch foreclosure data');
+        throw new Error(response.error || "Failed to fetch foreclosure data");
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch foreclosure data';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch foreclosure data";
       setError(errorMessage);
       return null;
     } finally {
@@ -71,16 +77,17 @@ export function useDappier() {
   const getMortgageRates = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await dappierService.getMortgageRates();
       if (response.success) {
         return response.data;
       } else {
-        throw new Error(response.error || 'Failed to fetch mortgage rates');
+        throw new Error(response.error || "Failed to fetch mortgage rates");
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch mortgage rates';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch mortgage rates";
       setError(errorMessage);
       return null;
     } finally {
@@ -96,6 +103,6 @@ export function useDappier() {
     getMarketData,
     getForeclosureData,
     getMortgageRates,
-    isConfigured: dappierService.isConfigured()
+    isConfigured: dappierService.isConfigured(),
   };
 }

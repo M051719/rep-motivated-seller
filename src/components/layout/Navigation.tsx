@@ -64,14 +64,14 @@ const Navigation: React.FC = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
-      toast.success('Successfully signed out');
+
+      toast.success("Successfully signed out");
       setUser(null);
       setIsAdmin(false);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error signing out:', error);
-      toast.error('Failed to sign out. Please try again.');
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out. Please try again.");
     }
   };
 
@@ -164,9 +164,9 @@ const Navigation: React.FC = () => {
             <Link
               to="/marketing"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/marketing')
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-700 hover:text-blue-600'
+                isActive("/marketing")
+                  ? "bg-blue-100 text-blue-700"
+                  : "text-gray-700 hover:text-blue-600"
               }`}
             >
               📬 Marketing

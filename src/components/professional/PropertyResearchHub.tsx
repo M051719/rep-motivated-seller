@@ -36,9 +36,9 @@ const PropertyResearchHub: React.FC = () => {
           ...free,
           ...paid,
           sources: [
-            ...(free ? ['Free APIs'] : []),
-            ...(paid ? ['Premium Data'] : [])
-          ]
+            ...(free ? ["Free APIs"] : []),
+            ...(paid ? ["Premium Data"] : []),
+          ],
         };
       };
 

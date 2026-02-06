@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Calculator, TrendingDown, DollarSign } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import { Calculator, TrendingDown, DollarSign } from "lucide-react";
 
 interface AmortizationInputs {
   loanAmount: number;
@@ -24,56 +24,62 @@ export const AmortizationCalculator: React.FC = () => {
 
   const [showFullSchedule, setShowFullSchedule] = useState(false);
 
-  const { schedule, monthlyPayment, totalInterest, totalPayment } = useMemo(() => {
-    const { loanAmount, interestRate, loanTermYears } = inputs;
-    
-    if (loanAmount <= 0 || interestRate <= 0 || loanTermYears <= 0) {
-      return { schedule: [], monthlyPayment: 0, totalInterest: 0, totalPayment: 0 };
-    }
+  const { schedule, monthlyPayment, totalInterest, totalPayment } =
+    useMemo(() => {
+      const { loanAmount, interestRate, loanTermYears } = inputs;
 
-    const monthlyRate = interestRate / 100 / 12;
-    const numberOfPayments = loanTermYears * 12;
+      if (loanAmount <= 0 || interestRate <= 0 || loanTermYears <= 0) {
+        return {
+          schedule: [],
+          monthlyPayment: 0,
+          totalInterest: 0,
+          totalPayment: 0,
+        };
+      }
 
-    // Calculate monthly payment using amortization formula
-    const monthlyPayment =
-      loanAmount *
-      (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-      (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+      const monthlyRate = interestRate / 100 / 12;
+      const numberOfPayments = loanTermYears * 12;
 
-    let balance = loanAmount;
-    const schedule: PaymentDetail[] = [];
+      // Calculate monthly payment using amortization formula
+      const monthlyPayment =
+        (loanAmount *
+          (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) /
+        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 
-    for (let i = 1; i <= numberOfPayments; i++) {
-      const interestPayment = balance * monthlyRate;
-      const principalPayment = monthlyPayment - interestPayment;
-      balance -= principalPayment;
+      let balance = loanAmount;
+      const schedule: PaymentDetail[] = [];
 
-      // Prevent negative balance due to floating point precision
-      if (balance < 0) balance = 0;
+      for (let i = 1; i <= numberOfPayments; i++) {
+        const interestPayment = balance * monthlyRate;
+        const principalPayment = monthlyPayment - interestPayment;
+        balance -= principalPayment;
 
-      schedule.push({
-        paymentNumber: i,
-        payment: monthlyPayment,
-        principal: principalPayment,
-        interest: interestPayment,
-        balance: balance,
-      });
-    }
+        // Prevent negative balance due to floating point precision
+        if (balance < 0) balance = 0;
 
-    const totalPayment = monthlyPayment * numberOfPayments;
-    const totalInterest = totalPayment - loanAmount;
+        schedule.push({
+          paymentNumber: i,
+          payment: monthlyPayment,
+          principal: principalPayment,
+          interest: interestPayment,
+          balance: balance,
+        });
+      }
 
-    return { schedule, monthlyPayment, totalInterest, totalPayment };
-  }, [inputs]);
+      const totalPayment = monthlyPayment * numberOfPayments;
+      const totalInterest = totalPayment - loanAmount;
+
+      return { schedule, monthlyPayment, totalInterest, totalPayment };
+    }, [inputs]);
 
   const updateInput = (key: keyof AmortizationInputs, value: number) => {
-    setInputs(prev => ({ ...prev, [key]: value }));
+    setInputs((prev) => ({ ...prev, [key]: value }));
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(amount);
@@ -96,12 +102,16 @@ export const AmortizationCalculator: React.FC = () => {
     }
 
     // Final payment if not already included
-    if (schedule.length > 0 && summary[summary.length - 1]?.paymentNumber !== schedule.length) {
+    if (
+      schedule.length > 0 &&
+      summary[summary.length - 1]?.paymentNumber !== schedule.length
+    ) {
       summary.push(schedule[schedule.length - 1]);
     }
 
     return summary;
-  };  const displaySchedule = showFullSchedule ? schedule : getSummarySchedule();
+  };
+  const displaySchedule = showFullSchedule ? schedule : getSummarySchedule();
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -124,7 +134,9 @@ export const AmortizationCalculator: React.FC = () => {
               <div className="bg-gray-50 rounded-lg p-5">
                 <div className="flex items-center space-x-2 mb-4">
                   <DollarSign className="w-5 h-5 text-purple-600" />
-                  <h3 className="text-lg font-bold text-gray-900">Loan Details</h3>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Loan Details
+                  </h3>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -134,7 +146,9 @@ export const AmortizationCalculator: React.FC = () => {
                     <input
                       type="number"
                       value={inputs.loanAmount}
-                      onChange={(e) => updateInput('loanAmount', Number(e.target.value))}
+                      onChange={(e) =>
+                        updateInput("loanAmount", Number(e.target.value))
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
@@ -146,7 +160,9 @@ export const AmortizationCalculator: React.FC = () => {
                       type="number"
                       step="0.01"
                       value={inputs.interestRate}
-                      onChange={(e) => updateInput('interestRate', Number(e.target.value))}
+                      onChange={(e) =>
+                        updateInput("interestRate", Number(e.target.value))
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
@@ -157,7 +173,9 @@ export const AmortizationCalculator: React.FC = () => {
                     <input
                       type="number"
                       value={inputs.loanTermYears}
-                      onChange={(e) => updateInput('loanTermYears', Number(e.target.value))}
+                      onChange={(e) =>
+                        updateInput("loanTermYears", Number(e.target.value))
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
@@ -199,13 +217,15 @@ export const AmortizationCalculator: React.FC = () => {
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center space-x-2">
                     <TrendingDown className="w-5 h-5 text-purple-600" />
-                    <h3 className="text-lg font-bold text-gray-900">Amortization Schedule</h3>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Amortization Schedule
+                    </h3>
                   </div>
                   <button
                     onClick={() => setShowFullSchedule(!showFullSchedule)}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
                   >
-                    {showFullSchedule ? 'Show Summary' : 'Show Full Schedule'}
+                    {showFullSchedule ? "Show Summary" : "Show Full Schedule"}
                   </button>
                 </div>
 
@@ -236,7 +256,9 @@ export const AmortizationCalculator: React.FC = () => {
                           <tr
                             key={payment.paymentNumber}
                             className={`${
-                              payment.paymentNumber % 12 === 0 ? 'bg-purple-50' : 'hover:bg-gray-50'
+                              payment.paymentNumber % 12 === 0
+                                ? "bg-purple-50"
+                                : "hover:bg-gray-50"
                             } transition-colors`}
                           >
                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -268,46 +290,58 @@ export const AmortizationCalculator: React.FC = () => {
 
                 {!showFullSchedule && schedule.length > 60 && (
                   <p className="text-sm text-gray-600 mt-4 text-center">
-                    Showing first 60 months (5 years) and yearly summaries thereafter. Click "Show Full Schedule" to see all {schedule.length} payments.
+                    Showing first 60 months (5 years) and yearly summaries
+                    thereafter. Click "Show Full Schedule" to see all{" "}
+                    {schedule.length} payments.
                   </p>
                 )}
               </div>
 
               {/* Interest vs Principal Chart Visual */}
               <div className="mt-6 bg-gray-50 rounded-lg p-5">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Payment Breakdown Over Time</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  Payment Breakdown Over Time
+                </h3>
                 <div className="space-y-3">
-                  {[1, Math.floor(schedule.length / 4), Math.floor(schedule.length / 2), Math.floor(3 * schedule.length / 4), schedule.length - 1].map(
-                    (index) => {
-                      if (!schedule[index]) return null;
-                      const payment = schedule[index];
-                      const principalPercent = (payment.principal / monthlyPayment) * 100;
-                      const interestPercent = (payment.interest / monthlyPayment) * 100;
+                  {[
+                    1,
+                    Math.floor(schedule.length / 4),
+                    Math.floor(schedule.length / 2),
+                    Math.floor((3 * schedule.length) / 4),
+                    schedule.length - 1,
+                  ].map((index) => {
+                    if (!schedule[index]) return null;
+                    const payment = schedule[index];
+                    const principalPercent =
+                      (payment.principal / monthlyPayment) * 100;
+                    const interestPercent =
+                      (payment.interest / monthlyPayment) * 100;
 
-                      return (
-                        <div key={index} className="space-y-1">
-                          <div className="flex justify-between text-sm font-medium text-gray-700">
-                            <span>Payment {payment.paymentNumber}</span>
-                            <span>{formatCurrency(payment.payment)}</span>
+                    return (
+                      <div key={index} className="space-y-1">
+                        <div className="flex justify-between text-sm font-medium text-gray-700">
+                          <span>Payment {payment.paymentNumber}</span>
+                          <span>{formatCurrency(payment.payment)}</span>
+                        </div>
+                        <div className="flex h-8 rounded-lg overflow-hidden">
+                          <div
+                            className="bg-green-500 flex items-center justify-center text-white text-xs font-semibold"
+                            style={{ width: `${principalPercent}%` }}
+                          >
+                            {principalPercent > 15 &&
+                              `${principalPercent.toFixed(0)}%`}
                           </div>
-                          <div className="flex h-8 rounded-lg overflow-hidden">
-                            <div
-                              className="bg-green-500 flex items-center justify-center text-white text-xs font-semibold"
-                              style={{ width: `${principalPercent}%` }}
-                            >
-                              {principalPercent > 15 && `${principalPercent.toFixed(0)}%`}
-                            </div>
-                            <div
-                              className="bg-red-500 flex items-center justify-center text-white text-xs font-semibold"
-                              style={{ width: `${interestPercent}%` }}
-                            >
-                              {interestPercent > 15 && `${interestPercent.toFixed(0)}%`}
-                            </div>
+                          <div
+                            className="bg-red-500 flex items-center justify-center text-white text-xs font-semibold"
+                            style={{ width: `${interestPercent}%` }}
+                          >
+                            {interestPercent > 15 &&
+                              `${interestPercent.toFixed(0)}%`}
                           </div>
                         </div>
-                      );
-                    }
-                  )}
+                      </div>
+                    );
+                  })}
                   <div className="flex justify-center space-x-6 mt-4 pt-4 border-t">
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 bg-green-500 rounded"></div>

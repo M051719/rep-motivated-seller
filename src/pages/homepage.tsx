@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
 
   // Check legal notice acceptance on mount
   useEffect(() => {
-    const hasAccepted = localStorage.getItem('legal_notice_accepted');
+    const hasAccepted = localStorage.getItem("legal_notice_accepted");
     if (!hasAccepted) {
       setShowLegalModal(true);
     } else {
@@ -123,8 +123,8 @@ const HomePage: React.FC = () => {
   // Force scroll to top when homepage mounts
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.body.style.overflow = 'unset';
-    document.documentElement.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
+    document.documentElement.style.overflow = "unset";
   }, []);
 
   const handleCTAClick = useCallback(
@@ -228,7 +228,7 @@ const HomePage: React.FC = () => {
         {/* Emergency Contact CTA */}
         <ContactCTA onCTAClick={handleCTAClick} />
       </div>
-      
+
       {/* Legal Notice Components */}
       <LegalNoticeModal
         isOpen={showLegalModal}
@@ -236,10 +236,12 @@ const HomePage: React.FC = () => {
         onAccept={() => {
           setShowLegalModal(false);
           setShowLegalBanner(true);
-          toast.success('Legal terms accepted. Thank you for your acknowledgment.');
+          toast.success(
+            "Legal terms accepted. Thank you for your acknowledgment.",
+          );
         }}
       />
-      
+
       {showLegalBanner && (
         <LegalNoticeBanner onDismiss={() => setShowLegalBanner(false)} />
       )}
@@ -362,7 +364,6 @@ const HeroSection = memo<{
               >
                 💳 Fix Your Credit
               </Link>
-      
             </>
           )}
         </motion.div>
@@ -915,4 +916,3 @@ const LoanApplicationCTA = memo<{ onCTAClick: (type: string) => void }>(
 );
 
 export default HomePage;
-

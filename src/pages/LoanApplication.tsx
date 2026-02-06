@@ -298,7 +298,7 @@ const LoanApplicationPage = () => {
     }
 
     toast.success(
-      "Application submitted successfully! We will review your application and contact you within 7 business days. This allows our representatives to thoroughly review your case and apply appropriate relief options."
+      "Application submitted successfully! We will review your application and contact you within 7 business days. This allows our representatives to thoroughly review your case and apply appropriate relief options.",
     );
     console.log("Application Data:", formData);
     console.log("Documents:", documentChecklist);

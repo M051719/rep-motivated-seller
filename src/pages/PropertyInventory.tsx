@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../store/authStore';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { BackButton } from '../components/ui/BackButton';
-import AddPropertyModal from '../components/AddPropertyModal';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "../lib/supabase";
+import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { BackButton } from "../components/ui/BackButton";
+import AddPropertyModal from "../components/AddPropertyModal";
 import {
   Plus,
   Edit2,
@@ -20,7 +20,7 @@ import {
   Filter,
   Search,
   Eye,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface Property {
   id: string;
@@ -38,7 +38,13 @@ interface Property {
   bedrooms: number | null;
   bathrooms: number | null;
   square_feet: number | null;
-  status: 'available' | 'under-contract' | 'purchased' | 'sold' | 'refinanced' | 'archived';
+  status:
+    | "available"
+    | "under-contract"
+    | "purchased"
+    | "sold"
+    | "refinanced"
+    | "archived";
   acquisition_date: string | null;
   sale_date: string | null;
   total_invested: number | null;
@@ -54,14 +60,14 @@ const PropertyInventory: React.FC = () => {
   const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
     fetchProperties();
@@ -71,16 +77,16 @@ const PropertyInventory: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('owner_id', user?.id)
-        .order('created_at', { ascending: false });
+        .from("properties")
+        .select("*")
+        .eq("owner_id", user?.id)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setProperties(data || []);
     } catch (error: any) {
-      console.error('Error fetching properties:', error);
-      toast.error('Failed to load properties');
+      console.error("Error fetching properties:", error);
+      toast.error("Failed to load properties");
     } finally {
       setLoading(false);
     }
@@ -92,37 +98,42 @@ const PropertyInventory: React.FC = () => {
       property.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.state.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
-    const matchesType = typeFilter === 'all' || property.property_type === typeFilter;
+    const matchesStatus =
+      statusFilter === "all" || property.status === statusFilter;
+    const matchesType =
+      typeFilter === "all" || property.property_type === typeFilter;
 
     return matchesSearch && matchesStatus && matchesType;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'under-contract':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'purchased':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'sold':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'refinanced':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'archived':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "available":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "under-contract":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "purchased":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "sold":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case "refinanced":
+        return "bg-indigo-100 text-indigo-800 border-indigo-200";
+      case "archived":
+        return "bg-gray-100 text-gray-800 border-gray-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const stats = {
     total: properties.length,
-    available: properties.filter((p) => p.status === 'available').length,
-    purchased: properties.filter((p) => p.status === 'purchased').length,
-    sold: properties.filter((p) => p.status === 'sold').length,
-    totalInvested: properties.reduce((sum, p) => sum + (p.total_invested || 0), 0),
+    available: properties.filter((p) => p.status === "available").length,
+    purchased: properties.filter((p) => p.status === "purchased").length,
+    sold: properties.filter((p) => p.status === "sold").length,
+    totalInvested: properties.reduce(
+      (sum, p) => sum + (p.total_invested || 0),
+      0,
+    ),
     totalProfit: properties.reduce((sum, p) => sum + (p.profit || 0), 0),
   };
 
@@ -135,7 +146,9 @@ const PropertyInventory: React.FC = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-3 mb-3">
             <Home className="w-10 h-10 text-blue-600" />
-            <h1 className="text-4xl font-bold text-gray-900">Property Inventory</h1>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Property Inventory
+            </h1>
           </div>
           <p className="text-xl text-gray-600">
             Track and manage your real estate portfolio
@@ -149,8 +162,12 @@ const PropertyInventory: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl shadow-md p-6 border-2 border-blue-100"
           >
-            <div className="text-blue-600 text-sm font-medium mb-1">Total Properties</div>
-            <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
+            <div className="text-blue-600 text-sm font-medium mb-1">
+              Total Properties
+            </div>
+            <div className="text-3xl font-bold text-gray-900">
+              {stats.total}
+            </div>
           </motion.div>
 
           <motion.div
@@ -159,8 +176,12 @@ const PropertyInventory: React.FC = () => {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-xl shadow-md p-6 border-2 border-green-100"
           >
-            <div className="text-green-600 text-sm font-medium mb-1">Available</div>
-            <div className="text-3xl font-bold text-gray-900">{stats.available}</div>
+            <div className="text-green-600 text-sm font-medium mb-1">
+              Available
+            </div>
+            <div className="text-3xl font-bold text-gray-900">
+              {stats.available}
+            </div>
           </motion.div>
 
           <motion.div
@@ -179,7 +200,9 @@ const PropertyInventory: React.FC = () => {
             transition={{ delay: 0.3 }}
             className="bg-white rounded-xl shadow-md p-6 border-2 border-indigo-100"
           >
-            <div className="text-indigo-600 text-sm font-medium mb-1">Total Profit</div>
+            <div className="text-indigo-600 text-sm font-medium mb-1">
+              Total Profit
+            </div>
             <div className="text-3xl font-bold text-gray-900">
               ${stats.totalProfit.toLocaleString()}
             </div>
@@ -206,7 +229,9 @@ const PropertyInventory: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -223,7 +248,9 @@ const PropertyInventory: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Property Type
+              </label>
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
@@ -242,7 +269,8 @@ const PropertyInventory: React.FC = () => {
 
           <div className="mt-4 flex justify-between items-center">
             <p className="text-sm text-gray-600">
-              Showing {filteredProperties.length} of {properties.length} properties
+              Showing {filteredProperties.length} of {properties.length}{" "}
+              properties
             </p>
             <button
               onClick={() => setShowAddModal(true)}
@@ -267,11 +295,11 @@ const PropertyInventory: React.FC = () => {
               No properties found
             </h3>
             <p className="text-gray-600 mb-6">
-              {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
-                ? 'Try adjusting your filters'
-                : 'Start building your portfolio by adding your first property'}
+              {searchTerm || statusFilter !== "all" || typeFilter !== "all"
+                ? "Try adjusting your filters"
+                : "Start building your portfolio by adding your first property"}
             </p>
-            {!searchTerm && statusFilter === 'all' && typeFilter === 'all' && (
+            {!searchTerm && statusFilter === "all" && typeFilter === "all" && (
               <button
                 onClick={() => setShowAddModal(true)}
                 className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
@@ -307,17 +335,19 @@ const PropertyInventory: React.FC = () => {
                   <div className="absolute top-3 right-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold border-2 ${getStatusColor(
-                        property.status
+                        property.status,
                       )}`}
                     >
-                      {property.status.replace('-', ' ').toUpperCase()}
+                      {property.status.replace("-", " ").toUpperCase()}
                     </span>
                   </div>
                 </div>
 
                 {/* Property Details */}
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{property.address}</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    {property.address}
+                  </h3>
                   <p className="text-sm text-gray-600 mb-4 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {property.city}, {property.state} {property.zip_code}
@@ -327,13 +357,17 @@ const PropertyInventory: React.FC = () => {
                     {property.bedrooms && (
                       <div>
                         <span className="text-gray-600">Beds:</span>
-                        <span className="ml-1 font-semibold">{property.bedrooms}</span>
+                        <span className="ml-1 font-semibold">
+                          {property.bedrooms}
+                        </span>
                       </div>
                     )}
                     {property.bathrooms && (
                       <div>
                         <span className="text-gray-600">Baths:</span>
-                        <span className="ml-1 font-semibold">{property.bathrooms}</span>
+                        <span className="ml-1 font-semibold">
+                          {property.bathrooms}
+                        </span>
                       </div>
                     )}
                     {property.square_feet && (
@@ -374,7 +408,9 @@ const PropertyInventory: React.FC = () => {
 
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => navigate(`/property-inventory/${property.id}`)}
+                      onClick={() =>
+                        navigate(`/property-inventory/${property.id}`)
+                      }
                       className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
                       <Eye className="w-4 h-4" />

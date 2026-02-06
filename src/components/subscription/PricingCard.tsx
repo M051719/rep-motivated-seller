@@ -79,9 +79,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 ? "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 hover:shadow-2xl shadow-lg"
                 : "bg-gray-800 text-white hover:bg-gray-900 hover:scale-105 hover:shadow-2xl"
           }`}
-          style={!isCurrentPlan ? { color: 'white', fontWeight: '700' } : undefined}
+          style={
+            !isCurrentPlan ? { color: "white", fontWeight: "700" } : undefined
+          }
         >
-          {isCurrentPlan ? "Current Plan" : tier === "free" ? "Get Started" : "Upgrade Now"}
+          {isCurrentPlan
+            ? "Current Plan"
+            : tier === "free"
+              ? "Get Started"
+              : "Upgrade Now"}
         </button>
 
         {isCurrentPlan && (
@@ -95,6 +101,3 @@ const PricingCard: React.FC<PricingCardProps> = ({
 };
 
 export default PricingCard;
-
-
-

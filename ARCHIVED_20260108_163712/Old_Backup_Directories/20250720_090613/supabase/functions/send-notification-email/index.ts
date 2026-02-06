@@ -1,69 +1,78 @@
-import { serve } from 'https://deno.land/std@0.131.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.0.0'
+import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.0.0";
 
 interface EmailPayload {
-  to: string
-  subject: string
-  html: string
-  from?: string
+  to: string;
+  subject: string;
+  html: string;
+  from?: string;
 }
 
 interface WebhookPayload {
-  type: 'INSERT' | 'UPDATE'
-  table: string
-  record: any
-  schema: string
+  type: "INSERT" | "UPDATE";
+  table: string;
+  record: any;
+  schema: string;
 }
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
 
-    const body: WebhookPayload = await req.json()
-    const { record, type } = body
+    const body: WebhookPayload = await req.json();
+    const { record, type } = body;
 
     // Get notification settings
     const { data: settings } = await supabaseClient
-      .from('notification_settings')
-      .select('*')
+      .from("notification_settings")
+      .select("*")
       .limit(1)
-      .single()
+      .single();
 
     if (!settings?.email_notifications) {
-      return new Response(JSON.stringify({ message: 'Email notifications disabled' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      })
+      return new Response(
+        JSON.stringify({ message: "Email notifications disabled" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     // Determine email type and recipients
-    let emailPayload: EmailPayload
-    const adminEmail = Deno.env.get('ADMIN_EMAIL') ?? ''
-    const urgentEmail = Deno.env.get('URGENT_EMAIL') ?? ''
-    const fromEmail = Deno.env.get('FROM_EMAIL') ?? 'noreply@repmotivatedseller.org'
+    let emailPayload: EmailPayload;
+    const adminEmail = Deno.env.get("ADMIN_EMAIL") ?? "";
+    const urgentEmail = Deno.env.get("URGENT_EMAIL") ?? "";
+    const fromEmail =
+      Deno.env.get("FROM_EMAIL") ?? "noreply@repmotivatedseller.org";
 
-    if (type === 'INSERT') {
+    if (type === "INSERT") {
       // New submission
-      const isUrgent = record.urgency_level === 'high'
-      const recipient = isUrgent ? urgentEmail : adminEmail
-      
+      const isUrgent = record.urgency_level === "high";
+      const recipient = isUrgent ? urgentEmail : adminEmail;
+
       emailPayload = {
         to: recipient,
-        subject: isUrgent ? '🚨 URGENT: New Foreclosure Assistance Request' : 'New Foreclosure Assistance Request',
+        subject: isUrgent
+          ? "🚨 URGENT: New Foreclosure Assistance Request"
+          : "New Foreclosure Assistance Request",
         html: generateEmailTemplate({
-          title: isUrgent ? 'URGENT: New Foreclosure Assistance Request' : 'New Foreclosure Assistance Request',
+          title: isUrgent
+            ? "URGENT: New Foreclosure Assistance Request"
+            : "New Foreclosure Assistance Request",
           name: record.name,
           email: record.email,
           phone: record.phone,
@@ -73,8 +82,8 @@ serve(async (req) => {
           propertyAddress: record.property_address,
         }),
         from: fromEmail,
-      }
-    } else if (type === 'UPDATE' && record.status !== 'new') {
+      };
+    } else if (type === "UPDATE" && record.status !== "new") {
       // Status update
       emailPayload = {
         to: record.email,
@@ -85,38 +94,41 @@ serve(async (req) => {
           notes: record.notes,
         }),
         from: fromEmail,
-      }
+      };
     } else {
-      return new Response(JSON.stringify({ message: 'No email sent for this event' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      })
+      return new Response(
+        JSON.stringify({ message: "No email sent for this event" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     // Send email via MailerLite API
-    const mailerliteApiKey = Deno.env.get('MAILERLITE_API_KEY') ?? ''
-    const response = await fetch('https://api.mailerlite.com/api/v2/emails', {
-      method: 'POST',
+    const mailerliteApiKey = Deno.env.get("MAILERLITE_API_KEY") ?? "";
+    const response = await fetch("https://api.mailerlite.com/api/v2/emails", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-MailerLite-ApiKey': mailerliteApiKey,
+        "Content-Type": "application/json",
+        "X-MailerLite-ApiKey": mailerliteApiKey,
       },
       body: JSON.stringify(emailPayload),
-    })
+    });
 
-    const result = await response.json()
+    const result = await response.json();
 
     return new Response(JSON.stringify({ success: true, result }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
-    })
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,
-    })
+    });
   }
-})
+});
 
 function generateEmailTemplate(data: any): string {
   return `
@@ -141,23 +153,23 @@ function generateEmailTemplate(data: any): string {
         </div>
         <div class="content">
           <p>A new foreclosure assistance request has been submitted with the following details:</p>
-          
+
           <h3>Contact Information</h3>
           <p><strong>Name:</strong> ${data.name}</p>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Phone:</strong> ${data.phone}</p>
-          
+
           <h3>Property Information</h3>
-          <p><strong>Address:</strong> ${data.propertyAddress || 'Not provided'}</p>
-          
+          <p><strong>Address:</strong> ${data.propertyAddress || "Not provided"}</p>
+
           <h3>Situation Details</h3>
           <p><strong>Urgency Level:</strong> <span class="urgency-${data.urgencyLevel}">${data.urgencyLevel.toUpperCase()}</span></p>
           <p><strong>Missed Payments:</strong> ${data.missedPayments || 0}</p>
-          <p><strong>Received Notice of Default:</strong> ${data.receivedNod ? 'Yes' : 'No'}</p>
-          
+          <p><strong>Received Notice of Default:</strong> ${data.receivedNod ? "Yes" : "No"}</p>
+
           <p>Please log in to the admin dashboard to view full details and take appropriate action.</p>
-          
-          <p><a href="${Deno.env.get('SITE_URL')}/admin/dashboard">Access Admin Dashboard</a></p>
+
+          <p><a href="${Deno.env.get("SITE_URL")}/admin/dashboard">Access Admin Dashboard</a></p>
         </div>
         <div class="footer">
           <p>This is an automated message from RepMotivatedSeller Foreclosure Assistance Platform.</p>
@@ -165,7 +177,7 @@ function generateEmailTemplate(data: any): string {
       </div>
     </body>
     </html>
-  `
+  `;
 }
 
 function generateStatusUpdateTemplate(data: any): string {
@@ -189,15 +201,15 @@ function generateStatusUpdateTemplate(data: any): string {
         </div>
         <div class="content">
           <p>Hello ${data.name},</p>
-          
+
           <p>We wanted to let you know that the status of your foreclosure assistance request has been updated.</p>
-          
+
           <p><strong>Current Status:</strong> <span class="status">${data.status.toUpperCase()}</span></p>
-          
-          ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ''}
-          
+
+          ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ""}
+
           <p>If you have any questions or need further assistance, please don't hesitate to contact us.</p>
-          
+
           <p>Thank you for choosing RepMotivatedSeller for your foreclosure assistance needs.</p>
         </div>
         <div class="footer">
@@ -207,5 +219,5 @@ function generateStatusUpdateTemplate(data: any): string {
       </div>
     </body>
     </html>
-  `
+  `;
 }
