@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Play, 
-  CheckCircle, 
-  Lock, 
-  Download, 
-  Award, 
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Play,
+  CheckCircle,
+  Lock,
+  Download,
+  Award,
   TrendingUp,
   FileText,
   Clock,
-  Sparkles
-} from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../store/authStore';
-import { BackButton } from '../components/ui/BackButton';
-import toast from 'react-hot-toast';
+  Sparkles,
+} from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { useAuthStore } from "../store/authStore";
+import { BackButton } from "../components/ui/BackButton";
+import toast from "react-hot-toast";
 
 interface Course {
   id: string;
   title: string;
   description: string;
   duration: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
   videoUrl?: string;
   completed: boolean;
   locked: boolean;
-  requiredTier: 'free' | 'entrepreneur' | 'professional' | 'enterprise';
+  requiredTier: "free" | "entrepreneur" | "professional" | "enterprise";
   modules: Module[];
 }
 
@@ -55,148 +55,152 @@ const EducationDashboard: React.FC = () => {
     totalCourses: 12,
     certificatesEarned: 0,
     hoursLearned: 0,
-    currentStreak: 0
+    currentStreak: 0,
   });
-  const [userTier, setUserTier] = useState<string>('free');
+  const [userTier, setUserTier] = useState<string>("free");
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
 
   // Courses data - Hardship Letters, Wholesale Contracts, Site How-Tos
   const courses: Course[] = [
     {
-      id: 'hardship-letters',
-      title: 'Hardship Letter Writing Mastery',
-      description: 'Learn to write compelling hardship letters that get results. Includes templates and AI-assisted writing.',
-      duration: '2.5 hours',
-      difficulty: 'Beginner',
+      id: "hardship-letters",
+      title: "Hardship Letter Writing Mastery",
+      description:
+        "Learn to write compelling hardship letters that get results. Includes templates and AI-assisted writing.",
+      duration: "2.5 hours",
+      difficulty: "Beginner",
       completed: false,
       locked: false,
-      requiredTier: 'free',
+      requiredTier: "free",
       modules: [
         {
-          id: 'hl-intro',
-          title: 'Understanding Hardship Letters',
-          duration: '20 min',
+          id: "hl-intro",
+          title: "Understanding Hardship Letters",
+          duration: "20 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder1',
-          hasAiAssistance: false
+          videoUrl: "https://www.youtube.com/embed/placeholder1",
+          hasAiAssistance: false,
         },
         {
-          id: 'hl-template',
-          title: 'Using Professional Templates',
-          duration: '30 min',
+          id: "hl-template",
+          title: "Using Professional Templates",
+          duration: "30 min",
           completed: false,
-          downloadUrl: '/templates/hardship-letter-template.pdf',
-          hasAiAssistance: true
+          downloadUrl: "/templates/hardship-letter-template.pdf",
+          hasAiAssistance: true,
         },
         {
-          id: 'hl-ai-writing',
-          title: 'AI-Assisted Letter Generation',
-          duration: '45 min',
+          id: "hl-ai-writing",
+          title: "AI-Assisted Letter Generation",
+          duration: "45 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder2',
-          hasAiAssistance: true
-        }
-      ]
+          videoUrl: "https://www.youtube.com/embed/placeholder2",
+          hasAiAssistance: true,
+        },
+      ],
     },
     {
-      id: 'wholesale-contracts',
-      title: 'Wholesale Contract Fundamentals (ALL TIERS)',
-      description: 'Master wholesale real estate contracts. Download templates and get expert guidance on every clause.',
-      duration: '3 hours',
-      difficulty: 'Intermediate',
+      id: "wholesale-contracts",
+      title: "Wholesale Contract Fundamentals (ALL TIERS)",
+      description:
+        "Master wholesale real estate contracts. Download templates and get expert guidance on every clause.",
+      duration: "3 hours",
+      difficulty: "Intermediate",
       completed: false,
       locked: false,
-      requiredTier: 'free',
+      requiredTier: "free",
       modules: [
         {
-          id: 'wc-basics',
-          title: 'Contract Basics & Structure',
-          duration: '40 min',
+          id: "wc-basics",
+          title: "Contract Basics & Structure",
+          duration: "40 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder3',
-          hasAiAssistance: false
+          videoUrl: "https://www.youtube.com/embed/placeholder3",
+          hasAiAssistance: false,
         },
         {
-          id: 'wc-templates',
-          title: 'Downloadable Contract Templates',
-          duration: '30 min',
+          id: "wc-templates",
+          title: "Downloadable Contract Templates",
+          duration: "30 min",
           completed: false,
-          downloadUrl: '/contracts/wholesale-purchase-agreement.pdf',
-          hasAiAssistance: false
+          downloadUrl: "/contracts/wholesale-purchase-agreement.pdf",
+          hasAiAssistance: false,
         },
         {
-          id: 'wc-clauses',
-          title: 'Key Clauses & Protections',
-          duration: '50 min',
+          id: "wc-clauses",
+          title: "Key Clauses & Protections",
+          duration: "50 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder4',
-          hasAiAssistance: true
-        }
-      ]
+          videoUrl: "https://www.youtube.com/embed/placeholder4",
+          hasAiAssistance: true,
+        },
+      ],
     },
     {
-      id: 'site-features',
-      title: 'RepMotivatedSeller Platform Guide',
-      description: 'Learn to use every feature of our platform to maximize your foreclosure prevention success.',
-      duration: '2 hours',
-      difficulty: 'Beginner',
+      id: "site-features",
+      title: "RepMotivatedSeller Platform Guide",
+      description:
+        "Learn to use every feature of our platform to maximize your foreclosure prevention success.",
+      duration: "2 hours",
+      difficulty: "Beginner",
       completed: false,
       locked: false,
-      requiredTier: 'free',
+      requiredTier: "free",
       modules: [
         {
-          id: 'sf-dashboard',
-          title: 'Navigating Your Dashboard',
-          duration: '25 min',
+          id: "sf-dashboard",
+          title: "Navigating Your Dashboard",
+          duration: "25 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder5',
-          hasAiAssistance: false
+          videoUrl: "https://www.youtube.com/embed/placeholder5",
+          hasAiAssistance: false,
         },
         {
-          id: 'sf-deal-analyzer',
-          title: 'Using the Deal Analyzer',
-          duration: '35 min',
+          id: "sf-deal-analyzer",
+          title: "Using the Deal Analyzer",
+          duration: "35 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder6',
-          hasAiAssistance: true
+          videoUrl: "https://www.youtube.com/embed/placeholder6",
+          hasAiAssistance: true,
         },
         {
-          id: 'sf-ai-assistant',
-          title: 'Maximizing AI Assistant Features',
-          duration: '30 min',
+          id: "sf-ai-assistant",
+          title: "Maximizing AI Assistant Features",
+          duration: "30 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder7',
-          hasAiAssistance: true
-        }
-      ]
+          videoUrl: "https://www.youtube.com/embed/placeholder7",
+          hasAiAssistance: true,
+        },
+      ],
     },
     {
-      id: 'ai-report-generation',
-      title: 'AI-Powered Report Generation (PAID TIERS)',
-      description: 'Use AI to create professional reports, analyses, and documentation instantly.',
-      duration: '1.5 hours',
-      difficulty: 'Advanced',
+      id: "ai-report-generation",
+      title: "AI-Powered Report Generation (PAID TIERS)",
+      description:
+        "Use AI to create professional reports, analyses, and documentation instantly.",
+      duration: "1.5 hours",
+      difficulty: "Advanced",
       completed: false,
-      locked: userTier === 'free',
-      requiredTier: 'entrepreneur',
+      locked: userTier === "free",
+      requiredTier: "entrepreneur",
       modules: [
         {
-          id: 'ai-setup',
-          title: 'Setting Up AI Tools',
-          duration: '20 min',
+          id: "ai-setup",
+          title: "Setting Up AI Tools",
+          duration: "20 min",
           completed: false,
-          videoUrl: 'https://www.youtube.com/embed/placeholder9',
-          hasAiAssistance: true
+          videoUrl: "https://www.youtube.com/embed/placeholder9",
+          hasAiAssistance: true,
         },
         {
-          id: 'ai-reports',
-          title: 'Generating Custom Reports',
-          duration: '45 min',
+          id: "ai-reports",
+          title: "Generating Custom Reports",
+          duration: "45 min",
           completed: false,
-          hasAiAssistance: true
-        }
-      ]
-    }
+          hasAiAssistance: true,
+        },
+      ],
+    },
   ];
 
   useEffect(() => {
@@ -208,20 +212,20 @@ const EducationDashboard: React.FC = () => {
 
     try {
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('tier')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("tier")
+        .eq("id", user.id)
         .single();
 
       if (profile) {
-        setUserTier(profile.tier || 'free');
+        setUserTier(profile.tier || "free");
       }
 
       // Load education progress from database
       const { data: progressData } = await supabase
-        .from('education_progress')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("education_progress")
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
       if (progressData) {
@@ -230,54 +234,62 @@ const EducationDashboard: React.FC = () => {
           totalCourses: 12,
           certificatesEarned: progressData.certificates_earned || 0,
           hoursLearned: progressData.hours_learned || 0,
-          currentStreak: progressData.current_streak || 0
+          currentStreak: progressData.current_streak || 0,
         });
       }
     } catch (error) {
-      console.error('Error loading progress:', error);
+      console.error("Error loading progress:", error);
     }
   };
 
   const handleModuleComplete = async (courseId: string, moduleId: string) => {
     if (!user) {
-      toast.error('Please log in to track progress');
+      toast.error("Please log in to track progress");
       return;
     }
 
     try {
-      await supabase.from('education_progress').upsert({
+      await supabase.from("education_progress").upsert({
         user_id: user.id,
         course_id: courseId,
         module_id: moduleId,
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       });
 
-      toast.success('Module completed! 🎉');
+      toast.success("Module completed! 🎉");
       loadUserProgress();
     } catch (error) {
-      console.error('Error marking complete:', error);
-      toast.error('Failed to save progress');
+      console.error("Error marking complete:", error);
+      toast.error("Failed to save progress");
     }
   };
 
   const handleDownload = (url: string, title: string) => {
     toast.success(`Downloading ${title}...`);
     // In production, this would trigger actual download
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   };
 
   const handleAiAssistance = (moduleTitle: string) => {
     toast.success(`Opening AI Assistant for ${moduleTitle}...`);
-    window.open('/ai-chat?context=' + encodeURIComponent(moduleTitle), '_blank');
+    window.open(
+      "/ai-chat?context=" + encodeURIComponent(moduleTitle),
+      "_blank",
+    );
   };
 
   const getTierBadgeColor = (tier: string) => {
     switch (tier) {
-      case 'free': return 'bg-gray-100 text-gray-700';
-      case 'entrepreneur': return 'bg-blue-100 text-blue-700';
-      case 'professional': return 'bg-purple-100 text-purple-700';
-      case 'enterprise': return 'bg-gold-100 text-gold-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case "free":
+        return "bg-gray-100 text-gray-700";
+      case "entrepreneur":
+        return "bg-blue-100 text-blue-700";
+      case "professional":
+        return "bg-purple-100 text-purple-700";
+      case "enterprise":
+        return "bg-gold-100 text-gold-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -296,7 +308,8 @@ const EducationDashboard: React.FC = () => {
             🎓 Education Dashboard
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Master foreclosure prevention with expert-led courses, downloadable templates, and AI-powered assistance
+            Master foreclosure prevention with expert-led courses, downloadable
+            templates, and AI-powered assistance
           </p>
         </motion.div>
 
@@ -310,7 +323,9 @@ const EducationDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Courses Completed</p>
-                <p className="text-3xl font-bold text-gray-900">{progress.coursesCompleted}/{progress.totalCourses}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {progress.coursesCompleted}/{progress.totalCourses}
+                </p>
               </div>
               <CheckCircle className="w-12 h-12 text-blue-500" />
             </div>
@@ -324,8 +339,12 @@ const EducationDashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Certificates Earned</p>
-                <p className="text-3xl font-bold text-gray-900">{progress.certificatesEarned}</p>
+                <p className="text-sm text-gray-600 mb-1">
+                  Certificates Earned
+                </p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {progress.certificatesEarned}
+                </p>
               </div>
               <Award className="w-12 h-12 text-purple-500" />
             </div>
@@ -340,7 +359,9 @@ const EducationDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Hours Learned</p>
-                <p className="text-3xl font-bold text-gray-900">{progress.hoursLearned}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {progress.hoursLearned}
+                </p>
               </div>
               <Clock className="w-12 h-12 text-green-500" />
             </div>
@@ -355,7 +376,9 @@ const EducationDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Current Streak</p>
-                <p className="text-3xl font-bold text-gray-900">{progress.currentStreak} days</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {progress.currentStreak} days
+                </p>
               </div>
               <TrendingUp className="w-12 h-12 text-orange-500" />
             </div>
@@ -371,17 +394,23 @@ const EducationDashboard: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 ${
-                course.locked ? 'opacity-60' : 'hover:scale-105'
+                course.locked ? "opacity-60" : "hover:scale-105"
               }`}
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-xl font-bold text-gray-900">{course.title}</h3>
-                      {course.locked && <Lock className="w-5 h-5 text-gray-400" />}
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {course.title}
+                      </h3>
+                      {course.locked && (
+                        <Lock className="w-5 h-5 text-gray-400" />
+                      )}
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">{course.description}</p>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {course.description}
+                    </p>
                   </div>
                 </div>
 
@@ -390,7 +419,9 @@ const EducationDashboard: React.FC = () => {
                     <Clock className="w-4 h-4" />
                     {course.duration}
                   </span>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${getTierBadgeColor(course.requiredTier)}`}>
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium ${getTierBadgeColor(course.requiredTier)}`}
+                  >
                     {course.requiredTier.toUpperCase()}
                   </span>
                 </div>
@@ -399,14 +430,15 @@ const EducationDashboard: React.FC = () => {
                   <div className="flex justify-between text-sm text-gray-600 mb-2">
                     <span>Progress</span>
                     <span>
-                      {course.modules.filter(m => m.completed).length}/{course.modules.length} modules
+                      {course.modules.filter((m) => m.completed).length}/
+                      {course.modules.length} modules
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-blue-600 h-2 rounded-full transition-all duration-500"
                       style={{
-                        width: `${(course.modules.filter(m => m.completed).length / course.modules.length) * 100}%`
+                        width: `${(course.modules.filter((m) => m.completed).length / course.modules.length) * 100}%`,
                       }}
                     />
                   </div>
@@ -417,11 +449,11 @@ const EducationDashboard: React.FC = () => {
                   disabled={course.locked}
                   className={`w-full py-3 rounded-lg font-semibold transition-all ${
                     course.locked
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg'
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg"
                   }`}
                 >
-                  {course.locked ? 'Upgrade to Unlock' : 'Start Learning'}
+                  {course.locked ? "Upgrade to Unlock" : "Start Learning"}
                 </button>
               </div>
             </motion.div>
@@ -448,8 +480,12 @@ const EducationDashboard: React.FC = () => {
                 <div className="p-8">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h2 className="text-3xl font-bold text-gray-900 mb-2">{selectedCourse.title}</h2>
-                      <p className="text-gray-600">{selectedCourse.description}</p>
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                        {selectedCourse.title}
+                      </h2>
+                      <p className="text-gray-600">
+                        {selectedCourse.description}
+                      </p>
                     </div>
                     <button
                       onClick={() => setSelectedCourse(null)}
@@ -467,7 +503,9 @@ const EducationDashboard: React.FC = () => {
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{module.title}</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                              {module.title}
+                            </h3>
                             <p className="text-sm text-gray-600 flex items-center gap-2">
                               <Clock className="w-4 h-4" />
                               {module.duration}
@@ -490,7 +528,12 @@ const EducationDashboard: React.FC = () => {
                           )}
                           {module.downloadUrl && (
                             <button
-                              onClick={() => handleDownload(module.downloadUrl!, module.title)}
+                              onClick={() =>
+                                handleDownload(
+                                  module.downloadUrl!,
+                                  module.title,
+                                )
+                              }
                               className="flex-1 min-w-[120px] px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                             >
                               <Download className="w-4 h-4" />
@@ -508,7 +551,12 @@ const EducationDashboard: React.FC = () => {
                           )}
                           {!module.completed && (
                             <button
-                              onClick={() => handleModuleComplete(selectedCourse.id, module.id)}
+                              onClick={() =>
+                                handleModuleComplete(
+                                  selectedCourse.id,
+                                  module.id,
+                                )
+                              }
                               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                             >
                               Mark Complete

@@ -353,8 +353,8 @@ const WhatWeDoPage = () => {
                 <div className="text-4xl mb-4">⚡</div>
                 <h3 className="text-xl font-bold mb-3">Quick & Efficient</h3>
                 <p className="text-blue-100">
-                  Professional approval process with decisions in 7 business days. No
-                  lengthy bank processes or excessive documentation
+                  Professional approval process with decisions in 7 business
+                  days. No lengthy bank processes or excessive documentation
                   requirements.
                 </p>
               </motion.div>
@@ -479,8 +479,8 @@ const WhatWeDoPage = () => {
                   Approval & Terms
                 </h3>
                 <p className="text-gray-700">
-                  Professional approval decision within 7 business days. We present loan
-                  terms including rate, amount, and timeline.
+                  Professional approval decision within 7 business days. We
+                  present loan terms including rate, amount, and timeline.
                 </p>
               </div>
 

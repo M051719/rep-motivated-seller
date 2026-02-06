@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { motion } from 'framer-motion';
-import { 
-  Users, 
-  TrendingUp, 
-  Award, 
-  FileText, 
+import { motion } from "framer-motion";
+import {
+  Users,
+  TrendingUp,
+  Award,
+  FileText,
   Calendar,
   DollarSign,
   Home,
   Heart,
   Trophy,
-  CheckCircle
-} from 'lucide-react';
+  CheckCircle,
+} from "lucide-react";
 import { useSubscription } from "../hooks/useSubscription";
-import { useAuthStore } from '../store/authStore';
-import { supabase } from '../lib/supabase';
+import { useAuthStore } from "../store/authStore";
+import { supabase } from "../lib/supabase";
 import SubscriptionCard from "../components/subscription/SubscriptionCard";
-import { BackButton } from '../components/ui/BackButton';
-import toast from 'react-hot-toast';
+import { BackButton } from "../components/ui/BackButton";
+import toast from "react-hot-toast";
 
 interface ImpactMetrics {
   familiesHelped: number;
@@ -36,7 +36,7 @@ interface MemberStats {
 interface LoanProgress {
   id: string;
   propertyAddress: string;
-  status: 'submitted' | 'processing' | 'approved' | 'closed' | 'denied';
+  status: "submitted" | "processing" | "approved" | "closed" | "denied";
   submittedAt: string;
   loanAmount: number;
   progress: number;
@@ -46,18 +46,18 @@ const Dashboard: React.FC = () => {
   const { subscription, checkFeatureAccess, trackApiUsage } = useSubscription();
   const { user } = useAuthStore();
   const [apiResult, setApiResult] = useState<string>("");
-  const [userTier, setUserTier] = useState<string>('free');
+  const [userTier, setUserTier] = useState<string>("free");
   const [impactMetrics, setImpactMetrics] = useState<ImpactMetrics>({
     familiesHelped: 0,
     loansProcessed: 0,
     totalSaved: 0,
-    avgProcessingDays: 0
+    avgProcessingDays: 0,
   });
   const [memberStats, setMemberStats] = useState<MemberStats>({
     documentsGenerated: 0,
     coursesCompleted: 0,
     appointmentsAttended: 0,
-    certificatesEarned: 0
+    certificatesEarned: 0,
   });
   const [loanProgress, setLoanProgress] = useState<LoanProgress[]>([]);
 
@@ -71,19 +71,19 @@ const Dashboard: React.FC = () => {
     try {
       // Load user tier
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('tier')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("tier")
+        .eq("id", user.id)
         .single();
 
       if (profile) {
-        setUserTier(profile.tier || 'free');
+        setUserTier(profile.tier || "free");
       }
 
       // Load platform-wide impact metrics (visible to all tiers)
       const { data: metricsData } = await supabase
-        .from('platform_metrics')
-        .select('*')
+        .from("platform_metrics")
+        .select("*")
         .single();
 
       if (metricsData) {
@@ -91,15 +91,15 @@ const Dashboard: React.FC = () => {
           familiesHelped: metricsData.families_helped || 0,
           loansProcessed: metricsData.loans_processed || 0,
           totalSaved: metricsData.total_saved || 0,
-          avgProcessingDays: metricsData.avg_processing_days || 0
+          avgProcessingDays: metricsData.avg_processing_days || 0,
         });
       }
 
       // Load member accomplishments
       const { data: accomplishments } = await supabase
-        .from('member_accomplishments')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("member_accomplishments")
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
       if (accomplishments) {
@@ -107,51 +107,65 @@ const Dashboard: React.FC = () => {
           documentsGenerated: accomplishments.documents_generated || 0,
           coursesCompleted: accomplishments.courses_completed || 0,
           appointmentsAttended: accomplishments.appointments_attended || 0,
-          certificatesEarned: accomplishments.certificates_earned || 0
+          certificatesEarned: accomplishments.certificates_earned || 0,
         });
       }
 
       // Load loan processing progress
       const { data: loans } = await supabase
-        .from('loan_applications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .from("loan_applications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
       if (loans) {
-        setLoanProgress(loans.map((loan: any) => ({
-          id: loan.id,
-          propertyAddress: loan.property_address,
-          status: loan.status,
-          submittedAt: loan.created_at,
-          loanAmount: loan.loan_amount,
-          progress: getProgressPercentage(loan.status)
-        })));
+        setLoanProgress(
+          loans.map((loan: any) => ({
+            id: loan.id,
+            propertyAddress: loan.property_address,
+            status: loan.status,
+            submittedAt: loan.created_at,
+            loanAmount: loan.loan_amount,
+            progress: getProgressPercentage(loan.status),
+          })),
+        );
       }
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error("Error loading dashboard data:", error);
     }
   };
 
   const getProgressPercentage = (status: string): number => {
     switch (status) {
-      case 'submitted': return 25;
-      case 'processing': return 50;
-      case 'approved': return 75;
-      case 'closed': return 100;
-      case 'denied': return 0;
-      default: return 0;
+      case "submitted":
+        return 25;
+      case "processing":
+        return 50;
+      case "approved":
+        return 75;
+      case "closed":
+        return 100;
+      case "denied":
+        return 0;
+      default:
+        return 0;
     }
   };
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'submitted': return 'bg-blue-100 text-blue-700';
-      case 'processing': return 'bg-yellow-100 text-yellow-700';
-      case 'approved': return 'bg-green-100 text-green-700';
-      case 'closed': return 'bg-purple-100 text-purple-700';
-      case 'denied': return 'bg-red-100 text-red-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case "submitted":
+        return "bg-blue-100 text-blue-700";
+      case "processing":
+        return "bg-yellow-100 text-yellow-700";
+      case "approved":
+        return "bg-green-100 text-green-700";
+      case "closed":
+        return "bg-purple-100 text-purple-700";
+      case "denied":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -192,7 +206,8 @@ const Dashboard: React.FC = () => {
             📊 Member Dashboard
           </h1>
           <p className="text-xl text-gray-600">
-            Welcome back! Track your progress and our platform's impact on families.
+            Welcome back! Track your progress and our platform's impact on
+            families.
           </p>
         </motion.div>
 
@@ -212,7 +227,9 @@ const Dashboard: React.FC = () => {
                 <Heart className="w-8 h-8 opacity-50" />
               </div>
               <p className="text-blue-100 text-sm mb-1">Families Helped</p>
-              <p className="text-4xl font-bold">{impactMetrics.familiesHelped.toLocaleString()}</p>
+              <p className="text-4xl font-bold">
+                {impactMetrics.familiesHelped.toLocaleString()}
+              </p>
             </motion.div>
 
             <motion.div
@@ -226,7 +243,9 @@ const Dashboard: React.FC = () => {
                 <CheckCircle className="w-8 h-8 opacity-50" />
               </div>
               <p className="text-green-100 text-sm mb-1">Loans Processed</p>
-              <p className="text-4xl font-bold">{impactMetrics.loansProcessed.toLocaleString()}</p>
+              <p className="text-4xl font-bold">
+                {impactMetrics.loansProcessed.toLocaleString()}
+              </p>
             </motion.div>
 
             <motion.div
@@ -239,8 +258,12 @@ const Dashboard: React.FC = () => {
                 <DollarSign className="w-12 h-12" />
                 <TrendingUp className="w-8 h-8 opacity-50" />
               </div>
-              <p className="text-purple-100 text-sm mb-1">Total Saved for Families</p>
-              <p className="text-4xl font-bold">${(impactMetrics.totalSaved / 1000000).toFixed(1)}M</p>
+              <p className="text-purple-100 text-sm mb-1">
+                Total Saved for Families
+              </p>
+              <p className="text-4xl font-bold">
+                ${(impactMetrics.totalSaved / 1000000).toFixed(1)}M
+              </p>
             </motion.div>
 
             <motion.div
@@ -253,8 +276,12 @@ const Dashboard: React.FC = () => {
                 <Calendar className="w-12 h-12" />
                 <Trophy className="w-8 h-8 opacity-50" />
               </div>
-              <p className="text-orange-100 text-sm mb-1">Avg Processing Time</p>
-              <p className="text-4xl font-bold">{impactMetrics.avgProcessingDays} days</p>
+              <p className="text-orange-100 text-sm mb-1">
+                Avg Processing Time
+              </p>
+              <p className="text-4xl font-bold">
+                {impactMetrics.avgProcessingDays} days
+              </p>
             </motion.div>
           </div>
         </div>
@@ -268,7 +295,9 @@ const Dashboard: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
               <div className="flex items-center justify-between mb-2">
                 <FileText className="w-8 h-8 text-blue-600" />
-                <span className="text-2xl font-bold text-gray-900">{memberStats.documentsGenerated}</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {memberStats.documentsGenerated}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Documents Generated</p>
             </div>
@@ -276,7 +305,9 @@ const Dashboard: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
               <div className="flex items-center justify-between mb-2">
                 <Award className="w-8 h-8 text-green-600" />
-                <span className="text-2xl font-bold text-gray-900">{memberStats.coursesCompleted}</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {memberStats.coursesCompleted}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Courses Completed</p>
             </div>
@@ -284,7 +315,9 @@ const Dashboard: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
               <div className="flex items-center justify-between mb-2">
                 <Calendar className="w-8 h-8 text-purple-600" />
-                <span className="text-2xl font-bold text-gray-900">{memberStats.appointmentsAttended}</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {memberStats.appointmentsAttended}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Appointments Attended</p>
             </div>
@@ -292,7 +325,9 @@ const Dashboard: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
               <div className="flex items-center justify-between mb-2">
                 <Trophy className="w-8 h-8 text-orange-600" />
-                <span className="text-2xl font-bold text-gray-900">{memberStats.certificatesEarned}</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {memberStats.certificatesEarned}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Certificates Earned</p>
             </div>
@@ -323,10 +358,13 @@ const Dashboard: React.FC = () => {
                         Loan Amount: ${loan.loanAmount.toLocaleString()}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Submitted: {new Date(loan.submittedAt).toLocaleDateString()}
+                        Submitted:{" "}
+                        {new Date(loan.submittedAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(loan.status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(loan.status)}`}
+                    >
                       {loan.status.toUpperCase()}
                     </span>
                   </div>
@@ -339,11 +377,11 @@ const Dashboard: React.FC = () => {
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full transition-all duration-500 ${
-                          loan.status === 'denied' 
-                            ? 'bg-red-500' 
-                            : loan.status === 'closed' 
-                            ? 'bg-green-500' 
-                            : 'bg-blue-600'
+                          loan.status === "denied"
+                            ? "bg-red-500"
+                            : loan.status === "closed"
+                              ? "bg-green-500"
+                              : "bg-blue-600"
                         }`}
                         style={{ width: `${loan.progress}%` }}
                       />
@@ -407,7 +445,8 @@ const Dashboard: React.FC = () => {
         >
           <h3 className="text-xl font-bold mb-2">⚠️ IMPORTANT NOTICE</h3>
           <p className="opacity-90">
-            All loans must be processed through RepMotivatedSeller. Platform data protected by law.
+            All loans must be processed through RepMotivatedSeller. Platform
+            data protected by law.
           </p>
         </motion.div>
       </div>
@@ -416,4 +455,3 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-

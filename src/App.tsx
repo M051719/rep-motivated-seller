@@ -56,29 +56,33 @@ import CanvaTemplatesPage from "./pages/CanvaTemplatesPage";
 import HardshipLetterGenerator from "./pages/HardshipLetterGenerator";
 import GLBACompliancePage from "./pages/GLBACompliancePage";
 import PCIDSSCompliancePage from "./pages/PCIDSSCompliancePage";
+import DealPresentationOutlinePage from "./pages/DealPresentationOutlinePage";
+import InstitutionalDashboardPage from "./pages/InstitutionalDashboardPage";
 import CreditRepairLanding from "./pages/credit-repair/CreditRepairLanding";
 import CreditRepairDashboard from "./pages/credit-repair/CreditRepairDashboard";
-import PropertyInventory from './pages/PropertyInventory';
-import PropertyDetail from './pages/PropertyDetail';
-import FSBOListing from './pages/FSBOListing';
-import EducationDashboard from './pages/EducationDashboard';
-import SchedulingDashboard from './pages/SchedulingDashboard';
-import DirectMailMarketingDashboard from './pages/DirectMailMarketingDashboard';
+import PropertyInventory from "./pages/PropertyInventory";
+import PropertyDetail from "./pages/PropertyDetail";
+import FSBOListing from "./pages/FSBOListing";
+import EducationDashboard from "./pages/EducationDashboard";
+import SchedulingDashboard from "./pages/SchedulingDashboard";
+import DirectMailMarketingDashboard from "./pages/DirectMailMarketingDashboard";
 // Temporary: Using simple version to bypass circular dependency
 // import AdminSMSDashboard from './pages/AdminSMSDashboard'
 import AdminSMSDashboard from "./pages/AdminSMSDashboardSimple";
 import AdminBlogManagement from "./pages/AdminBlogManagement";
 import AdminCommentModeration from "./components/AdminCommentModeration";
 import AdminTemplateUpload from "./pages/AdminTemplateUpload";
-import AdminKnowledgeBase from './pages/AdminKnowledgeBase';
+import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
 import TemplateAnalyticsDashboard from "./pages/TemplateAnalyticsDashboard";
 import UserFavoritesPage from "./pages/UserFavoritesPage";
 import TestPage from "./pages/TestPage";
-import MarketingDashboard from './pages/MarketingDashboard';
+import MarketingDashboard from "./pages/MarketingDashboard";
 
 // Security components
-import SecurityHeaders from './components/security/SecurityHeaders';
-const SecurityDashboard = React.lazy(() => import('./components/security/SecurityDashboard'));
+import SecurityHeaders from "./components/security/SecurityHeaders";
+const SecurityDashboard = React.lazy(
+  () => import("./components/security/SecurityDashboard"),
+);
 
 // State management
 import { useAuthStore, fetchUserProfile } from "./store/authStore";
@@ -259,14 +263,23 @@ function App() {
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/subscription" element={<SubscriptionPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/education/dashboard" element={<EducationDashboard />} />
+              <Route
+                path="/education/dashboard"
+                element={<EducationDashboard />}
+              />
               <Route path="/scheduling" element={<SchedulingDashboard />} />
-              <Route path="/marketing/direct-mail" element={<DirectMailMarketingDashboard />} />
-                <Route path="/consultation" element={<BookConsultation />} />
+              <Route
+                path="/marketing/direct-mail"
+                element={<DirectMailMarketingDashboard />}
+              />
+              <Route path="/consultation" element={<BookConsultation />} />
               <Route path="/loan-application" element={<LoanApplication />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/compliance/glba" element={<GLBACompliancePage />} />
-              <Route path="/compliance/pci-dss" element={<PCIDSSCompliancePage />} />
+              <Route
+                path="/compliance/pci-dss"
+                element={<PCIDSSCompliancePage />}
+              />
               <Route
                 path="/terms-of-service"
                 element={<TermsOfServicePage />}
@@ -280,18 +293,27 @@ function App() {
               <Route path="/blog/:slug" element={<BlogPostDetail />} />
               <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
               <Route path="/resources" element={<ResourcesPage />} />
-              <Route path="/ebooks/online-voices" element={<OnlineVoicesEbook />} />
+              <Route
+                path="/ebooks/online-voices"
+                element={<OnlineVoicesEbook />}
+              />
               <Route path="/videos" element={<VideosPage />} />
               <Route path="/help" element={<HelpPage />} />
               {/* Credit Repair Service */}
               <Route path="/credit-repair" element={<CreditRepairLanding />} />
-              <Route path="/credit-repair/dashboard" element={<CreditRepairDashboard />} />
+              <Route
+                path="/credit-repair/dashboard"
+                element={<CreditRepairDashboard />}
+              />
               <Route path="/tools" element={<CalculatorsPage />} />
               <Route path="/calculators" element={<CalculatorsPage />} />
               {/* Feature Routes */}
               <Route path="/foreclosure" element={<ForeclosurePage />} />
               <Route path="/questionnaire" element={<ForeclosurePage />} />
-              <Route path="/hardship-letter-generator" element={<HardshipLetterGenerator />} />
+              <Route
+                path="/hardship-letter-generator"
+                element={<HardshipLetterGenerator />}
+              />
               <Route path="/contracts" element={<ContractsPage />} />
               <Route
                 path="/contracts-library"
@@ -300,23 +322,37 @@ function App() {
               <Route path="/unsubscribe" element={<UnsubscribePage />} />
               <Route path="/sitemap" element={<SitemapPage />} />
               <Route path="/direct-mail" element={<DirectMailPage />} />
-              <Route path="/presentation-builder" element={<PresentationBuilderPage />} />
-              <Route path="/property-inventory" element={<PropertyInventory />} />
-              <Route path="/property-inventory/:id" element={<PropertyDetail />} />
-              <Route path="/fsbo-listing" element={<FSBOListing />} />
-                <Route path="/ai-chat" element={<AIChatPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              
               <Route
-                path="/canva-templates"
-                element={<CanvaTemplatesPage />}
+                path="/institutional-dashboard"
+                element={<InstitutionalDashboardPage />}
               />
-              
+              <Route
+                path="/deal-presentation"
+                element={<DealPresentationOutlinePage />}
+              />
+              <Route
+                path="/presentation-builder"
+                element={<PresentationBuilderPage />}
+              />
+              <Route
+                path="/property-inventory"
+                element={<PropertyInventory />}
+              />
+              <Route
+                path="/property-inventory/:id"
+                element={<PropertyDetail />}
+              />
+              <Route path="/fsbo-listing" element={<FSBOListing />} />
+              <Route path="/ai-chat" element={<AIChatPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+
+              <Route path="/canva-templates" element={<CanvaTemplatesPage />} />
+
               {/* Security Dashboard (Development Only) */}
               {import.meta.env.DEV && (
                 <Route path="/security" element={<SecurityDashboard />} />
               )}
-              
+
               {/* Protected Routes */}
               <Route
                 path="/dashboard"
@@ -435,10 +471,7 @@ function App() {
                   isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" />
                 }
               />
-              <Route
-                path="/marketing"
-                element={<MarketingDashboard />}
-              />
+              <Route path="/marketing" element={<MarketingDashboard />} />
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
@@ -447,7 +480,7 @@ function App() {
           <Footer />
 
           <Toaster position="top-right" />
-          
+
           {/* Floating AI Chat Button - Persistent across all pages */}
           <FloatingAIChat />
         </div>
@@ -457,11 +490,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-

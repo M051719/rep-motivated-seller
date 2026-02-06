@@ -503,8 +503,3 @@ interface PricingCardProps {
   onSelectPlan: () => void;
   popular?: boolean;
 }
-
-
-
-
-

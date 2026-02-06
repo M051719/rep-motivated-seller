@@ -44,7 +44,7 @@ export default function AuthForm() {
 
     // Make Turnstile optional in development
     const isDevelopment = import.meta.env.DEV;
-    
+
     if (!isDevelopment && !turnstileToken) {
       setMessage("Please complete the captcha verification");
       setIsLoading(false);

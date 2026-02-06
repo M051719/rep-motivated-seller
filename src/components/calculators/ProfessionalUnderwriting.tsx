@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { useAuthStore } from '../../store/authStore';
+import React, { useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { useAuthStore } from "../../store/authStore";
 import {
   TrendingUp,
   TrendingDown,
@@ -13,8 +13,8 @@ import {
   BarChart3,
   PieChart,
   Lock,
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 interface UnderwritingInputs {
   propertyPrice: number;
@@ -38,7 +38,7 @@ interface UnderwritingInputs {
 
 interface Scenario {
   name: string;
-  type: 'pessimistic' | 'base' | 'optimistic';
+  type: "pessimistic" | "base" | "optimistic";
   color: string;
   adjustments: {
     appreciationRate: number;
@@ -71,13 +71,13 @@ interface ScenarioResults {
   exitValue: number;
   totalReturn: number;
   avgAnnualReturn: number;
-  grade: 'Strong Buy' | 'Buy' | 'Consider' | 'Pass';
+  grade: "Strong Buy" | "Buy" | "Consider" | "Pass";
   gradeColor: string;
 }
 
 export const ProfessionalUnderwriting: React.FC = () => {
   const { user } = useAuthStore();
-  const userTier = user?.subscription_tier || 'free';
+  const userTier = user?.subscription_tier || "free";
 
   const [inputs, setInputs] = useState<UnderwritingInputs>({
     propertyPrice: 300000,
@@ -101,9 +101,9 @@ export const ProfessionalUnderwriting: React.FC = () => {
 
   const scenarios: Scenario[] = [
     {
-      name: 'Pessimistic',
-      type: 'pessimistic',
-      color: 'red',
+      name: "Pessimistic",
+      type: "pessimistic",
+      color: "red",
       adjustments: {
         appreciationRate: -2,
         vacancyRate: 5,
@@ -112,9 +112,9 @@ export const ProfessionalUnderwriting: React.FC = () => {
       },
     },
     {
-      name: 'Base Case',
-      type: 'base',
-      color: 'blue',
+      name: "Base Case",
+      type: "base",
+      color: "blue",
       adjustments: {
         appreciationRate: 0,
         vacancyRate: 0,
@@ -123,9 +123,9 @@ export const ProfessionalUnderwriting: React.FC = () => {
       },
     },
     {
-      name: 'Optimistic',
-      type: 'optimistic',
-      color: 'green',
+      name: "Optimistic",
+      type: "optimistic",
+      color: "green",
       adjustments: {
         appreciationRate: 2,
         vacancyRate: -3,
@@ -135,11 +135,17 @@ export const ProfessionalUnderwriting: React.FC = () => {
     },
   ];
 
-  const calculateMonthlyPayment = (principal: number, rate: number, years: number): number => {
+  const calculateMonthlyPayment = (
+    principal: number,
+    rate: number,
+    years: number,
+  ): number => {
     const monthlyRate = rate / 100 / 12;
     const numPayments = years * 12;
-    return (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
-           (Math.pow(1 + monthlyRate, numPayments) - 1);
+    return (
+      (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
+      (Math.pow(1 + monthlyRate, numPayments) - 1)
+    );
   };
 
   const calculateIRR = (cashFlows: number[]): number => {
@@ -172,11 +178,19 @@ export const ProfessionalUnderwriting: React.FC = () => {
   const analyzeScenario = (scenario: Scenario): ScenarioResults => {
     const downPaymentAmount = inputs.propertyPrice * (inputs.downPayment / 100);
     const loanAmount = inputs.propertyPrice - downPaymentAmount;
-    const monthlyPayment = calculateMonthlyPayment(loanAmount, inputs.interestRate, inputs.loanTerm);
+    const monthlyPayment = calculateMonthlyPayment(
+      loanAmount,
+      inputs.interestRate,
+      inputs.loanTerm,
+    );
     const annualDebtService = monthlyPayment * 12;
 
-    const adjustedAppreciation = inputs.appreciationRate + scenario.adjustments.appreciationRate;
-    const adjustedVacancy = Math.max(0, inputs.vacancyRate + scenario.adjustments.vacancyRate);
+    const adjustedAppreciation =
+      inputs.appreciationRate + scenario.adjustments.appreciationRate;
+    const adjustedVacancy = Math.max(
+      0,
+      inputs.vacancyRate + scenario.adjustments.vacancyRate,
+    );
     const rentGrowth = 2 + scenario.adjustments.rentGrowth;
     const expenseInflation = 3 + scenario.adjustments.expenseInflation;
 
@@ -184,8 +198,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
     const irrCashFlows: number[] = [-downPaymentAmount];
 
     let currentRent = inputs.annualRent;
-    let currentExpenses = inputs.propertyTax + inputs.insurance + inputs.maintenance + 
-                          inputs.utilities + inputs.hoa;
+    let currentExpenses =
+      inputs.propertyTax +
+      inputs.insurance +
+      inputs.maintenance +
+      inputs.utilities +
+      inputs.hoa;
     let propertyValue = inputs.propertyPrice;
     let remainingBalance = loanAmount;
 
@@ -206,12 +224,15 @@ export const ProfessionalUnderwriting: React.FC = () => {
       // Tax calculation with depreciation
       const depreciation = inputs.propertyPrice / inputs.depreciationYears;
       const taxableIncome = netRent - totalExpenses - depreciation;
-      const taxBenefit = taxableIncome > 0 ? -(taxableIncome * inputs.taxRate / 100) : 
-                         Math.abs(taxableIncome * inputs.taxRate / 100);
+      const taxBenefit =
+        taxableIncome > 0
+          ? -((taxableIncome * inputs.taxRate) / 100)
+          : Math.abs((taxableIncome * inputs.taxRate) / 100);
       const afterTaxCF = beforeTaxCF + taxBenefit;
 
       // Update loan balance (simplified)
-      const principal = monthlyPayment * 12 - (remainingBalance * inputs.interestRate / 100);
+      const principal =
+        monthlyPayment * 12 - (remainingBalance * inputs.interestRate) / 100;
       remainingBalance = Math.max(0, remainingBalance - principal);
 
       const equity = propertyValue - remainingBalance;
@@ -242,27 +263,30 @@ export const ProfessionalUnderwriting: React.FC = () => {
     irrCashFlows[irrCashFlows.length - 1] = exitCashFlow;
 
     const irr = calculateIRR(irrCashFlows);
-    const totalCashReturned = irrCashFlows.slice(1).reduce((sum, cf) => sum + cf, 0);
+    const totalCashReturned = irrCashFlows
+      .slice(1)
+      .reduce((sum, cf) => sum + cf, 0);
     const equityMultiple = totalCashReturned / downPaymentAmount;
-    const totalReturn = ((totalCashReturned - downPaymentAmount) / downPaymentAmount) * 100;
+    const totalReturn =
+      ((totalCashReturned - downPaymentAmount) / downPaymentAmount) * 100;
     const avgAnnualReturn = totalReturn / inputs.holdingPeriod;
 
     // Grading
-    let grade: 'Strong Buy' | 'Buy' | 'Consider' | 'Pass';
+    let grade: "Strong Buy" | "Buy" | "Consider" | "Pass";
     let gradeColor: string;
 
     if (irr >= 15) {
-      grade = 'Strong Buy';
-      gradeColor = 'green';
+      grade = "Strong Buy";
+      gradeColor = "green";
     } else if (irr >= 10) {
-      grade = 'Buy';
-      gradeColor = 'blue';
+      grade = "Buy";
+      gradeColor = "blue";
     } else if (irr >= 5) {
-      grade = 'Consider';
-      gradeColor = 'yellow';
+      grade = "Consider";
+      gradeColor = "yellow";
     } else {
-      grade = 'Pass';
-      gradeColor = 'red';
+      grade = "Pass";
+      gradeColor = "red";
     }
 
     return {
@@ -284,10 +308,14 @@ export const ProfessionalUnderwriting: React.FC = () => {
   }, [inputs]);
 
   const handleExportPDF = () => {
-    toast.success('PDF export functionality coming soon!');
+    toast.success("PDF export functionality coming soon!");
   };
 
-  if (userTier === 'free' || userTier === 'basic' || userTier === 'professional') {
+  if (
+    userTier === "free" ||
+    userTier === "basic" ||
+    userTier === "professional"
+  ) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
@@ -307,16 +335,20 @@ export const ProfessionalUnderwriting: React.FC = () => {
             </div>
 
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Unlock advanced multi-scenario analysis with IRR calculations, equity projections,
-              and tax-adjusted returns for sophisticated real estate investments.
+              Unlock advanced multi-scenario analysis with IRR calculations,
+              equity projections, and tax-adjusted returns for sophisticated
+              real estate investments.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <div className="bg-purple-50 rounded-xl p-6">
                 <Award className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">3-Scenario Analysis</h3>
+                <h3 className="font-bold text-gray-900 mb-2">
+                  3-Scenario Analysis
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Pessimistic, Base, and Optimistic projections with sensitivity testing
+                  Pessimistic, Base, and Optimistic projections with sensitivity
+                  testing
                 </p>
               </div>
               <div className="bg-indigo-50 rounded-xl p-6">
@@ -328,14 +360,18 @@ export const ProfessionalUnderwriting: React.FC = () => {
               </div>
               <div className="bg-purple-50 rounded-xl p-6">
                 <BarChart3 className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Multi-Year Projections</h3>
+                <h3 className="font-bold text-gray-900 mb-2">
+                  Multi-Year Projections
+                </h3>
                 <p className="text-gray-600 text-sm">
                   Detailed cash flow analysis over your investment horizon
                 </p>
               </div>
               <div className="bg-indigo-50 rounded-xl p-6">
                 <PieChart className="w-12 h-12 text-indigo-600 mx-auto mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Tax-Adjusted Returns</h3>
+                <h3 className="font-bold text-gray-900 mb-2">
+                  Tax-Adjusted Returns
+                </h3>
                 <p className="text-gray-600 text-sm">
                   Includes depreciation schedules and after-tax cash flows
                 </p>
@@ -371,7 +407,8 @@ export const ProfessionalUnderwriting: React.FC = () => {
             Professional Underwriting Analysis
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Multi-scenario sensitivity analysis with IRR, equity multiples, and tax-adjusted returns
+            Multi-scenario sensitivity analysis with IRR, equity multiples, and
+            tax-adjusted returns
           </p>
         </motion.div>
 
@@ -402,7 +439,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.propertyPrice}
-                    onChange={(e) => setInputs({ ...inputs, propertyPrice: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        propertyPrice: Number(e.target.value),
+                      })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -414,7 +456,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.downPayment}
-                  onChange={(e) => setInputs({ ...inputs, downPayment: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      downPayment: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -427,7 +474,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.annualRent}
-                    onChange={(e) => setInputs({ ...inputs, annualRent: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        annualRent: Number(e.target.value),
+                      })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -447,7 +499,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   type="number"
                   step="0.1"
                   value={inputs.interestRate}
-                  onChange={(e) => setInputs({ ...inputs, interestRate: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      interestRate: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -458,7 +515,9 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.loanTerm}
-                  onChange={(e) => setInputs({ ...inputs, loanTerm: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, loanTerm: Number(e.target.value) })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -469,7 +528,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.vacancyRate}
-                  onChange={(e) => setInputs({ ...inputs, vacancyRate: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      vacancyRate: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -489,7 +553,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.propertyTax}
-                    onChange={(e) => setInputs({ ...inputs, propertyTax: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        propertyTax: Number(e.target.value),
+                      })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -503,7 +572,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.insurance}
-                    onChange={(e) => setInputs({ ...inputs, insurance: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        insurance: Number(e.target.value),
+                      })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -517,7 +591,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.maintenance}
-                    onChange={(e) => setInputs({ ...inputs, maintenance: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        maintenance: Number(e.target.value),
+                      })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -537,7 +616,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   type="number"
                   step="0.1"
                   value={inputs.appreciationRate}
-                  onChange={(e) => setInputs({ ...inputs, appreciationRate: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      appreciationRate: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -548,7 +632,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.holdingPeriod}
-                  onChange={(e) => setInputs({ ...inputs, holdingPeriod: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      holdingPeriod: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -559,7 +648,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.sellingCosts}
-                  onChange={(e) => setInputs({ ...inputs, sellingCosts: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      sellingCosts: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -577,7 +671,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.propertyManagement}
-                  onChange={(e) => setInputs({ ...inputs, propertyManagement: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      propertyManagement: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -590,7 +689,9 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.hoa}
-                    onChange={(e) => setInputs({ ...inputs, hoa: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({ ...inputs, hoa: Number(e.target.value) })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -604,7 +705,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   <input
                     type="number"
                     value={inputs.utilities}
-                    onChange={(e) => setInputs({ ...inputs, utilities: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        utilities: Number(e.target.value),
+                      })
+                    }
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -623,7 +729,9 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 <input
                   type="number"
                   value={inputs.taxRate}
-                  onChange={(e) => setInputs({ ...inputs, taxRate: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, taxRate: Number(e.target.value) })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -635,7 +743,12 @@ export const ProfessionalUnderwriting: React.FC = () => {
                   type="number"
                   step="0.5"
                   value={inputs.depreciationYears}
-                  onChange={(e) => setInputs({ ...inputs, depreciationYears: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setInputs({
+                      ...inputs,
+                      depreciationYears: Number(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -674,42 +787,74 @@ export const ProfessionalUnderwriting: React.FC = () => {
                 className={`bg-gradient-to-br from-${result.scenario.color}-50 to-${result.scenario.color}-100 rounded-xl p-6 border-2 border-${result.scenario.color}-200`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">{result.scenario.name}</h3>
-                  {result.scenario.type === 'pessimistic' && <TrendingDown className={`w-6 h-6 text-${result.scenario.color}-600`} />}
-                  {result.scenario.type === 'base' && <Target className={`w-6 h-6 text-${result.scenario.color}-600`} />}
-                  {result.scenario.type === 'optimistic' && <TrendingUp className={`w-6 h-6 text-${result.scenario.color}-600`} />}
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {result.scenario.name}
+                  </h3>
+                  {result.scenario.type === "pessimistic" && (
+                    <TrendingDown
+                      className={`w-6 h-6 text-${result.scenario.color}-600`}
+                    />
+                  )}
+                  {result.scenario.type === "base" && (
+                    <Target
+                      className={`w-6 h-6 text-${result.scenario.color}-600`}
+                    />
+                  )}
+                  {result.scenario.type === "optimistic" && (
+                    <TrendingUp
+                      className={`w-6 h-6 text-${result.scenario.color}-600`}
+                    />
+                  )}
                 </div>
 
                 <div className="space-y-3">
-                  <div className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}>
-                    <div className="text-xs text-gray-600 mb-1">Internal Rate of Return</div>
-                    <div className={`text-2xl font-bold text-${result.gradeColor}-600`}>
+                  <div
+                    className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}
+                  >
+                    <div className="text-xs text-gray-600 mb-1">
+                      Internal Rate of Return
+                    </div>
+                    <div
+                      className={`text-2xl font-bold text-${result.gradeColor}-600`}
+                    >
                       {result.irr.toFixed(2)}%
                     </div>
                   </div>
 
-                  <div className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}>
-                    <div className="text-xs text-gray-600 mb-1">Equity Multiple</div>
+                  <div
+                    className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}
+                  >
+                    <div className="text-xs text-gray-600 mb-1">
+                      Equity Multiple
+                    </div>
                     <div className="text-2xl font-bold text-gray-900">
                       {result.equityMultiple.toFixed(2)}x
                     </div>
                   </div>
 
-                  <div className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}>
-                    <div className="text-xs text-gray-600 mb-1">Total Return</div>
+                  <div
+                    className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}
+                  >
+                    <div className="text-xs text-gray-600 mb-1">
+                      Total Return
+                    </div>
                     <div className="text-lg font-bold text-gray-900">
                       {result.totalReturn.toFixed(1)}%
                     </div>
                   </div>
 
-                  <div className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}>
+                  <div
+                    className={`bg-white rounded-lg p-3 border border-${result.scenario.color}-200`}
+                  >
                     <div className="text-xs text-gray-600 mb-1">Exit Value</div>
                     <div className="text-lg font-bold text-gray-900">
                       ${result.exitValue.toLocaleString()}
                     </div>
                   </div>
 
-                  <div className={`bg-${result.gradeColor}-600 text-white rounded-lg p-3 text-center font-bold`}>
+                  <div
+                    className={`bg-${result.gradeColor}-600 text-white rounded-lg p-3 text-center font-bold`}
+                  >
                     {result.grade}
                   </div>
                 </div>
@@ -732,40 +877,110 @@ export const ProfessionalUnderwriting: React.FC = () => {
 
           {results.map((result) => (
             <div key={result.scenario.type} className="mb-8 last:mb-0">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">{result.scenario.name} Scenario</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                {result.scenario.name} Scenario
+              </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="px-4 py-3 text-left font-semibold">Year</th>
-                      <th className="px-4 py-3 text-right font-semibold">Gross Rent</th>
-                      <th className="px-4 py-3 text-right font-semibold">Net Rent</th>
-                      <th className="px-4 py-3 text-right font-semibold">Expenses</th>
-                      <th className="px-4 py-3 text-right font-semibold">Debt Service</th>
-                      <th className="px-4 py-3 text-right font-semibold">Before Tax CF</th>
-                      <th className="px-4 py-3 text-right font-semibold">Tax Benefit</th>
-                      <th className="px-4 py-3 text-right font-semibold">After Tax CF</th>
-                      <th className="px-4 py-3 text-right font-semibold">Property Value</th>
-                      <th className="px-4 py-3 text-right font-semibold">Equity</th>
+                      <th className="px-4 py-3 text-left font-semibold">
+                        Year
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Gross Rent
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Net Rent
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Expenses
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Debt Service
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Before Tax CF
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Tax Benefit
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        After Tax CF
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Property Value
+                      </th>
+                      <th className="px-4 py-3 text-right font-semibold">
+                        Equity
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {result.cashFlows.map((cf) => (
-                      <tr key={cf.year} className="border-b border-gray-200 hover:bg-gray-50">
+                      <tr
+                        key={cf.year}
+                        className="border-b border-gray-200 hover:bg-gray-50"
+                      >
                         <td className="px-4 py-3 font-medium">{cf.year}</td>
-                        <td className="px-4 py-3 text-right">${cf.grossRent.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                        <td className="px-4 py-3 text-right">${cf.netRent.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                        <td className="px-4 py-3 text-right">${cf.expenses.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                        <td className="px-4 py-3 text-right">${cf.debtService.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                        <td className={`px-4 py-3 text-right font-semibold ${cf.beforeTax >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          ${cf.beforeTax.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        <td className="px-4 py-3 text-right">
+                          $
+                          {cf.grossRent.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
                         </td>
-                        <td className="px-4 py-3 text-right">${cf.taxBenefit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                        <td className={`px-4 py-3 text-right font-bold ${cf.afterTax >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          ${cf.afterTax.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        <td className="px-4 py-3 text-right">
+                          $
+                          {cf.netRent.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
                         </td>
-                        <td className="px-4 py-3 text-right font-semibold">${cf.propertyValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
-                        <td className="px-4 py-3 text-right font-bold text-purple-600">${cf.equity.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                        <td className="px-4 py-3 text-right">
+                          $
+                          {cf.expenses.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          $
+                          {cf.debtService.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
+                        <td
+                          className={`px-4 py-3 text-right font-semibold ${cf.beforeTax >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
+                          $
+                          {cf.beforeTax.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          $
+                          {cf.taxBenefit.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
+                        <td
+                          className={`px-4 py-3 text-right font-bold ${cf.afterTax >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
+                          $
+                          {cf.afterTax.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          $
+                          {cf.propertyValue.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-right font-bold text-purple-600">
+                          $
+                          {cf.equity.toLocaleString(undefined, {
+                            maximumFractionDigits: 0,
+                          })}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -785,9 +1000,11 @@ export const ProfessionalUnderwriting: React.FC = () => {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-yellow-800">
-              <strong>Investment Disclaimer:</strong> This analysis is for informational purposes only and should not be
-              considered financial advice. Actual results may vary significantly from projections. Always consult with
-              qualified professionals before making investment decisions.
+              <strong>Investment Disclaimer:</strong> This analysis is for
+              informational purposes only and should not be considered financial
+              advice. Actual results may vary significantly from projections.
+              Always consult with qualified professionals before making
+              investment decisions.
             </div>
           </div>
         </motion.div>

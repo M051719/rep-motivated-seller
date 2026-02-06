@@ -3,11 +3,20 @@
  * Add, edit, and manage educational articles
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Search, Save, X, Eye, EyeOff } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Search,
+  Save,
+  X,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { supabase } from "../lib/supabase";
+import toast from "react-hot-toast";
 
 interface Article {
   id: string;
@@ -16,51 +25,51 @@ interface Article {
   content: string;
   excerpt: string;
   category: string;
-  tier_level: 'basic' | 'premium' | 'elite';
+  tier_level: "basic" | "premium" | "elite";
   keywords: string[];
   tags: string[];
-  status: 'draft' | 'published' | 'archived';
+  status: "draft" | "published" | "archived";
   view_count: number;
   created_at: string;
   updated_at: string;
 }
 
 const CATEGORIES = [
-  { value: 'pre-foreclosure-basics', label: 'Pre-Foreclosure Basics' },
-  { value: 'credit-repair-fundamentals', label: 'Credit Repair Fundamentals' },
-  { value: 'real-estate-investing-101', label: 'Real Estate Investing 101' },
-  { value: 'property-analysis', label: 'Property Analysis' },
-  { value: 'deal-evaluation', label: 'Deal Evaluation' },
-  { value: 'market-insights', label: 'Market Insights' },
-  { value: 'document-generation', label: 'Document Generation' },
-  { value: 'calculators', label: 'Calculators' },
-  { value: 'roi-analysis', label: 'ROI Analysis' },
-  { value: '1-percent-rule', label: '1% Rule' },
-  { value: 'dscr-analysis', label: 'DSCR Analysis' },
-  { value: 'direct-mail', label: 'Direct Mail' },
-  { value: 'wholesale-contracts', label: 'Wholesale Contracts' },
-  { value: 'fix-flip-strategies', label: 'Fix & Flip Strategies' },
-  { value: 'legal-guides', label: 'Legal Guides' }
+  { value: "pre-foreclosure-basics", label: "Pre-Foreclosure Basics" },
+  { value: "credit-repair-fundamentals", label: "Credit Repair Fundamentals" },
+  { value: "real-estate-investing-101", label: "Real Estate Investing 101" },
+  { value: "property-analysis", label: "Property Analysis" },
+  { value: "deal-evaluation", label: "Deal Evaluation" },
+  { value: "market-insights", label: "Market Insights" },
+  { value: "document-generation", label: "Document Generation" },
+  { value: "calculators", label: "Calculators" },
+  { value: "roi-analysis", label: "ROI Analysis" },
+  { value: "1-percent-rule", label: "1% Rule" },
+  { value: "dscr-analysis", label: "DSCR Analysis" },
+  { value: "direct-mail", label: "Direct Mail" },
+  { value: "wholesale-contracts", label: "Wholesale Contracts" },
+  { value: "fix-flip-strategies", label: "Fix & Flip Strategies" },
+  { value: "legal-guides", label: "Legal Guides" },
 ];
 
 export default function AdminKnowledgeBase() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
   const [formData, setFormData] = useState({
-    id: '',
-    title: '',
-    slug: '',
-    content: '',
-    excerpt: '',
-    category: 'real-estate-investing-101',
-    tier_level: 'basic' as 'basic' | 'premium' | 'elite',
-    keywords: '',
-    tags: '',
-    status: 'draft' as 'draft' | 'published' | 'archived'
+    id: "",
+    title: "",
+    slug: "",
+    content: "",
+    excerpt: "",
+    category: "real-estate-investing-101",
+    tier_level: "basic" as "basic" | "premium" | "elite",
+    keywords: "",
+    tags: "",
+    status: "draft" as "draft" | "published" | "archived",
   });
 
   useEffect(() => {
@@ -70,15 +79,15 @@ export default function AdminKnowledgeBase() {
   const fetchArticles = async () => {
     try {
       const { data, error } = await supabase
-        .from('knowledge_base')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("knowledge_base")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setArticles(data || []);
     } catch (error) {
-      console.error('Error fetching articles:', error);
-      toast.error('Failed to load articles');
+      console.error("Error fetching articles:", error);
+      toast.error("Failed to load articles");
     } finally {
       setIsLoading(false);
     }
@@ -87,21 +96,21 @@ export default function AdminKnowledgeBase() {
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
   };
 
   const handleTitleChange = (title: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       title,
-      slug: prev.slug || generateSlug(title)
+      slug: prev.slug || generateSlug(title),
     }));
   };
 
   const handleSave = async () => {
     if (!formData.title || !formData.content || !formData.category) {
-      toast.error('Title, content, and category are required');
+      toast.error("Title, content, and category are required");
       return;
     }
 
@@ -110,40 +119,47 @@ export default function AdminKnowledgeBase() {
         title: formData.title,
         slug: formData.slug || generateSlug(formData.title),
         content: formData.content,
-        excerpt: formData.excerpt || formData.content.substring(0, 200).replace(/#+/g, '').trim(),
+        excerpt:
+          formData.excerpt ||
+          formData.content.substring(0, 200).replace(/#+/g, "").trim(),
         category: formData.category,
         tier_level: formData.tier_level,
-        keywords: formData.keywords ? formData.keywords.split(',').map(k => k.trim()) : [],
-        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
+        keywords: formData.keywords
+          ? formData.keywords.split(",").map((k) => k.trim())
+          : [],
+        tags: formData.tags
+          ? formData.tags.split(",").map((t) => t.trim())
+          : [],
         status: formData.status,
-        published_at: formData.status === 'published' ? new Date().toISOString() : null
+        published_at:
+          formData.status === "published" ? new Date().toISOString() : null,
       };
 
       if (formData.id) {
         // Update existing
         const { error } = await supabase
-          .from('knowledge_base')
+          .from("knowledge_base")
           .update(articleData)
-          .eq('id', formData.id);
+          .eq("id", formData.id);
 
         if (error) throw error;
-        toast.success('Article updated successfully!');
+        toast.success("Article updated successfully!");
       } else {
         // Create new
         const { error } = await supabase
-          .from('knowledge_base')
+          .from("knowledge_base")
           .insert([articleData]);
 
         if (error) throw error;
-        toast.success('Article created successfully!');
+        toast.success("Article created successfully!");
       }
 
       setIsEditing(false);
       resetForm();
       fetchArticles();
     } catch (error: any) {
-      console.error('Error saving article:', error);
-      toast.error(error.message || 'Failed to save article');
+      console.error("Error saving article:", error);
+      toast.error(error.message || "Failed to save article");
     }
   };
 
@@ -153,54 +169,56 @@ export default function AdminKnowledgeBase() {
       title: article.title,
       slug: article.slug,
       content: article.content,
-      excerpt: article.excerpt || '',
+      excerpt: article.excerpt || "",
       category: article.category,
       tier_level: article.tier_level,
-      keywords: article.keywords?.join(', ') || '',
-      tags: article.tags?.join(', ') || '',
-      status: article.status
+      keywords: article.keywords?.join(", ") || "",
+      tags: article.tags?.join(", ") || "",
+      status: article.status,
     });
     setIsEditing(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this article?')) return;
+    if (!confirm("Are you sure you want to delete this article?")) return;
 
     try {
       const { error } = await supabase
-        .from('knowledge_base')
+        .from("knowledge_base")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
-      toast.success('Article deleted successfully!');
+      toast.success("Article deleted successfully!");
       fetchArticles();
     } catch (error) {
-      console.error('Error deleting article:', error);
-      toast.error('Failed to delete article');
+      console.error("Error deleting article:", error);
+      toast.error("Failed to delete article");
     }
   };
 
   const resetForm = () => {
     setFormData({
-      id: '',
-      title: '',
-      slug: '',
-      content: '',
-      excerpt: '',
-      category: 'real-estate-investing-101',
-      tier_level: 'basic',
-      keywords: '',
-      tags: '',
-      status: 'draft'
+      id: "",
+      title: "",
+      slug: "",
+      content: "",
+      excerpt: "",
+      category: "real-estate-investing-101",
+      tier_level: "basic",
+      keywords: "",
+      tags: "",
+      status: "draft",
     });
   };
 
-  const filteredArticles = articles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         article.content.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || article.category === selectedCategory;
+  const filteredArticles = articles.filter((article) => {
+    const matchesSearch =
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.content.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || article.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -219,7 +237,9 @@ export default function AdminKnowledgeBase() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Knowledge Base Admin</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Knowledge Base Admin
+          </h1>
           <button
             onClick={() => {
               resetForm();
@@ -241,7 +261,7 @@ export default function AdminKnowledgeBase() {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
-                {formData.id ? 'Edit Article' : 'New Article'}
+                {formData.id ? "Edit Article" : "New Article"}
               </h2>
               <button
                 onClick={() => {
@@ -277,7 +297,9 @@ export default function AdminKnowledgeBase() {
                 <input
                   type="text"
                   value={formData.slug}
-                  onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, slug: e.target.value }))
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="auto-generated-from-title"
                 />
@@ -291,10 +313,15 @@ export default function AdminKnowledgeBase() {
                   </label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        category: e.target.value,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    {CATEGORIES.map(cat => (
+                    {CATEGORIES.map((cat) => (
                       <option key={cat.value} value={cat.value}>
                         {cat.label}
                       </option>
@@ -308,7 +335,12 @@ export default function AdminKnowledgeBase() {
                   </label>
                   <select
                     value={formData.tier_level}
-                    onChange={(e) => setFormData(prev => ({ ...prev, tier_level: e.target.value as any }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        tier_level: e.target.value as any,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="basic">Basic (All Members)</option>
@@ -325,7 +357,12 @@ export default function AdminKnowledgeBase() {
                 </label>
                 <textarea
                   value={formData.excerpt}
-                  onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      excerpt: e.target.value,
+                    }))
+                  }
                   rows={2}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Brief description for search results..."
@@ -339,7 +376,12 @@ export default function AdminKnowledgeBase() {
                 </label>
                 <textarea
                   value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      content: e.target.value,
+                    }))
+                  }
                   rows={15}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
                   placeholder="# Article Title
@@ -361,7 +403,12 @@ More content..."
                   <input
                     type="text"
                     value={formData.keywords}
-                    onChange={(e) => setFormData(prev => ({ ...prev, keywords: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        keywords: e.target.value,
+                      }))
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="foreclosure, prevention, homeowner"
                   />
@@ -374,7 +421,9 @@ More content..."
                   <input
                     type="text"
                     value={formData.tags}
-                    onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, tags: e.target.value }))
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="urgent, homeowner-help, basics"
                   />
@@ -388,11 +437,18 @@ More content..."
                 </label>
                 <select
                   value={formData.status}
-                  onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as any }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      status: e.target.value as any,
+                    }))
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="draft">Draft (Not visible)</option>
-                  <option value="published">Published (Visible to users)</option>
+                  <option value="published">
+                    Published (Visible to users)
+                  </option>
                   <option value="archived">Archived</option>
                 </select>
               </div>
@@ -404,7 +460,7 @@ More content..."
                   className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Save className="w-5 h-5" />
-                  {formData.id ? 'Update Article' : 'Create Article'}
+                  {formData.id ? "Update Article" : "Create Article"}
                 </button>
                 <button
                   onClick={() => {
@@ -439,7 +495,7 @@ More content..."
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Categories</option>
-              {CATEGORIES.map(cat => (
+              {CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>
@@ -452,10 +508,12 @@ More content..."
         <div className="space-y-4">
           {filteredArticles.length === 0 ? (
             <div className="bg-white rounded-lg shadow p-12 text-center">
-              <p className="text-gray-500">No articles found. Create your first article!</p>
+              <p className="text-gray-500">
+                No articles found. Create your first article!
+              </p>
             </div>
           ) : (
-            filteredArticles.map(article => (
+            filteredArticles.map((article) => (
               <motion.div
                 key={article.id}
                 initial={{ opacity: 0 }}
@@ -465,30 +523,53 @@ More content..."
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        article.status === 'published' ? 'bg-green-100 text-green-700' :
-                        article.status === 'draft' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {article.status === 'published' ? <Eye className="w-3 h-3 inline mr-1" /> : <EyeOff className="w-3 h-3 inline mr-1" />}
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {article.title}
+                      </h3>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          article.status === "published"
+                            ? "bg-green-100 text-green-700"
+                            : article.status === "draft"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        {article.status === "published" ? (
+                          <Eye className="w-3 h-3 inline mr-1" />
+                        ) : (
+                          <EyeOff className="w-3 h-3 inline mr-1" />
+                        )}
                         {article.status}
                       </span>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        article.tier_level === 'basic' ? 'bg-blue-100 text-blue-700' :
-                        article.tier_level === 'premium' ? 'bg-purple-100 text-purple-700' :
-                        'bg-amber-100 text-amber-700'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          article.tier_level === "basic"
+                            ? "bg-blue-100 text-blue-700"
+                            : article.tier_level === "premium"
+                              ? "bg-purple-100 text-purple-700"
+                              : "bg-amber-100 text-amber-700"
+                        }`}
+                      >
                         {article.tier_level}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{article.excerpt}</p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {article.excerpt}
+                    </p>
                     <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <span>{CATEGORIES.find(c => c.value === article.category)?.label}</span>
+                      <span>
+                        {
+                          CATEGORIES.find((c) => c.value === article.category)
+                            ?.label
+                        }
+                      </span>
                       <span>•</span>
                       <span>{article.view_count} views</span>
                       <span>•</span>
-                      <span>{new Date(article.created_at).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(article.created_at).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">

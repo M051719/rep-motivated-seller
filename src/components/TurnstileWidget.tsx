@@ -41,7 +41,8 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, TurnstileWidgetProps>(
       return null;
     }
 
-    const mode = forceVisible || errorCount >= fallbackThreshold ? "visible" : "invisible";
+    const mode =
+      forceVisible || errorCount >= fallbackThreshold ? "visible" : "invisible";
 
     const handleVerify = (token: string) => {
       onToken(token);

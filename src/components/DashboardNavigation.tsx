@@ -1,6 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { LayoutDashboard, MessageSquare, Shield, User, Calendar } from "lucide-react";
+import {
+  LayoutDashboard,
+  MessageSquare,
+  Shield,
+  User,
+  Calendar,
+} from "lucide-react";
 
 interface DashboardNavigationProps {
   user: any;

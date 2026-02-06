@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { motion } from 'framer-motion';
-import { FileText, Download, Check, Home, DollarSign, Calendar, User } from 'lucide-react';
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Download,
+  Check,
+  Home,
+  DollarSign,
+  Calendar,
+  User,
+} from "lucide-react";
 import { BackButton } from "../components/ui/BackButton";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
-type ContractType = 'wholesale' | 'fix-flip' | 'cashout-refi' | null;
+type ContractType = "wholesale" | "fix-flip" | "cashout-refi" | null;
 
 interface WholesaleFormData {
   sellerName: string;
@@ -29,29 +37,31 @@ interface FixFlipFormData {
 
 export const ContractsPage: React.FC = () => {
   const [selectedContract, setSelectedContract] = useState<ContractType>(null);
-  const [generatedContract, setGeneratedContract] = useState<string | null>(null);
+  const [generatedContract, setGeneratedContract] = useState<string | null>(
+    null,
+  );
 
   // Wholesale form state
   const [wholesaleData, setWholesaleData] = useState<WholesaleFormData>({
-    sellerName: '',
-    sellerAddress: '',
-    buyerName: '',
-    buyerAddress: '',
-    propertyAddress: '',
-    purchasePrice: '',
-    depositAmount: '',
-    closingDate: '',
-    assignmentFee: ''
+    sellerName: "",
+    sellerAddress: "",
+    buyerName: "",
+    buyerAddress: "",
+    propertyAddress: "",
+    purchasePrice: "",
+    depositAmount: "",
+    closingDate: "",
+    assignmentFee: "",
   });
 
   // Fix-Flip form state
   const [fixFlipData, setFixFlipData] = useState<FixFlipFormData>({
-    sellerName: '',
-    propertyAddress: '',
-    purchasePrice: '',
-    estimatedRepairs: '',
-    afterRepairValue: '',
-    closingDate: ''
+    sellerName: "",
+    propertyAddress: "",
+    purchasePrice: "",
+    estimatedRepairs: "",
+    afterRepairValue: "",
+    closingDate: "",
   });
 
   const generateWholesaleContract = () => {
@@ -68,7 +78,7 @@ export const ContractsPage: React.FC = () => {
       </head>
       <body>
         <h1>WHOLESALE REAL ESTATE PURCHASE AGREEMENT</h1>
-        
+
         <div class="section">
           <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
         </div>
@@ -100,7 +110,7 @@ export const ContractsPage: React.FC = () => {
 
         <div class="section">
           <h3>ASSIGNMENT RIGHTS</h3>
-          <p>Buyer shall have the right to assign this contract to another party without the consent of the Seller. 
+          <p>Buyer shall have the right to assign this contract to another party without the consent of the Seller.
           The assignment fee of $${parseInt(wholesaleData.assignmentFee).toLocaleString()} shall be paid to Buyer at closing.</p>
         </div>
 
@@ -135,9 +145,9 @@ export const ContractsPage: React.FC = () => {
       </body>
       </html>
     `;
-    
+
     setGeneratedContract(contract);
-    toast.success('Wholesale contract generated successfully!');
+    toast.success("Wholesale contract generated successfully!");
   };
 
   const generateFixFlipContract = () => {
@@ -154,7 +164,7 @@ export const ContractsPage: React.FC = () => {
       </head>
       <body>
         <h1>FIX-AND-FLIP PURCHASE AGREEMENT</h1>
-        
+
         <div class="section">
           <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
         </div>
@@ -209,30 +219,30 @@ export const ContractsPage: React.FC = () => {
       </body>
       </html>
     `;
-    
+
     setGeneratedContract(contract);
-    toast.success('Fix-and-flip contract generated successfully!');
+    toast.success("Fix-and-flip contract generated successfully!");
   };
 
   const downloadContract = () => {
     if (!generatedContract) return;
-    
-    const blob = new Blob([generatedContract], { type: 'text/html' });
+
+    const blob = new Blob([generatedContract], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `contract-${Date.now()}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success('Contract downloaded successfully!');
+    toast.success("Contract downloaded successfully!");
   };
 
   const printContract = () => {
     if (!generatedContract) return;
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(generatedContract);
       printWindow.document.close();
@@ -245,7 +255,7 @@ export const ContractsPage: React.FC = () => {
       <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <BackButton />
-          
+
           <div className="bg-white rounded-xl shadow-lg p-8 mt-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -289,19 +299,21 @@ export const ContractsPage: React.FC = () => {
     );
   }
 
-  if (selectedContract === 'wholesale') {
+  if (selectedContract === "wholesale") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <BackButton />
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl shadow-lg p-8 mt-4"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Wholesale Purchase Agreement</h2>
-            
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Wholesale Purchase Agreement
+            </h2>
+
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -312,12 +324,17 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={wholesaleData.sellerName}
-                    onChange={(e) => setWholesaleData({...wholesaleData, sellerName: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        sellerName: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="John Doe"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Seller Address
@@ -325,7 +342,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={wholesaleData.sellerAddress}
-                    onChange={(e) => setWholesaleData({...wholesaleData, sellerAddress: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        sellerAddress: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="123 Main St, City, ST 12345"
                   />
@@ -338,7 +360,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={wholesaleData.buyerName}
-                    onChange={(e) => setWholesaleData({...wholesaleData, buyerName: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        buyerName: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Jane Smith"
                   />
@@ -351,7 +378,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={wholesaleData.buyerAddress}
-                    onChange={(e) => setWholesaleData({...wholesaleData, buyerAddress: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        buyerAddress: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="456 Oak Ave, City, ST 12345"
                   />
@@ -365,7 +397,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={wholesaleData.propertyAddress}
-                    onChange={(e) => setWholesaleData({...wholesaleData, propertyAddress: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        propertyAddress: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="789 Property Ln, City, ST 12345"
                   />
@@ -379,7 +416,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="number"
                     value={wholesaleData.purchasePrice}
-                    onChange={(e) => setWholesaleData({...wholesaleData, purchasePrice: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        purchasePrice: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="150000"
                   />
@@ -392,7 +434,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="number"
                     value={wholesaleData.depositAmount}
-                    onChange={(e) => setWholesaleData({...wholesaleData, depositAmount: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        depositAmount: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="1000"
                   />
@@ -405,7 +452,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="number"
                     value={wholesaleData.assignmentFee}
-                    onChange={(e) => setWholesaleData({...wholesaleData, assignmentFee: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        assignmentFee: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="10000"
                   />
@@ -419,7 +471,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="date"
                     value={wholesaleData.closingDate}
-                    onChange={(e) => setWholesaleData({...wholesaleData, closingDate: e.target.value})}
+                    onChange={(e) =>
+                      setWholesaleData({
+                        ...wholesaleData,
+                        closingDate: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -447,19 +504,21 @@ export const ContractsPage: React.FC = () => {
     );
   }
 
-  if (selectedContract === 'fix-flip') {
+  if (selectedContract === "fix-flip") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <BackButton />
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl shadow-lg p-8 mt-4"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Fix-and-Flip Purchase Agreement</h2>
-            
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Fix-and-Flip Purchase Agreement
+            </h2>
+
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
@@ -470,7 +529,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={fixFlipData.sellerName}
-                    onChange={(e) => setFixFlipData({...fixFlipData, sellerName: e.target.value})}
+                    onChange={(e) =>
+                      setFixFlipData({
+                        ...fixFlipData,
+                        sellerName: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="John Doe"
                   />
@@ -484,7 +548,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="text"
                     value={fixFlipData.propertyAddress}
-                    onChange={(e) => setFixFlipData({...fixFlipData, propertyAddress: e.target.value})}
+                    onChange={(e) =>
+                      setFixFlipData({
+                        ...fixFlipData,
+                        propertyAddress: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="789 Property Ln, City, ST 12345"
                   />
@@ -498,7 +567,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="number"
                     value={fixFlipData.purchasePrice}
-                    onChange={(e) => setFixFlipData({...fixFlipData, purchasePrice: e.target.value})}
+                    onChange={(e) =>
+                      setFixFlipData({
+                        ...fixFlipData,
+                        purchasePrice: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="100000"
                   />
@@ -511,7 +585,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="number"
                     value={fixFlipData.estimatedRepairs}
-                    onChange={(e) => setFixFlipData({...fixFlipData, estimatedRepairs: e.target.value})}
+                    onChange={(e) =>
+                      setFixFlipData({
+                        ...fixFlipData,
+                        estimatedRepairs: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="30000"
                   />
@@ -524,7 +603,12 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="number"
                     value={fixFlipData.afterRepairValue}
-                    onChange={(e) => setFixFlipData({...fixFlipData, afterRepairValue: e.target.value})}
+                    onChange={(e) =>
+                      setFixFlipData({
+                        ...fixFlipData,
+                        afterRepairValue: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="200000"
                   />
@@ -538,31 +622,49 @@ export const ContractsPage: React.FC = () => {
                   <input
                     type="date"
                     value={fixFlipData.closingDate}
-                    onChange={(e) => setFixFlipData({...fixFlipData, closingDate: e.target.value})}
+                    onChange={(e) =>
+                      setFixFlipData({
+                        ...fixFlipData,
+                        closingDate: e.target.value,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
               </div>
 
-              {fixFlipData.purchasePrice && fixFlipData.estimatedRepairs && fixFlipData.afterRepairValue && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <h3 className="font-bold text-gray-900 mb-3">Profit Analysis</h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-600">Total Investment:</p>
-                      <p className="text-xl font-bold text-gray-900">
-                        ${(parseInt(fixFlipData.purchasePrice) + parseInt(fixFlipData.estimatedRepairs)).toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Projected Profit:</p>
-                      <p className="text-xl font-bold text-green-600">
-                        ${(parseInt(fixFlipData.afterRepairValue) - parseInt(fixFlipData.purchasePrice) - parseInt(fixFlipData.estimatedRepairs)).toLocaleString()}
-                      </p>
+              {fixFlipData.purchasePrice &&
+                fixFlipData.estimatedRepairs &&
+                fixFlipData.afterRepairValue && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                    <h3 className="font-bold text-gray-900 mb-3">
+                      Profit Analysis
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-600">Total Investment:</p>
+                        <p className="text-xl font-bold text-gray-900">
+                          $
+                          {(
+                            parseInt(fixFlipData.purchasePrice) +
+                            parseInt(fixFlipData.estimatedRepairs)
+                          ).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Projected Profit:</p>
+                        <p className="text-xl font-bold text-green-600">
+                          $
+                          {(
+                            parseInt(fixFlipData.afterRepairValue) -
+                            parseInt(fixFlipData.purchasePrice) -
+                            parseInt(fixFlipData.estimatedRepairs)
+                          ).toLocaleString()}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
               <div className="flex gap-4 pt-6">
                 <button
@@ -590,7 +692,7 @@ export const ContractsPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <BackButton />
-        
+
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -615,13 +717,16 @@ export const ContractsPage: React.FC = () => {
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FileText className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Wholesale Contract</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                Wholesale Contract
+              </h3>
               <p className="text-gray-600 mb-4">
-                Generate wholesale real estate purchase agreements with assignment rights
+                Generate wholesale real estate purchase agreements with
+                assignment rights
               </p>
             </div>
             <button
-              onClick={() => setSelectedContract('wholesale')}
+              onClick={() => setSelectedContract("wholesale")}
               className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
             >
               Create Contract
@@ -638,13 +743,15 @@ export const ContractsPage: React.FC = () => {
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Home className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Fix-and-Flip</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                Fix-and-Flip
+              </h3>
               <p className="text-gray-600 mb-4">
                 Generate fix-and-flip purchase agreements with profit analysis
               </p>
             </div>
             <button
-              onClick={() => setSelectedContract('fix-flip')}
+              onClick={() => setSelectedContract("fix-flip")}
               className="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
             >
               Create Contract
@@ -661,7 +768,9 @@ export const ContractsPage: React.FC = () => {
               <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <DollarSign className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Cash-Out Refinance</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                Cash-Out Refinance
+              </h3>
               <p className="text-gray-600 mb-4">
                 Generate cash-out refinance applications (Coming Soon)
               </p>
@@ -683,7 +792,10 @@ export const ContractsPage: React.FC = () => {
         >
           <h3 className="text-xl font-bold mb-2">⚠️ LEGAL DISCLAIMER</h3>
           <p className="opacity-90">
-            These contracts are templates for informational purposes only. Always have legal documents reviewed by a licensed attorney before signing. RepMotivatedSeller is not responsible for legal issues arising from contract use.
+            These contracts are templates for informational purposes only.
+            Always have legal documents reviewed by a licensed attorney before
+            signing. RepMotivatedSeller is not responsible for legal issues
+            arising from contract use.
           </p>
         </motion.div>
       </div>

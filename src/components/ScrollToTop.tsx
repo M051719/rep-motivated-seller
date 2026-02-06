@@ -10,8 +10,8 @@ export function ScrollToTop() {
 
   useEffect(() => {
     // Always ensure body is scrollable
-    document.body.style.overflow = 'unset';
-    document.documentElement.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
+    document.documentElement.style.overflow = "unset";
 
     // If there's a hash, let the browser handle it
     if (hash) {

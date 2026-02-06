@@ -116,7 +116,8 @@ const HelpPage: React.FC = () => {
     const matchesCategory =
       selectedCategory === "all" || faq.category === selectedCategory;
     const searchTerm = searchQuery.trim().toLowerCase();
-    const matchesSearch = searchTerm === "" || 
+    const matchesSearch =
+      searchTerm === "" ||
       faq.question.toLowerCase().includes(searchTerm) ||
       faq.answer.toLowerCase().includes(searchTerm);
     return matchesCategory && matchesSearch;
@@ -363,5 +364,3 @@ const HelpPage: React.FC = () => {
 };
 
 export default HelpPage;
-
-

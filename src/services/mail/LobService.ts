@@ -13,7 +13,7 @@ export interface PostcardOptions {
   from: MailingAddress;
   front: string;
   back: string;
-  size?: '4x6' | '6x9' | '6x11';
+  size?: "4x6" | "6x9" | "6x11";
 }
 
 export interface LetterOptions {
@@ -28,18 +28,20 @@ class LobService {
   private apiKey: string;
 
   constructor() {
-    this.apiKey = process.env.LOB_API_KEY || '';
+    this.apiKey = process.env.LOB_API_KEY || "";
   }
 
-  async sendPostcard(options: PostcardOptions): Promise<{ success: boolean; id?: string; error?: string }> {
+  async sendPostcard(
+    options: PostcardOptions,
+  ): Promise<{ success: boolean; id?: string; error?: string }> {
     try {
-      const response = await fetch('https://api.lob.com/v1/postcards', {
-        method: 'POST',
+      const response = await fetch("https://api.lob.com/v1/postcards", {
+        method: "POST",
         headers: {
-          'Authorization': `Basic ${btoa(this.apiKey + ':')}`,
-          'Content-Type': 'application/json'
+          Authorization: `Basic ${btoa(this.apiKey + ":")}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(options)
+        body: JSON.stringify(options),
       });
 
       const data = await response.json();
@@ -49,15 +51,17 @@ class LobService {
     }
   }
 
-  async sendLetter(options: LetterOptions): Promise<{ success: boolean; id?: string; error?: string }> {
+  async sendLetter(
+    options: LetterOptions,
+  ): Promise<{ success: boolean; id?: string; error?: string }> {
     try {
-      const response = await fetch('https://api.lob.com/v1/letters', {
-        method: 'POST',
+      const response = await fetch("https://api.lob.com/v1/letters", {
+        method: "POST",
         headers: {
-          'Authorization': `Basic ${btoa(this.apiKey + ':')}`,
-          'Content-Type': 'application/json'
+          Authorization: `Basic ${btoa(this.apiKey + ":")}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(options)
+        body: JSON.stringify(options),
       });
 
       const data = await response.json();
@@ -67,15 +71,17 @@ class LobService {
     }
   }
 
-  async verifyAddress(address: Partial<MailingAddress>): Promise<{ success: boolean; verified?: MailingAddress; error?: string }> {
+  async verifyAddress(
+    address: Partial<MailingAddress>,
+  ): Promise<{ success: boolean; verified?: MailingAddress; error?: string }> {
     try {
-      const response = await fetch('https://api.lob.com/v1/us_verifications', {
-        method: 'POST',
+      const response = await fetch("https://api.lob.com/v1/us_verifications", {
+        method: "POST",
         headers: {
-          'Authorization': `Basic ${btoa(this.apiKey + ':')}`,
-          'Content-Type': 'application/json'
+          Authorization: `Basic ${btoa(this.apiKey + ":")}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(address)
+        body: JSON.stringify(address),
       });
 
       const data = await response.json();

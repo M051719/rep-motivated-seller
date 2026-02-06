@@ -1,7 +1,16 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart3, TrendingUp, DollarSign, PieChart, Lock, Download, Target, Award } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo } from "react";
+import {
+  BarChart3,
+  TrendingUp,
+  DollarSign,
+  PieChart,
+  Lock,
+  Download,
+  Target,
+  Award,
+} from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
+import { Link } from "react-router-dom";
 
 interface PropertyPerformance {
   id: string;
@@ -16,53 +25,70 @@ interface PropertyPerformance {
 
 export const PerformanceDashboard: React.FC = () => {
   const { user } = useAuthStore();
-  const isEnterprise = user?.membershipTier === 'enterprise';
+  const isEnterprise = user?.membershipTier === "enterprise";
 
   const [properties, setProperties] = useState<PropertyPerformance[]>([
     {
-      id: '1',
-      propertyName: 'Maple Street Duplex',
+      id: "1",
+      propertyName: "Maple Street Duplex",
       purchasePrice: 180000,
       currentValue: 210000,
       monthlyIncome: 2400,
       monthlyExpenses: 800,
       mortgagePayment: 950,
-      acquisitionDate: '2023-01-15',
+      acquisitionDate: "2023-01-15",
     },
     {
-      id: '2',
-      propertyName: 'Oak Avenue Fourplex',
+      id: "2",
+      propertyName: "Oak Avenue Fourplex",
       purchasePrice: 420000,
       currentValue: 480000,
       monthlyIncome: 5200,
       monthlyExpenses: 1800,
       mortgagePayment: 2100,
-      acquisitionDate: '2022-06-20',
+      acquisitionDate: "2022-06-20",
     },
     {
-      id: '3',
-      propertyName: 'Pine Boulevard Commercial',
+      id: "3",
+      propertyName: "Pine Boulevard Commercial",
       purchasePrice: 850000,
       currentValue: 920000,
       monthlyIncome: 9500,
       monthlyExpenses: 3200,
       mortgagePayment: 4800,
-      acquisitionDate: '2021-09-10',
+      acquisitionDate: "2021-09-10",
     },
   ]);
 
   const portfolioMetrics = useMemo(() => {
     if (!isEnterprise) return null;
 
-    const totalPurchasePrice = properties.reduce((sum, p) => sum + p.purchasePrice, 0);
-    const totalCurrentValue = properties.reduce((sum, p) => sum + p.currentValue, 0);
+    const totalPurchasePrice = properties.reduce(
+      (sum, p) => sum + p.purchasePrice,
+      0,
+    );
+    const totalCurrentValue = properties.reduce(
+      (sum, p) => sum + p.currentValue,
+      0,
+    );
     const totalEquityGain = totalCurrentValue - totalPurchasePrice;
-    const totalEquityGainPercent = totalPurchasePrice > 0 ? (totalEquityGain / totalPurchasePrice) * 100 : 0;
+    const totalEquityGainPercent =
+      totalPurchasePrice > 0 ? (totalEquityGain / totalPurchasePrice) * 100 : 0;
 
-    const totalMonthlyIncome = properties.reduce((sum, p) => sum + p.monthlyIncome, 0);
-    const totalMonthlyExpenses = properties.reduce((sum, p) => sum + p.monthlyExpenses, 0);
-    const totalMortgagePayment = properties.reduce((sum, p) => sum + p.mortgagePayment, 0);
-    const totalMonthlyCashFlow = totalMonthlyIncome - totalMonthlyExpenses - totalMortgagePayment;
+    const totalMonthlyIncome = properties.reduce(
+      (sum, p) => sum + p.monthlyIncome,
+      0,
+    );
+    const totalMonthlyExpenses = properties.reduce(
+      (sum, p) => sum + p.monthlyExpenses,
+      0,
+    );
+    const totalMortgagePayment = properties.reduce(
+      (sum, p) => sum + p.mortgagePayment,
+      0,
+    );
+    const totalMonthlyCashFlow =
+      totalMonthlyIncome - totalMonthlyExpenses - totalMortgagePayment;
 
     const annualCashFlow = totalMonthlyCashFlow * 12;
     const annualIncome = totalMonthlyIncome * 12;
@@ -70,18 +96,31 @@ export const PerformanceDashboard: React.FC = () => {
     const annualDebtService = totalMortgagePayment * 12;
 
     // Calculate individual property metrics
-    const propertyMetrics = properties.map(p => {
+    const propertyMetrics = properties.map((p) => {
       const equityGain = p.currentValue - p.purchasePrice;
-      const equityGainPercent = p.purchasePrice > 0 ? (equityGain / p.purchasePrice) * 100 : 0;
-      const monthlyCashFlow = p.monthlyIncome - p.monthlyExpenses - p.mortgagePayment;
+      const equityGainPercent =
+        p.purchasePrice > 0 ? (equityGain / p.purchasePrice) * 100 : 0;
+      const monthlyCashFlow =
+        p.monthlyIncome - p.monthlyExpenses - p.mortgagePayment;
       const annualCashFlow = monthlyCashFlow * 12;
-      const cashOnCashReturn = p.purchasePrice > 0 ? (annualCashFlow / (p.purchasePrice * 0.25)) * 100 : 0; // Assuming 25% down
-      const capRate = p.purchasePrice > 0 ? ((p.monthlyIncome * 12 - p.monthlyExpenses * 12) / p.purchasePrice) * 100 : 0;
-      
+      const cashOnCashReturn =
+        p.purchasePrice > 0
+          ? (annualCashFlow / (p.purchasePrice * 0.25)) * 100
+          : 0; // Assuming 25% down
+      const capRate =
+        p.purchasePrice > 0
+          ? ((p.monthlyIncome * 12 - p.monthlyExpenses * 12) /
+              p.purchasePrice) *
+            100
+          : 0;
+
       const monthsHeld = calculateMonthsHeld(p.acquisitionDate);
       const totalCashFlowToDate = monthlyCashFlow * monthsHeld;
       const totalReturn = equityGain + totalCashFlowToDate;
-      const totalReturnPercent = p.purchasePrice > 0 ? (totalReturn / (p.purchasePrice * 0.25)) * 100 : 0;
+      const totalReturnPercent =
+        p.purchasePrice > 0
+          ? (totalReturn / (p.purchasePrice * 0.25)) * 100
+          : 0;
 
       return {
         ...p,
@@ -99,7 +138,9 @@ export const PerformanceDashboard: React.FC = () => {
     });
 
     // Best and worst performers
-    const sortedByROI = [...propertyMetrics].sort((a, b) => b.totalReturnPercent - a.totalReturnPercent);
+    const sortedByROI = [...propertyMetrics].sort(
+      (a, b) => b.totalReturnPercent - a.totalReturnPercent,
+    );
     const bestPerformer = sortedByROI[0];
     const worstPerformer = sortedByROI[sortedByROI.length - 1];
 
@@ -134,21 +175,23 @@ export const PerformanceDashboard: React.FC = () => {
   const calculateMonthsHeld = (acquisitionDate: string) => {
     const acquired = new Date(acquisitionDate);
     const now = new Date();
-    const months = (now.getFullYear() - acquired.getFullYear()) * 12 + (now.getMonth() - acquired.getMonth());
+    const months =
+      (now.getFullYear() - acquired.getFullYear()) * 12 +
+      (now.getMonth() - acquired.getMonth());
     return Math.max(1, months);
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatPercent = (value: number) => {
-    return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
+    return `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
   };
 
   // Enterprise Lock Overlay
@@ -213,7 +256,9 @@ export const PerformanceDashboard: React.FC = () => {
           <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white px-6 py-12">
             <div className="flex items-center space-x-3 mb-2">
               <BarChart3 className="w-10 h-10" />
-              <h2 className="text-4xl font-bold">Portfolio Performance Dashboard</h2>
+              <h2 className="text-4xl font-bold">
+                Portfolio Performance Dashboard
+              </h2>
             </div>
             <p className="text-purple-100 text-lg">
               Track and optimize your real estate portfolio performance
@@ -247,13 +292,17 @@ export const PerformanceDashboard: React.FC = () => {
             <div>
               <div className="flex items-center space-x-3 mb-3">
                 <BarChart3 className="w-10 h-10" />
-                <h2 className="text-4xl font-bold">Portfolio Performance Dashboard</h2>
+                <h2 className="text-4xl font-bold">
+                  Portfolio Performance Dashboard
+                </h2>
               </div>
               <p className="text-purple-100 text-lg mb-4">
                 Real-time tracking and analysis of your investment portfolio
               </p>
               <div className="inline-block px-4 py-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                <span className="font-bold text-yellow-300">⭐ ENTERPRISE EXCLUSIVE</span>
+                <span className="font-bold text-yellow-300">
+                  ⭐ ENTERPRISE EXCLUSIVE
+                </span>
               </div>
             </div>
             <button className="flex items-center space-x-2 px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-all shadow-lg">
@@ -269,53 +318,79 @@ export const PerformanceDashboard: React.FC = () => {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <Target className="w-8 h-8 text-blue-100" />
-                <span className="text-3xl font-bold">{portfolioMetrics!.propertyCount}</span>
+                <span className="text-3xl font-bold">
+                  {portfolioMetrics!.propertyCount}
+                </span>
               </div>
               <p className="text-blue-100 text-sm font-medium">Properties</p>
-              <p className="text-2xl font-bold mt-1">{formatCurrency(portfolioMetrics!.totalCurrentValue)}</p>
-              <p className="text-blue-200 text-xs mt-1">Total Portfolio Value</p>
+              <p className="text-2xl font-bold mt-1">
+                {formatCurrency(portfolioMetrics!.totalCurrentValue)}
+              </p>
+              <p className="text-blue-200 text-xs mt-1">
+                Total Portfolio Value
+              </p>
             </div>
 
             <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <TrendingUp className="w-8 h-8 text-green-100" />
-                <span className={`text-2xl font-bold ${portfolioMetrics!.totalEquityGain >= 0 ? '' : 'text-red-300'}`}>
+                <span
+                  className={`text-2xl font-bold ${portfolioMetrics!.totalEquityGain >= 0 ? "" : "text-red-300"}`}
+                >
                   {formatPercent(portfolioMetrics!.totalEquityGainPercent)}
                 </span>
               </div>
               <p className="text-green-100 text-sm font-medium">Equity Gain</p>
-              <p className="text-2xl font-bold mt-1">{formatCurrency(portfolioMetrics!.totalEquityGain)}</p>
+              <p className="text-2xl font-bold mt-1">
+                {formatCurrency(portfolioMetrics!.totalEquityGain)}
+              </p>
               <p className="text-green-200 text-xs mt-1">Total Appreciation</p>
             </div>
 
             <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <DollarSign className="w-8 h-8 text-purple-100" />
-                <span className={`text-2xl font-bold ${portfolioMetrics!.totalMonthlyCashFlow >= 0 ? '' : 'text-red-300'}`}>
+                <span
+                  className={`text-2xl font-bold ${portfolioMetrics!.totalMonthlyCashFlow >= 0 ? "" : "text-red-300"}`}
+                >
                   /mo
                 </span>
               </div>
-              <p className="text-purple-100 text-sm font-medium">Monthly Cash Flow</p>
-              <p className="text-2xl font-bold mt-1">{formatCurrency(portfolioMetrics!.totalMonthlyCashFlow)}</p>
-              <p className="text-purple-200 text-xs mt-1">{formatCurrency(portfolioMetrics!.annualCashFlow)}/year</p>
+              <p className="text-purple-100 text-sm font-medium">
+                Monthly Cash Flow
+              </p>
+              <p className="text-2xl font-bold mt-1">
+                {formatCurrency(portfolioMetrics!.totalMonthlyCashFlow)}
+              </p>
+              <p className="text-purple-200 text-xs mt-1">
+                {formatCurrency(portfolioMetrics!.annualCashFlow)}/year
+              </p>
             </div>
 
             <div className="bg-gradient-to-br from-pink-500 to-rose-600 text-white rounded-xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <Award className="w-8 h-8 text-pink-100" />
-                <span className="text-3xl font-bold">{Math.round(portfolioMetrics!.healthScore)}</span>
+                <span className="text-3xl font-bold">
+                  {Math.round(portfolioMetrics!.healthScore)}
+                </span>
               </div>
-              <p className="text-pink-100 text-sm font-medium">Portfolio Health</p>
+              <p className="text-pink-100 text-sm font-medium">
+                Portfolio Health
+              </p>
               <div className="mt-2 bg-white/20 rounded-full h-2">
-                <div 
-                  className="bg-white rounded-full h-2 transition-all" 
+                <div
+                  className="bg-white rounded-full h-2 transition-all"
                   style={{ width: `${portfolioMetrics!.healthScore}%` }}
                 ></div>
               </div>
               <p className="text-pink-200 text-xs mt-1">
-                {portfolioMetrics!.healthScore >= 80 ? 'Excellent' : 
-                 portfolioMetrics!.healthScore >= 60 ? 'Good' : 
-                 portfolioMetrics!.healthScore >= 40 ? 'Fair' : 'Needs Attention'}
+                {portfolioMetrics!.healthScore >= 80
+                  ? "Excellent"
+                  : portfolioMetrics!.healthScore >= 60
+                    ? "Good"
+                    : portfolioMetrics!.healthScore >= 40
+                      ? "Fair"
+                      : "Needs Attention"}
               </p>
             </div>
           </div>
@@ -329,20 +404,36 @@ export const PerformanceDashboard: React.FC = () => {
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                  <span className="text-gray-700 font-medium">Gross Income</span>
-                  <span className="font-bold text-green-600 text-xl">{formatCurrency(portfolioMetrics!.annualIncome)}</span>
+                  <span className="text-gray-700 font-medium">
+                    Gross Income
+                  </span>
+                  <span className="font-bold text-green-600 text-xl">
+                    {formatCurrency(portfolioMetrics!.annualIncome)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                  <span className="text-gray-700 font-medium">Operating Expenses</span>
-                  <span className="font-bold text-orange-600 text-xl">-{formatCurrency(portfolioMetrics!.annualExpenses)}</span>
+                  <span className="text-gray-700 font-medium">
+                    Operating Expenses
+                  </span>
+                  <span className="font-bold text-orange-600 text-xl">
+                    -{formatCurrency(portfolioMetrics!.annualExpenses)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                  <span className="text-gray-700 font-medium">Debt Service</span>
-                  <span className="font-bold text-red-600 text-xl">-{formatCurrency(portfolioMetrics!.annualDebtService)}</span>
+                  <span className="text-gray-700 font-medium">
+                    Debt Service
+                  </span>
+                  <span className="font-bold text-red-600 text-xl">
+                    -{formatCurrency(portfolioMetrics!.annualDebtService)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-gray-900 font-bold text-lg">Net Cash Flow</span>
-                  <span className={`font-bold text-2xl ${portfolioMetrics!.annualCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className="text-gray-900 font-bold text-lg">
+                    Net Cash Flow
+                  </span>
+                  <span
+                    className={`font-bold text-2xl ${portfolioMetrics!.annualCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}
+                  >
                     {formatCurrency(portfolioMetrics!.annualCashFlow)}
                   </span>
                 </div>
@@ -357,36 +448,70 @@ export const PerformanceDashboard: React.FC = () => {
               <div className="space-y-4">
                 <div className="bg-green-50 border-2 border-green-300 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-green-800">🏆 BEST PERFORMER</span>
-                    <span className="text-green-600 font-bold">{formatPercent(portfolioMetrics!.bestPerformer.totalReturnPercent)}</span>
+                    <span className="text-sm font-semibold text-green-800">
+                      🏆 BEST PERFORMER
+                    </span>
+                    <span className="text-green-600 font-bold">
+                      {formatPercent(
+                        portfolioMetrics!.bestPerformer.totalReturnPercent,
+                      )}
+                    </span>
                   </div>
-                  <p className="font-bold text-gray-900 text-lg">{portfolioMetrics!.bestPerformer.propertyName}</p>
+                  <p className="font-bold text-gray-900 text-lg">
+                    {portfolioMetrics!.bestPerformer.propertyName}
+                  </p>
                   <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
                     <div>
                       <span className="text-gray-600">Cash Flow:</span>
-                      <span className="font-semibold ml-1">{formatCurrency(portfolioMetrics!.bestPerformer.monthlyCashFlow)}/mo</span>
+                      <span className="font-semibold ml-1">
+                        {formatCurrency(
+                          portfolioMetrics!.bestPerformer.monthlyCashFlow,
+                        )}
+                        /mo
+                      </span>
                     </div>
                     <div>
                       <span className="text-gray-600">Equity:</span>
-                      <span className="font-semibold ml-1">{formatCurrency(portfolioMetrics!.bestPerformer.equityGain)}</span>
+                      <span className="font-semibold ml-1">
+                        {formatCurrency(
+                          portfolioMetrics!.bestPerformer.equityGain,
+                        )}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-red-50 border-2 border-red-300 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-red-800">⚠️ NEEDS ATTENTION</span>
-                    <span className="text-red-600 font-bold">{formatPercent(portfolioMetrics!.worstPerformer.totalReturnPercent)}</span>
+                    <span className="text-sm font-semibold text-red-800">
+                      ⚠️ NEEDS ATTENTION
+                    </span>
+                    <span className="text-red-600 font-bold">
+                      {formatPercent(
+                        portfolioMetrics!.worstPerformer.totalReturnPercent,
+                      )}
+                    </span>
                   </div>
-                  <p className="font-bold text-gray-900 text-lg">{portfolioMetrics!.worstPerformer.propertyName}</p>
+                  <p className="font-bold text-gray-900 text-lg">
+                    {portfolioMetrics!.worstPerformer.propertyName}
+                  </p>
                   <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
                     <div>
                       <span className="text-gray-600">Cash Flow:</span>
-                      <span className="font-semibold ml-1">{formatCurrency(portfolioMetrics!.worstPerformer.monthlyCashFlow)}/mo</span>
+                      <span className="font-semibold ml-1">
+                        {formatCurrency(
+                          portfolioMetrics!.worstPerformer.monthlyCashFlow,
+                        )}
+                        /mo
+                      </span>
                     </div>
                     <div>
                       <span className="text-gray-600">Equity:</span>
-                      <span className="font-semibold ml-1">{formatCurrency(portfolioMetrics!.worstPerformer.equityGain)}</span>
+                      <span className="font-semibold ml-1">
+                        {formatCurrency(
+                          portfolioMetrics!.worstPerformer.equityGain,
+                        )}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -406,23 +531,46 @@ export const PerformanceDashboard: React.FC = () => {
               <table className="min-w-full">
                 <thead className="bg-gray-50 border-b-2 border-gray-300">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Property</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">Purchase Price</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">Current Value</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">Equity Gain</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">Monthly CF</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">CoC Return</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">Cap Rate</th>
-                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">Total Return</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">
+                      Property
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      Purchase Price
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      Current Value
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      Equity Gain
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      Monthly CF
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      CoC Return
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      Cap Rate
+                    </th>
+                    <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                      Total Return
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {portfolioMetrics!.propertyMetrics.map((property, index) => (
-                    <tr key={property.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <tr
+                      key={property.id}
+                      className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                    >
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-semibold text-gray-900">{property.propertyName}</p>
-                          <p className="text-sm text-gray-500">{property.monthsHeld} months held</p>
+                          <p className="font-semibold text-gray-900">
+                            {property.propertyName}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {property.monthsHeld} months held
+                          </p>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-right font-medium text-gray-900">
@@ -433,14 +581,20 @@ export const PerformanceDashboard: React.FC = () => {
                       </td>
                       <td className="px-4 py-4 text-right">
                         <div>
-                          <p className={`font-bold ${property.equityGain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <p
+                            className={`font-bold ${property.equityGain >= 0 ? "text-green-600" : "text-red-600"}`}
+                          >
                             {formatCurrency(property.equityGain)}
                           </p>
-                          <p className="text-sm text-gray-500">{formatPercent(property.equityGainPercent)}</p>
+                          <p className="text-sm text-gray-500">
+                            {formatPercent(property.equityGainPercent)}
+                          </p>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-right">
-                        <span className={`font-bold ${property.monthlyCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <span
+                          className={`font-bold ${property.monthlyCashFlow >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
                           {formatCurrency(property.monthlyCashFlow)}
                         </span>
                       </td>
@@ -452,10 +606,14 @@ export const PerformanceDashboard: React.FC = () => {
                       </td>
                       <td className="px-4 py-4 text-right">
                         <div>
-                          <p className={`font-bold text-lg ${property.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <p
+                            className={`font-bold text-lg ${property.totalReturn >= 0 ? "text-green-600" : "text-red-600"}`}
+                          >
                             {formatCurrency(property.totalReturn)}
                           </p>
-                          <p className="text-sm font-semibold text-gray-600">{formatPercent(property.totalReturnPercent)}</p>
+                          <p className="text-sm font-semibold text-gray-600">
+                            {formatPercent(property.totalReturnPercent)}
+                          </p>
                         </div>
                       </td>
                     </tr>
@@ -463,7 +621,9 @@ export const PerformanceDashboard: React.FC = () => {
                 </tbody>
                 <tfoot className="bg-gradient-to-r from-gray-100 to-gray-200 border-t-2 border-gray-400">
                   <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">PORTFOLIO TOTALS</td>
+                    <td className="px-6 py-4 font-bold text-gray-900">
+                      PORTFOLIO TOTALS
+                    </td>
                     <td className="px-4 py-4 text-right font-bold text-gray-900">
                       {formatCurrency(portfolioMetrics!.totalPurchasePrice)}
                     </td>
@@ -476,7 +636,10 @@ export const PerformanceDashboard: React.FC = () => {
                     <td className="px-4 py-4 text-right font-bold text-green-600">
                       {formatCurrency(portfolioMetrics!.totalMonthlyCashFlow)}
                     </td>
-                    <td colSpan={3} className="px-4 py-4 text-center text-gray-500 italic">
+                    <td
+                      colSpan={3}
+                      className="px-4 py-4 text-center text-gray-500 italic"
+                    >
                       Individual metrics vary by property
                     </td>
                   </tr>

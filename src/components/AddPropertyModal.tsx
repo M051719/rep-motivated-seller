@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../store/authStore';
-import toast from 'react-hot-toast';
-import ImageUploader from './ImageUploader';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "../lib/supabase";
+import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
+import ImageUploader from "./ImageUploader";
 import {
   X,
   Home,
@@ -15,7 +15,7 @@ import {
   Calendar,
   FileText,
   Save,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -23,68 +23,76 @@ interface AddPropertyModalProps {
   onSuccess: () => void;
 }
 
-const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, onSuccess }) => {
+const AddPropertyModal: React.FC<AddPropertyModalProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+}) => {
   const { user } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
   const [formData, setFormData] = useState({
     // Basic Info
-    address: '',
-    city: '',
-    state: '',
-    zip_code: '',
-    property_type: 'single-family',
-    
+    address: "",
+    city: "",
+    state: "",
+    zip_code: "",
+    property_type: "single-family",
+
     // Financial
-    purchase_price: '',
-    current_value: '',
-    sale_price: '',
-    mortgage_balance: '',
-    monthly_payment: '',
-    monthly_rent: '',
-    
+    purchase_price: "",
+    current_value: "",
+    sale_price: "",
+    mortgage_balance: "",
+    monthly_payment: "",
+    monthly_rent: "",
+
     // Property Specs
-    bedrooms: '',
-    bathrooms: '',
-    square_feet: '',
-    lot_size: '',
-    year_built: '',
-    
+    bedrooms: "",
+    bathrooms: "",
+    square_feet: "",
+    lot_size: "",
+    year_built: "",
+
     // Status
-    status: 'available',
-    acquisition_date: '',
-    sale_date: '',
-    
+    status: "available",
+    acquisition_date: "",
+    sale_date: "",
+
     // Investment
-    total_invested: '',
-    repair_costs: '',
-    holding_costs: '',
-    profit: '',
-    
+    total_invested: "",
+    repair_costs: "",
+    holding_costs: "",
+    profit: "",
+
     // Details
-    description: '',
-    notes: '',
-    featured_image_url: '',
-    listing_url: '',
-    mls_number: '',
+    description: "",
+    notes: "",
+    featured_image_url: "",
+    listing_url: "",
+    mls_number: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageUpload = (url: string) => {
     setFormData((prev) => ({ ...prev, featured_image_url: url }));
-    toast.success('Featured image uploaded!');
+    toast.success("Featured image uploaded!");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user?.id) {
-      toast.error('You must be logged in to add properties');
+      toast.error("You must be logged in to add properties");
       return;
     }
 
@@ -98,23 +106,43 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
         state: formData.state,
         zip_code: formData.zip_code,
         property_type: formData.property_type,
-        purchase_price: formData.purchase_price ? parseFloat(formData.purchase_price) : null,
-        current_value: formData.current_value ? parseFloat(formData.current_value) : null,
-        sale_price: formData.sale_price ? parseFloat(formData.sale_price) : null,
-        mortgage_balance: formData.mortgage_balance ? parseFloat(formData.mortgage_balance) : null,
-        monthly_payment: formData.monthly_payment ? parseFloat(formData.monthly_payment) : null,
-        monthly_rent: formData.monthly_rent ? parseFloat(formData.monthly_rent) : null,
+        purchase_price: formData.purchase_price
+          ? parseFloat(formData.purchase_price)
+          : null,
+        current_value: formData.current_value
+          ? parseFloat(formData.current_value)
+          : null,
+        sale_price: formData.sale_price
+          ? parseFloat(formData.sale_price)
+          : null,
+        mortgage_balance: formData.mortgage_balance
+          ? parseFloat(formData.mortgage_balance)
+          : null,
+        monthly_payment: formData.monthly_payment
+          ? parseFloat(formData.monthly_payment)
+          : null,
+        monthly_rent: formData.monthly_rent
+          ? parseFloat(formData.monthly_rent)
+          : null,
         bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
         bathrooms: formData.bathrooms ? parseFloat(formData.bathrooms) : null,
-        square_feet: formData.square_feet ? parseInt(formData.square_feet) : null,
+        square_feet: formData.square_feet
+          ? parseInt(formData.square_feet)
+          : null,
         lot_size: formData.lot_size ? parseFloat(formData.lot_size) : null,
         year_built: formData.year_built ? parseInt(formData.year_built) : null,
         status: formData.status,
         acquisition_date: formData.acquisition_date || null,
         sale_date: formData.sale_date || null,
-        total_invested: formData.total_invested ? parseFloat(formData.total_invested) : null,
-        repair_costs: formData.repair_costs ? parseFloat(formData.repair_costs) : null,
-        holding_costs: formData.holding_costs ? parseFloat(formData.holding_costs) : null,
+        total_invested: formData.total_invested
+          ? parseFloat(formData.total_invested)
+          : null,
+        repair_costs: formData.repair_costs
+          ? parseFloat(formData.repair_costs)
+          : null,
+        holding_costs: formData.holding_costs
+          ? parseFloat(formData.holding_costs)
+          : null,
         profit: formData.profit ? parseFloat(formData.profit) : null,
         description: formData.description || null,
         notes: formData.notes || null,
@@ -125,31 +153,52 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
       };
 
       const { data, error } = await supabase
-        .from('properties')
+        .from("properties")
         .insert([propertyData])
         .select()
         .single();
 
       if (error) throw error;
 
-      toast.success('Property added successfully!');
+      toast.success("Property added successfully!");
       onSuccess();
       onClose();
-      
+
       // Reset form
       setFormData({
-        address: '', city: '', state: '', zip_code: '', property_type: 'single-family',
-        purchase_price: '', current_value: '', sale_price: '', mortgage_balance: '',
-        monthly_payment: '', monthly_rent: '', bedrooms: '', bathrooms: '',
-        square_feet: '', lot_size: '', year_built: '', status: 'available',
-        acquisition_date: '', sale_date: '', total_invested: '', repair_costs: '',
-        holding_costs: '', profit: '', description: '', notes: '',
-        featured_image_url: '', listing_url: '', mls_number: '',
+        address: "",
+        city: "",
+        state: "",
+        zip_code: "",
+        property_type: "single-family",
+        purchase_price: "",
+        current_value: "",
+        sale_price: "",
+        mortgage_balance: "",
+        monthly_payment: "",
+        monthly_rent: "",
+        bedrooms: "",
+        bathrooms: "",
+        square_feet: "",
+        lot_size: "",
+        year_built: "",
+        status: "available",
+        acquisition_date: "",
+        sale_date: "",
+        total_invested: "",
+        repair_costs: "",
+        holding_costs: "",
+        profit: "",
+        description: "",
+        notes: "",
+        featured_image_url: "",
+        listing_url: "",
+        mls_number: "",
       });
       setCurrentStep(1);
     } catch (error: any) {
-      console.error('Error adding property:', error);
-      toast.error(error.message || 'Failed to add property');
+      console.error("Error adding property:", error);
+      toast.error(error.message || "Failed to add property");
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +221,9 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Home className="w-6 h-6 text-white" />
-                <h2 className="text-2xl font-bold text-white">Add New Property</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  Add New Property
+                </h2>
               </div>
               <button
                 onClick={onClose}
@@ -190,8 +241,8 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                         currentStep >= step
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-500'
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-200 text-gray-500"
                       }`}
                     >
                       {step}
@@ -199,7 +250,7 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
                     {step < 4 && (
                       <div
                         className={`w-16 h-1 mx-2 ${
-                          currentStep > step ? 'bg-blue-600' : 'bg-gray-200'
+                          currentStep > step ? "bg-blue-600" : "bg-gray-200"
                         }`}
                       />
                     )}
@@ -207,15 +258,18 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
                 ))}
               </div>
               <div className="text-center mt-2 text-sm text-gray-600">
-                {currentStep === 1 && 'Property Location & Type'}
-                {currentStep === 2 && 'Property Details'}
-                {currentStep === 3 && 'Financial Information'}
-                {currentStep === 4 && 'Additional Details'}
+                {currentStep === 1 && "Property Location & Type"}
+                {currentStep === 2 && "Property Details"}
+                {currentStep === 3 && "Financial Information"}
+                {currentStep === 4 && "Additional Details"}
               </div>
             </div>
 
             {/* Form Content */}
-            <form onSubmit={handleSubmit} className="overflow-y-auto max-h-[calc(90vh-200px)]">
+            <form
+              onSubmit={handleSubmit}
+              className="overflow-y-auto max-h-[calc(90vh-200px)]"
+            >
               <div className="px-6 py-6">
                 {/* Step 1: Location & Type */}
                 {currentStep === 1 && (
@@ -716,7 +770,7 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
                   onClick={currentStep === 1 ? onClose : prevStep}
                   className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
-                  {currentStep === 1 ? 'Cancel' : 'Previous'}
+                  {currentStep === 1 ? "Cancel" : "Previous"}
                 </button>
 
                 {currentStep < 4 ? (
@@ -734,7 +788,7 @@ const AddPropertyModal: React.FC<AddPropertyModalProps> = ({ isOpen, onClose, on
                     className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Save className="w-5 h-5" />
-                    <span>{isSubmitting ? 'Saving...' : 'Save Property'}</span>
+                    <span>{isSubmitting ? "Saving..." : "Save Property"}</span>
                   </button>
                 )}
               </div>

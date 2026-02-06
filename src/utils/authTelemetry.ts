@@ -15,7 +15,10 @@ interface AuthTelemetryPayload {
 const TELEMETRY_ENDPOINT = import.meta.env.VITE_AUTH_TELEMETRY_URL;
 const TELEMETRY_SECRET = import.meta.env.VITE_AUTH_TELEMETRY_SECRET;
 
-export const logAuthEvent = (event: AuthEvent, payload: AuthTelemetryPayload = {}) => {
+export const logAuthEvent = (
+  event: AuthEvent,
+  payload: AuthTelemetryPayload = {},
+) => {
   const body = {
     event,
     timestamp: new Date().toISOString(),

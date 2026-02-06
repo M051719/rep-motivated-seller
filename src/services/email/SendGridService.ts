@@ -11,30 +11,36 @@ export interface EmailOptions {
 
 class SendGridService {
   private apiKey: string;
-  private defaultFrom: string = 'noreply@repmotivatedseller.com';
+  private defaultFrom: string = "noreply@repmotivatedseller.com";
 
   constructor() {
-    this.apiKey = process.env.SENDGRID_API_KEY || '';
+    this.apiKey = process.env.SENDGRID_API_KEY || "";
   }
 
-  async sendEmail(options: EmailOptions): Promise<{ success: boolean; error?: string }> {
+  async sendEmail(
+    options: EmailOptions,
+  ): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
+      const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          personalizations: [{
-            to: [{ email: options.to }],
-            dynamic_template_data: options.dynamicTemplateData
-          }],
+          personalizations: [
+            {
+              to: [{ email: options.to }],
+              dynamic_template_data: options.dynamicTemplateData,
+            },
+          ],
           from: { email: options.from || this.defaultFrom },
           subject: options.subject,
-          content: options.html ? [{ type: 'text/html', value: options.html }] : [{ type: 'text/plain', value: options.text || '' }],
-          template_id: options.templateId
-        })
+          content: options.html
+            ? [{ type: "text/html", value: options.html }]
+            : [{ type: "text/plain", value: options.text || "" }],
+          template_id: options.templateId,
+        }),
       });
 
       return { success: response.ok };
@@ -43,7 +49,9 @@ class SendGridService {
     }
   }
 
-  async sendBulkEmail(emails: EmailOptions[]): Promise<{ success: boolean; sent: number; failed: number }> {
+  async sendBulkEmail(
+    emails: EmailOptions[],
+  ): Promise<{ success: boolean; sent: number; failed: number }> {
     let sent = 0;
     let failed = 0;
 

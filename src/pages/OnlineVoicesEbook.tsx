@@ -7,7 +7,8 @@ const OnlineVoicesEbook: React.FC = () => {
   const [expandedChapter, setExpandedChapter] = useState<number | null>(null);
 
   const ebookData = {
-    title: "Online Voices: Finding Support Through Social Media During Foreclosure",
+    title:
+      "Online Voices: Finding Support Through Social Media During Foreclosure",
     subtitle: "navigating tough times",
     description:
       "Discover how digital communities can provide essential guidance and emotional support for homeowners facing distress. By engaging in online forums and social media groups, individuals can connect with others navigating similar challenges, access valuable resources, and learn effective strategies to regain financial stability.",
@@ -92,7 +93,8 @@ const OnlineVoicesEbook: React.FC = () => {
       },
       {
         number: 8,
-        title: "Networking Events for Real Estate Professionals Helping Homeowners",
+        title:
+          "Networking Events for Real Estate Professionals Helping Homeowners",
         sections: [
           "Importance of Networking",
           "Finding Networking Opportunities",
@@ -127,7 +129,9 @@ const OnlineVoicesEbook: React.FC = () => {
   };
 
   const toggleChapter = (chapterNumber: number) => {
-    setExpandedChapter(expandedChapter === chapterNumber ? null : chapterNumber);
+    setExpandedChapter(
+      expandedChapter === chapterNumber ? null : chapterNumber,
+    );
   };
 
   return (
@@ -154,7 +158,9 @@ const OnlineVoicesEbook: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {ebookData.title}
           </h1>
-          <p className="text-xl text-purple-600 font-medium mb-6">{ebookData.subtitle}</p>
+          <p className="text-xl text-purple-600 font-medium mb-6">
+            {ebookData.subtitle}
+          </p>
           <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
             {ebookData.description}
           </p>
@@ -188,7 +194,9 @@ const OnlineVoicesEbook: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="bg-white rounded-2xl shadow-xl p-8 mb-8"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">📚 Table of Contents</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            📚 Table of Contents
+          </h2>
 
           <div className="space-y-4">
             {ebookData.chapters.map((chapter) => (
@@ -211,11 +219,15 @@ const OnlineVoicesEbook: React.FC = () => {
                       <h3 className="text-lg font-semibold text-gray-900">
                         {chapter.title}
                       </h3>
-                      <p className="text-sm text-gray-600 mt-1">{chapter.summary}</p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {chapter.summary}
+                      </p>
                     </div>
                   </div>
                   <motion.span
-                    animate={{ rotate: expandedChapter === chapter.number ? 180 : 0 }}
+                    animate={{
+                      rotate: expandedChapter === chapter.number ? 180 : 0,
+                    }}
                     transition={{ duration: 0.3 }}
                     className="text-2xl text-purple-600"
                   >
@@ -230,7 +242,9 @@ const OnlineVoicesEbook: React.FC = () => {
                     exit={{ opacity: 0, height: 0 }}
                     className="px-6 py-4 bg-purple-50 border-t border-purple-200"
                   >
-                    <h4 className="font-semibold text-gray-900 mb-3">Sections:</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      Sections:
+                    </h4>
                     <ul className="space-y-2">
                       {chapter.sections.map((section, index) => (
                         <li key={index} className="flex items-start space-x-2">
@@ -253,15 +267,19 @@ const OnlineVoicesEbook: React.FC = () => {
           transition={{ delay: 0.4 }}
           className="bg-white rounded-2xl shadow-xl p-8 mb-8"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">🎯 Key Topics Covered</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            🎯 Key Topics Covered
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-start space-x-3">
               <span className="text-3xl">🤝</span>
               <div>
-                <h3 className="font-semibold text-gray-900">Community Support</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Community Support
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Connect with others facing similar challenges through support groups and online
-                  communities
+                  Connect with others facing similar challenges through support
+                  groups and online communities
                 </p>
               </div>
             </div>
@@ -270,16 +288,20 @@ const OnlineVoicesEbook: React.FC = () => {
               <div>
                 <h3 className="font-semibold text-gray-900">Legal Resources</h3>
                 <p className="text-gray-600 text-sm">
-                  Understand your rights and access free or low-cost legal assistance
+                  Understand your rights and access free or low-cost legal
+                  assistance
                 </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <span className="text-3xl">💰</span>
               <div>
-                <h3 className="font-semibold text-gray-900">Financial Management</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Financial Management
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Learn budgeting skills and financial literacy to regain control
+                  Learn budgeting skills and financial literacy to regain
+                  control
                 </p>
               </div>
             </div>
@@ -288,16 +310,20 @@ const OnlineVoicesEbook: React.FC = () => {
               <div>
                 <h3 className="font-semibold text-gray-900">Mental Health</h3>
                 <p className="text-gray-600 text-sm">
-                  Access emotional support and mental health resources during difficult times
+                  Access emotional support and mental health resources during
+                  difficult times
                 </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <span className="text-3xl">🏛️</span>
               <div>
-                <h3 className="font-semibold text-gray-900">Government Programs</h3>
+                <h3 className="font-semibold text-gray-900">
+                  Government Programs
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Discover local assistance programs and eligibility requirements
+                  Discover local assistance programs and eligibility
+                  requirements
                 </p>
               </div>
             </div>
@@ -306,7 +332,8 @@ const OnlineVoicesEbook: React.FC = () => {
               <div>
                 <h3 className="font-semibold text-gray-900">Moving Forward</h3>
                 <p className="text-gray-600 text-sm">
-                  Set new goals and embrace growth after facing foreclosure challenges
+                  Set new goals and embrace growth after facing foreclosure
+                  challenges
                 </p>
               </div>
             </div>
@@ -324,8 +351,8 @@ const OnlineVoicesEbook: React.FC = () => {
             Ready to Find Support and Solutions?
           </h2>
           <p className="text-lg mb-6 opacity-90">
-            This comprehensive guide will help you navigate foreclosure with confidence and
-            community support.
+            This comprehensive guide will help you navigate foreclosure with
+            confidence and community support.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <motion.a

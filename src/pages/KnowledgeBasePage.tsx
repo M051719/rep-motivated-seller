@@ -4,16 +4,30 @@
  * Tier-based access control
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  BookOpen, Search, Filter, Lock, TrendingUp, 
-  DollarSign, Home, FileText, Calculator, Mail,
-  ChevronRight, Star, ThumbsUp, Eye, Clock,
-  CheckCircle, AlertCircle, Zap
-} from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { toast } from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  BookOpen,
+  Search,
+  Filter,
+  Lock,
+  TrendingUp,
+  DollarSign,
+  Home,
+  FileText,
+  Calculator,
+  Mail,
+  ChevronRight,
+  Star,
+  ThumbsUp,
+  Eye,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Zap,
+} from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { toast } from "react-hot-toast";
 
 interface KnowledgeBaseArticle {
   id: string;
@@ -22,7 +36,7 @@ interface KnowledgeBaseArticle {
   excerpt: string;
   content: string;
   category: string;
-  tier_level: 'basic' | 'premium' | 'elite';
+  tier_level: "basic" | "premium" | "elite";
   keywords: string[];
   tags: string[];
   view_count: number;
@@ -32,31 +46,66 @@ interface KnowledgeBaseArticle {
 }
 
 const CATEGORIES = [
-  { id: 'all', name: 'All Topics', icon: BookOpen, color: 'gray' },
-  { id: 'roi-analysis', name: 'ROI Analysis', icon: TrendingUp, color: 'green' },
-  { id: 'calculators', name: 'Calculators', icon: Calculator, color: 'blue' },
-  { id: 'dscr-analysis', name: 'DSCR Loans', icon: DollarSign, color: 'purple' },
-  { id: 'credit-repair-fundamentals', name: 'Credit Repair', icon: Star, color: 'yellow' },
-  { id: 'pre-foreclosure-basics', name: 'Pre-Foreclosure', icon: Home, color: 'red' },
-  { id: 'real-estate-investing-101', name: 'Investing 101', icon: FileText, color: 'indigo' },
-  { id: 'direct-mail', name: 'Direct Mail', icon: Mail, color: 'pink' },
-  { id: 'fix-flip-strategies', name: 'Fix & Flip', icon: Home, color: 'orange' },
-  { id: 'legal-guides', name: 'Legal Guides', icon: FileText, color: 'cyan' }
+  { id: "all", name: "All Topics", icon: BookOpen, color: "gray" },
+  {
+    id: "roi-analysis",
+    name: "ROI Analysis",
+    icon: TrendingUp,
+    color: "green",
+  },
+  { id: "calculators", name: "Calculators", icon: Calculator, color: "blue" },
+  {
+    id: "dscr-analysis",
+    name: "DSCR Loans",
+    icon: DollarSign,
+    color: "purple",
+  },
+  {
+    id: "credit-repair-fundamentals",
+    name: "Credit Repair",
+    icon: Star,
+    color: "yellow",
+  },
+  {
+    id: "pre-foreclosure-basics",
+    name: "Pre-Foreclosure",
+    icon: Home,
+    color: "red",
+  },
+  {
+    id: "real-estate-investing-101",
+    name: "Investing 101",
+    icon: FileText,
+    color: "indigo",
+  },
+  { id: "direct-mail", name: "Direct Mail", icon: Mail, color: "pink" },
+  {
+    id: "fix-flip-strategies",
+    name: "Fix & Flip",
+    icon: Home,
+    color: "orange",
+  },
+  { id: "legal-guides", name: "Legal Guides", icon: FileText, color: "cyan" },
 ];
 
 const TIER_INFO = {
-  basic: { name: 'Free', color: 'gray', icon: CheckCircle },
-  premium: { name: 'Premium', color: 'blue', icon: Star },
-  elite: { name: 'Elite', color: 'purple', icon: Zap }
+  basic: { name: "Free", color: "gray", icon: CheckCircle },
+  premium: { name: "Premium", color: "blue", icon: Star },
+  elite: { name: "Elite", color: "purple", icon: Zap },
 };
 
 const KnowledgeBasePage: React.FC = () => {
   const [articles, setArticles] = useState<KnowledgeBaseArticle[]>([]);
-  const [filteredArticles, setFilteredArticles] = useState<KnowledgeBaseArticle[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedArticle, setSelectedArticle] = useState<KnowledgeBaseArticle | null>(null);
-  const [userTier, setUserTier] = useState<'basic' | 'premium' | 'elite'>('basic');
+  const [filteredArticles, setFilteredArticles] = useState<
+    KnowledgeBaseArticle[]
+  >([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedArticle, setSelectedArticle] =
+    useState<KnowledgeBaseArticle | null>(null);
+  const [userTier, setUserTier] = useState<"basic" | "premium" | "elite">(
+    "basic",
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch articles on mount
@@ -74,16 +123,16 @@ const KnowledgeBasePage: React.FC = () => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
-        .from('knowledge_base')
-        .select('*')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
+        .from("knowledge_base")
+        .select("*")
+        .eq("status", "published")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setArticles(data || []);
     } catch (error) {
-      console.error('Error fetching articles:', error);
-      toast.error('Failed to load knowledge base');
+      console.error("Error fetching articles:", error);
+      toast.error("Failed to load knowledge base");
     } finally {
       setIsLoading(false);
     }
@@ -91,20 +140,22 @@ const KnowledgeBasePage: React.FC = () => {
 
   const fetchUserTier = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase
-          .from('users')
-          .select('tier')
-          .eq('id', user.id)
+          .from("users")
+          .select("tier")
+          .eq("id", user.id)
           .single();
-        
+
         if (profile?.tier) {
           setUserTier(profile.tier);
         }
       }
     } catch (error) {
-      console.error('Error fetching user tier:', error);
+      console.error("Error fetching user tier:", error);
     }
   };
 
@@ -112,25 +163,30 @@ const KnowledgeBasePage: React.FC = () => {
     let filtered = articles;
 
     // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(article => article.category === selectedCategory);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(
+        (article) => article.category === selectedCategory,
+      );
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(article => 
-        article.title.toLowerCase().includes(query) ||
-        article.excerpt.toLowerCase().includes(query) ||
-        article.keywords.some(kw => kw.toLowerCase().includes(query)) ||
-        article.tags.some(tag => tag.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        (article) =>
+          article.title.toLowerCase().includes(query) ||
+          article.excerpt.toLowerCase().includes(query) ||
+          article.keywords.some((kw) => kw.toLowerCase().includes(query)) ||
+          article.tags.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
     setFilteredArticles(filtered);
   };
 
-  const canAccessArticle = (articleTier: 'basic' | 'premium' | 'elite'): boolean => {
+  const canAccessArticle = (
+    articleTier: "basic" | "premium" | "elite",
+  ): boolean => {
     const tierOrder = { basic: 0, premium: 1, elite: 2 };
     return tierOrder[userTier] >= tierOrder[articleTier];
   };
@@ -138,54 +194,60 @@ const KnowledgeBasePage: React.FC = () => {
   const trackArticleView = async (articleId: string) => {
     try {
       // Increment view count
-      await supabase.rpc('increment_kb_view', { article_id: articleId });
+      await supabase.rpc("increment_kb_view", { article_id: articleId });
 
       // Log view in analytics
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
-        await supabase.from('knowledge_base_views').insert({
+        await supabase.from("knowledge_base_views").insert({
           article_id: articleId,
           user_id: user.id,
-          viewed_at: new Date().toISOString()
+          viewed_at: new Date().toISOString(),
         });
       }
     } catch (error) {
-      console.error('Error tracking view:', error);
+      console.error("Error tracking view:", error);
     }
   };
 
   const markHelpful = async (articleId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        toast.error('Please sign in to provide feedback');
+        toast.error("Please sign in to provide feedback");
         return;
       }
 
       // Record feedback
-      await supabase.from('knowledge_base_feedback').insert({
+      await supabase.from("knowledge_base_feedback").insert({
         article_id: articleId,
         user_id: user.id,
         helpful: true,
-        feedback_text: null
+        feedback_text: null,
       });
 
       // Increment helpful count
-      await supabase.rpc('increment_kb_helpful', { article_id: articleId });
+      await supabase.rpc("increment_kb_helpful", { article_id: articleId });
 
-      toast.success('Thanks for your feedback!');
-      
+      toast.success("Thanks for your feedback!");
+
       // Refresh articles to update count
       fetchArticles();
     } catch (error) {
-      console.error('Error submitting feedback:', error);
-      toast.error('Failed to submit feedback');
+      console.error("Error submitting feedback:", error);
+      toast.error("Failed to submit feedback");
     }
   };
 
   const openArticle = (article: KnowledgeBaseArticle) => {
     if (!canAccessArticle(article.tier_level)) {
-      toast.error(`This article requires ${TIER_INFO[article.tier_level].name} membership`);
+      toast.error(
+        `This article requires ${TIER_INFO[article.tier_level].name} membership`,
+      );
       return;
     }
 
@@ -194,7 +256,7 @@ const KnowledgeBasePage: React.FC = () => {
   };
 
   const getCategoryInfo = (categoryId: string) => {
-    return CATEGORIES.find(cat => cat.id === categoryId) || CATEGORIES[0];
+    return CATEGORIES.find((cat) => cat.id === categoryId) || CATEGORIES[0];
   };
 
   if (isLoading) {
@@ -207,7 +269,9 @@ const KnowledgeBasePage: React.FC = () => {
           >
             <BookOpen className="w-16 h-16 text-blue-600 mx-auto" />
           </motion.div>
-          <p className="mt-4 text-gray-600 font-medium">Loading knowledge base...</p>
+          <p className="mt-4 text-gray-600 font-medium">
+            Loading knowledge base...
+          </p>
         </div>
       </div>
     );
@@ -234,13 +298,18 @@ const KnowledgeBasePage: React.FC = () => {
             className="bg-white rounded-2xl shadow-xl p-8 mb-6"
           >
             <div className="flex items-center gap-3 mb-4">
-              {React.createElement(getCategoryInfo(selectedArticle.category).icon, {
-                className: `w-6 h-6 text-${getCategoryInfo(selectedArticle.category).color}-600`
-              })}
+              {React.createElement(
+                getCategoryInfo(selectedArticle.category).icon,
+                {
+                  className: `w-6 h-6 text-${getCategoryInfo(selectedArticle.category).color}-600`,
+                },
+              )}
               <span className="text-sm font-medium text-gray-600">
                 {getCategoryInfo(selectedArticle.category).name}
               </span>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold bg-${TIER_INFO[selectedArticle.tier_level].color}-100 text-${TIER_INFO[selectedArticle.tier_level].color}-800`}>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold bg-${TIER_INFO[selectedArticle.tier_level].color}-100 text-${TIER_INFO[selectedArticle.tier_level].color}-800`}
+              >
                 {TIER_INFO[selectedArticle.tier_level].name}
               </span>
             </div>
@@ -279,14 +348,16 @@ const KnowledgeBasePage: React.FC = () => {
             )}
 
             {/* Article Content */}
-            <div 
+            <div
               className="prose prose-lg max-w-none"
               dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
             />
 
             {/* Helpful Button */}
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <p className="text-gray-700 font-medium mb-4">Was this article helpful?</p>
+              <p className="text-gray-700 font-medium mb-4">
+                Was this article helpful?
+              </p>
               <button
                 onClick={() => markHelpful(selectedArticle.id)}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
@@ -316,17 +387,22 @@ const KnowledgeBasePage: React.FC = () => {
             <h1 className="text-5xl font-bold text-gray-900">Knowledge Base</h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive guides and tutorials on real estate investing, financing, 
-            property analysis, and more. Learn from industry experts.
+            Comprehensive guides and tutorials on real estate investing,
+            financing, property analysis, and more. Learn from industry experts.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3">
             <span className="px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200 text-sm font-medium text-gray-700">
-              Your Tier: <span className={`text-${TIER_INFO[userTier].color}-600 font-bold`}>
+              Your Tier:{" "}
+              <span
+                className={`text-${TIER_INFO[userTier].color}-600 font-bold`}
+              >
                 {TIER_INFO[userTier].name}
               </span>
             </span>
             <span className="text-gray-500">•</span>
-            <span className="text-gray-600 font-medium">{articles.length} Articles Available</span>
+            <span className="text-gray-600 font-medium">
+              {articles.length} Articles Available
+            </span>
           </div>
         </motion.div>
 
@@ -367,7 +443,7 @@ const KnowledgeBasePage: React.FC = () => {
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
                     isActive
                       ? `bg-${category.color}-600 text-white shadow-lg`
-                      : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200'
+                      : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -383,7 +459,9 @@ const KnowledgeBasePage: React.FC = () => {
           {filteredArticles.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No articles found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No articles found
+              </h3>
               <p className="text-gray-600">
                 Try adjusting your search or category filter
               </p>
@@ -402,13 +480,17 @@ const KnowledgeBasePage: React.FC = () => {
                   transition={{ delay: index * 0.05 }}
                   onClick={() => canAccess && openArticle(article)}
                   className={`bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all cursor-pointer ${
-                    !canAccess && 'opacity-75'
+                    !canAccess && "opacity-75"
                   }`}
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-lg bg-${categoryInfo.color}-100`}>
-                      <Icon className={`w-6 h-6 text-${categoryInfo.color}-600`} />
+                    <div
+                      className={`p-3 rounded-lg bg-${categoryInfo.color}-100`}
+                    >
+                      <Icon
+                        className={`w-6 h-6 text-${categoryInfo.color}-600`}
+                      />
                     </div>
                     {!canAccess && (
                       <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full">

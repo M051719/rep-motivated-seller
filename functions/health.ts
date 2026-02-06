@@ -14,12 +14,9 @@ export const onRequest: PagesFunction = async () => {
       headers: jsonHeaders,
     });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      {
-        status: 500,
-        headers: jsonHeaders,
-      },
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: jsonHeaders,
+    });
   }
 };
