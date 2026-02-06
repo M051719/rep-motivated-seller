@@ -42,7 +42,25 @@ export default function AIAssistant() {
 
   const fetchUserTier = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();{ response: string; kbArticles: Array<{ id: string; title: string; }>; hasRealTime: boolean; hasKB: boolean }> => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        const { data: tierData } = await supabase
+          .from('user_tiers')
+          .select('tier')
+          .eq('user_id', user.id)
+          .single();
+
+        if (tierData) {
+          setUserTier(tierData.tier);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user tier:', error);
+    }
+  };
+
+  const processMessage = async (userMessage: string): Promise<{ response: string; kbArticles: Array<{ id: string; title: string; }>; hasRealTime: boolean; hasKB: boolean }> => {
     const lowerMessage = userMessage.toLowerCase();
     let response = '';
     let kbArticles: Array<{ id: string; title: string; }> = [];
@@ -51,7 +69,7 @@ export default function AIAssistant() {
 
     // STEP 1: Search Knowledge Base first
     const kbResults = await knowledgeBaseService.searchArticles(userMessage, userTier);
-    
+
     if (kbResults.hasResults && kbResults.articles.length > 0) {
       hasKB = true;
       const topArticle = kbResults.articles[0];
@@ -59,7 +77,7 @@ export default function AIAssistant() {
 
       // Extract excerpt from top article
       response = `📚 **From our Knowledge Base:**\n\n${topArticle.excerpt}\n\n`;
-      
+
       if (kbResults.articles.length > 1) {
         response += `**Related Articles:**\n`;
         kbResults.articles.slice(0, 3).forEach((article, idx) => {
@@ -70,8 +88,8 @@ export default function AIAssistant() {
     }
 
     // STEP 2: Check if real-time data is needed
-    const needsRealTimeData = lowerMessage.includes('market') || 
-                              lowerMessage.includes('rate') || 
+    const needsRealTimeData = lowerMessage.includes('market') ||
+                              lowerMessage.includes('rate') ||
                               lowerMessage.includes('current') ||
                               lowerMessage.includes('price') ||
                               lowerMessage.includes('trend');
@@ -143,7 +161,7 @@ export default function AIAssistant() {
       }
     } catch (error) {
       consolaiResponse = await generateAIResponse(input);
-      
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -191,7 +209,7 @@ export default function AIAssistant() {
 
     try {
       const response = await generateAIResponse(input);
-      
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
