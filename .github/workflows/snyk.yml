@@ -1,18 +1,30 @@
 name: Snyk Security Scan
 
+# WORKFLOW DISABLED - Manual trigger only until secrets are configured
+#
+# Required Secrets:
+#   - SNYK_TOKEN: Your Snyk API token
+#     Get your token from: https://app.snyk.io/account
+#     Navigate to Account Settings > General > API Token
+#
+# To re-enable automatic runs:
+#   1. Add the SNYK_TOKEN secret in GitHub Settings > Secrets and variables > Actions
+#   2. Uncomment the 'push', 'pull_request', and 'schedule' triggers below
+#   3. Remove the 'workflow_dispatch' trigger if you don't want manual runs
+#
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
-      - develop
-  schedule:
-    # Run weekly on Mondays at 9 AM UTC
-    - cron: '0 9 * * 1'
   workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  # pull_request:
+  #   branches:
+  #     - main
+  #     - develop
+  # schedule:
+  #   # Run weekly on Mondays at 9 AM UTC
+  #   - cron: '0 9 * * 1'
 
 permissions:
   contents: read
