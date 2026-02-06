@@ -1,4 +1,4 @@
-typescriptimport { HubSpotService } from '../services/hubspotService';
+import { HubSpotService } from '../services/hubspotService';
 
 // Test connection
 const testConnection = async () => {
