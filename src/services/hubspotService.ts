@@ -235,6 +235,56 @@ class HubSpotServiceClass {
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  // Static wrappers for test compatibility
+  static async syncLead(leadData: any): Promise<SyncResult> {
+    const instance = new HubSpotServiceClass();
+    try {
+      const contact = await instance.createContact({
+        properties: {
+          email: leadData.email,
+          firstname: leadData.firstName,
+          lastname: leadData.lastName,
+          phone: leadData.phone,
+        },
+      });
+
+      return {
+        success: true,
+        contactId: contact.id,
+        message: "Lead synced successfully",
+        recordsProcessed: 1,
+        recordsCreated: 1,
+        recordsUpdated: 0,
+        recordsFailed: 0,
+        errors: [],
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+        recordsProcessed: 1,
+        recordsCreated: 0,
+        recordsUpdated: 0,
+        recordsFailed: 1,
+        errors: [error instanceof Error ? error.message : "Unknown error"],
+      } as SyncResult;
+    }
+  }
+
+  static async getRecentContacts(limit: number = 10): Promise<any[]> {
+    const instance = new HubSpotServiceClass();
+    try {
+      const response = await instance.makeRequest(
+        `${HUBSPOT_CONFIG.endpoints.contacts}?limit=${limit}`,
+        "GET",
+      );
+      return response.results || [];
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      return [];
+    }
+  }
 }
 
 export const HubSpotService = new HubSpotServiceClass();
