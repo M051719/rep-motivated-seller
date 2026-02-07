@@ -41,6 +41,10 @@ export class GLBAKeyManagement {
       ['encrypt', 'decrypt']
     );
   }
+
+  async getActiveKey(): Promise<CryptoKey> {
+    return await this.generateKey();
+  }
 }
 
 export default GLBAKeyManagement;
