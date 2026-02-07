@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * GLBA Encryption Library
  * Provides AES-256-GCM encryption for sensitive financial data
