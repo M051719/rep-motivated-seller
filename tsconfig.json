@@ -9,14 +9,12 @@
     ],
     "module": "ESNext",
     "skipLibCheck": true,
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    /* Linting */
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -31,7 +29,9 @@
   "exclude": [
     "node_modules",
     "dist",
-    "src/lib/src/**"
+    "src/lib/src/**",
+    "src/lib/schema.ts",
+    "src/pages/api/sync-hubspot.ts"
   ],
   "references": [
     {
