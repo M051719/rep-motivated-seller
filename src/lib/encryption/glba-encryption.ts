@@ -84,7 +84,7 @@ export class GLBAEncryption {
       );
       const plaintextBuffer = new TextEncoder().encode(plaintext);
       const encryptedBuffer = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv, tagLength: this.AUTH_TAG_LENGTH * 8 },
+        { name: "AES-GCM", iv: iv as Uint8Array, tagLength: this.AUTH_TAG_LENGTH * 8 },
         cryptoKey,
         plaintextBuffer,
       );
@@ -134,7 +134,7 @@ export class GLBAEncryption {
         ["decrypt"],
       );
       const decryptedBuffer = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv, tagLength: this.AUTH_TAG_LENGTH * 8 },
+        { name: "AES-GCM", iv: iv as Uint8Array, tagLength: this.AUTH_TAG_LENGTH * 8 },
         cryptoKey,
         combined,
       );
@@ -164,7 +164,7 @@ export class GLBAEncryption {
     const hashBuffer = await crypto.subtle.deriveBits(
       {
         name: "PBKDF2",
-        salt: saltBuffer,
+        salt: saltBuffer as Uint8Array,
         iterations: this.PBKDF2_ITERATIONS,
         hash: "SHA-256",
       },
@@ -182,7 +182,7 @@ export class GLBAEncryption {
     const masterKey = this.base64ToBuffer(this.getMasterKey());
     const keyMaterial = await crypto.subtle.importKey(
       "raw",
-      masterKey,
+      masterKey as BufferSource,
       "HKDF",
       false,
       ["deriveBits"],
