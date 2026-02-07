@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import ExcelJS from "exceljs";
@@ -15,7 +14,6 @@ import {
 } from "lucide-react";
 import { PageLayout } from "../components/ui/PageLayout";
 
-// @ts-nocheck
 const currencyFormat = (v: number) => ({
   formula: undefined,
   result: v,
