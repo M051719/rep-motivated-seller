@@ -29,7 +29,7 @@ export class GLBAEncryption {
   private static readonly PBKDF2_ITERATIONS = 100000;
 
   private static toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
-    return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+    return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
   }
 
   private static getMasterKey(): string {
