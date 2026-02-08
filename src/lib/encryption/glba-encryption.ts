@@ -29,6 +29,7 @@ export class GLBAEncryption {
   private static readonly PBKDF2_ITERATIONS = 100000;
 
   private static toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+    // Ensure an ArrayBuffer-backed BufferSource for WebCrypto operations.
     return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
   }
 
@@ -84,7 +85,11 @@ export class GLBAEncryption {
       );
       const plaintextBuffer = new TextEncoder().encode(plaintext);
       const encryptedBuffer = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: iv as Uint8Array, tagLength: this.AUTH_TAG_LENGTH * 8 },
+        {
+          name: "AES-GCM",
+          iv: this.toArrayBuffer(iv),
+          tagLength: this.AUTH_TAG_LENGTH * 8,
+        },
         cryptoKey,
         plaintextBuffer,
       );
@@ -134,7 +139,11 @@ export class GLBAEncryption {
         ["decrypt"],
       );
       const decryptedBuffer = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: iv as Uint8Array, tagLength: this.AUTH_TAG_LENGTH * 8 },
+        {
+          name: "AES-GCM",
+          iv: this.toArrayBuffer(iv),
+          tagLength: this.AUTH_TAG_LENGTH * 8,
+        },
         cryptoKey,
         combined,
       );
@@ -164,7 +173,7 @@ export class GLBAEncryption {
     const hashBuffer = await crypto.subtle.deriveBits(
       {
         name: "PBKDF2",
-        salt: saltBuffer as Uint8Array,
+        salt: this.toArrayBuffer(saltBuffer as Uint8Array),
         iterations: this.PBKDF2_ITERATIONS,
         hash: "SHA-256",
       },

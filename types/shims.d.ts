@@ -4,7 +4,13 @@ declare module "react-error-boundary" {
     error: Error;
     resetErrorBoundary: () => void;
   }
-  export const ErrorBoundary: React.FC<{ FallbackComponent: React.ComponentType<FallbackProps>; onError?: (error: Error, info: any) => void; onReset?: () => void }>;
+  export const ErrorBoundary: React.FC<
+    React.PropsWithChildren<{
+      FallbackComponent: React.ComponentType<FallbackProps>;
+      onError?: (error: Error, info: any) => void;
+      onReset?: () => void;
+    }>
+  >;
 }
 
 declare module "@supabase/auth-helpers-nextjs" {
