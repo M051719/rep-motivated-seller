@@ -1,5 +1,14 @@
 import { describe, it, expect } from "vitest";
+import { createClient } from "@supabase/supabase-js";
 import { resolveSupabaseEnv, supabase } from "../../lib/supabase";
+
+const restoreEnvValue = (key: string, value: string | undefined) => {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
+};
 
 describe("Supabase environment configuration", () => {
   it("initializes the client when VITE_ env vars are present", () => {
@@ -28,17 +37,11 @@ describe("Supabase environment configuration", () => {
     expect(env.url).toBe("https://fallback.supabase.co");
     expect(env.anonKey).toBe("fallback-anon-key");
 
-    const restoreEnv = (key: string, value: string | undefined) => {
-      if (value === undefined) {
-        delete process.env[key];
-      } else {
-        process.env[key] = value;
-      }
-    };
+    expect(() => createClient(env.url!, env.anonKey!)).not.toThrow();
 
-    restoreEnv("VITE_SUPABASE_URL", originalEnv.viteUrl);
-    restoreEnv("VITE_SUPABASE_ANON_KEY", originalEnv.viteKey);
-    restoreEnv("SUPABASE_URL", originalEnv.url);
-    restoreEnv("SUPABASE_ANON_KEY", originalEnv.key);
+    restoreEnvValue("VITE_SUPABASE_URL", originalEnv.viteUrl);
+    restoreEnvValue("VITE_SUPABASE_ANON_KEY", originalEnv.viteKey);
+    restoreEnvValue("SUPABASE_URL", originalEnv.url);
+    restoreEnvValue("SUPABASE_ANON_KEY", originalEnv.key);
   });
 });
