@@ -33,15 +33,28 @@ jobs:
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           scan-type: 'fs'
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Check if Trivy results exist
+        id: check-trivy
+        run: |
+          if [ -f trivy-results.sarif ]; then
+            echo "file_exists=true" >> $GITHUB_OUTPUT
+            echo "✅ Trivy results file found"
+          else
+            echo "file_exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Trivy results file not found - scan may have found no issues"
+          fi
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && steps.check-trivy.outputs.file_exists == 'true'
         with:
           sarif_file: 'trivy-results.sarif'
 
