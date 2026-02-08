@@ -2,16 +2,18 @@
 import { beforeAll, afterAll, afterEach } from "vitest";
 import { setupAPIsMocks, resetAPIMocks } from "./setup/apiMocks";
 
+if (!process.env.VITE_SUPABASE_URL) {
+  process.env.VITE_SUPABASE_URL = "https://ltxqodqlexvojqqxquew.supabase.co";
+}
+if (!process.env.VITE_SUPABASE_ANON_KEY) {
+  process.env.VITE_SUPABASE_ANON_KEY = "test-anon-key";
+}
+
 // Setup runs before all tests
 beforeAll(() => {
   console.log("🚀 Starting service integration tests...\n");
 
   setupAPIsMocks();
-
-  // Set test environment variables if not already set
-  if (!process.env.VITE_SUPABASE_URL) {
-    process.env.VITE_SUPABASE_URL = "https://ltxqodqlexvojqqxquew.supabase.co";
-  }
   if (!process.env.HUBSPOT_ACCESS_TOKEN) {
     process.env.HUBSPOT_ACCESS_TOKEN = "test-token";
   }
