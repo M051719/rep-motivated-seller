@@ -312,7 +312,7 @@ const DealPresentationOutlinePage: React.FC = () => {
         { type: "num" as const, value: 3.5 },
         { type: "num" as const, value: 5 },
       ],
-      color: ["FF9999", "FFFF99", "99FF99"],
+      color: [{ argb: "FF9999" }, { argb: "FFFF99" }, { argb: "99FF99" }],
       priority: 1,
     };
 
