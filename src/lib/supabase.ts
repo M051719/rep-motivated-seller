@@ -15,7 +15,7 @@ const { url: supabaseUrl, anonKey: supabaseAnonKey } = resolveSupabaseEnv();
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
-    "Missing Supabase environment variables (VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY)",
+    "Missing Supabase environment variables (VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY or SUPABASE_URL/SUPABASE_ANON_KEY)",
   );
 }
 
