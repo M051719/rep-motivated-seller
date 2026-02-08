@@ -1,5 +1,5 @@
-﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+﻿import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { createClient } from 'npm:@supabase/supabase-js@2.39.3'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,8 +42,16 @@ serve(async (req) => {
           avgDuration: 0,
           transferRate: totalCalls > 0 ? Math.round((transferredCalls / totalCalls) * 100) : 0,
         },
-        aiPerformance: { fulfillmentRate: 0, topIntents: [], avgConfidence: 0 },
-        handoffAnalysis: { totalHandoffs: transferredCalls, avgResolutionTime: 0, commonReasons: [] },
+        aiPerformance: { 
+          fulfillmentRate: 0, 
+          topIntents: [], 
+          avgConfidence: 0 
+        },
+        handoffAnalysis: { 
+          totalHandoffs: transferredCalls, 
+          avgResolutionTime: 0, 
+          commonReasons: [] 
+        },
         recentCalls: calls?.slice(0, 10) || [],
       }
 
@@ -54,14 +62,19 @@ serve(async (req) => {
     }
 
     if (action === 'call-details' && callId) {
-      const { data: call } = await supabaseClient.from('ai_calls').select('*').eq('call_sid', callId).single()
+      const { data: call } = await supabaseClient
+        .from('ai_calls')
+        .select('*')
+        .eq('call_sid', callId)
+        .single()
+
       return new Response(JSON.stringify({ call }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
 
-    throw new Error('Invalid action')
+    throw new Error('Invalid action. Use: dashboard or call-details')
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
