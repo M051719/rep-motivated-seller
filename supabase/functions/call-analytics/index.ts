@@ -42,15 +42,15 @@ serve(async (req) => {
           avgDuration: 0,
           transferRate: totalCalls > 0 ? Math.round((transferredCalls / totalCalls) * 100) : 0,
         },
-        aiPerformance: { 
-          fulfillmentRate: 0, 
-          topIntents: [], 
-          avgConfidence: 0 
+        aiPerformance: {
+          fulfillmentRate: 0,
+          topIntents: [],
+          avgConfidence: 0
         },
-        handoffAnalysis: { 
-          totalHandoffs: transferredCalls, 
-          avgResolutionTime: 0, 
-          commonReasons: [] 
+        handoffAnalysis: {
+          totalHandoffs: transferredCalls,
+          avgResolutionTime: 0,
+          commonReasons: []
         },
         recentCalls: calls?.slice(0, 10) || [],
       }
