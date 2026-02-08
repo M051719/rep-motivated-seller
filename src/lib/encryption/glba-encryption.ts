@@ -29,6 +29,7 @@ export class GLBAEncryption {
   private static readonly PBKDF2_ITERATIONS = 100000;
 
   private static toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+    // Ensure an ArrayBuffer-backed BufferSource for WebCrypto operations.
     return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
   }
 
