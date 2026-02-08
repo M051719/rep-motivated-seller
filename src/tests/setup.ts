@@ -2,12 +2,17 @@
 import { beforeAll, afterAll, afterEach } from "vitest";
 import { setupAPIsMocks, resetAPIMocks } from "./setup/apiMocks";
 
-if (!process.env.VITE_SUPABASE_URL) {
-  process.env.VITE_SUPABASE_URL = "https://ltxqodqlexvojqqxquew.supabase.co";
-}
-if (!process.env.VITE_SUPABASE_ANON_KEY) {
-  process.env.VITE_SUPABASE_ANON_KEY = "test-anon-key";
-}
+const ensureSupabaseTestEnv = () => {
+  if (!process.env.VITE_SUPABASE_URL) {
+    process.env.VITE_SUPABASE_URL =
+      "https://ltxqodqlexvojqqxquew.supabase.co";
+  }
+  if (!process.env.VITE_SUPABASE_ANON_KEY) {
+    process.env.VITE_SUPABASE_ANON_KEY = "test-anon-key";
+  }
+};
+
+ensureSupabaseTestEnv();
 
 // Setup runs before all tests
 beforeAll(() => {
