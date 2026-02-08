@@ -1,55 +1,47 @@
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
-import { createClient } from 'npm:@supabase/supabase-js@2.39.3'
+﻿import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-// Define CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Get the JWT token from the Authorization header
+    // Create Supabase client with auth header
     const authHeader = req.headers.get('Authorization')
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+
+    if (!authHeader) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Unauthorized: Missing or invalid Authorization header',
-          message: 'This endpoint requires a valid JWT token.'
+        JSON.stringify({
+          authenticated: false,
+          error: 'No authorization header provided',
+          timestamp: new Date().toISOString(),
+          help: 'Include Authorization: Bearer <token> header',
         }),
         {
-          status: 401,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
         }
       )
     }
 
-    // Extract the token
-    const token = authHeader.replace('Bearer ', '')
-
-    // Create Supabase client using the JWT token
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: authHeader },
         },
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        }
       }
     )
 
-    // Get the authenticated user
+    // Test authentication
     const {
       data: { user },
       error: userError,
@@ -57,41 +49,56 @@ serve(async (req) => {
 
     if (userError || !user) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Unauthorized: Invalid JWT token',
-          message: 'The provided JWT token is invalid or expired. Please obtain a new token by logging in.'
+        JSON.stringify({
+          authenticated: false,
+          error: userError?.message || 'User not found',
+          timestamp: new Date().toISOString(),
         }),
         {
-          status: 401,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
         }
       )
     }
 
-    // Return user information
-    return new Response(
-      JSON.stringify({ 
-        message: 'Authentication successful',
-        user: {
-          id: user.id,
-          email: user.email,
-          created_at: user.created_at,
-          last_sign_in_at: user.last_sign_in_at
-        }
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+    // Test database access
+    const { data: testData, error: dbError } = await supabaseClient
+      .from('foreclosure_responses')
+      .select('id')
+      .limit(1)
+
+    // Success response
+    const response = {
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        created_at: user.created_at,
+      },
+      database: {
+        accessible: !dbError,
+        error: dbError?.message || null,
+      },
+      timestamp: new Date().toISOString(),
+      message: 'Authentication successful',
+    }
+
+    return new Response(JSON.stringify(response, null, 2), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
   } catch (error) {
+    console.error('Auth Test Error:', error)
     return new Response(
-      JSON.stringify({ 
-        error: 'Internal server error',
-        message: error.message 
+      JSON.stringify({
+        authenticated: false,
+        error: error.message,
+        timestamp: new Date().toISOString(),
       }),
       {
-        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
       }
     )
   }
