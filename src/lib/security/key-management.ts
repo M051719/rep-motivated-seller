@@ -15,6 +15,17 @@ export class GLBAKeyManagement {
     return GLBAKeyManagement.instance;
   }
 
+  static async getActiveKey(): Promise<{
+    id: string;
+    key_data: string;
+    cryptoKey: CryptoKey;
+  }> {
+    const instance = GLBAKeyManagement.getInstance();
+    const cryptoKey = await instance.getActiveKey();
+    const key_data = await instance.exportKey(cryptoKey);
+    return { id: "active", key_data, cryptoKey };
+  }
+
   async generateKey(): Promise<CryptoKey> {
     return await crypto.subtle.generateKey(
       {
