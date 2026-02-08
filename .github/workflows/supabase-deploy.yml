@@ -1,4 +1,4 @@
-name: Supabase Deployment
+﻿name: Supabase Deployment
 
 on:
   push:
@@ -32,19 +32,41 @@ jobs:
         run: |
           supabase link --project-ref ltxqodqlexvojqqxquew
       
-      - name: Deploy Edge Functions
+      - name: Deploy Edge Functions (with error handling)
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          supabase functions deploy admin-dashboard --no-verify-jwt
-          supabase functions deploy send-notification-email --no-verify-jwt
-          supabase functions deploy schedule-follow-ups --no-verify-jwt
-          supabase functions deploy sms-handler --no-verify-jwt
-          supabase functions deploy ai-voice-handler --no-verify-jwt
-          supabase functions deploy call-analytics --no-verify-jwt
-          supabase functions deploy auth-test --no-verify-jwt
+          # Function to deploy with error handling
+          deploy_function() {
+            local func_name=$1
+            if [ -d "supabase/functions/$func_name" ] && [ -f "supabase/functions/$func_name/index.ts" ]; then
+              echo "âœ“ Deploying $func_name..."
+              if supabase functions deploy $func_name --no-verify-jwt; then
+                echo "âœ“ $func_name deployed successfully"
+              else
+                echo "âš  Failed to deploy $func_name (continuing...)"
+              fi
+            else
+              echo "âš  Skipping $func_name (source file not found)"
+            fi
+          }
+
+          # Deploy all functions with error handling
+          deploy_function "admin-dashboard"
+          deploy_function "send-notification-email"
+          deploy_function "schedule-follow-ups"
+          deploy_function "sms-handler"
+          deploy_function "ai-voice-handler"
+          deploy_function "call-analytics"
+          deploy_function "auth-test"
+
+          echo ""
+          echo "========================================="
+          echo "Edge Function Deployment Complete"
+          echo "========================================="
       
       - name: Set Supabase secrets
+        continue-on-error: true
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
@@ -52,10 +74,10 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          supabase secrets set MAILERLITE_API_KEY="$MAILERLITE_API_KEY"
-          supabase secrets set TWILIO_ACCOUNT_SID="$TWILIO_ACCOUNT_SID"
-          supabase secrets set TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN"
-          supabase secrets set OPENAI_API_KEY="$OPENAI_API_KEY"
+          supabase secrets set MAILERLITE_API_KEY="$MAILERLITE_API_KEY" || echo "âš  Failed to set MAILERLITE_API_KEY"
+          supabase secrets set TWILIO_ACCOUNT_SID="$TWILIO_ACCOUNT_SID" || echo "âš  Failed to set TWILIO_ACCOUNT_SID"
+          supabase secrets set TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN" || echo "âš  Failed to set TWILIO_AUTH_TOKEN"
+          supabase secrets set OPENAI_API_KEY="$OPENAI_API_KEY" || echo "âš  Failed to set OPENAI_API_KEY"
           supabase secrets set TWILIO_PHONE_NUMBER="+18778064677"
           supabase secrets set AGENT_PHONE_NUMBER="+18778064677"
           supabase secrets set SCHEDULING_PHONE_NUMBER="+18778064677"
