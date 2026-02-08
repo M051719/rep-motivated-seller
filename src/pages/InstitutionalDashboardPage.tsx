@@ -143,9 +143,9 @@ const addDealsSheet = (workbook: ExcelJS.Workbook) => {
   const cfRule = {
     type: "colorScale" as const,
     cfvo: [
-      { type: "num", value: 1 },
-      { type: "num", value: 3.5 },
-      { type: "num", value: 5 },
+      { type: "num" as const, value: 1 },
+      { type: "num" as const, value: 3.5 },
+      { type: "num" as const, value: 5 },
     ],
     color: ["FF9999", "FFFF99", "99FF99"],
     priority: 1,
@@ -194,9 +194,9 @@ const addScoringSheet = (workbook: ExcelJS.Workbook) => {
   const cfRule = {
     type: "colorScale" as const,
     cfvo: [
-      { type: "num", value: 1 },
-      { type: "num", value: 3.5 },
-      { type: "num", value: 5 },
+      { type: "num" as const, value: 1 },
+      { type: "num" as const, value: 3.5 },
+      { type: "num" as const, value: 5 },
     ],
     color: ["FF9999", "FFFF99", "99FF99"],
     priority: 1,
