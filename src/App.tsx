@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,77 +16,86 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import AIAssistant from "./components/AIAssistant";
 import FloatingAIChat from "./components/FloatingAIChat";
 
-// Pages
+// Critical pages - loaded synchronously for auth redirects and initial page load
 import Homepage from "./pages/homepage";
-import PricingPage from "./pages/PricingPage";
 import AuthPage from "./pages/AuthPage";
 import AuthCallback from "./pages/AuthCallback";
-import ForeclosurePage from "./pages/ForeclosurePage";
-import ContractsPage from "./pages/ContractsPage";
-import AdminPage from "./pages/AdminPage";
-import ProfilePage from "./pages/ProfilePage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-import TermsOfServicePage from "./pages/TermsOfServicePage";
-import RefundPolicyPage from "./pages/RefundPolicyPage";
-import CookiesPolicyPage from "./pages/CookiesPolicyPage";
-import DisclaimerPage from "./pages/DisclaimerPage";
-import BookConsultation from "./pages/BookConsultation";
-import LoanApplication from "./pages/LoanApplication";
-import WhatWeDoPage from "./pages/WhatWeDoPage";
-import ContactPage from "./pages/ContactPage";
-// New content pages
-import SuccessStoriesPage from "./pages/SuccessStoriesPage";
-import BlogPage from "./pages/BlogPage";
-import BlogPostDetail from "./pages/BlogPostDetail";
-import KnowledgeBasePage from "./pages/KnowledgeBasePage";
-import ResourcesPage from "./pages/ResourcesPage";
-import VideosPage from "./pages/VideosPage";
-import HelpPage from "./pages/HelpPage";
-import OnlineVoicesEbook from "./pages/OnlineVoicesEbook";
-import CalculatorsPage from "./pages/CalculatorsPage";
-import SubscriptionPage from "./pages/SubscriptionPage";
-import ContractsLibraryPage from "./pages/ContractsLibraryPage";
-import UnsubscribePage from "./pages/UnsubscribePage";
-import SitemapPage from "./pages/SitemapPage";
-import DirectMailPage from "./pages/DirectMailPage";
-import PresentationBuilderPage from "./pages/PresentationBuilderPage";
-import AIChatPage from "./pages/AIChatPage";
-import ReportsPage from "./pages/ReportsPage";
-import CanvaTemplatesPage from "./pages/CanvaTemplatesPage";
-import HardshipLetterGenerator from "./pages/HardshipLetterGenerator";
-import GLBACompliancePage from "./pages/GLBACompliancePage";
-import PCIDSSCompliancePage from "./pages/PCIDSSCompliancePage";
-import DealPresentationOutlinePage from "./pages/DealPresentationOutlinePage";
-import InstitutionalDashboardPage from "./pages/InstitutionalDashboardPage";
-import CreditRepairLanding from "./pages/credit-repair/CreditRepairLanding";
-import CreditRepairDashboard from "./pages/credit-repair/CreditRepairDashboard";
-import PropertyInventory from "./pages/PropertyInventory";
-import PropertyDetail from "./pages/PropertyDetail";
-import FSBOListing from "./pages/FSBOListing";
-import EducationDashboard from "./pages/EducationDashboard";
-import SchedulingDashboard from "./pages/SchedulingDashboard";
-import DirectMailMarketingDashboard from "./pages/DirectMailMarketingDashboard";
-// Temporary: Using simple version to bypass circular dependency
-// import AdminSMSDashboard from './pages/AdminSMSDashboard'
-import AdminSMSDashboard from "./pages/AdminSMSDashboardSimple";
-import AdminBlogManagement from "./pages/AdminBlogManagement";
-import AdminCommentModeration from "./components/AdminCommentModeration";
-import AdminTemplateUpload from "./pages/AdminTemplateUpload";
-import AdminKnowledgeBase from "./pages/AdminKnowledgeBase";
-import TemplateAnalyticsDashboard from "./pages/TemplateAnalyticsDashboard";
-import UserFavoritesPage from "./pages/UserFavoritesPage";
-import TestPage from "./pages/TestPage";
-import MarketingDashboard from "./pages/MarketingDashboard";
 
 // Security components
 import SecurityHeaders from "./components/security/SecurityHeaders";
-const SecurityDashboard = React.lazy(
-  () => import("./components/security/SecurityDashboard"),
-);
+
+// Lazy-loaded pages - loaded on demand to reduce initial bundle size
+const PricingPage = React.lazy(() => import("./pages/PricingPage"));
+const ForeclosurePage = React.lazy(() => import("./pages/ForeclosurePage"));
+const ContractsPage = React.lazy(() => import("./pages/ContractsPage"));
+const AdminPage = React.lazy(() => import("./pages/AdminPage"));
+const ProfilePage = React.lazy(() => import("./pages/ProfilePage"));
+const PrivacyPolicyPage = React.lazy(() => import("./pages/PrivacyPolicyPage"));
+const TermsOfServicePage = React.lazy(() => import("./pages/TermsOfServicePage"));
+const RefundPolicyPage = React.lazy(() => import("./pages/RefundPolicyPage"));
+const CookiesPolicyPage = React.lazy(() => import("./pages/CookiesPolicyPage"));
+const DisclaimerPage = React.lazy(() => import("./pages/DisclaimerPage"));
+const BookConsultation = React.lazy(() => import("./pages/BookConsultation"));
+const LoanApplication = React.lazy(() => import("./pages/LoanApplication"));
+const WhatWeDoPage = React.lazy(() => import("./pages/WhatWeDoPage"));
+const ContactPage = React.lazy(() => import("./pages/ContactPage"));
+const SuccessStoriesPage = React.lazy(() => import("./pages/SuccessStoriesPage"));
+const BlogPage = React.lazy(() => import("./pages/BlogPage"));
+const BlogPostDetail = React.lazy(() => import("./pages/BlogPostDetail"));
+const KnowledgeBasePage = React.lazy(() => import("./pages/KnowledgeBasePage"));
+const ResourcesPage = React.lazy(() => import("./pages/ResourcesPage"));
+const VideosPage = React.lazy(() => import("./pages/VideosPage"));
+const HelpPage = React.lazy(() => import("./pages/HelpPage"));
+const OnlineVoicesEbook = React.lazy(() => import("./pages/OnlineVoicesEbook"));
+const CalculatorsPage = React.lazy(() => import("./pages/CalculatorsPage"));
+const SubscriptionPage = React.lazy(() => import("./pages/SubscriptionPage"));
+const ContractsLibraryPage = React.lazy(() => import("./pages/ContractsLibraryPage"));
+const UnsubscribePage = React.lazy(() => import("./pages/UnsubscribePage"));
+const SitemapPage = React.lazy(() => import("./pages/SitemapPage"));
+const DirectMailPage = React.lazy(() => import("./pages/DirectMailPage"));
+const AIChatPage = React.lazy(() => import("./pages/AIChatPage"));
+const ReportsPage = React.lazy(() => import("./pages/ReportsPage"));
+const CanvaTemplatesPage = React.lazy(() => import("./pages/CanvaTemplatesPage"));
+const GLBACompliancePage = React.lazy(() => import("./pages/GLBACompliancePage"));
+const PCIDSSCompliancePage = React.lazy(() => import("./pages/PCIDSSCompliancePage"));
+const CreditRepairLanding = React.lazy(() => import("./pages/credit-repair/CreditRepairLanding"));
+const CreditRepairDashboard = React.lazy(() => import("./pages/credit-repair/CreditRepairDashboard"));
+const PropertyInventory = React.lazy(() => import("./pages/PropertyInventory"));
+const PropertyDetail = React.lazy(() => import("./pages/PropertyDetail"));
+const FSBOListing = React.lazy(() => import("./pages/FSBOListing"));
+const EducationDashboard = React.lazy(() => import("./pages/EducationDashboard"));
+const SchedulingDashboard = React.lazy(() => import("./pages/SchedulingDashboard"));
+const DirectMailMarketingDashboard = React.lazy(() => import("./pages/DirectMailMarketingDashboard"));
+const AdminSMSDashboard = React.lazy(() => import("./pages/AdminSMSDashboardSimple"));
+const AdminBlogManagement = React.lazy(() => import("./pages/AdminBlogManagement"));
+const AdminCommentModeration = React.lazy(() => import("./components/AdminCommentModeration"));
+const AdminTemplateUpload = React.lazy(() => import("./pages/AdminTemplateUpload"));
+const AdminKnowledgeBase = React.lazy(() => import("./pages/AdminKnowledgeBase"));
+const TemplateAnalyticsDashboard = React.lazy(() => import("./pages/TemplateAnalyticsDashboard"));
+const UserFavoritesPage = React.lazy(() => import("./pages/UserFavoritesPage"));
+const TestPage = React.lazy(() => import("./pages/TestPage"));
+const MarketingDashboard = React.lazy(() => import("./pages/MarketingDashboard"));
+const SecurityDashboard = React.lazy(() => import("./components/security/SecurityDashboard"));
+
+// Heavy library pages - lazy loaded to reduce bundle size (ExcelJS, jsPDF, pptxgenjs)
+const PresentationBuilderPage = React.lazy(() => import("./pages/PresentationBuilderPage"));
+const HardshipLetterGenerator = React.lazy(() => import("./pages/HardshipLetterGenerator"));
+const DealPresentationOutlinePage = React.lazy(() => import("./pages/DealPresentationOutlinePage"));
+const InstitutionalDashboardPage = React.lazy(() => import("./pages/InstitutionalDashboardPage"));
 
 // State management
 import { useAuthStore, fetchUserProfile } from "./store/authStore";
 import { supabase } from "./lib/supabase";
+
+// Loading fallback component for lazy-loaded routes
+const PageLoader: React.FC = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <p className="mt-4 text-gray-600">Loading...</p>
+    </div>
+  </div>
+);
 
 // Dashboard Component
 const Dashboard: React.FC = () => {
@@ -242,22 +251,23 @@ function App() {
         <div className="min-h-screen bg-gray-50 flex flex-col">
           <Header />
           <main className="flex-grow pt-16">
-            <Routes>
-              {/* Home - redirect based on auth */}
-              <Route
-                path="/"
-                element={isAuthenticated ? <Dashboard /> : <Homepage />}
-              />
-              {/* Auth */}
-              <Route
-                path="/auth"
-                element={!isAuthenticated ? <AuthPage /> : <Navigate to="/" />}
-              />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route
-                path="/signup"
-                element={!isAuthenticated ? <AuthPage /> : <Navigate to="/" />}
-              />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                {/* Home - redirect based on auth */}
+                <Route
+                  path="/"
+                  element={isAuthenticated ? <Dashboard /> : <Homepage />}
+                />
+                {/* Auth */}
+                <Route
+                  path="/auth"
+                  element={!isAuthenticated ? <AuthPage /> : <Navigate to="/" />}
+                />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route
+                  path="/signup"
+                  element={!isAuthenticated ? <AuthPage /> : <Navigate to="/" />}
+                />
               {/* Public Routes */}
               <Route path="/what-we-do" element={<WhatWeDoPage />} />
               <Route path="/pricing" element={<PricingPage />} />
@@ -475,6 +485,7 @@ function App() {
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
+            </Suspense>
           </main>
 
           <Footer />

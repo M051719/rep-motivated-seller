@@ -70,7 +70,15 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           supabase: ['@supabase/supabase-js'],
           ui: ['framer-motion', 'react-hot-toast'],
-          routing: ['react-router-dom']
+          routing: ['react-router-dom'],
+          // Heavy libraries - split into separate chunks
+          exceljs: ['exceljs'],
+          pdf: ['jspdf'],
+          stripe: ['@stripe/stripe-js', '@stripe/react-stripe-js', 'stripe'],
+          editor: ['react-quill'],
+          pptx: ['pptxgenjs'],
+          charts: ['chart.js', 'react-chartjs-2'],
+          maps: ['mapbox-gl']
         }
       }
     },
