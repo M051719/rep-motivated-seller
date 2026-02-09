@@ -26,8 +26,8 @@ jobs:
 
     - name: Run Database Tests
       run: |
-        supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} 
-        supabase db push
+        supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }} --password ${{ secrets.SUPABASE_DB_PASSWORD }}
+        supabase db push --password ${{ secrets.SUPABASE_DB_PASSWORD }}
         supabase test db
       env:
         SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
