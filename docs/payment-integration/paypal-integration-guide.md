@@ -273,42 +273,21 @@ PAYPAL_PREMIUM_PLAN_ID=P-1AB23456CD789012E
 PAYPAL_ELITE_PLAN_ID=P-9XY87654FE321098Z
 ```
 
-### 3. Use PayPalButton Component
+### 3. Use PayPalCheckout Component
 
-The `PayPalButton.tsx` component already exists. Use it like this:
+Use the `PayPalCheckout.tsx` component for one-time payments:
 
 ```tsx
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
-import PayPalButton from '../components/payments/PayPalButton';
+import PayPalCheckout from '../components/payments/PayPalCheckout';
 
 function PricingPage() {
-  const initialOptions = {
-    clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-    currency: 'USD',
-    intent: 'subscription',
-    vault: true,
-  };
-
   return (
-    <PayPalScriptProvider options={initialOptions}>
-      {/* Premium Tier */}
-      <PayPalButton
-        planId="premium"
-        planName="Premium Tier"
-        planPrice={97}
-        onSuccess={() => navigate('/dashboard')}
-        onCancel={() => navigate('/pricing')}
-      />
-
-      {/* Elite Tier */}
-      <PayPalButton
-        planId="elite"
-        planName="Elite Tier"
-        planPrice={297}
-        onSuccess={() => navigate('/dashboard')}
-        onCancel={() => navigate('/pricing')}
-      />
-    </PayPalScriptProvider>
+    <PayPalCheckout
+      amount={100}
+      description="Consultation Payment"
+      onSuccess={() => navigate('/dashboard')}
+      onCancel={() => navigate('/pricing')}
+    />
   );
 }
 ```
