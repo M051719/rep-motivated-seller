@@ -37,3 +37,6 @@ export { default as PropertyIntelligenceDashboard } from "./analytics/PropertyIn
 
 // Legal Components
 export { default as UnsubscribePage } from "./legal/UnsubscribePage";
+
+// Payment Components
+export { default as PayPalCheckout } from "./payments/PayPalCheckout";

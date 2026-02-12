@@ -1,4 +1,4 @@
-# REVIEW , ANALYZE, COMPARE, UPDATE , OMIT AS NEEDED,  IF NEEDED
+
 {
   "name": "rep-motivated-seller",
   "version": "0.0.0",
