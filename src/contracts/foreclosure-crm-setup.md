@@ -1,7 +1,3 @@
-
-
-
-
 Updated email templates to match your email types:
 
 new_submission: Initial confirmation email
@@ -163,7 +159,7 @@ Edge Functions:
 
 spin-questionnaire - Handles SPIN questionnaire operations (getting questions, saving/retrieving submissions)
 foreclosure-clients - Manages client data (create, read, update, delete)
-_shared/cors - Helper module for CORS headers
+\_shared/cors - Helper module for CORS headers
 Sample Data:
 
 Pre-populated SPIN questions organized by category (Situation, Problem, Implication, Need-Payoff)
@@ -179,7 +175,6 @@ Conduct structured SPIN questionnaires with clients
 Track progress through the questionnaire process
 Store and retrieve client responses
 Analyze client situations to determine the best foreclosure prevention strategies
-
 
 I've now added a comprehensive analytics tracking system to your foreclosure CRM. Here's what I've created:
 
@@ -216,46 +211,26 @@ Form completion rates and abandonment points
 Feature usage and popularity
 System performance and error tracking
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React from 'react';
 import { ForeclosureQuestionnaire } from '../components/Forms/ForeclosureQuestionnaire';
 import { DollarSign, AlertTriangle, CheckCircle, Home, Building } from 'lucide-react';
 
 export const ForeclosurePage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Financing Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <DollarSign className="w-10 h-10 text-yellow-300 mx-auto mb-3" />
-            <h2 className="text-xl font-bold mb-2">
-              🏦 Financing Solutions Available Through RepMotivatedSeller
-            </h2>
-            <p className="text-blue-100 mb-4">
-              Private money loans for residential & multifamily investment properties • Non-owner occupied only • Borrower entity required
-            </p>
-            
+return (
+
+<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+{/_ Financing Banner _/}
+<div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6">
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div className="text-center">
+<DollarSign className="w-10 h-10 text-yellow-300 mx-auto mb-3" />
+<h2 className="text-xl font-bold mb-2">
+🏦 Financing Solutions Available Through RepMotivatedSeller
+</h2>
+<p className="text-blue-100 mb-4">
+Private money loans for residential & multifamily investment properties • Non-owner occupied only • Borrower entity required
+</p>
+
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-5xl mx-auto">
               <div className="bg-white/10 rounded-lg p-3">
                 <div className="font-semibold text-sm">Loan Amount</div>
@@ -293,5 +268,6 @@ export const ForeclosurePage: React.FC = () => {
 
       <ForeclosureQuestionnaire />
     </div>
-  );
+
+);
 };

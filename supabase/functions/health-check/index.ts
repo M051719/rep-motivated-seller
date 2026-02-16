@@ -3,20 +3,22 @@ serve(async (req) => {
     checkDatabaseHealth(),
     checkStorageHealth(),
     checkAuthHealth(),
-    checkExternalAPIs()
-  ])
-  
+    checkExternalAPIs(),
+  ]);
+
   const results = checks.map((check, index) => ({
-    service: ['database', 'storage', 'auth', 'external'][index],
-    status: check.status === 'fulfilled' ? 'healthy' : 'unhealthy',
-    details: check.status === 'fulfilled' ? check.value : check.reason
-  }))
-  
-  const overallHealth = results.every(r => r.status === 'healthy') ? 'healthy' : 'degraded'
-  
+    service: ["database", "storage", "auth", "external"][index],
+    status: check.status === "fulfilled" ? "healthy" : "unhealthy",
+    details: check.status === "fulfilled" ? check.value : check.reason,
+  }));
+
+  const overallHealth = results.every((r) => r.status === "healthy")
+    ? "healthy"
+    : "degraded";
+
   return Response.json({
     status: overallHealth,
     timestamp: new Date().toISOString(),
-    services: results
-  })
-})
+    services: results,
+  });
+});

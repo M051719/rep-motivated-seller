@@ -4,23 +4,23 @@
 
 ### Essential Keyboard Shortcuts
 
-| Action | Windows Shortcut |
-|--------|-----------------|
-| **New Design** | Ctrl + N |
+| Action             | Windows Shortcut              |
+| ------------------ | ----------------------------- |
+| **New Design**     | Ctrl + N                      |
 | **Duplicate Page** | Ctrl + D (when page selected) |
-| **Copy Element** | Ctrl + C |
-| **Paste Element** | Ctrl + V |
-| **Undo** | Ctrl + Z |
-| **Redo** | Ctrl + Y |
-| **Save** | Ctrl + S |
-| **Download** | Ctrl + Shift + S |
-| **Zoom In** | Ctrl + Plus |
-| **Zoom Out** | Ctrl + Minus |
-| **Fit to Screen** | Ctrl + 0 |
-| **Select All** | Ctrl + A |
-| **Group Elements** | Ctrl + G |
-| **Ungroup** | Ctrl + Shift + G |
-| **Lock Element** | Ctrl + L |
+| **Copy Element**   | Ctrl + C                      |
+| **Paste Element**  | Ctrl + V                      |
+| **Undo**           | Ctrl + Z                      |
+| **Redo**           | Ctrl + Y                      |
+| **Save**           | Ctrl + S                      |
+| **Download**       | Ctrl + Shift + S              |
+| **Zoom In**        | Ctrl + Plus                   |
+| **Zoom Out**       | Ctrl + Minus                  |
+| **Fit to Screen**  | Ctrl + 0                      |
+| **Select All**     | Ctrl + A                      |
+| **Group Elements** | Ctrl + G                      |
+| **Ungroup**        | Ctrl + Shift + G              |
+| **Lock Element**   | Ctrl + L                      |
 
 ---
 
@@ -72,11 +72,13 @@
 ## 📐 Exact Sizing & Positioning
 
 ### Canvas Size
+
 - Always use: **1920 x 1080**
 - This is Full HD (1080p) video resolution
 - Perfect for YouTube, Instagram, Facebook
 
 ### Element Positioning
+
 - Use **arrow keys** to nudge elements (1px at a time)
 - Hold **Shift + Arrow** for 10px jumps
 - Position panel shows exact X, Y coordinates
@@ -87,9 +89,9 @@
 
 ### Save Your Work Efficiently
 
-1. **After creating all backgrounds:** 
+1. **After creating all backgrounds:**
    - File → Make a copy → Name: "RepMotivatedSeller Backgrounds Master"
-   
+
 2. **Keep template file:**
    - You can recreate anytime
    - Tweak colors for variations
@@ -115,7 +117,7 @@ Minute 1-2: Page 1 - Blue-Indigo Gradient
 - Click background → C → Gradient
 - Left: #2563eb, Right: #4338ca, Angle: 90°
 
-Minute 2-3: Page 2 - Blue-Purple Gradient  
+Minute 2-3: Page 2 - Blue-Purple Gradient
 - Go to page 2
 - Click background → C → Gradient
 - Left: #3b82f6, Right: #7c3aed, Angle: 135°
@@ -125,7 +127,7 @@ Minute 3-4: Page 3 - White Solid
 - Click background → C → #ffffff
 
 Minute 4-5: Page 4 - Dark Blue Solid
-- Go to page 4  
+- Go to page 4
 - Click background → C → #1e3a8a
 
 Minute 5-6: Page 5 - Light Gray Solid
@@ -160,16 +162,19 @@ Minute 7-10: Export All
 4. Add these hex codes:
 
 **Blues:**
+
 - `#2563eb` - Primary Blue
-- `#3b82f6` - Light Blue  
+- `#3b82f6` - Light Blue
 - `#1e3a8a` - Dark Blue
 
 **Purples:**
+
 - `#4338ca` - Indigo
 - `#7c3aed` - Purple
 - `#5b21b6` - Deep Purple
 
 **Neutrals:**
+
 - `#ffffff` - White
 - `#f3f4f6` - Light Gray
 - `#1f2937` - Dark Gray
@@ -202,6 +207,7 @@ Now you can click these anytime without typing!
 ### After Creating Backgrounds
 
 **Save as template:**
+
 1. File → "Make a template"
 2. Name: "RMS Video Backgrounds"
 3. Share link with yourself
@@ -210,6 +216,7 @@ Now you can click these anytime without typing!
 ### Create More Assets
 
 **Use same file to create:**
+
 - Logo backgrounds (2000x600 canvas)
 - Social media posts (1080x1080)
 - YouTube thumbnails (1280x720)
@@ -220,21 +227,25 @@ Now you can click these anytime without typing!
 ## 💡 Common Issues & Fixes
 
 ### "Gradient looks banded"
+
 - Download as PNG (not JPG)
 - Use "Standard" or "High" quality
 - Canva may compress gradients slightly
 
 ### "Colors look different after export"
+
 - This is normal color space conversion
 - Slight variation is OK
 - Test in CapCut to verify
 
 ### "File size too large"
+
 - PNG files will be 300KB-2MB each
 - This is normal for 1920x1080
 - CapCut handles this fine
 
 ### "Can't find downloaded files"
+
 - Check Downloads folder
 - Files named: "Untitled design (1).png", etc.
 - Rename immediately after download

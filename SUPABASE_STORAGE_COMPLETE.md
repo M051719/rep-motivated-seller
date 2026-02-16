@@ -10,10 +10,10 @@
    - Allowed Types: JPEG, PNG, GIF, WebP
    - Public Access: ✅ Enabled
    - Folders:
-     * featured/ - Featured/hero images for blog posts
-     * content/ - Inline images uploaded within blog content
+     - featured/ - Featured/hero images for blog posts
+     - content/ - Inline images uploaded within blog content
 
-2. avatars Bucket  
+2. avatars Bucket
    - Purpose: Store user profile avatars
    - Size Limit: 2MB per file
    - Allowed Types: JPEG, PNG, WebP
@@ -25,31 +25,34 @@
 ═══════════════════════════════════════════════════════════════
 
 ✅ ImageUploader Component (src/components/ImageUploader.tsx)
-   - Drag-and-drop file upload
-   - Click to browse file selection
-   - Real-time upload progress indicator
-   - Image preview with hover overlay
-   - One-click image removal
-   - Automatic file validation (type & size)
-   - Automatic unique filename generation
-   - Public URL retrieval from Supabase
-   - Toast notifications for all actions
+
+- Drag-and-drop file upload
+- Click to browse file selection
+- Real-time upload progress indicator
+- Image preview with hover overlay
+- One-click image removal
+- Automatic file validation (type & size)
+- Automatic unique filename generation
+- Public URL retrieval from Supabase
+- Toast notifications for all actions
 
 ✅ RichTextEditor with Direct Image Uploads (src/components/RichTextEditor.tsx)
-   - Click image icon in toolbar to upload
-   - Images upload directly to Supabase Storage
-   - Automatically inserts image into content
-   - 5MB file size limit with validation
-   - Supported formats: JPEG, PNG, GIF, WebP
-   - Real-time upload feedback
-   - Images stored in blog-images/content/ folder
+
+- Click image icon in toolbar to upload
+- Images upload directly to Supabase Storage
+- Automatically inserts image into content
+- 5MB file size limit with validation
+- Supported formats: JPEG, PNG, GIF, WebP
+- Real-time upload feedback
+- Images stored in blog-images/content/ folder
 
 ✅ Featured Image Upload (AdminBlogManagement.tsx)
-   - Drag-and-drop featured image upload
-   - Preview before publishing
-   - Easy removal with confirmation
-   - Images stored in blog-images/featured/ folder
-   - Automatic URL saving to database
+
+- Drag-and-drop featured image upload
+- Preview before publishing
+- Easy removal with confirmation
+- Images stored in blog-images/featured/ folder
+- Automatic URL saving to database
 
 ═══════════════════════════════════════════════════════════════
 🔒 SECURITY POLICIES
@@ -100,20 +103,21 @@ Avatars Bucket:
 
 Supabase Storage Structure:
 └── blog-images/
-    ├── featured/
-    │   └── [timestamp]-[random].jpg  (Featured images)
-    └── content/
-        └── [timestamp]-[random].jpg  (Inline content images)
+├── featured/
+│ └── [timestamp]-[random].jpg (Featured images)
+└── content/
+└── [timestamp]-[random].jpg (Inline content images)
 
 └── avatars/
-    └── [user-id]/
-        └── [timestamp]-[random].jpg  (User avatars)
+└── [user-id]/
+└── [timestamp]-[random].jpg (User avatars)
 
 ═══════════════════════════════════════════════════════════════
 🔧 TECHNICAL DETAILS
 ═══════════════════════════════════════════════════════════════
 
 ImageUploader Component Props:
+
 - currentImage?: string - Current image URL to display
 - onImageUploaded: (url: string) => void - Callback with new image URL
 - onImageRemoved: () => void - Callback when image is removed
@@ -122,6 +126,7 @@ ImageUploader Component Props:
 - maxSizeMB?: number - Max file size in MB (default: 5)
 
 RichTextEditor Image Upload:
+
 - Automatically triggered by toolbar image button
 - Uploads to blog-images/content/ folder
 - Returns public URL and inserts into editor
@@ -129,6 +134,7 @@ RichTextEditor Image Upload:
 - Shows loading state during upload
 
 Storage Bucket Configuration:
+
 - Cache-Control: 3600 seconds (1 hour)
 - Upsert: false (prevents overwriting)
 - Public: true (allows public access)
@@ -139,31 +145,36 @@ Storage Bucket Configuration:
 ═══════════════════════════════════════════════════════════════
 
 ✅ No More External Image Hosting
-   - All images stored in your Supabase project
-   - No dependency on third-party services
-   - Complete control over image assets
+
+- All images stored in your Supabase project
+- No dependency on third-party services
+- Complete control over image assets
 
 ✅ Automatic CDN Distribution
-   - Supabase provides global CDN
-   - Fast image loading worldwide
-   - Automatic image caching
+
+- Supabase provides global CDN
+- Fast image loading worldwide
+- Automatic image caching
 
 ✅ Secure & Validated
-   - File type validation
-   - File size limits enforced
-   - Row-level security policies
-   - Protection against malicious uploads
+
+- File type validation
+- File size limits enforced
+- Row-level security policies
+- Protection against malicious uploads
 
 ✅ User-Friendly Interface
-   - Drag-and-drop uploads
-   - Real-time progress feedback
-   - Image previews
-   - Easy removal process
+
+- Drag-and-drop uploads
+- Real-time progress feedback
+- Image previews
+- Easy removal process
 
 ✅ Cost-Effective
-   - Included in Supabase free tier (1GB storage)
-   - Scales with your subscription
-   - No additional image hosting costs
+
+- Included in Supabase free tier (1GB storage)
+- Scales with your subscription
+- No additional image hosting costs
 
 ═══════════════════════════════════════════════════════════════
 📊 STORAGE LIMITS (Supabase Free Tier)
@@ -172,14 +183,16 @@ Storage Bucket Configuration:
 Storage Space: 1GB total
 Bandwidth: 2GB/month
 File Size Limits:
-  - Blog Images: 5MB max
-  - Avatars: 2MB max
+
+- Blog Images: 5MB max
+- Avatars: 2MB max
 
 Pro Tier Includes:
-  - 100GB storage
-  - 200GB bandwidth
-  - Automatic image optimization
-  - Custom domain support
+
+- 100GB storage
+- 200GB bandwidth
+- Automatic image optimization
+- Custom domain support
 
 ═══════════════════════════════════════════════════════════════
 🧪 TESTING CHECKLIST

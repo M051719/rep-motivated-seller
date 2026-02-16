@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Phone, 
-  PhoneCall, 
-  PhoneIncoming, 
-  PhoneOutgoing, 
-  Clock, 
-  User, 
-  MessageSquare, 
-  TrendingUp, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  Phone,
+  PhoneCall,
+  PhoneIncoming,
+  PhoneOutgoing,
+  Clock,
+  User,
+  MessageSquare,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
   RefreshCw,
   Play,
   Pause,
@@ -290,8 +290,8 @@ export const CallManagement: React.FC = () => {
                       <span className="text-gray-700 capitalize">{intent.replace('_', ' ')}</span>
                       <div className="flex items-center">
                         <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
                             style={{ width: `${(count / analytics.aiPerformance.topIntents[0][1]) * 100}%` }}
                           />
                         </div>
@@ -458,7 +458,7 @@ export const CallManagement: React.FC = () => {
         {activeTab === 'analytics' && analytics && (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-gray-900">Call Analytics & Insights</h3>
-            
+
             {/* Performance Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-blue-50 rounded-lg p-6">
@@ -501,8 +501,8 @@ export const CallManagement: React.FC = () => {
                     <span className="text-gray-700 capitalize">{reason.replace('_', ' ')}</span>
                     <div className="flex items-center">
                       <div className="w-24 bg-gray-200 rounded-full h-2 mr-3">
-                        <div 
-                          className="bg-red-500 h-2 rounded-full" 
+                        <div
+                          className="bg-red-500 h-2 rounded-full"
                           style={{ width: `${(count / analytics.handoffAnalysis.commonReasons[0][1]) * 100}%` }}
                         />
                       </div>
@@ -703,8 +703,8 @@ const CallDetailsModal: React.FC<CallDetailsModalProps> = ({ call, details, onCl
                   {details.transcript.map((entry: any, index: number) => (
                     <div key={index} className={`flex ${entry.speaker === 'caller' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        entry.speaker === 'caller' 
-                          ? 'bg-blue-500 text-white' 
+                        entry.speaker === 'caller'
+                          ? 'bg-blue-500 text-white'
                           : 'bg-white text-gray-900 border'
                       }`}>
                         <div className="text-xs opacity-75 mb-1">

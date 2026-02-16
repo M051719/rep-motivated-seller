@@ -37,12 +37,12 @@ if ($ConfigureOnly -or [string]::IsNullOrWhiteSpace($config.figmaToken)) {
     Write-Host "🔧 Figma API Configuration" -ForegroundColor Yellow
     Write-Host "──────────────────────────" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "You need:" -ForegroundColor White
     Write-Host "  1. Figma Personal Access Token" -ForegroundColor Gray
     Write-Host "  2. Figma File Key (from the URL)" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "📝 How to get your Figma token:" -ForegroundColor Cyan
     Write-Host "  1. Go to: https://www.figma.com/settings" -ForegroundColor White
     Write-Host "  2. Scroll to 'Personal access tokens'" -ForegroundColor White
@@ -50,7 +50,7 @@ if ($ConfigureOnly -or [string]::IsNullOrWhiteSpace($config.figmaToken)) {
     Write-Host "  4. Name it: 'RepMotivatedSeller Assets'" -ForegroundColor White
     Write-Host "  5. Copy the token" -ForegroundColor White
     Write-Host ""
-    
+
     if ([string]::IsNullOrWhiteSpace($FigmaToken)) {
         $FigmaToken = Read-Host "Enter your Figma token (or 'skip')"
         if ($FigmaToken -eq "skip") {
@@ -58,9 +58,9 @@ if ($ConfigureOnly -or [string]::IsNullOrWhiteSpace($config.figmaToken)) {
             exit
         }
     }
-    
+
     $config.figmaToken = $FigmaToken
-    
+
     Write-Host ""
     Write-Host "📝 How to get your File Key:" -ForegroundColor Cyan
     Write-Host "  1. Open your Figma file" -ForegroundColor White
@@ -71,7 +71,7 @@ if ($ConfigureOnly -or [string]::IsNullOrWhiteSpace($config.figmaToken)) {
     Write-Host "  https://www.figma.com/file/ABC123xyz/RepMotivatedSeller" -ForegroundColor Gray
     Write-Host "  File Key: ABC123xyz" -ForegroundColor Gray
     Write-Host ""
-    
+
     if ([string]::IsNullOrWhiteSpace($FileKey)) {
         $FileKey = Read-Host "Enter your Figma file key (or 'skip')"
         if ($FileKey -eq "skip") {
@@ -79,9 +79,9 @@ if ($ConfigureOnly -or [string]::IsNullOrWhiteSpace($config.figmaToken)) {
             exit
         }
     }
-    
+
     $config.fileKey = $FileKey
-    
+
     # Save configuration
     $config | ConvertTo-Json | Set-Content $configPath
     Write-Host ""
@@ -112,10 +112,10 @@ $headers = @{
 try {
     $fileUrl = "https://api.figma.com/v1/files/$($config.fileKey)"
     $response = Invoke-RestMethod -Uri $fileUrl -Headers $headers -Method Get
-    
+
     Write-Host "✓ Connected to Figma file: $($response.name)" -ForegroundColor Green
     Write-Host ""
-    
+
 }
 catch {
     Write-Host "✗ Failed to connect to Figma API" -ForegroundColor Red
@@ -136,15 +136,15 @@ $exportableNodes = @()
 
 function Find-ExportableNodes {
     param($node, $path = "")
-    
+
     if ($node.type -eq "FRAME" -or $node.type -eq "COMPONENT") {
         # Check if this looks like a background or logo
         $nodeName = $node.name.ToLower()
-        
-        if ($nodeName -match "background|bg|gradient" -or 
+
+        if ($nodeName -match "background|bg|gradient" -or
             $nodeName -match "logo|icon|graphic" -or
             $node.exportSettings.Count -gt 0) {
-            
+
             $exportableNodes += @{
                 id   = $node.id
                 name = $node.name
@@ -153,7 +153,7 @@ function Find-ExportableNodes {
             }
         }
     }
-    
+
     if ($node.children) {
         foreach ($child in $node.children) {
             Find-ExportableNodes -node $child -path "$path/$($node.name)"
@@ -231,12 +231,12 @@ foreach ($node in $selectedNodes) {
         # Get export URL
         $nodeIds = $node.id
         $exportUrl = "https://api.figma.com/v1/images/$($config.fileKey)?ids=$nodeIds&format=png&scale=2"
-        
+
         $imageResponse = Invoke-RestMethod -Uri $exportUrl -Headers $headers -Method Get
-        
+
         if ($imageResponse.images.$nodeIds) {
             $imageUrl = $imageResponse.images.$nodeIds
-            
+
             # Determine output folder
             $nodeName = $node.name.ToLower()
             if ($nodeName -match "background|bg|gradient") {
@@ -248,28 +248,28 @@ foreach ($node in $selectedNodes) {
             else {
                 $outputFolder = $assetsRoot
             }
-            
+
             # Clean filename
             $filename = $node.name -replace '[^\w\-]', '-'
             $filename = $filename.ToLower() + ".png"
             $outputPath = Join-Path $outputFolder $filename
-            
+
             # Download image
             Invoke-WebRequest -Uri $imageUrl -OutFile $outputPath
-            
+
             $fileSize = (Get-Item $outputPath).Length
             $sizeMB = [math]::Round($fileSize / 1MB, 2)
-            
+
             Write-Host "  ✓ $filename ($sizeMB MB)" -ForegroundColor Green
             Write-Host "    → $outputFolder" -ForegroundColor Gray
-            
+
             $exported++
-            
+
         }
         else {
             Write-Host "  ✗ Failed to export: $($node.name)" -ForegroundColor Red
         }
-        
+
     }
     catch {
         Write-Host "  ✗ Error exporting $($node.name): $($_.Exception.Message)" -ForegroundColor Red

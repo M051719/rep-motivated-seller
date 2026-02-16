@@ -11,7 +11,7 @@
   </head>
   <body>
     <div id="root"></div>
-    
+
     <!-- MailerLite Universal -->
     <script>
         (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
@@ -23,8 +23,3 @@
     <!-- End MailerLite Universal -->
   </body>
 </html>
-
-
-
-
-

@@ -26,7 +26,7 @@ SELECT is_empty(
 );
 
 SELECT is_empty(
-    'SELECT * FROM consultation_bookings', 
+    'SELECT * FROM consultation_bookings',
     'Anonymous users should not see any consultation bookings'
 );
 

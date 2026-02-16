@@ -63,7 +63,7 @@ export default function BookConsultation() {
               Select a time that works best for you - all times shown in your local timezone
             </p>
           </div>
-          
+
           <CalendlyWidget type="inline" />
         </div>
 
@@ -84,7 +84,7 @@ export default function BookConsultation() {
                 <li>• Document upload instructions</li>
               </ul>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 shadow-md">
               <div className="text-blue-600 font-bold text-lg mb-3">
                 2. During Your Call
@@ -96,7 +96,7 @@ export default function BookConsultation() {
                 <li>• Q&A with expert advisor</li>
               </ul>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6 shadow-md">
               <div className="text-blue-600 font-bold text-lg mb-3">
                 3. After Your Call
@@ -153,38 +153,38 @@ export default function BookConsultation() {
                 Is the initial consultation really free?
               </h3>
               <p className="text-gray-700">
-                Yes! The 15-minute quick assessment is completely free with no obligation. 
+                Yes! The 15-minute quick assessment is completely free with no obligation.
                 We want to understand your situation and see if we can help before you commit.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6">
               <h3 className="font-semibold text-gray-900 mb-2">
                 What happens if I need to reschedule?
               </h3>
               <p className="text-gray-700">
-                You can reschedule or cancel your appointment up to 24 hours in advance 
+                You can reschedule or cancel your appointment up to 24 hours in advance
                 through the confirmation email. We understand emergencies happen.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6">
               <h3 className="font-semibold text-gray-900 mb-2">
                 Do I need to pay before the consultation?
               </h3>
               <p className="text-gray-700">
-                Payment is required at booking for 30-minute and 60-minute consultations. 
-                The 15-minute assessment is free. Paid consultations are fully refundable 
+                Payment is required at booking for 30-minute and 60-minute consultations.
+                The 15-minute assessment is free. Paid consultations are fully refundable
                 if cancelled 24+ hours in advance.
               </p>
             </div>
-            
+
             <div className="bg-white rounded-lg p-6">
               <h3 className="font-semibold text-gray-900 mb-2">
                 Will my information be kept confidential?
               </h3>
               <p className="text-gray-700">
-                Absolutely. All consultations are completely confidential. We comply with 
+                Absolutely. All consultations are completely confidential. We comply with
                 GLBA privacy requirements and never share your information without consent.
               </p>
             </div>
@@ -199,12 +199,12 @@ export default function BookConsultation() {
           <p className="text-xl mb-6 opacity-90">
             Book your free assessment now and start your journey to financial recovery
           </p>
-          <a 
+          <a
             href="#calendly-widget"
             onClick={(e) => {
               e.preventDefault();
-              document.querySelector('.calendly-widget-container')?.scrollIntoView({ 
-                behavior: 'smooth' 
+              document.querySelector('.calendly-widget-container')?.scrollIntoView({
+                behavior: 'smooth'
               });
             }}
             className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"

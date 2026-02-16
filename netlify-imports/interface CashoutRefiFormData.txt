@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  DollarSign, 
-  Home, 
-  FileText, 
-  Download, 
-  Printer, 
-  CheckCircle, 
+import {
+  DollarSign,
+  Home,
+  FileText,
+  Download,
+  Printer,
+  CheckCircle,
   AlertTriangle,
   User,
   Calculator,
@@ -26,7 +26,7 @@ interface CashoutRefiFormData {
   borrowerEmployer: string;
   borrowerIncome: string;
   borrowerCreditScore: string;
-  
+
   // Co-Borrower Information (if applicable)
   coBorrowerName: string;
   coBorrowerAddress: string;
@@ -37,7 +37,7 @@ interface CashoutRefiFormData {
   coBorrowerEmployer: string;
   coBorrowerIncome: string;
   coBorrowerCreditScore: string;
-  
+
   // Property Information
   propertyAddress: string;
   propertyType: string;
@@ -46,31 +46,31 @@ interface CashoutRefiFormData {
   squareFootage: string;
   occupancyType: string;
   propertyUse: string;
-  
+
   // Current Loan Information
   currentLender: string;
   currentBalance: string;
   currentRate: string;
   currentPayment: string;
   originalLoanDate: string;
-  
+
   // New Loan Information
   requestedLoanAmount: string;
   cashoutAmount: string;
   newLoanTerm: string;
   desiredRate: string;
   loanProgram: string;
-  
+
   // Financial Information
   monthlyIncome: string;
   monthlyDebts: string;
   assets: string;
   liabilities: string;
-  
+
   // Cash-Out Purpose
   cashoutPurpose: string;
   purposeDetails: string;
-  
+
   // Lender Information
   lenderName: string;
   lenderAddress: string;
@@ -153,10 +153,10 @@ export const CashoutRefiForm: React.FC = () => {
 
   const generateDocument = async () => {
     setIsGenerating(true);
-    
+
     // Simulate document generation
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     const document = generateCashoutRefiDocument(formData);
     setGeneratedDocument(document);
     setIsGenerating(false);
@@ -164,7 +164,7 @@ export const CashoutRefiForm: React.FC = () => {
 
   const downloadDocument = () => {
     if (!generatedDocument) return;
-    
+
     const blob = new Blob([generatedDocument], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -176,7 +176,7 @@ export const CashoutRefiForm: React.FC = () => {
 
   const printDocument = () => {
     if (!generatedDocument) return;
-    
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(generatedDocument);
@@ -275,7 +275,7 @@ export const CashoutRefiForm: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div
@@ -1402,7 +1402,7 @@ function generateCashoutRefiDocument(data: CashoutRefiFormData): string {
 
     <div class="signature-section">
         <div class="section-title">11. SIGNATURES</div>
-        
+
         <div style="margin: 40px 0;">
             <strong>PRIMARY BORROWER:</strong><br><br>
             <div class="signature-line"></div>

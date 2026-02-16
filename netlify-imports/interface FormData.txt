@@ -8,7 +8,7 @@ interface FormData {
   contact_name: string;
   contact_email: string;
   contact_phone: string;
-  
+
   // Situation Questions
   situation_length: string;
   payment_difficulty_date: string;
@@ -21,7 +21,7 @@ interface FormData {
   home_value: string;
   mortgage_balance: string;
   liens: string;
-  
+
   // Problem Questions
   challenge: string;
   lender_issue: string;
@@ -29,7 +29,7 @@ interface FormData {
   options_narrowing: string;
   third_party_help: string;
   overwhelmed: string;
-  
+
   // Implication Questions
   implication_credit: string;
   implication_loss: string;
@@ -37,7 +37,7 @@ interface FormData {
   legal_concerns: string;
   future_impact: string;
   financial_risk: string;
-  
+
   // Need-Payoff Questions
   interested_solution: string;
   negotiation_help: string;
@@ -105,7 +105,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isAuthenticated) {
       setSubmitError('Please sign in to submit the questionnaire');
       return;
@@ -117,7 +117,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
     try {
       // Get the current user session
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         throw new Error('No active session found');
       }
@@ -296,7 +296,7 @@ export const ForeclosureQuestionnaire: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div

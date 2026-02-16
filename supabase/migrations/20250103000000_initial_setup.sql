@@ -59,22 +59,22 @@ ALTER TABLE api.leads ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies
 -- Payments policies
-CREATE POLICY "Users can view their own payments" 
-ON api.payments FOR SELECT 
+CREATE POLICY "Users can view their own payments"
+ON api.payments FOR SELECT
 USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can insert their own payments" 
-ON api.payments FOR INSERT 
+CREATE POLICY "Users can insert their own payments"
+ON api.payments FOR INSERT
 WITH CHECK (auth.uid() = user_id);
 
 -- Consultation bookings policies
-CREATE POLICY "Users can manage their own consultations" 
-ON api.consultation_bookings FOR ALL 
+CREATE POLICY "Users can manage their own consultations"
+ON api.consultation_bookings FOR ALL
 USING (auth.uid() = user_id);
 
 -- Leads policies
-CREATE POLICY "Users can manage their own leads" 
-ON api.leads FOR ALL 
+CREATE POLICY "Users can manage their own leads"
+ON api.leads FOR ALL
 USING (auth.uid() = user_id);
 
 -- Grant table permissions
@@ -101,11 +101,11 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_payments_updated_at BEFORE UPDATE ON api.payments 
+CREATE TRIGGER update_payments_updated_at BEFORE UPDATE ON api.payments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_bookings_updated_at BEFORE UPDATE ON api.consultation_bookings 
+CREATE TRIGGER update_bookings_updated_at BEFORE UPDATE ON api.consultation_bookings
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_leads_updated_at BEFORE UPDATE ON api.leads 
+CREATE TRIGGER update_leads_updated_at BEFORE UPDATE ON api.leads
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

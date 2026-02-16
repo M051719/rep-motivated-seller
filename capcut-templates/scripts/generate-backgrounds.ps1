@@ -28,24 +28,24 @@ function Create-Gradient {
         [string[]]$colors,
         [string]$name
     )
-    
+
     Write-Host "📐 Generating: $name..." -ForegroundColor Yellow
-    
+
     $bitmap = New-Object System.Drawing.Bitmap($Width, $Height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-    
+
     # Calculate segments
     $numSegments = $colors.Count - 1
     $segmentHeight = [math]::Floor($Height / $numSegments)
-    
+
     for ($segment = 0; $segment -lt $numSegments; $segment++) {
         $startColor = Hex-To-Color $colors[$segment]
         $endColor = Hex-To-Color $colors[$segment + 1]
-        
+
         $startY = $segment * $segmentHeight
         $endY = if ($segment -eq $numSegments - 1) { $Height } else { ($segment + 1) * $segmentHeight }
         $currentHeight = $endY - $startY
-        
+
         # Create gradient brush for this segment
         $rect = New-Object System.Drawing.Rectangle(0, $startY, $Width, $currentHeight)
         $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush(
@@ -54,18 +54,18 @@ function Create-Gradient {
             $endColor,
             [System.Drawing.Drawing2D.LinearGradientMode]::Vertical
         )
-        
+
         $graphics.FillRectangle($brush, $rect)
         $brush.Dispose()
     }
-    
+
     # Save
     $outputPath = Join-Path $OutputDir "$name.png"
     $bitmap.Save($outputPath, [System.Drawing.Imaging.ImageFormat]::Png)
-    
+
     $graphics.Dispose()
     $bitmap.Dispose()
-    
+
     Write-Host "  ✓ Saved: $outputPath" -ForegroundColor Green
     return $outputPath
 }
@@ -75,25 +75,25 @@ function Create-Solid {
         [string]$color,
         [string]$name
     )
-    
+
     Write-Host "📐 Generating: $name..." -ForegroundColor Yellow
-    
+
     $bitmap = New-Object System.Drawing.Bitmap($Width, $Height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-    
+
     $solidColor = Hex-To-Color $color
     $brush = New-Object System.Drawing.SolidBrush($solidColor)
-    
+
     $graphics.FillRectangle($brush, 0, 0, $Width, $Height)
-    
+
     # Save
     $outputPath = Join-Path $OutputDir "$name.png"
     $bitmap.Save($outputPath, [System.Drawing.Imaging.ImageFormat]::Png)
-    
+
     $brush.Dispose()
     $graphics.Dispose()
     $bitmap.Dispose()
-    
+
     Write-Host "  ✓ Saved: $outputPath" -ForegroundColor Green
     return $outputPath
 }

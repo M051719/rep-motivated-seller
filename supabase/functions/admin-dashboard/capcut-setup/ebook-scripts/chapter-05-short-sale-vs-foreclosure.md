@@ -1,4 +1,5 @@
 # Chapter 5: Short Sale vs. Foreclosure - Comparing Your Options
+
 ## Video Script - "Short Sale vs. Foreclosure: What's Better?" (55 seconds)
 
 **Series:** Real Solutions for Real Estate | Episode 5
@@ -9,79 +10,97 @@
 ---
 
 ## Hook (0-3 seconds)
+
 **Visual:** Split screen - house with "Short Sale" vs "Foreclosure" signs
 **Text Overlay:** "Short Sale vs. Foreclosure"
 **Animation:** VS battle style graphics
 
 **Voiceover/Caption:**
+
 > "Facing foreclosure? A short sale might be your better option. Here's why."
 
 ---
 
 ## Comparison Table (3-45 seconds)
+
 **Visual:** Side-by-side comparison chart animating
 **Background:** Clean, professional (blue gradient)
 
 ### Round 1: Credit Impact (8 seconds)
+
 **Visual:** Credit score graphics
 
 **Left side (Short Sale):**
+
 - Text: "Credit Score: -50 to -150 points"
 - Icon: Yellow caution symbol
 
 **Right side (Foreclosure):**
+
 - Text: "Credit Score: -200 to -400 points"
 - Icon: Red warning symbol
 
 **Voiceover:** "Credit impact: Short sale drops your score 50-150 points. Foreclosure? 200-400 points. Short sale wins."
 
 ### Round 2: Timeline to Buy Again (8 seconds)
+
 **Visual:** Calendar/timeline graphics
 
 **Short Sale:**
+
 - Text: "Buy Again in: 2-4 years"
 - Icon: Green checkmark
 
 **Foreclosure:**
+
 - Text: "Buy Again in: 5-7 years"
 - Icon: Red X
 
 **Voiceover:** "Want to buy another home? After a short sale: 2-4 years. After foreclosure: 5-7 years. Clear winner."
 
 ### Round 3: Deficiency Judgment (9 seconds)
+
 **Visual:** Legal document/gavel graphics
 
 **Short Sale:**
+
 - Text: "Often Negotiable/Forgiven"
 - Icon: Handshake
 
 **Foreclosure:**
+
 - Text: "Lender Can Sue for Difference"
 - Icon: Court gavel
 
 **Voiceover:** "The debt? Short sales often forgive it or make it negotiable. With foreclosure, lenders can sue you for the difference between sale price and what you owed."
 
 ### Round 4: Control Over Sale (8 seconds)
+
 **Visual:** Steering wheel vs. passenger seat
 
 **Short Sale:**
+
 - Text: "You Control Terms & Timeline"
 - Icon: Steering wheel
 
 **Foreclosure:**
+
 - Text: "Bank Controls Everything"
 - Icon: Lock/handcuffs
 
 **Voiceover:** "Control: With a short sale, YOU negotiate terms. Foreclosure? The bank owns the process."
 
 ### Round 5: Impact on Record (8 seconds)
+
 **Visual:** Public record documents
 
 **Short Sale:**
+
 - Text: "Shows as 'Settled'"
 - Icon: Document with checkmark
 
 **Foreclosure:**
+
 - Text: "Public Record - Permanent"
 - Icon: Red stamp "FORECLOSED"
 
@@ -90,6 +109,7 @@
 ---
 
 ## Winner Announcement (45-50 seconds)
+
 **Visual:** Short Sale side lights up with trophy
 **Text Overlay:** "SHORT SALE WINS ON ALMOST EVERY METRIC"
 **Animation:** Confetti, checkmarks appearing
@@ -99,13 +119,16 @@
 ---
 
 ## Call to Action (50-55 seconds)
+
 **Visual:** RepMotivatedSeller logo
 **Text Overlay:**
+
 - "Explore a Short Sale Today"
 - "We Buy Houses - Fast & Fair"
 - "RepMotivatedSeller.com"
 
 **Voiceover/Caption:**
+
 > "We specialize in short sales. Free consultation - let's explore your options."
 
 ---
@@ -113,6 +136,7 @@
 ## Production Assets
 
 ### Required Files:
+
 - [ ] house-with-short-sale-sign.jpg
 - [ ] house-with-foreclosure-sign.jpg
 - [ ] credit-score-graphics (up/down arrows)
@@ -125,17 +149,20 @@
 - [ ] repmotivatedseller-logo.png
 
 ### Music:
+
 - **Track:** Upbeat, competitive, building momentum
 - **Style:** Game show / sports competition vibe
 - **Volume:** 30%
 
 ### Color Scheme:
+
 **Short Sale side:** Green (#10b981) - Positive
 **Foreclosure side:** Red (#ef4444) - Negative
 **VS:** Orange (#f97316) - Neutral comparison
 **Background:** Professional blue (#2563eb)
 
 ### Text Style:
+
 - **Hook:** Poppins Bold, 72pt, White with shadow
 - **Category Headers:** Poppins SemiBold, 48pt, White
 - **Comparison Details:** Inter Medium, 36pt, Color-coded
@@ -254,6 +281,7 @@ Questions? Drop them below! I'm answering ALL comments today ⬇️
 **Hashtags:** #ShortSale #ForeclosureAlternatives #RealEstateSolutions #HomeownerHelp #CreditProtection #SmartSelling
 
 **Best Posting Times:**
+
 - Weekday mornings (7-9 AM) for decision-makers
 - Wednesday-Thursday (most engagement for educational content)
 - Avoid Fridays (lower engagement for serious topics)
@@ -264,17 +292,17 @@ Questions? Drop them below! I'm answering ALL comments today ⬇️
 
 "📊 QUICK COMPARISON CHART:
 
-| Metric | Short Sale | Foreclosure |
-|--------|-----------|-------------|
+| Metric        | Short Sale  | Foreclosure  |
+| ------------- | ----------- | ------------ |
 | Credit Impact | -50 to -150 | -200 to -400 |
-| Buy Again | 2-4 years | 5-7 years |
-| Debt | Negotiable | Can be sued |
-| Control | You | Bank |
-| Record | Settled | Permanent |
+| Buy Again     | 2-4 years   | 5-7 years    |
+| Debt          | Negotiable  | Can be sued  |
+| Control       | You         | Bank         |
+| Record        | Settled     | Permanent    |
 
 Winner: SHORT SALE ✅
 
-Have specific questions about YOUR situation? 
+Have specific questions about YOUR situation?
 👉 DM us for a free consultation (link in bio)"
 
 ---
@@ -282,11 +310,13 @@ Have specific questions about YOUR situation?
 ## Follow-Up Content
 
 **Next in series:**
+
 - Chapter 6: Working with Cash Buyers (how it works)
 - Chapter 7: Understanding Your Legal Rights (what protections you have)
 
 **Create carousel post:**
 Expand this comparison with:
+
 - Slide 1: Title/Hook
 - Slide 2: Credit Impact
 - Slide 3: Timeline
@@ -297,6 +327,7 @@ Expand this comparison with:
 - Slide 8: CTA
 
 **Story series:**
+
 - Story 1: "Short Sale vs Foreclosure - swipe for the truth"
 - Story 2-6: Each comparison point
 - Story 7: Winner
@@ -326,7 +357,7 @@ A: "As cash buyers, we handle everything directly, including negotiating with yo
 ## Trust-Building Elements
 
 **Add to caption or comment:**
-"🔍 Transparency: We make money by buying your house at a fair price, then reselling or renovating it. But our goal is YOUR best outcome - even if that means referring you to another solution. 
+"🔍 Transparency: We make money by buying your house at a fair price, then reselling or renovating it. But our goal is YOUR best outcome - even if that means referring you to another solution.
 
 We're not here for a quick buck. We're here to help homeowners navigate one of the toughest financial situations they'll face."
 

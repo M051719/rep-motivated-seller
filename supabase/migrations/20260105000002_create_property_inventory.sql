@@ -7,14 +7,14 @@ CREATE TABLE IF NOT EXISTS properties (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  
+
   -- Property Details
   address TEXT NOT NULL,
   city TEXT NOT NULL,
   state TEXT NOT NULL,
   zip_code TEXT NOT NULL,
   property_type TEXT NOT NULL CHECK (property_type IN ('single-family', 'multi-family', 'condo', 'townhouse', 'land', 'commercial')),
-  
+
   -- Financial Details
   purchase_price DECIMAL(12, 2),
   current_value DECIMAL(12, 2),
@@ -22,33 +22,33 @@ CREATE TABLE IF NOT EXISTS properties (
   mortgage_balance DECIMAL(12, 2),
   monthly_payment DECIMAL(10, 2),
   monthly_rent DECIMAL(10, 2),
-  
+
   -- Property Specs
   bedrooms INTEGER,
   bathrooms DECIMAL(3, 1),
   square_feet INTEGER,
   lot_size DECIMAL(10, 2),
   year_built INTEGER,
-  
+
   -- Status & Workflow
   status TEXT NOT NULL DEFAULT 'available' CHECK (status IN ('available', 'under-contract', 'purchased', 'sold', 'refinanced', 'archived')),
   acquisition_date DATE,
   sale_date DATE,
-  
+
   -- Investment Details
   total_invested DECIMAL(12, 2),
   repair_costs DECIMAL(12, 2),
   holding_costs DECIMAL(12, 2),
   profit DECIMAL(12, 2),
   roi DECIMAL(5, 2), -- Return on Investment %
-  
+
   -- Description & Notes
   description TEXT,
   notes TEXT,
-  
+
   -- Owner
   owner_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  
+
   -- Metadata
   featured_image_url TEXT,
   listing_url TEXT,

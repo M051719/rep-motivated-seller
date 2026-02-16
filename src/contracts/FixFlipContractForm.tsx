@@ -1466,7 +1466,7 @@ function generateFixFlipContract(data: FixFlipFormData): string {
 
     <div class="signature-section">
         <div class="section-title">10. SIGNATURES</div>
-        
+
         <div style="margin: 40px 0;">
             <strong>SELLER:</strong><br><br>
             <div class="signature-line"></div>

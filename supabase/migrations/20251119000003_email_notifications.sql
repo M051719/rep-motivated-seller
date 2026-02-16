@@ -5,33 +5,33 @@ DROP TABLE IF EXISTS public.email_notifications CASCADE;
 
 CREATE TABLE public.email_notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  
+
   -- Notification details
   type TEXT NOT NULL CHECK (type IN ('new_submission', 'urgent_case', 'status_change', 'follow_up', 'test')),
   submission_id UUID, -- Reference to submission (if applicable)
   recipient_email TEXT NOT NULL,
-  
+
   -- Email content
   subject TEXT NOT NULL,
   sender_email TEXT NOT NULL DEFAULT 'noreply@repmotivatedseller.com',
   sender_name TEXT NOT NULL DEFAULT 'RepMotivatedSeller',
-  
+
   -- MailerLite integration
   mailerlite_subscriber_id TEXT,
   mailerlite_campaign_id TEXT,
   mailerlite_groups TEXT[], -- Array of group names subscriber was added to
-  
+
   -- Status tracking
   sent_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   delivered_at TIMESTAMP WITH TIME ZONE,
   opened_at TIMESTAMP WITH TIME ZONE,
   clicked_at TIMESTAMP WITH TIME ZONE,
-  
+
   -- Metadata
   error_message TEXT,
   retry_count INTEGER DEFAULT 0,
   metadata JSONB DEFAULT '{}'::jsonb,
-  
+
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

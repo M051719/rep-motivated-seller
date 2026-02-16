@@ -46,26 +46,26 @@ Write-Host ""
 # Function to create product
 function Create-PayPalProduct {
     param($name, $description, $accessToken, $baseUrl)
-    
+
     $productBody = @{
         name        = $name
         description = $description
         type        = "SERVICE"
         category    = "SOFTWARE"
     } | ConvertTo-Json
-    
+
     $product = Invoke-RestMethod -Uri "$baseUrl/v1/catalogs/products" -Method Post -Headers @{
         "Authorization" = "Bearer $accessToken"
         "Content-Type"  = "application/json"
     } -Body $productBody
-    
+
     return $product.id
 }
 
 # Function to create billing plan
 function Create-PayPalPlan {
     param($productId, $planName, $price, $accessToken, $baseUrl)
-    
+
     $planBody = @{
         product_id          = $productId
         name                = $planName
@@ -93,13 +93,13 @@ function Create-PayPalPlan {
             payment_failure_threshold = 3
         }
     } | ConvertTo-Json -Depth 10
-    
+
     $plan = Invoke-RestMethod -Uri "$baseUrl/v1/billing/plans" -Method Post -Headers @{
         "Authorization" = "Bearer $accessToken"
         "Content-Type"  = "application/json"
         "Prefer"        = "return=representation"
     } -Body $planBody
-    
+
     return $plan.id
 }
 

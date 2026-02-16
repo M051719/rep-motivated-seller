@@ -54,41 +54,41 @@ $skippedFiles = 0
 foreach ($item in $itemsToMove) {
     $sourcePath = Join-Path $wrongDir $item.Source
     $destPath = Join-Path $correctDir $item.Dest
-    
+
     if (-not (Test-Path $sourcePath)) {
         Write-Host "  [SKIP] $($item.Source) - does not exist in wrong directory" -ForegroundColor DarkGray
         continue
     }
-    
+
     Write-Host "  [FOUND] $($item.Source) -> $($item.Dest)" -ForegroundColor Cyan
-    
+
     # Ensure destination directory exists
     if (-not (Test-Path $destPath)) {
         New-Item -ItemType Directory -Path $destPath -Force | Out-Null
         Write-Host "    Created directory: $destPath" -ForegroundColor Green
     }
-    
+
     # Get all files in source
     $files = Get-ChildItem -Path $sourcePath -Recurse -File
     $totalFiles += $files.Count
-    
+
     Write-Host "    Found $($files.Count) files" -ForegroundColor White
-    
+
     foreach ($file in $files) {
         $relativePath = $file.FullName.Substring($sourcePath.Length + 1)
         $targetFile = Join-Path $destPath $relativePath
         $targetDir = Split-Path $targetFile -Parent
-        
+
         # Create target directory if needed
         if (-not (Test-Path $targetDir)) {
             New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
         }
-        
+
         # Check if file already exists
         if (Test-Path $targetFile) {
             $sourceHash = (Get-FileHash $file.FullName -Algorithm SHA256).Hash
             $targetHash = (Get-FileHash $targetFile -Algorithm SHA256).Hash
-            
+
             if ($sourceHash -eq $targetHash) {
                 Write-Host "      [SKIP] $relativePath - identical file exists" -ForegroundColor DarkGray
                 $skippedFiles++
@@ -99,7 +99,7 @@ foreach ($item in $itemsToMove) {
                 $backupFile = "$targetFile.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
                 Copy-Item $targetFile $backupFile
                 Write-Host "      [BACKUP] $relativePath -> .backup" -ForegroundColor Yellow
-                
+
                 # Copy new file
                 Copy-Item $file.FullName $targetFile -Force
                 Write-Host "      [OVERWRITE] $relativePath" -ForegroundColor Magenta
@@ -115,7 +115,7 @@ foreach ($item in $itemsToMove) {
             "COPIED: $relativePath" | Out-File $logFile -Append
         }
     }
-    
+
     Write-Host ""
 }
 

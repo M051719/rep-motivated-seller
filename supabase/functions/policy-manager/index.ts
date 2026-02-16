@@ -36,7 +36,10 @@ function asArray(input: unknown): string[] | undefined {
 const DEFAULT_SCHEMAS = ["public"];
 
 // Ensure single shared pool
-const pool = new Pool({ connectionString: Deno.env.get("SUPABASE_DB_URL")!, max: 2 });
+const pool = new Pool({
+  connectionString: Deno.env.get("SUPABASE_DB_URL")!,
+  max: 2,
+});
 
 // Helpers
 async function withClient<T>(fn: (client: any) => Promise<T>): Promise<T> {
@@ -48,7 +51,9 @@ async function withClient<T>(fn: (client: any) => Promise<T>): Promise<T> {
   }
 }
 
-function parseTableFilter(filter?: string[]): { schema?: string; table?: string }[] | undefined {
+function parseTableFilter(
+  filter?: string[],
+): { schema?: string; table?: string }[] | undefined {
   if (!filter || filter.length === 0) return undefined;
   return filter.map((f) => {
     const parts = f.split(".");
@@ -59,7 +64,7 @@ function parseTableFilter(filter?: string[]): { schema?: string; table?: string 
 
 function buildTablePredicate(
   schemas: string[],
-  filters?: { schema?: string; table?: string }[]
+  filters?: { schema?: string; table?: string }[],
 ): { sql: string; params: any[] } {
   const params: any[] = [];
   let where = `n.nspname = ANY($1)`;
@@ -69,7 +74,9 @@ function buildTablePredicate(
     filters.forEach((f) => {
       if (f.schema && f.table) {
         params.push(f.schema, f.table);
-        clauses.push(`(n.nspname = $${params.length - 1} AND c.relname = $${params.length})`);
+        clauses.push(
+          `(n.nspname = $${params.length - 1} AND c.relname = $${params.length})`,
+        );
       } else if (f.table) {
         params.push(f.table);
         clauses.push(`(c.relname = $${params.length})`);
@@ -117,28 +124,70 @@ async function auditPolicies(input: {
     ).rows;
 
     // Heuristics for suspicious policies
-    const suspicious: { schema: string; table: string; policy: string; issue: string }[] = [];
+    const suspicious: {
+      schema: string;
+      table: string;
+      policy: string;
+      issue: string;
+    }[] = [];
     for (const p of policies) {
       if (!p.roles || p.roles.length === 0) {
-        suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "Missing TO roles (roles is empty)" });
+        suspicious.push({
+          schema: p.schema,
+          table: p.table,
+          policy: p.policy,
+          issue: "Missing TO roles (roles is empty)",
+        });
       }
       if (p.command === "SELECT" && !p.using_expr) {
-        suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "SELECT policy missing USING expression" });
+        suspicious.push({
+          schema: p.schema,
+          table: p.table,
+          policy: p.policy,
+          issue: "SELECT policy missing USING expression",
+        });
       }
       if (p.command === "INSERT" && !p.with_check_expr) {
-        suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "INSERT policy missing WITH CHECK expression" });
+        suspicious.push({
+          schema: p.schema,
+          table: p.table,
+          policy: p.policy,
+          issue: "INSERT policy missing WITH CHECK expression",
+        });
       }
       if (p.command === "UPDATE" && (!p.using_expr || !p.with_check_expr)) {
-        if (!p.using_expr) suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "UPDATE policy missing USING expression" });
-        if (!p.with_check_expr) suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "UPDATE policy missing WITH CHECK expression" });
+        if (!p.using_expr)
+          suspicious.push({
+            schema: p.schema,
+            table: p.table,
+            policy: p.policy,
+            issue: "UPDATE policy missing USING expression",
+          });
+        if (!p.with_check_expr)
+          suspicious.push({
+            schema: p.schema,
+            table: p.table,
+            policy: p.policy,
+            issue: "UPDATE policy missing WITH CHECK expression",
+          });
       }
       if (p.command === "DELETE" && !p.using_expr) {
-        suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "DELETE policy missing USING expression" });
+        suspicious.push({
+          schema: p.schema,
+          table: p.table,
+          policy: p.policy,
+          issue: "DELETE policy missing USING expression",
+        });
       }
       // Prefer auth.uid() usage
       const text = `${p.using_expr ?? ""} ${p.with_check_expr ?? ""}`;
       if (/current_user\b/i.test(text)) {
-        suspicious.push({ schema: p.schema, table: p.table, policy: p.policy, issue: "Uses current_user; prefer auth.uid()" });
+        suspicious.push({
+          schema: p.schema,
+          table: p.table,
+          policy: p.policy,
+          issue: "Uses current_user; prefer auth.uid()",
+        });
       }
     }
 
@@ -161,10 +210,14 @@ function normalizePolicyName(command: string, base: string, prefix: string) {
   return `${prefix} ${verb} ${base}`.trim();
 }
 
-function buildConsolidationStatements(rows: any[], options: { renamePolicyPrefix: string; normalizeNaming: boolean }) {
+function buildConsolidationStatements(
+  rows: any[],
+  options: { renamePolicyPrefix: string; normalizeNaming: boolean },
+) {
   const statements: string[] = [];
   // Group by table+command and attempt to merge duplicate policies with identical expressions and roles
-  const key = (r: any) => `${r.schema}.${r.table}|${r.command}|${r.using_expr ?? ""}|${r.with_check_expr ?? ""}|${(r.roles||[]).join(',')}`;
+  const key = (r: any) =>
+    `${r.schema}.${r.table}|${r.command}|${r.using_expr ?? ""}|${r.with_check_expr ?? ""}|${(r.roles || []).join(",")}`;
   const groups = new Map<string, any[]>();
   for (const r of rows) {
     const k = key(r);
@@ -176,14 +229,26 @@ function buildConsolidationStatements(rows: any[], options: { renamePolicyPrefix
     const keep = list[0];
     for (let i = 1; i < list.length; i++) {
       const drop = list[i];
-      statements.push(`drop policy "${drop.policy.replace(/"/g, '""')}" on "${drop.schema}"."${drop.table}";`);
+      statements.push(
+        `drop policy "${drop.policy.replace(/"/g, '""')}" on "${drop.schema}"."${drop.table}";`,
+      );
     }
     // Optionally normalize name of kept policy
     if (options.normalizeNaming) {
-      const base = (keep.using_expr?.includes("auth.uid()") || keep.with_check_expr?.includes("auth.uid()")) ? "by auth.uid()" : "policy";
-      const desired = normalizePolicyName(keep.command, base, options.renamePolicyPrefix);
+      const base =
+        keep.using_expr?.includes("auth.uid()") ||
+        keep.with_check_expr?.includes("auth.uid()")
+          ? "by auth.uid()"
+          : "policy";
+      const desired = normalizePolicyName(
+        keep.command,
+        base,
+        options.renamePolicyPrefix,
+      );
       if (desired !== keep.policy) {
-        statements.push(`alter policy "${keep.policy.replace(/"/g, '""')}" on "${keep.schema}"."${keep.table}" rename to "${desired.replace(/"/g, '""')}";`);
+        statements.push(
+          `alter policy "${keep.policy.replace(/"/g, '""')}" on "${keep.schema}"."${keep.table}" rename to "${desired.replace(/"/g, '""')}";`,
+        );
       }
     }
   }
@@ -195,33 +260,53 @@ function buildFixStatements(rows: any[]) {
   for (const p of rows) {
     // Missing roles -> default to authenticated
     if (!p.roles || p.roles.length === 0) {
-      statements.push(`alter policy "${p.policy.replace(/"/g, '""')}" on "${p.schema}"."${p.table}" to authenticated;`);
+      statements.push(
+        `alter policy "${p.policy.replace(/"/g, '""')}" on "${p.schema}"."${p.table}" to authenticated;`,
+      );
     }
     // Wrong function usage
     const text = `${p.using_expr ?? ""} ${p.with_check_expr ?? ""}`;
     if (/current_user\b/i.test(text)) {
       // Propose replacement. Exact rewrite is app-specific; we only comment via SQL
-      statements.push(`-- Review policy "${p.policy}" on ${p.schema}.${p.table}: replace current_user with (select auth.uid())`);
+      statements.push(
+        `-- Review policy "${p.policy}" on ${p.schema}.${p.table}: replace current_user with (select auth.uid())`,
+      );
     }
     // Missing expressions per command
     if (p.command === "SELECT" && !p.using_expr) {
-      statements.push(`-- Consider: create a restrictive SELECT policy or add USING expression on ${p.schema}.${p.table}`);
+      statements.push(
+        `-- Consider: create a restrictive SELECT policy or add USING expression on ${p.schema}.${p.table}`,
+      );
     }
     if (p.command === "INSERT" && !p.with_check_expr) {
-      statements.push(`-- Consider: add WITH CHECK expression for INSERT on ${p.schema}.${p.table}`);
+      statements.push(
+        `-- Consider: add WITH CHECK expression for INSERT on ${p.schema}.${p.table}`,
+      );
     }
     if (p.command === "UPDATE") {
-      if (!p.using_expr) statements.push(`-- Consider: add USING expression for UPDATE on ${p.schema}.${p.table}`);
-      if (!p.with_check_expr) statements.push(`-- Consider: add WITH CHECK expression for UPDATE on ${p.schema}.${p.table}`);
+      if (!p.using_expr)
+        statements.push(
+          `-- Consider: add USING expression for UPDATE on ${p.schema}.${p.table}`,
+        );
+      if (!p.with_check_expr)
+        statements.push(
+          `-- Consider: add WITH CHECK expression for UPDATE on ${p.schema}.${p.table}`,
+        );
     }
     if (p.command === "DELETE" && !p.using_expr) {
-      statements.push(`-- Consider: add USING expression for DELETE on ${p.schema}.${p.table}`);
+      statements.push(
+        `-- Consider: add USING expression for DELETE on ${p.schema}.${p.table}`,
+      );
     }
   }
   return statements;
 }
 
-async function collectPoliciesForWork(client: any, schemas: string[], tableFilter?: string[]) {
+async function collectPoliciesForWork(
+  client: any,
+  schemas: string[],
+  tableFilter?: string[],
+) {
   const filters = parseTableFilter(tableFilter);
   const predicate = buildTablePredicate(schemas, filters);
   const { rows } = await client.query(
@@ -291,8 +376,12 @@ app.post("/policy-manager/consolidate", async (c) => {
 
   return await withClient(async (client) => {
     const rows = await collectPoliciesForWork(client, schemas, tableFilter);
-    const statements = buildConsolidationStatements(rows, { renamePolicyPrefix, normalizeNaming });
-    if (dryRun || statements.length === 0) return c.json({ dryRun: true, statements, executed: 0 });
+    const statements = buildConsolidationStatements(rows, {
+      renamePolicyPrefix,
+      normalizeNaming,
+    });
+    if (dryRun || statements.length === 0)
+      return c.json({ dryRun: true, statements, executed: 0 });
     const res = await runStatements(client, statements);
     return c.json({ dryRun: false, statements, executed: res.executed });
   });
@@ -307,7 +396,8 @@ app.post("/policy-manager/fix", async (c) => {
   return await withClient(async (client) => {
     const rows = await collectPoliciesForWork(client, schemas, tableFilter);
     const statements = buildFixStatements(rows);
-    if (dryRun || statements.length === 0) return c.json({ dryRun: true, statements, executed: 0 });
+    if (dryRun || statements.length === 0)
+      return c.json({ dryRun: true, statements, executed: 0 });
     const res = await runStatements(client, statements);
     return c.json({ dryRun: false, statements, executed: res.executed });
   });

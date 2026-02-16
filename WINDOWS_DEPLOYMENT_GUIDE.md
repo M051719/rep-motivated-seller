@@ -5,12 +5,16 @@ This guide provides specific instructions for deploying the RepMotivatedSeller p
 ## SSL Certificate Setup
 
 ### Certificate Files
+
 Your SSL certificate files are located at:
+
 - Certificate: `C:/nginx/conf/ssl/star_repmotivatedseller_shoprealestatespace_org.csr`
 - Private Key: `C:/nginx/conf/ssl/star_repmotivatedseller_shoprealestatespace_org.key`
 
 ### Directory Structure
+
 Ensure these directories exist:
+
 ```batch
 mkdir C:\nginx\conf\ssl
 ```
@@ -266,6 +270,7 @@ pause
 ### Nginx Won't Start
 
 1. Check if port 80/443 is already in use:
+
    ```batch
    netstat -ano | findstr :80
    netstat -ano | findstr :443

@@ -5,10 +5,10 @@ param(
     [Parameter(Position = 0)]
     [ValidateSet('create-project', 'export-list', 'open', 'list-projects', 'open-exports', 'help')]
     [string]$Action = 'help',
-    
+
     [Parameter(Position = 1)]
     [string]$ProjectName = "",
-    
+
     [Parameter(Position = 2)]
     [string]$ScriptFile = ""
 )
@@ -78,32 +78,32 @@ function Open-CapCut {
         Write-Host "Please install CapCut from: https://www.capcut.com/download" -ForegroundColor Yellow
         return
     }
-    
+
     Write-Host "Opening CapCut..." -ForegroundColor Green
     Start-Process $CapCutPath
 }
 
 function Create-Project {
     param([string]$Name)
-    
+
     if ([string]::IsNullOrWhiteSpace($Name)) {
         Write-Host "Error: Project name required" -ForegroundColor Red
         Write-Host "Usage: .\capcut-helper.ps1 create-project <name>" -ForegroundColor Yellow
         return
     }
-    
+
     $ProjectPath = Join-Path $ProjectsDir $Name
-    
+
     if (Test-Path $ProjectPath) {
         Write-Host "Warning: Project '$Name' already exists" -ForegroundColor Yellow
         Write-Host "Location: $ProjectPath" -ForegroundColor Gray
         return
     }
-    
+
     New-Item -ItemType Directory -Path $ProjectPath -Force | Out-Null
     Write-Host "Created project: $Name" -ForegroundColor Green
     Write-Host "Location: $ProjectPath" -ForegroundColor Gray
-    
+
     # Open the project folder
     $openFolder = Read-Host "Open project folder? (Y/n)"
     if ($openFolder -ne "n") {
@@ -117,25 +117,25 @@ function List-Projects {
         Write-Host "Expected location: $ProjectsDir" -ForegroundColor Gray
         return
     }
-    
+
     $projects = Get-ChildItem $ProjectsDir -Directory -ErrorAction SilentlyContinue
-    
+
     if ($projects.Count -eq 0) {
         Write-Host "No projects found" -ForegroundColor Yellow
         Write-Host "Create your first project in CapCut!" -ForegroundColor Cyan
         return
     }
-    
+
     Write-Host ""
     Write-Host "CapCut Projects ($($projects.Count) total)" -ForegroundColor Cyan
     Write-Host "========================" -ForegroundColor Gray
     Write-Host ""
-    
+
     $projects | Sort-Object LastWriteTime -Descending | ForEach-Object {
-        $size = (Get-ChildItem $_.FullName -Recurse -File -ErrorAction SilentlyContinue | 
+        $size = (Get-ChildItem $_.FullName -Recurse -File -ErrorAction SilentlyContinue |
             Measure-Object -Property Length -Sum).Sum
         $sizeMB = [math]::Round($size / 1MB, 2)
-        
+
         Write-Host "  $($_.Name)" -ForegroundColor White
         Write-Host "    Modified: $($_.LastWriteTime.ToString('yyyy-MM-dd HH:mm'))" -ForegroundColor Gray
         Write-Host "    Size: $sizeMB MB" -ForegroundColor Gray
@@ -150,29 +150,29 @@ function List-Exports {
         Write-Host "Default export location: $OutputDir" -ForegroundColor Gray
         return
     }
-    
+
     $exports = Get-ChildItem $OutputDir -Filter "*.mp4" -ErrorAction SilentlyContinue
-    
+
     if ($exports.Count -eq 0) {
         Write-Host "No exported videos found" -ForegroundColor Yellow
         Write-Host "Export location: $OutputDir" -ForegroundColor Gray
         return
     }
-    
+
     Write-Host ""
     Write-Host "Exported Videos ($($exports.Count) total)" -ForegroundColor Cyan
     Write-Host "====================" -ForegroundColor Gray
     Write-Host ""
-    
+
     $exports | Sort-Object LastWriteTime -Descending | ForEach-Object {
         $sizeMB = [math]::Round($_.Length / 1MB, 2)
-        
+
         Write-Host "  $($_.Name)" -ForegroundColor White
         Write-Host "    Created: $($_.LastWriteTime.ToString('yyyy-MM-dd HH:mm'))" -ForegroundColor Gray
         Write-Host "    Size: $sizeMB MB" -ForegroundColor Gray
         Write-Host ""
     }
-    
+
     $openFolder = Read-Host "Open exports folder? (Y/n)"
     if ($openFolder -ne "n") {
         Start-Process "explorer.exe" -ArgumentList $OutputDir
@@ -184,7 +184,7 @@ function Open-ExportsFolder {
         Write-Host "Creating exports folder..." -ForegroundColor Yellow
         New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
     }
-    
+
     Write-Host "Opening exports folder..." -ForegroundColor Green
     Start-Process "explorer.exe" -ArgumentList $OutputDir
 }
@@ -194,27 +194,27 @@ switch ($Action) {
     "create-project" {
         Create-Project -Name $ProjectName
     }
-    
+
     "export-list" {
         List-Exports
     }
-    
+
     "open" {
         Open-CapCut
     }
-    
+
     "list-projects" {
         List-Projects
     }
-    
+
     "open-exports" {
         Open-ExportsFolder
     }
-    
+
     "help" {
         Show-Help
     }
-    
+
     default {
         Show-Help
     }

@@ -5,10 +5,10 @@ param(
     [Parameter(Position = 0)]
     [ValidateSet('list', 'create', 'create-all', 'schedule', 'help')]
     [string]$Action = 'help',
-    
+
     [Parameter(Position = 1)]
     [string]$Chapter = "",
-    
+
     [Parameter(Position = 2)]
     [ValidateSet('1', '2', 'all')]
     [string]$EBook = "all"
@@ -107,15 +107,15 @@ function Show-Help {
 
 function List-Chapters {
     param([string]$FilterEBook = "all")
-    
+
     Write-Host ""
     Write-Host "Available Chapter Templates" -ForegroundColor Cyan
     Write-Host "===========================" -ForegroundColor Cyan
     Write-Host ""
-    
+
     $ebook1Chapters = $chapters.GetEnumerator() | Where-Object { $_.Value.EBook -eq 1 } | Sort-Object Name
     $ebook2Chapters = $chapters.GetEnumerator() | Where-Object { $_.Value.EBook -eq 2 } | Sort-Object Name
-    
+
     if ($FilterEBook -eq "all" -or $FilterEBook -eq "1") {
         Write-Host "E-Book 1: Finding Support Through Social Media" -ForegroundColor Yellow
         Write-Host ""
@@ -124,7 +124,7 @@ function List-Chapters {
             $info = $chapter.Value
             $status = if ($info.Complete) { "[COMPLETE]" } else { "[TEMPLATE]" }
             $color = if ($info.Complete) { "Green" } else { "Yellow" }
-            
+
             Write-Host "  $num. " -NoNewline -ForegroundColor White
             Write-Host "$($info.Title) " -NoNewline -ForegroundColor Cyan
             Write-Host "($($info.Duration)) " -NoNewline -ForegroundColor Gray
@@ -132,7 +132,7 @@ function List-Chapters {
         }
         Write-Host ""
     }
-    
+
     if ($FilterEBook -eq "all" -or $FilterEBook -eq "2") {
         Write-Host "E-Book 2: Real Solutions for Real Estate" -ForegroundColor Yellow
         Write-Host ""
@@ -141,7 +141,7 @@ function List-Chapters {
             $info = $chapter.Value
             $status = if ($info.Complete) { "[COMPLETE]" } else { "[TEMPLATE]" }
             $color = if ($info.Complete) { "Green" } else { "Yellow" }
-            
+
             Write-Host "  $num. " -NoNewline -ForegroundColor White
             Write-Host "$($info.Title) " -NoNewline -ForegroundColor Cyan
             Write-Host "($($info.Duration)) " -NoNewline -ForegroundColor Gray
@@ -149,31 +149,31 @@ function List-Chapters {
         }
         Write-Host ""
     }
-    
+
     $completeCount = ($chapters.Values | Where-Object { $_.Complete }).Count
     $totalCount = $chapters.Count
-    
+
     Write-Host "Status: $completeCount of $totalCount templates complete" -ForegroundColor Cyan
     Write-Host ""
 }
 
 function Create-ChapterProject {
     param([string]$ChapterNum)
-    
+
     if (-not $chapters.ContainsKey($ChapterNum)) {
         Write-Host "Error: Chapter $ChapterNum not found" -ForegroundColor Red
         Write-Host "Use 'list' action to see available chapters" -ForegroundColor Yellow
         return
     }
-    
+
     $chapter = $chapters[$ChapterNum]
     $scriptFile = Join-Path $ebookScriptsPath $chapter.File
-    
+
     if (-not (Test-Path $scriptFile)) {
         Write-Host "Error: Script file not found: $scriptFile" -ForegroundColor Red
         return
     }
-    
+
     Write-Host ""
     Write-Host "Creating video project for Chapter $ChapterNum" -ForegroundColor Cyan
     Write-Host "===========================================" -ForegroundColor Cyan
@@ -183,35 +183,35 @@ function Create-ChapterProject {
     Write-Host "Duration: $($chapter.Duration)" -ForegroundColor White
     Write-Host "E-Book: $($chapter.EBook)" -ForegroundColor White
     Write-Host ""
-    
+
     # Generate project name
     $timestamp = Get-Date -Format "yyyyMMdd"
     $projectName = "$timestamp-Chapter-$ChapterNum-$($chapter.Title -replace '\s+', '-')"
     $projectPath = Join-Path $contentCreationPath $projectName
-    
+
     # Create project structure
     Write-Host "Creating project structure..." -ForegroundColor Yellow
-    
+
     $folders = @("Script", "Storyboard", "Assets", "Shot-List", "Review", "Final-Export")
     foreach ($folder in $folders) {
         $folderPath = Join-Path $projectPath $folder
         New-Item -ItemType Directory -Path $folderPath -Force | Out-Null
     }
-    
+
     # Copy script template
     Write-Host "Copying script template..." -ForegroundColor Yellow
     $destScript = Join-Path $projectPath "Script\$projectName-script.md"
     Copy-Item $scriptFile $destScript
-    
+
     # Create project README
     Write-Host "Creating project README..." -ForegroundColor Yellow
-    
+
     $chapterTitle = $chapter.Title
     $chapterSeries = $chapter.Series
     $chapterEBook = $chapter.EBook
     $chapterDuration = $chapter.Duration
     $currentDate = Get-Date -Format "yyyy-MM-dd HH:mm"
-    
+
     $readmeContent = @"
 # Chapter $ChapterNum - $chapterTitle
 
@@ -329,10 +329,10 @@ Original template: $scriptFile
 - Comments: ___
 - Website clicks: ___
 "@
-    
+
     $readmePath = Join-Path $projectPath "README.md"
     $readmeContent | Set-Content $readmePath
-    
+
     Write-Host ""
     Write-Host "========================================" -ForegroundColor Green
     Write-Host " PROJECT CREATED SUCCESSFULLY" -ForegroundColor Green
@@ -346,7 +346,7 @@ Original template: $scriptFile
     Write-Host "  3. Open CapCut and create video" -ForegroundColor Cyan
     Write-Host "  4. Export to Final-Export folder" -ForegroundColor Cyan
     Write-Host ""
-    
+
     $openFolder = Read-Host "Open project folder? (Y/n)"
     if ($openFolder -ne "n") {
         Start-Process "explorer.exe" -ArgumentList $projectPath
@@ -355,18 +355,18 @@ Original template: $scriptFile
 
 function Create-AllProjects {
     param([string]$FilterEBook = "all")
-    
+
     Write-Host ""
     Write-Host "Creating all video projects..." -ForegroundColor Cyan
     Write-Host ""
-    
+
     $filteredChapters = $chapters.GetEnumerator() | Sort-Object Name
-    
+
     if ($FilterEBook -ne "all") {
         $ebookNum = [int]$FilterEBook
         $filteredChapters = $filteredChapters | Where-Object { $_.Value.EBook -eq $ebookNum }
     }
-    
+
     $count = 0
     foreach ($chapter in $filteredChapters) {
         if ($chapter.Value.Complete) {
@@ -376,7 +376,7 @@ function Create-AllProjects {
             Write-Host ""
         }
     }
-    
+
     Write-Host "========================================" -ForegroundColor Green
     Write-Host " ALL PROJECTS CREATED" -ForegroundColor Green
     Write-Host "========================================" -ForegroundColor Green
@@ -393,36 +393,36 @@ function Show-Schedule {
     Write-Host ""
     Write-Host "8-Week Production Plan (2-3 videos per week)" -ForegroundColor Yellow
     Write-Host ""
-    
+
     Write-Host "Week 1: Setup + First Videos" -ForegroundColor White
     Write-Host "  - Monday: Set up workspace, collect assets" -ForegroundColor Gray
     Write-Host "  - Wednesday: Produce Chapter 01" -ForegroundColor Gray
     Write-Host "  - Friday: Produce Chapter 02" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "Week 2: E-Book 1 Series" -ForegroundColor White
     Write-Host "  - Tuesday: Produce Chapter 03" -ForegroundColor Gray
     Write-Host "  - Thursday: Review and refine first 3 videos" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "Week 3: Start Publishing + Continue Production" -ForegroundColor White
     Write-Host "  - Monday: Publish Chapter 01" -ForegroundColor Gray
     Write-Host "  - Wednesday: Publish Chapter 02, Produce Chapter 04" -ForegroundColor Gray
     Write-Host "  - Friday: Publish Chapter 03, Produce Chapter 05" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "Week 4: E-Book 2 Series" -ForegroundColor White
     Write-Host "  - Monday: Publish Chapter 04" -ForegroundColor Gray
     Write-Host "  - Wednesday: Publish Chapter 05, Produce Chapter 06" -ForegroundColor Gray
     Write-Host "  - Friday: Publish Chapter 06" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "Week 5-8: Expand Series" -ForegroundColor White
     Write-Host "  - Continue 2-3 videos per week" -ForegroundColor Gray
     Write-Host "  - Maintain consistent posting schedule" -ForegroundColor Gray
     Write-Host "  - Monitor metrics and adjust" -ForegroundColor Gray
     Write-Host ""
-    
+
     Write-Host "Publishing Strategy:" -ForegroundColor Yellow
     Write-Host "  - Best days: Tuesday, Wednesday, Thursday" -ForegroundColor Gray
     Write-Host "  - Best times: 8-10 AM or 7-9 PM" -ForegroundColor Gray
@@ -436,7 +436,7 @@ switch ($Action) {
     "list" {
         List-Chapters -FilterEBook $EBook
     }
-    
+
     "create" {
         if ([string]::IsNullOrWhiteSpace($Chapter)) {
             Write-Host "Error: Chapter number required" -ForegroundColor Red
@@ -447,19 +447,19 @@ switch ($Action) {
             Create-ChapterProject -ChapterNum $Chapter
         }
     }
-    
+
     "create-all" {
         Create-AllProjects -FilterEBook $EBook
     }
-    
+
     "schedule" {
         Show-Schedule
     }
-    
+
     "help" {
         Show-Help
     }
-    
+
     default {
         Show-Help
     }

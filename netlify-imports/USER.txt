@@ -154,5 +154,3 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     useAuthStore.getState().logout();
   }
 });
-
-

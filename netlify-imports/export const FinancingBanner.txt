@@ -8,11 +8,11 @@ export const FinancingBanner: React.FC = () => {
   if (isDismissed) return null;
 
   const availableStates = [
-    'Washington', 'Montana', 'Wyoming', 'Colorado', 'New Mexico', 'Texas', 'Oklahoma', 
-    'Kansas', 'Nebraska', 'Iowa', 'Missouri', 'Arkansas', 'Louisiana', 'Mississippi', 
-    'Tennessee', 'Illinois', 'Wisconsin', 'Indiana', 'Maine', 'Michigan', 'Kentucky', 
-    'Virginia', 'West Virginia', 'Pennsylvania', 'Alabama', 'Georgia', 'South Carolina', 
-    'Florida', 'Delaware', 'Washington DC', 'New Hampshire', 'Massachusetts', 
+    'Washington', 'Montana', 'Wyoming', 'Colorado', 'New Mexico', 'Texas', 'Oklahoma',
+    'Kansas', 'Nebraska', 'Iowa', 'Missouri', 'Arkansas', 'Louisiana', 'Mississippi',
+    'Tennessee', 'Illinois', 'Wisconsin', 'Indiana', 'Maine', 'Michigan', 'Kentucky',
+    'Virginia', 'West Virginia', 'Pennsylvania', 'Alabama', 'Georgia', 'South Carolina',
+    'Florida', 'Delaware', 'Washington DC', 'New Hampshire', 'Massachusetts',
     'Connecticut', 'Rhode Island', 'Maryland', 'Alaska', 'Hawaii'
   ];
 

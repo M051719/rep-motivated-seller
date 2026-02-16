@@ -35,7 +35,7 @@
 </head>
 <body>
     <h1>RepMotivatedSeller Test Page</h1>
-    
+
     <div class="container">
         <h2>Site Status</h2>
         <p class="success">✓ Page loaded successfully!</p>
@@ -64,14 +64,14 @@
         function checkSecurityHeaders() {
             const resultDiv = document.getElementById('securityResult');
             resultDiv.innerHTML = 'Checking security headers...';
-            
+
             fetch(window.location.href)
                 .then(response => {
                     const headers = {};
                     response.headers.forEach((value, name) => {
                         headers[name] = value;
                     });
-                    
+
                     let html = '<ul>';
                     const securityHeaders = [
                         'content-security-policy',
@@ -81,7 +81,7 @@
                         'x-xss-protection',
                         'referrer-policy'
                     ];
-                    
+
                     securityHeaders.forEach(header => {
                         if (headers[header]) {
                             html += `<li><strong>${header}:</strong> <span class="success">✓ Present</span></li>`;
@@ -89,7 +89,7 @@
                             html += `<li><strong>${header}:</strong> ✗ Missing</li>`;
                         }
                     });
-                    
+
                     html += '</ul>';
                     resultDiv.innerHTML = html;
                 })
@@ -102,7 +102,7 @@
         function testSupabase() {
             const resultDiv = document.getElementById('supabaseResult');
             resultDiv.innerHTML = 'Testing connection to Supabase...';
-            
+
             fetch('https://ltxqodqlexvojqqxquew.supabase.co/rest/v1/health', {
                 method: 'GET',
                 headers: {

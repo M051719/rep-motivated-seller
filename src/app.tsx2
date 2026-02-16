@@ -56,25 +56,25 @@ function App() {
     <Router>
       <div className="App min-h-screen bg-gray-50">
         <Navigation user={user} />
-        
+
         <main className="flex-1">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               {/* Main Pages */}
               <Route path="/" element={<HomePage />} />
               <Route path="/foreclosure-help" element={<ForeclosureHelp />} />
-              
+
               {/* Education Platform */}
               <Route path="/education" element={<CourseLibrary />} />
               <Route path="/education/course/:courseId" element={<EnhancedCoursePlayer />} />
               <Route path="/education/dashboard" element={<StudentDashboard />} />
               <Route path="/education/analytics" element={<LearningAnalytics />} />
               <Route path="/education/certificate/:certificateId" element={<CertificateViewer />} />
-              
+
               {/* Marketing System */}
               <Route path="/marketing/direct-mail" element={<MailCampaignManager />} />
               <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
-              
+
               {/* Legal Pages */}
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
@@ -84,10 +84,10 @@ function App() {
         </main>
 
         <Footer />
-        
+
         {/* AI Assistant - Always Available */}
         <AIAssistant />
-        
+
         {/* Toast Notifications */}
         <Toaster position="bottom-right" />
       </div>

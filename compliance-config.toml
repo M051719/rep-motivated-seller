@@ -18,7 +18,7 @@ glba_compliant = true
 network_segmentation = "Implemented via Supabase RLS + API schema"
 firewall_rules = "Supabase managed firewall + application-level restrictions"
 
-# Requirement 2: Default Passwords  
+# Requirement 2: Default Passwords
 default_passwords = "All disabled - Supabase managed + strong password policy"
 vendor_defaults = "Changed - Custom configuration applied"
 
@@ -35,7 +35,7 @@ wireless_encryption = "N/A - Cloud-based service"
 vulnerability_management = "Regular Supabase updates + application scanning"
 secure_development = "RLS policies + input validation + parameterized queries"
 
-# Requirement 7: Access Controls  
+# Requirement 7: Access Controls
 need_to_know_access = "RLS user-scoped policies + role-based permissions"
 user_access_controls = "Supabase Auth + multi-factor authentication"
 
@@ -47,7 +47,7 @@ password_policies = "12+ chars, complexity requirements enforced"
 # Requirement 9: Physical Access
 physical_security = "Supabase cloud infrastructure security"
 
-# Requirement 10: Logging  
+# Requirement 10: Logging
 audit_logs = "Supabase logs + application audit trail"
 log_retention = "365 days minimum + automated archival"
 log_monitoring = "Real-time monitoring + alerts"
@@ -60,7 +60,7 @@ network_security_testing = "Annual assessment + continuous monitoring"
 security_policy = "Documented + annual review + staff training"
 
 # ==============================================
-# GLBA REQUIREMENTS IMPLEMENTATION  
+# GLBA REQUIREMENTS IMPLEMENTATION
 # ==============================================
 
 [glba]
@@ -69,7 +69,7 @@ administrative_safeguards = "Access controls + employee training + incident resp
 physical_safeguards = "Supabase cloud security + device encryption"
 technical_safeguards = "Encryption + access controls + audit logs"
 
-# Privacy Rule  
+# Privacy Rule
 privacy_notices = "User consent + privacy policy + opt-out mechanisms"
 opt_out_rights = "User dashboard + automated processing"
 information_sharing = "Limited to service providers + user consent"
@@ -90,7 +90,7 @@ encrypted_storage = true
 audit_logging = true
 backup_encryption = true
 
-# API Security  
+# API Security
 rate_limiting = "Implemented via Edge Functions + Supabase quotas"
 input_validation = "All endpoints + RPC functions"
 cors_restrictions = "Production domains only"
@@ -112,7 +112,7 @@ deletion_procedures = true
 
 # Monitoring & Alerting
 security_monitoring = true
-compliance_monitoring = true  
+compliance_monitoring = true
 incident_response = true
 audit_trail = true
 log_analysis = true

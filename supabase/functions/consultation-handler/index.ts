@@ -1,39 +1,44 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req) => {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
   }
-  
+
   try {
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    )
-    
-    const booking = await req.json()
-    
-    const { data: bookingId, error } = await supabase.rpc('handle_consultation_booking', booking)
-    
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    const booking = await req.json();
+
+    const { data: bookingId, error } = await supabase.rpc(
+      "handle_consultation_booking",
+      booking,
+    );
+
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+        headers: { "Content-Type": "application/json" },
+      });
     }
-    
-    return new Response(JSON.stringify({ 
-      success: true, 
-      booking_id: bookingId 
-    }), {
-      headers: { 'Content-Type': 'application/json' }
-    })
-    
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        booking_id: bookingId,
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+      headers: { "Content-Type": "application/json" },
+    });
   }
-})
+});

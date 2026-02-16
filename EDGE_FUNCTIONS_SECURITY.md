@@ -10,19 +10,19 @@ JWT verification is a critical security feature that ensures only authenticated 
 
 The project uses different security settings based on each function's purpose:
 
-| Function | JWT Verification | Reason |
-|----------|-----------------|--------|
-| auth-test | ✅ Enabled | Tests authentication flow |
-| admin-dashboard | ✅ Enabled | Contains sensitive admin operations |
-| foreclosure-submission | ❌ Disabled | Public webhook endpoint |
-| notification-dispatcher | ❌ Disabled | Internal service communication |
-| send-notification-email | ❌ Disabled | Webhook trigger endpoint |
-| schedule-property-followup | ✅ Enabled | Contains sensitive property data |
-| schedule-follow-ups | ✅ Enabled | Contains sensitive customer data |
-| external-api-integration | ✅ Enabled | Accesses external services with credentials |
-| ai-voice-handler | ❌ Disabled | Twilio webhook endpoint |
-| test-secrets | ✅ Enabled | Tests access to sensitive environment variables |
-| weather-api | ❌ Disabled | Public demo endpoint |
+| Function                   | JWT Verification | Reason                                          |
+| -------------------------- | ---------------- | ----------------------------------------------- |
+| auth-test                  | ✅ Enabled       | Tests authentication flow                       |
+| admin-dashboard            | ✅ Enabled       | Contains sensitive admin operations             |
+| foreclosure-submission     | ❌ Disabled      | Public webhook endpoint                         |
+| notification-dispatcher    | ❌ Disabled      | Internal service communication                  |
+| send-notification-email    | ❌ Disabled      | Webhook trigger endpoint                        |
+| schedule-property-followup | ✅ Enabled       | Contains sensitive property data                |
+| schedule-follow-ups        | ✅ Enabled       | Contains sensitive customer data                |
+| external-api-integration   | ✅ Enabled       | Accesses external services with credentials     |
+| ai-voice-handler           | ❌ Disabled      | Twilio webhook endpoint                         |
+| test-secrets               | ✅ Enabled       | Tests access to sensitive environment variables |
+| weather-api                | ❌ Disabled      | Public demo endpoint                            |
 
 ## Authentication Methods
 
@@ -78,19 +78,19 @@ Even with JWT verification enabled, the admin-dashboard function implements addi
 ```typescript
 // Check if user is an admin
 const { data: adminProfile, error: adminError } = await supabaseClient
-  .from('admin_profiles')
-  .select('*')
-  .eq('user_id', user.id)
-  .single()
+  .from("admin_profiles")
+  .select("*")
+  .eq("user_id", user.id)
+  .single();
 
-if (adminError || !adminProfile || adminProfile.role !== 'admin') {
+if (adminError || !adminProfile || adminProfile.role !== "admin") {
   return new Response(
-    JSON.stringify({ error: 'Forbidden: Admin access required' }),
+    JSON.stringify({ error: "Forbidden: Admin access required" }),
     {
       status: 403,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    }
-  )
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    },
+  );
 }
 ```
 
@@ -100,10 +100,11 @@ All functions implement proper CORS headers to control which domains can access 
 
 ```typescript
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+};
 ```
 
 For production, you should restrict 'Access-Control-Allow-Origin' to specific domains.
@@ -114,10 +115,10 @@ Sensitive information is stored in environment variables, not in the function co
 
 ```typescript
 const supabaseClient = createClient(
-  Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_ANON_KEY") ?? "",
   // ...
-)
+);
 ```
 
 ## Best Practices

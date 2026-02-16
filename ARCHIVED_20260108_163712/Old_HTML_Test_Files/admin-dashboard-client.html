@@ -174,7 +174,7 @@
   <!-- Dashboard Section -->
   <div id="dashboard-section" style="display: none;">
     <h1>Admin Dashboard</h1>
-    
+
     <div class="controls">
       <div>
         <select id="period-select" onchange="loadPerformanceMetrics()">
@@ -186,7 +186,7 @@
       </div>
       <button onclick="logout()">Logout</button>
     </div>
-    
+
     <!-- Summary Stats -->
     <div class="container">
       <div class="card stat-card">
@@ -206,7 +206,7 @@
         <div class="stat-value" id="conversion-rate">--</div>
       </div>
     </div>
-    
+
     <!-- Recent Submissions -->
     <div class="card">
       <h2>Recent Submissions</h2>
@@ -238,7 +238,7 @@
         <tbody id="submissions-body"></tbody>
       </table>
     </div>
-    
+
     <!-- Upcoming Follow-ups -->
     <div class="card" style="margin-top: 20px;">
       <h2>Upcoming Follow-ups</h2>
@@ -257,7 +257,7 @@
         <tbody id="followups-body"></tbody>
       </table>
     </div>
-    
+
     <!-- Performance Metrics -->
     <div class="card" style="margin-top: 20px;">
       <h2>Performance Metrics</h2>
@@ -279,25 +279,25 @@
     const SUPABASE_URL = 'https://ltxqodqlexvojqqxquew.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg';
     let authToken = localStorage.getItem('supabase_token');
-    
+
     // Check if user is logged in
     document.addEventListener('DOMContentLoaded', function() {
       checkAuth();
     });
-    
+
     async function checkAuth() {
       if (!authToken) {
         showLoginUI();
         return;
       }
-      
+
       try {
         const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
           headers: {
             'Authorization': `Bearer ${authToken}`
           }
         });
-        
+
         if (response.ok) {
           showDashboardUI();
           loadDashboardData();
@@ -309,27 +309,27 @@
         showLoginUI();
       }
     }
-    
+
     function showLoginUI() {
       document.getElementById('login-section').style.display = 'block';
       document.getElementById('dashboard-section').style.display = 'none';
     }
-    
+
     function showDashboardUI() {
       document.getElementById('login-section').style.display = 'none';
       document.getElementById('dashboard-section').style.display = 'block';
     }
-    
+
     async function login() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const errorElement = document.getElementById('login-error');
-      
+
       if (!email || !password) {
         errorElement.textContent = 'Please enter both email and password';
         return;
       }
-      
+
       try {
         const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
           method: 'POST',
@@ -339,41 +339,41 @@
           },
           body: JSON.stringify({ email, password })
         });
-        
+
         if (!response.ok) {
           throw new Error('Invalid credentials');
         }
-        
+
         const data = await response.json();
         authToken = data.access_token;
         localStorage.setItem('supabase_token', authToken);
-        
+
         showDashboardUI();
         loadDashboardData();
-        
+
       } catch (error) {
         console.error('Login error:', error);
         errorElement.textContent = 'Login failed: ' + error.message;
       }
     }
-    
+
     function logout() {
       localStorage.removeItem('supabase_token');
       authToken = null;
       showLoginUI();
     }
-    
+
     async function loadDashboardData() {
       loadSummaryData();
       loadRecentSubmissions();
       loadUpcomingFollowups();
       loadPerformanceMetrics();
     }
-    
+
     async function refreshDashboard() {
       loadDashboardData();
     }
-    
+
     async function loadSummaryData() {
       try {
         const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
@@ -384,63 +384,63 @@
           },
           body: JSON.stringify({ action: 'summary' })
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to load summary data');
         }
-        
+
         const data = await response.json();
-        
+
         document.getElementById('total-submissions').textContent = data.total_submissions || 0;
         document.getElementById('new-submissions').textContent = data.new_submissions || 0;
         document.getElementById('pending-followups').textContent = data.pending_followups || 0;
         document.getElementById('conversion-rate').textContent = `${data.conversion_rate || 0}%`;
-        
+
       } catch (error) {
         console.error('Error loading summary data:', error);
       }
     }
-    
+
     async function loadRecentSubmissions() {
       try {
         document.getElementById('submissions-loading').style.display = 'flex';
         document.getElementById('submissions-table').style.display = 'none';
-        
+
         const statusFilter = document.getElementById('status-filter').value;
         const searchQuery = document.getElementById('submission-search').value;
-        
+
         const filters = {};
         if (statusFilter) filters.status = statusFilter;
         if (searchQuery) filters.search = searchQuery;
-        
+
         const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${authToken}`
           },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             action: 'recent_submissions',
             filters
           })
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to load submissions');
         }
-        
+
         const data = await response.json();
         const submissions = data.submissions || [];
-        
+
         const tableBody = document.getElementById('submissions-body');
         tableBody.innerHTML = '';
-        
+
         if (submissions.length === 0) {
           tableBody.innerHTML = '<tr><td colspan="4">No submissions found</td></tr>';
         } else {
           submissions.forEach(submission => {
             const row = document.createElement('tr');
-            
+
             // Format the status badge
             let statusBadge = '';
             switch (submission.foreclosure_status) {
@@ -459,21 +459,21 @@
               default:
                 statusBadge = '<span class="badge">' + submission.foreclosure_status + '</span>';
             }
-            
+
             row.innerHTML = `
               <td>${submission.property_address}<br><small>${submission.city}, ${submission.state}</small></td>
               <td>${submission.contact_name}<br><small>${submission.contact_phone}</small></td>
               <td>${statusBadge}</td>
               <td>${new Date(submission.created_at).toLocaleDateString()}</td>
             `;
-            
+
             tableBody.appendChild(row);
           });
         }
-        
+
         document.getElementById('submissions-loading').style.display = 'none';
         document.getElementById('submissions-table').style.display = 'table';
-        
+
       } catch (error) {
         console.error('Error loading submissions:', error);
         document.getElementById('submissions-loading').style.display = 'none';
@@ -481,12 +481,12 @@
         document.getElementById('submissions-body').innerHTML = '<tr><td colspan="4">Error loading submissions</td></tr>';
       }
     }
-    
+
     async function loadUpcomingFollowups() {
       try {
         document.getElementById('followups-loading').style.display = 'flex';
         document.getElementById('followups-table').style.display = 'none';
-        
+
         const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
           method: 'POST',
           headers: {
@@ -495,38 +495,38 @@
           },
           body: JSON.stringify({ action: 'upcoming_followups' })
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to load followups');
         }
-        
+
         const data = await response.json();
         const followups = data.followups || [];
-        
+
         const tableBody = document.getElementById('followups-body');
         tableBody.innerHTML = '';
-        
+
         if (followups.length === 0) {
           tableBody.innerHTML = '<tr><td colspan="4">No upcoming follow-ups</td></tr>';
         } else {
           followups.forEach(followup => {
             const row = document.createElement('tr');
             const submission = followup.property_submissions;
-            
+
             row.innerHTML = `
               <td>${submission?.property_address || 'N/A'}</td>
               <td>${submission?.contact_name || 'N/A'}<br><small>${submission?.contact_phone || 'N/A'}</small></td>
               <td>${new Date(followup.scheduled_date).toLocaleString()}</td>
               <td>${followup.notes || 'No notes'}</td>
             `;
-            
+
             tableBody.appendChild(row);
           });
         }
-        
+
         document.getElementById('followups-loading').style.display = 'none';
         document.getElementById('followups-table').style.display = 'table';
-        
+
       } catch (error) {
         console.error('Error loading followups:', error);
         document.getElementById('followups-loading').style.display = 'none';
@@ -534,32 +534,32 @@
         document.getElementById('followups-body').innerHTML = '<tr><td colspan="4">Error loading follow-ups</td></tr>';
       }
     }
-    
+
     async function loadPerformanceMetrics() {
       try {
         document.getElementById('metrics-loading').style.display = 'flex';
         document.getElementById('metrics-container').style.display = 'none';
-        
+
         const period = document.getElementById('period-select').value;
-        
+
         const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-dashboard`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${authToken}`
           },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             action: 'performance_metrics',
             period
           })
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to load metrics');
         }
-        
+
         const data = await response.json();
-        
+
         // Update summary
         const metricsElement = document.getElementById('metrics-summary');
         metricsElement.innerHTML = `
@@ -567,13 +567,13 @@
           <p><strong>Total Submissions:</strong> ${data.submissions.total}</p>
           <p><strong>Total Completed Follow-ups:</strong> ${data.followups.total}</p>
         `;
-        
+
         // Create chart
         createPerformanceChart(data);
-        
+
         document.getElementById('metrics-loading').style.display = 'none';
         document.getElementById('metrics-container').style.display = 'block';
-        
+
       } catch (error) {
         console.error('Error loading metrics:', error);
         document.getElementById('metrics-loading').style.display = 'none';
@@ -581,7 +581,7 @@
         document.getElementById('metrics-summary').innerHTML = '<p>Error loading performance metrics</p>';
       }
     }
-    
+
     function getPeriodLabel(period) {
       switch (period) {
         case 'day': return 'Last 24 Hours';
@@ -591,39 +591,39 @@
         default: return 'Custom Period';
       }
     }
-    
+
     function createPerformanceChart(data) {
       const ctx = document.getElementById('metrics-chart').getContext('2d');
-      
+
       // Get all dates from both datasets
       const allDates = new Set([
         ...Object.keys(data.submissions.by_date || {}),
         ...Object.keys(data.followups.by_date || {})
       ]);
-      
+
       // Sort dates
       const sortedDates = Array.from(allDates).sort();
-      
+
       // Prepare datasets
-      const submissionsData = sortedDates.map(date => 
+      const submissionsData = sortedDates.map(date =>
         data.submissions.by_date?.[date] || 0
       );
-      
-      const followupsData = sortedDates.map(date => 
+
+      const followupsData = sortedDates.map(date =>
         data.followups.by_date?.[date] || 0
       );
-      
+
       // Format dates for display
       const formattedDates = sortedDates.map(date => {
         const d = new Date(date);
         return `${d.getMonth() + 1}/${d.getDate()}`;
       });
-      
+
       // Destroy existing chart if it exists
       if (window.performanceChart) {
         window.performanceChart.destroy();
       }
-      
+
       // Create new chart
       window.performanceChart = new Chart(ctx, {
         type: 'line',

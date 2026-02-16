@@ -1,4 +1,5 @@
 # RepMotivatedSeller Migration Guide
+
 ## Netlify to Supabase Project Integration
 
 This guide will help you integrate the RepMotivatedSeller Netlify application files into your Supabase project deployment.
@@ -22,6 +23,7 @@ This guide will help you integrate the RepMotivatedSeller Netlify application fi
 ### What This Migration Does
 
 This migration process will:
+
 - ✅ Convert 39 Netlify .txt files to proper TypeScript/React components
 - ✅ Create organized directory structure
 - ✅ Set up Supabase database schema
@@ -140,6 +142,7 @@ cd "c:\Users\monte\Documents\cert api token keys ids\GITHUB FOLDER\GitHub\mcp-ap
 ```
 
 **What this script does:**
+
 - Creates proper directory structure
 - Converts .txt files to .tsx/.ts files
 - Organizes components by type
@@ -206,6 +209,7 @@ supabase db push
 ```
 
 This will create:
+
 - `profiles` table
 - `foreclosure_responses` table
 - `contracts` table
@@ -287,6 +291,7 @@ Visit: http://localhost:5173
 ### Set Up Email Service
 
 Configure email notifications for:
+
 - New foreclosure submissions
 - Urgent cases (3+ missed payments or NOD)
 - User signups
@@ -500,6 +505,7 @@ rep-motivated-seller/
 ## ✅ Migration Checklist
 
 ### Pre-Migration
+
 - [x] Analyzed Netlify files
 - [x] Created migration documentation
 - [x] Created migration scripts
@@ -508,6 +514,7 @@ rep-motivated-seller/
 - [ ] Set up Stripe account
 
 ### Migration
+
 - [ ] Run migration script
 - [ ] Install dependencies
 - [ ] Configure environment variables
@@ -516,6 +523,7 @@ rep-motivated-seller/
 - [ ] Configure webhooks
 
 ### Testing
+
 - [ ] Test authentication
 - [ ] Test foreclosure form
 - [ ] Test contract generation
@@ -524,6 +532,7 @@ rep-motivated-seller/
 - [ ] Test all payment flows
 
 ### Deployment
+
 - [ ] Configure custom domain
 - [ ] Set up SSL certificate
 - [ ] Configure email service
@@ -532,6 +541,7 @@ rep-motivated-seller/
 - [ ] Update DNS records
 
 ### Post-Deployment
+
 - [ ] Monitor error logs
 - [ ] Test production deployment
 - [ ] Create user documentation
@@ -587,6 +597,7 @@ Your migration is successful when:
 ## 📞 Support
 
 For migration assistance:
+
 1. Check troubleshooting section above
 2. Review migration analysis document
 3. Check Supabase/Stripe logs
@@ -594,6 +605,6 @@ For migration assistance:
 
 ---
 
-**Last Updated**: November 11, 2025  
-**Version**: 1.0.0  
+**Last Updated**: November 11, 2025
+**Version**: 1.0.0
 **Author**: Migration Assistant

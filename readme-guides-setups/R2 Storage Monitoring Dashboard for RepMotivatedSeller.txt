@@ -17,17 +17,17 @@ const s3 = new AWS.S3({
  */
 async function getStorageAnalytics() {
   const bucketName = 'repmotivedseller-shoprealestatespace-org';
-  
+
   try {
     console.log('📊 RepMotivatedSeller Storage Analytics');
     console.log('=' .repeat(50));
-    
+
     // List all objects with details
     const objects = await s3.listObjectsV2({
       Bucket: bucketName,
       MaxKeys: 1000
     }).promise();
-    
+
     let analytics = {
       totalFiles: 0,
       totalSize: 0,
@@ -45,13 +45,13 @@ async function getStorageAnalytics() {
         GLACIER: { count: 0, size: 0 }
       }
     };
-    
+
     const now = new Date();
-    
+
     for (const object of objects.Contents) {
       analytics.totalFiles++;
       analytics.totalSize += object.Size;
-      
+
       // Analyze by path
       const pathPrefix = object.Key.split('/')[0];
       if (!analytics.byPath[pathPrefix]) {
@@ -59,10 +59,10 @@ async function getStorageAnalytics() {
       }
       analytics.byPath[pathPrefix].count++;
       analytics.byPath[pathPrefix].size += object.Size;
-      
+
       // Analyze by age
       const ageInDays = (now - new Date(object.LastModified)) / (1000 * 60 * 60 * 24);
-      
+
       if (ageInDays <= 7) {
         analytics.byAge.last7Days.count++;
         analytics.byAge.last7Days.size += object.Size;
@@ -79,7 +79,7 @@ async function getStorageAnalytics() {
         analytics.byAge.older.count++;
         analytics.byAge.older.size += object.Size;
       }
-      
+
       // Storage class (default to STANDARD if not specified)
       const storageClass = object.StorageClass || 'STANDARD';
       if (analytics.storageClasses[storageClass]) {
@@ -87,12 +87,12 @@ async function getStorageAnalytics() {
         analytics.storageClasses[storageClass].size += object.Size;
       }
     }
-    
+
     // Display results
     console.log(`📁 Total Files: ${analytics.totalFiles.toLocaleString()}`);
     console.log(`💾 Total Size: ${formatBytes(analytics.totalSize)}`);
     console.log();
-    
+
     console.log('📂 Files by Directory:');
     Object.entries(analytics.byPath)
       .sort((a, b) => b[1].size - a[1].size)
@@ -100,7 +100,7 @@ async function getStorageAnalytics() {
         console.log(`   ${path}: ${data.count} files, ${formatBytes(data.size)}`);
       });
     console.log();
-    
+
     console.log('📅 Files by Age:');
     console.log(`   Last 7 days: ${analytics.byAge.last7Days.count} files, ${formatBytes(analytics.byAge.last7Days.size)}`);
     console.log(`   Last 30 days: ${analytics.byAge.last30Days.count} files, ${formatBytes(analytics.byAge.last30Days.size)}`);
@@ -108,16 +108,16 @@ async function getStorageAnalytics() {
     console.log(`   Last 365 days: ${analytics.byAge.last365Days.count} files, ${formatBytes(analytics.byAge.last365Days.size)}`);
     console.log(`   Older than 1 year: ${analytics.byAge.older.count} files, ${formatBytes(analytics.byAge.older.size)}`);
     console.log();
-    
+
     console.log('🏪 Storage Classes:');
     Object.entries(analytics.storageClasses).forEach(([className, data]) => {
       if (data.count > 0) {
         console.log(`   ${className}: ${data.count} files, ${formatBytes(data.size)}`);
       }
     });
-    
+
     return analytics;
-    
+
   } catch (error) {
     console.error('❌ Error getting storage analytics:', error);
     throw error;
@@ -133,25 +133,25 @@ function calculateActualSavings(analytics) {
     STANDARD_IA: 0.0125, // $/GB/month
     GLACIER: 0.004      // $/GB/month
   };
-  
+
   let actualMonthlyCost = 0;
   let wouldBeCostWithoutLifecycle = 0;
-  
+
   Object.entries(analytics.storageClasses).forEach(([className, data]) => {
     const sizeGB = data.size / (1024 * 1024 * 1024);
     actualMonthlyCost += sizeGB * costs[className];
     wouldBeCostWithoutLifecycle += sizeGB * costs.STANDARD; // All in standard
   });
-  
+
   const monthlySavings = wouldBeCostWithoutLifecycle - actualMonthlyCost;
   const annualSavings = monthlySavings * 12;
-  
+
   console.log('💰 Cost Analysis:');
   console.log(`   Current monthly cost: $${actualMonthlyCost.toFixed(2)}`);
   console.log(`   Without lifecycle policies: $${wouldBeCostWithoutLifecycle.toFixed(2)}`);
   console.log(`   Monthly savings: $${monthlySavings.toFixed(2)}`);
   console.log(`   Annual savings: $${annualSavings.toFixed(2)}`);
-  
+
   return {
     actualMonthlyCost,
     wouldBeCostWithoutLifecycle,
@@ -165,19 +165,19 @@ function calculateActualSavings(analytics) {
  */
 async function checkLifecycleCompliance() {
   const bucketName = 'repmotivedseller-shoprealestatespace-org';
-  
+
   try {
     const lifecycle = await s3.getBucketLifecycleConfiguration({
       Bucket: bucketName
     }).promise();
-    
+
     console.log('✅ Lifecycle Policy Status:');
     lifecycle.LifecycleConfiguration.Rules.forEach(rule => {
       console.log(`   ${rule.ID}: ${rule.Status}`);
     });
-    
+
     return true;
-    
+
   } catch (error) {
     console.log('❌ No lifecycle policies found. Run setup script first.');
     return false;
@@ -189,20 +189,20 @@ async function checkLifecycleCompliance() {
  */
 function predictFutureCosts(analytics, monthlyGrowthGB = 50) {
   const currentSizeGB = analytics.totalSize / (1024 * 1024 * 1024);
-  
+
   console.log('🔮 Cost Projections (assuming', monthlyGrowthGB, 'GB growth/month):');
-  
+
   for (let months = 3; months <= 36; months += 3) {
     const futureSize = currentSizeGB + (monthlyGrowthGB * months);
-    
+
     // Simulate lifecycle transitions
     const recentData = futureSize * 0.3; // 30% recent (standard)
     const mediumData = futureSize * 0.4; // 40% medium age (IA)
     const oldData = futureSize * 0.3;    // 30% old (glacier)
-    
+
     const cost = (recentData * 0.015) + (mediumData * 0.0125) + (oldData * 0.004);
     const withoutLifecycle = futureSize * 0.015;
-    
+
     console.log(`   Month ${months}: ${futureSize.toFixed(0)}GB → $${cost.toFixed(2)}/month (saves $${(withoutLifecycle - cost).toFixed(2)})`);
   }
 }
@@ -212,13 +212,13 @@ function predictFutureCosts(analytics, monthlyGrowthGB = 50) {
  */
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  
+
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
@@ -231,55 +231,55 @@ async function generateStorageReport() {
     console.log('   Generated:', new Date().toISOString());
     console.log('=' .repeat(60));
     console.log();
-    
+
     // Check lifecycle policies
     const hasLifecycle = await checkLifecycleCompliance();
     console.log();
-    
+
     if (hasLifecycle) {
       // Get analytics
       const analytics = await getStorageAnalytics();
       console.log();
-      
+
       // Calculate savings
       const savings = calculateActualSavings(analytics);
       console.log();
-      
+
       // Predict future costs
       predictFutureCosts(analytics);
       console.log();
-      
+
       console.log('📋 Recommendations:');
-      
+
       if (analytics.byAge.older.size > analytics.totalSize * 0.2) {
         console.log('   ✅ Good: Significant old data being archived');
       }
-      
+
       if (analytics.storageClasses.STANDARD.size > analytics.totalSize * 0.6) {
         console.log('   ⚠️  Consider: Most data still in standard storage');
         console.log('      → Review lifecycle policies for faster transitions');
       }
-      
+
       if (savings.annualSavings > 100) {
         console.log('   💰 Excellent: Significant cost savings from lifecycle policies');
       }
-      
+
       return {
         analytics,
         savings,
         hasLifecycle
       };
     }
-    
+
   } catch (error) {
     console.error('❌ Error generating report:', error);
   }
 }
 
 // Export for use in other scripts
-export { 
-  getStorageAnalytics, 
-  calculateActualSavings, 
+export {
+  getStorageAnalytics,
+  calculateActualSavings,
   checkLifecycleCompliance,
   generateStorageReport
 };

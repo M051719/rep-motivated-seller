@@ -3,11 +3,11 @@ app:
   applicationId: ${STACKHAWK_APP_ID}
   env: ${STACKHAWK_ENVIRONMENT:development}
   host: ${STACKHAWK_HOST:http://localhost:5173}
-  
+
   # Application metadata
   name: "RepMotivatedSeller Platform"
   description: "Foreclosure prevention and real estate education platform"
-  
+
   # Define application type and technology stack
   context:
     technology:
@@ -16,7 +16,7 @@ app:
       - Vite
       - Supabase
       - Node.js
-    
+
     # Risk level assessment
     riskLevel: HIGH  # Due to financial data and PII handling
 
@@ -31,7 +31,7 @@ auth:
     username: ${STACKHAWK_TEST_EMAIL}
     password: ${STACKHAWK_TEST_PASSWORD}
     loginSuccessIndicator: "dashboard|profile|education"
-  
+
   # Additional auth configurations
   loggedInIndicator:
     - text: "Sign Out"
@@ -45,7 +45,7 @@ hawk:
     maxDuration: 10  # minutes
     maxDepth: 10
     maxChildren: 100
-    
+
     # Include/exclude paths
     includePaths:
       - /
@@ -58,14 +58,14 @@ hawk:
       - /book-consultation
       - /membership
       - /api.*
-    
+
     excludePaths:
       - /admin.*
       - /test.*
       - .*logout.*
       - .*signout.*
       - /unsubscribe
-  
+
   # Scan tuning
   scanner:
     # OWASP ZAP scanner rules
@@ -73,7 +73,7 @@ hawk:
       # Enable critical security checks
       - rule: "10010"  # Cookie No HttpOnly Flag
         enabled: true
-      - rule: "10011"  # Cookie Without Secure Flag  
+      - rule: "10011"  # Cookie Without Secure Flag
         enabled: true
       - rule: "10015"  # Incomplete or No Cache-control Header Set
         enabled: true
@@ -91,7 +91,7 @@ hawk:
         enabled: true
       - rule: "90020"  # Missing Anti-clickjacking Header
         enabled: true
-      
+
       # SQL Injection tests
       - rule: "40018"  # SQL Injection
         enabled: true
@@ -99,7 +99,7 @@ hawk:
         enabled: true
       - rule: "40020"  # SQL Injection - MySQL
         enabled: true
-      
+
       # XSS tests
       - rule: "40012"  # Cross Site Scripting (Reflected)
         enabled: true
@@ -109,14 +109,14 @@ hawk:
         enabled: true
       - rule: "40017"  # Cross Site Scripting (Persistent) - Spider
         enabled: true
-    
+
     # Custom payloads for financial application testing
     customPayloads:
       - name: "financial_data_test"
         payload: "ssn=123-45-6789&account=123456789&routing=987654321"
       - name: "pci_test"
         payload: "cc=4111111111111111&exp=12/25&cvv=123"
-    
+
     # Performance tuning
     maxDuration: 30  # minutes
     delayInMs: 1000  # delay between requests
@@ -129,13 +129,13 @@ apis:
     paths:
       - path: "/payment-webhook"
         method: POST
-      - path: "/paypal-webhook" 
+      - path: "/paypal-webhook"
         method: POST
       - path: "/email-sender"
         method: POST
       - path: "/direct-mail-sender"
         method: POST
-    
+
     # API security headers to check
     securityHeaders:
       - "Authorization"
@@ -149,13 +149,13 @@ reporting:
     - JSON
     - HTML
     - SARIF  # For GitHub integration
-  
+
   # Vulnerability thresholds
   thresholds:
     high: 0      # Fail build on any high severity issues
     medium: 5    # Allow up to 5 medium severity issues
     low: 10      # Allow up to 10 low severity issues
-  
+
   # Custom report settings
   custom:
     includeRequestResponse: true
@@ -168,7 +168,7 @@ integrations:
   github:
     enabled: true
     uploadSarif: true
-    
+
   # Slack notifications (optional)
   slack:
     enabled: false
@@ -183,14 +183,14 @@ environments:
       maxDuration: 5
     scanner:
       maxDuration: 15
-  
+
   staging:
     host: ${STAGING_URL}
     spider:
       maxDuration: 10
     scanner:
       maxDuration: 30
-  
+
   production:
     host: ${PRODUCTION_URL}
     spider:

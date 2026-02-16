@@ -19,6 +19,7 @@ This comprehensive guide provides step-by-step instructions for setting up, conf
 ## Project Overview
 
 RepMotivatedSeller is a foreclosure assistance platform built with:
+
 - **Frontend**: React + Vite (with static HTML fallback)
 - **Backend**: Supabase (Database, Authentication, Edge Functions)
 - **Integrations**: MailerLite, Twilio, CRM systems
@@ -94,6 +95,7 @@ scripts\build-and-deploy-local.bat
 ### 1. Project Setup
 
 Your Supabase project is already set up at:
+
 - **URL**: https://ltxqodqlexvojqqxquew.supabase.co
 - **Project Reference**: ltxqodqlexvojqqxquew
 - **Anon Key**: sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg
@@ -101,11 +103,13 @@ Your Supabase project is already set up at:
 ### 2. Database Schema
 
 The database schema is defined in:
+
 ```
 supabase/migrations/20230101000000_initial_schema.sql
 ```
 
 Key tables include:
+
 - `property_submissions`: Stores foreclosure questionnaire responses
 - `follow_ups`: Tracks follow-up activities for each submission
 - `admin_profiles`: Manages admin users and permissions
@@ -113,6 +117,7 @@ Key tables include:
 ### 3. Authentication Setup
 
 Ensure your Supabase project has:
+
 - Email authentication enabled
 - Admin users created
 - JWT configuration properly set
@@ -122,6 +127,7 @@ Ensure your Supabase project has:
 ### 1. Available Edge Functions
 
 The project includes several Edge Functions:
+
 - `admin-dashboard`: Admin dashboard API
 - `send-notification-email`: Email notification system
 - `schedule-follow-ups`: Automated follow-up scheduling
@@ -185,6 +191,7 @@ Ensure these variables are set in your Supabase project:
 - `SITE_URL`: Your production site URL
 
 For SMS notifications (if enabled):
+
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
 - `TWILIO_PHONE_NUMBER`
@@ -391,6 +398,7 @@ When updating the database schema:
 ### 4. Monitoring
 
 Regularly check:
+
 - Supabase logs for Edge Function errors
 - Nginx logs for web server issues
 - Database performance and storage usage

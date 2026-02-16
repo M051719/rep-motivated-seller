@@ -60,6 +60,7 @@
 ## 📋 WORKFLOW PATH (Choose One)
 
 ### ⭐ Path 1: Complete Guided Workflow (45 min)
+
 **Best for: First-time users**
 
 ```
@@ -81,25 +82,26 @@ Launch CapCut ──────→ Start creating! (30 min)
 ---
 
 ### 🎯 Path 2: Manual Sequential (30 min)
+
 **Best for: Quick learners**
 
 ```
 1. notepad canva-background-guide.md
    └─→ Read instructions
-   
+
 2. Open Canva Desktop
    └─→ Create 1920x1080 canvas
    └─→ Make 5 pages
    └─→ Apply colors/gradients
    └─→ Export all as PNG
-   
+
 3. .\organize-all-assets.ps1
    └─→ Select music files
    └─→ Auto-categorize
-   
+
 4. .\verify-assets.ps1
    └─→ Check status
-   
+
 5. Open CapCut
    └─→ Import assets
    └─→ Create video
@@ -108,21 +110,22 @@ Launch CapCut ──────→ Start creating! (30 min)
 ---
 
 ### 🎨 Path 3: Figma Export (20 min)
+
 **Best for: Figma users**
 
 ```
 1. Design in Figma
    └─→ Create 1920x1080 frames
    └─→ Name: "background-xxx"
-   
+
 2. .\figma-export.ps1 -ConfigureOnly
    └─→ Enter API token
    └─→ Enter file key
-   
+
 3. .\figma-export.ps1
    └─→ Select frames to export
    └─→ Auto-download & organize
-   
+
 4. .\verify-assets.ps1
    └─→ Confirm ready
 ```
@@ -387,7 +390,7 @@ The fastest path is:
     2. Press 6
     3. Follow every prompt
     4. Don't skip steps
-    
+
 This takes 45 minutes but ensures
 everything is set up correctly!
 ```

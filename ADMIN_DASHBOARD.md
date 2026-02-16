@@ -26,40 +26,42 @@ To access the admin dashboard, open `admin-dashboard.html` in your browser. You'
 This Edge Function enables sending SMS notifications to clients using the Twilio API.
 
 #### Features:
+
 - Send individual SMS messages to specific clients
 - Send bulk SMS messages to filtered groups of clients
 - Automatically log SMS communications in the follow-up logs
 - Template support with variable substitution (e.g., `{{name}}`)
 
 #### Usage:
+
 ```javascript
 // Send individual SMS
 fetch(`${SUPABASE_URL}/functions/v1/send-sms-notification`, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    to: '+15551234567',
-    name: 'John Doe',
-    submissionId: '123',
-    message: 'Hello {{name}}, this is a test message.'
-  })
+    to: "+15551234567",
+    name: "John Doe",
+    submissionId: "123",
+    message: "Hello {{name}}, this is a test message.",
+  }),
 });
 
 // Send bulk SMS
 fetch(`${SUPABASE_URL}/functions/v1/send-sms-notification`, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    recipients: 'new', // 'all', 'new', 'processing', or 'custom'
-    message: 'Hello {{name}}, this is a bulk message.',
-    bulkSend: true
-  })
+    recipients: "new", // 'all', 'new', 'processing', or 'custom'
+    message: "Hello {{name}}, this is a bulk message.",
+    bulkSend: true,
+  }),
 });
 ```
 
@@ -68,57 +70,59 @@ fetch(`${SUPABASE_URL}/functions/v1/send-sms-notification`, {
 This Edge Function provides administrative capabilities for user management, including creating, updating, and deleting users with specific roles.
 
 #### Features:
+
 - Create new admin users with specific roles (admin, agent, support)
 - Update existing user roles
 - Delete users from the system
 - Role-based access control
 
 #### Usage:
+
 ```javascript
 // Create a new user
 fetch(`${SUPABASE_URL}/functions/v1/auth-management`, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    action: 'create',
+    action: "create",
     user: {
-      email: 'newuser@example.com',
-      password: 'securepassword',
-      role: 'agent'
-    }
-  })
+      email: "newuser@example.com",
+      password: "securepassword",
+      role: "agent",
+    },
+  }),
 });
 
 // Update a user's role
 fetch(`${SUPABASE_URL}/functions/v1/auth-management`, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    action: 'update',
-    userId: 'user-uuid',
+    action: "update",
+    userId: "user-uuid",
     user: {
-      role: 'admin'
-    }
-  })
+      role: "admin",
+    },
+  }),
 });
 
 // Delete a user
 fetch(`${SUPABASE_URL}/functions/v1/auth-management`, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
   body: JSON.stringify({
-    action: 'delete',
-    userId: 'user-uuid'
-  })
+    action: "delete",
+    userId: "user-uuid",
+  }),
 });
 ```
 
@@ -164,7 +168,7 @@ A view that provides aggregated data for the admin dashboard.
 CREATE OR REPLACE VIEW public.admin_dashboard_view
 WITH (security_invoker=on)
 AS
-SELECT 
+SELECT
   fr.id,
   fr.property_address,
   fr.name AS contact_name,
@@ -184,20 +188,22 @@ SELECT
   fr.updated_at,
   (SELECT COUNT(*) FROM public.follow_up_logs ful WHERE ful.submission_id = fr.id) AS follow_up_count,
   (SELECT MAX(ful.contact_date) FROM public.follow_up_logs ful WHERE ful.submission_id = fr.id) AS last_follow_up_date,
-  (SELECT MIN(ful.contact_date) FROM public.follow_up_logs ful 
+  (SELECT MIN(ful.contact_date) FROM public.follow_up_logs ful
    WHERE ful.submission_id = fr.id AND ful.contact_date > NOW()) AS next_follow_up_date
-FROM 
+FROM
   public.foreclosure_responses fr;
 ```
 
 ## Deployment Instructions
 
 1. Deploy the Edge Functions using the provided script:
+
    ```
    scripts/deploy-new-functions.bat
    ```
 
 2. Set up the required Twilio credentials as Supabase secrets:
+
    ```
    supabase secrets set TWILIO_ACCOUNT_SID=your_account_sid TWILIO_AUTH_TOKEN=your_auth_token TWILIO_PHONE_NUMBER=your_phone_number --project-ref ltxqodqlexvojqqxquew
    ```

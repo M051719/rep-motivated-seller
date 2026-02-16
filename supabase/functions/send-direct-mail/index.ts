@@ -1,10 +1,11 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
 
 interface DirectMailRequest {
   to_address: {
@@ -15,7 +16,11 @@ interface DirectMailRequest {
     address_state: string;
     address_zip: string;
   };
-  template_type: 'foreclosure_prevention' | 'cash_offer' | 'land_acquisition' | 'loan_modification';
+  template_type:
+    | "foreclosure_prevention"
+    | "cash_offer"
+    | "land_acquisition"
+    | "loan_modification";
   property_data?: {
     address: string;
     estimated_value?: number;
@@ -27,33 +32,33 @@ interface DirectMailRequest {
 
 serve(async (req) => {
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
 
-    const mailData: DirectMailRequest = await req.json()
+    const mailData: DirectMailRequest = await req.json();
 
     // Validate required fields
     if (!mailData.to_address || !mailData.template_type) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields' }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400 
-        }
-      )
+        JSON.stringify({ error: "Missing required fields" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        },
+      );
     }
 
     // Use test secret key for development (change to LOB_LIVE_SECRET for production)
-    const lobApiKey = Deno.env.get('LOB_TEST_SECRET')
+    const lobApiKey = Deno.env.get("LOB_TEST_SECRET");
     if (!lobApiKey) {
-      throw new Error('Lob API key not configured')
+      throw new Error("Lob API key not configured");
     }
 
     // Template HTML based on type
@@ -251,7 +256,7 @@ serve(async (req) => {
             </div>
           </body>
         </html>
-      `
+      `,
     };
 
     // Get template HTML
@@ -261,36 +266,39 @@ serve(async (req) => {
     // Replace placeholders
     finalHtml = finalHtml.replace(/{{to_name}}/g, mailData.to_address.name);
     if (mailData.property_data?.address) {
-      finalHtml = finalHtml.replace(/{{property_address}}/g, mailData.property_data.address);
+      finalHtml = finalHtml.replace(
+        /{{property_address}}/g,
+        mailData.property_data.address,
+      );
     }
 
     // Send via Lob API
-    const lobResponse = await fetch('https://api.lob.com/v1/letters', {
-      method: 'POST',
+    const lobResponse = await fetch("https://api.lob.com/v1/letters", {
+      method: "POST",
       headers: {
-        'Authorization': `Basic ${btoa(lobApiKey + ':')}`,
-        'Content-Type': 'application/json',
+        Authorization: `Basic ${btoa(lobApiKey + ":")}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        description: `${mailData.template_type} - ${mailData.campaign_id || 'general'}`,
+        description: `${mailData.template_type} - ${mailData.campaign_id || "general"}`,
         to: mailData.to_address,
         from: {
-          name: 'RepMotivatedSeller',
-          address_line1: '14603 Gilmore St #7',
-          address_city: 'Van Nuys',
-          address_state: 'CA',
-          address_zip: '91411'
+          name: "RepMotivatedSeller",
+          address_line1: "14603 Gilmore St #7",
+          address_city: "Van Nuys",
+          address_state: "CA",
+          address_zip: "91411",
         },
         file: finalHtml,
         color: true,
         double_sided: false,
-        mail_type: 'usps_first_class',
+        mail_type: "usps_first_class",
         metadata: {
-          campaign_id: mailData.campaign_id || 'direct_mail',
+          campaign_id: mailData.campaign_id || "direct_mail",
           template_type: mailData.template_type,
-          processed_via: 'repmotivatedseller'
-        }
-      })
+          processed_via: "repmotivatedseller",
+        },
+      }),
     });
 
     if (!lobResponse.ok) {
@@ -302,7 +310,7 @@ serve(async (req) => {
 
     // Log to database
     const { error: dbError } = await supabase
-      .from('direct_mail_campaigns')
+      .from("direct_mail_campaigns")
       .insert({
         lob_letter_id: lobData.id,
         recipient_name: mailData.to_address.name,
@@ -310,41 +318,37 @@ serve(async (req) => {
         template_type: mailData.template_type,
         campaign_id: mailData.campaign_id,
         property_address: mailData.property_data?.address,
-        status: 'sent',
+        status: "sent",
         lob_tracking_url: lobData.url,
         expected_delivery: lobData.expected_delivery_date,
         metadata: {
           lob_response: lobData,
-          property_data: mailData.property_data
-        }
+          property_data: mailData.property_data,
+        },
       });
 
     if (dbError) {
-      console.error('Database logging error:', dbError);
+      console.error("Database logging error:", dbError);
       // Don't fail the request if logging fails
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         letter_id: lobData.id,
         tracking_url: lobData.url,
-        expected_delivery: lobData.expected_delivery_date
+        expected_delivery: lobData.expected_delivery_date,
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
     );
-
   } catch (error) {
-    console.error('Error:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
-    );
+    console.error("Error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
   }
 });

@@ -4,7 +4,7 @@
   "steps": [
     {
       "type": "docker",
-      "action": "compose_up", 
+      "action": "compose_up",
       "args": ["supabase/docker-compose.yml"]
     },
     {

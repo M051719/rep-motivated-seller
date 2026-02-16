@@ -1,4 +1,5 @@
 # Chapter 6: Working with Cash Buyers
+
 ## Video Script - "How Cash Buyers Help in Pre-Foreclosure" (50 seconds)
 
 **Series:** Real Solutions for Real Estate | Episode 6
@@ -9,11 +10,13 @@
 ---
 
 ## Hook (0-3 seconds)
+
 **Visual:** Hand giving house keys to grateful homeowner
 **Text Overlay:** "Cash Buyers: Your Foreclosure Exit"
 **Animation:** Keys glowing, smooth handoff
 
 **Voiceover/Caption:**
+
 > "Cash buyers can stop foreclosure in as little as 7 days. Here's how it actually works."
 
 ---
@@ -21,69 +24,84 @@
 ## The Cash Buyer Process (3-40 seconds)
 
 ### Step 1: Free Consultation (7 seconds)
+
 **Visual:** Friendly video call or in-person meeting
 **Text Overlay:** "Step 1: Free Consultation"
 **Animation:** Calendar booking, no dollar signs
 
-**Voiceover:** 
+**Voiceover:**
+
 > "First, we evaluate your situation completely free. No fees, no obligation. We look at what you owe, the home's condition, and your timeline."
 
 ---
 
 ### Step 2: Fair Cash Offer (7 seconds)
+
 **Visual:** Document with offer, calculator, transparent pricing breakdown
 **Text Overlay:** "Step 2: Fair Cash Offer (24-48 Hours)"
 **Animation:** Calculator, numbers appearing
 
 **Voiceover:**
+
 > "Within 48 hours, you get a fair cash offer. No lowballing - we show exactly how we calculated it."
 
 ---
 
 ### Step 3: We Handle Everything (10 seconds)
+
 **Visual:** Checklist being completed, documents being signed
-**Text Overlay:** 
+**Text Overlay:**
+
 - "We negotiate with your lender"
 - "We handle all paperwork"
 - "We cover closing costs"
 
 **Voiceover:**
+
 > "Here's what makes cash buyers different: We negotiate directly with your lender for a short sale if needed. We handle ALL the paperwork. And we cover closing costs - you pay nothing."
 
 ---
 
 ### Step 4: Close Fast (8 seconds)
+
 **Visual:** Calendar showing 7-21 days, house sold sign
 **Text Overlay:** "Step 4: Close in 7-21 Days"
 **Animation:** Fast-forward calendar effect
 
 **Voiceover:**
+
 > "Most important? We close fast. In as little as 7 days, you're out from under the mortgage, foreclosure is stopped, and you can move forward."
 
 ---
 
 ### What You Get (8 seconds)
+
 **Visual:** Benefits list appearing
 **Text Overlay:**
+
 - "✓ No Repairs Needed"
 - "✓ No Realtor Commissions"
 - "✓ No Closing Costs"
 - "✓ Foreclosure Stopped"
 
 **Voiceover:**
+
 > "No repairs. No realtor commissions. No closing costs. And foreclosure? Stopped."
 
 ---
 
 ## Call to Action (40-50 seconds)
+
 **Visual:** RepMotivatedSeller logo, phone ringing
 **Text Overlay:**
+
 - "Stop Foreclosure in 7 Days"
 - "Free Consultation - No Obligation"
 - "RepMotivatedSeller.com"
 - "We Buy As-Is for Cash"
 
 **Voiceover/Caption:**
+
 > "One call could change everything. Free consultation today."
 
 ---
@@ -91,6 +109,7 @@
 ## Production Assets
 
 ### Required Files:
+
 - [ ] keys-handoff-closeup.jpg
 - [ ] video-call-consultation.jpg
 - [ ] offer-document-calculator.jpg
@@ -101,17 +120,20 @@
 - [ ] repmotivatedseller-logo.png
 
 ### Music:
+
 - **Track:** Hopeful, uplifting, moving forward
 - **Mood:** Relief, solution-oriented, positive
 - **Volume:** 28%
 
 ### Color Scheme:
+
 - **Hook:** Warm gold (#f59e0b) - Opportunity
 - **Process Steps:** Progressive blue shades (light to dark)
 - **Benefits:** Green (#10b981) - Positive outcomes
 - **CTA:** Brand blue/purple gradient
 
 ### Text Style:
+
 - **Hook:** Poppins Bold, 70pt, White with glow
 - **Step Headers:** Poppins SemiBold, 52pt, White
 - **Step Details:** Inter Regular, 38pt, White
@@ -130,26 +152,26 @@
    - Text glows gently
 
 2. **Scene 2 (Process):** 0:03-0:40
-   
+
    **Step 1 (0:03-0:10):**
    - Professional but friendly
    - Video call interface or clean office
    - "NO FEES" badge pops in
    - Calculator shows $0 consultation fee
-   
+
    **Step 2 (0:10-0:17):**
    - Document zooms in
    - Calculator animation (transparent math)
    - "24-48 HOURS" clock animation
    - Emphasis on speed + fairness
-   
+
    **Step 3 (0:17-0:27):**
    - 3 checkmarks appear sequentially
    - Each point highlighted (0.8s each)
    - Lender negotiation graphic
    - Paperwork stack disappearing (we handle it)
    - Dollar sign with slash (no costs)
-   
+
    **Step 4 (0:27-0:35):**
    - Calendar pages flip fast
    - "7 DAYS" emphasized with pulse
@@ -253,6 +275,7 @@ Questions? Ask away ⬇️ I'm here all day.
 **Hashtags:** #CashBuyers #ForeclosureSolution #SellHouseFast #PreForeclosure #ShortSale #StopForeclosure
 
 **Best Posting Times:**
+
 - Tuesday-Thursday mornings (8-10 AM) for serious decision-makers
 - Lunch hours (12-1 PM) for research phase
 - Sunday evenings (people planning the week ahead)
@@ -295,11 +318,13 @@ But if you're facing foreclosure, need out fast, or have a house needing major r
 ## Follow-Up Content
 
 **Next in series:**
+
 - Chapter 7: Understanding Your Legal Rights
 - Chapter 8: Rebuilding Your Financial Future
 
 **Create detailed FAQ post:**
 "Everything You Need to Know About Cash Buyers"
+
 - How they make money
 - When it makes sense
 - When traditional sale is better

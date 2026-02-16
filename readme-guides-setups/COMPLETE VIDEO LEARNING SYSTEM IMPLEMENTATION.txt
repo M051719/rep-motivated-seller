@@ -177,18 +177,18 @@ CREATE INDEX IF NOT EXISTS idx_learning_events_course ON learning_events(course_
 -- STORAGE BUCKETS
 -- ====================================
 
-INSERT INTO storage.buckets (id, name, public) VALUES 
+INSERT INTO storage.buckets (id, name, public) VALUES
 ('certificates', 'certificates', true),
 ('course-thumbnails', 'course-thumbnails', true),
 ('video-thumbnails', 'video-thumbnails', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies
-CREATE POLICY "Certificates are publicly viewable" ON storage.objects 
+CREATE POLICY "Certificates are publicly viewable" ON storage.objects
   FOR SELECT USING (bucket_id = 'certificates');
-CREATE POLICY "Course thumbnails are publicly viewable" ON storage.objects 
+CREATE POLICY "Course thumbnails are publicly viewable" ON storage.objects
   FOR SELECT USING (bucket_id = 'course-thumbnails');
-CREATE POLICY "Video thumbnails are publicly viewable" ON storage.objects 
+CREATE POLICY "Video thumbnails are publicly viewable" ON storage.objects
   FOR SELECT USING (bucket_id = 'video-thumbnails');
 
 -- ====================================
@@ -196,7 +196,7 @@ CREATE POLICY "Video thumbnails are publicly viewable" ON storage.objects
 -- ====================================
 
 -- Insert sample courses
-INSERT INTO courses (title, description, category, difficulty_level, duration_minutes, is_published, featured, learning_objectives, prerequisites) VALUES 
+INSERT INTO courses (title, description, category, difficulty_level, duration_minutes, is_published, featured, learning_objectives, prerequisites) VALUES
 (
   'Foreclosure Prevention 101',
   'Learn the essential steps to prevent foreclosure and understand your options when facing mortgage difficulties.',
@@ -240,9 +240,9 @@ BEGIN
     -- Get course IDs
     SELECT id INTO foreclosure_course_id FROM courses WHERE title = 'Foreclosure Prevention 101';
     SELECT id INTO credit_course_id FROM courses WHERE title = 'Credit Repair Fundamentals';
-    
+
     -- Insert lessons for Foreclosure Prevention 101
-    INSERT INTO lessons (course_id, title, description, lesson_order, video_duration, video_provider, video_id, is_preview) VALUES 
+    INSERT INTO lessons (course_id, title, description, lesson_order, video_duration, video_provider, video_id, is_preview) VALUES
     (
       foreclosure_course_id,
       'Understanding the Foreclosure Process',
@@ -273,9 +273,9 @@ BEGIN
       'dQw4w9WgXcQ',
       false
     );
-    
+
     -- Insert lessons for Credit Repair
-    INSERT INTO lessons (course_id, title, description, lesson_order, video_duration, video_provider, video_id, is_preview) VALUES 
+    INSERT INTO lessons (course_id, title, description, lesson_order, video_duration, video_provider, video_id, is_preview) VALUES
     (
       credit_course_id,
       'Reading Your Credit Report',
@@ -306,7 +306,7 @@ END $$;
 CREATE OR REPLACE FUNCTION generate_certificate_number()
 RETURNS TEXT AS $$
 BEGIN
-  RETURN 'RMS-CERT-' || to_char(now(), 'YYYY') || '-' || 
+  RETURN 'RMS-CERT-' || to_char(now(), 'YYYY') || '-' ||
          LPAD(FLOOR(RANDOM() * 999999)::TEXT, 6, '0');
 END;
 $$ LANGUAGE plpgsql;
@@ -325,7 +325,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   -- Update enrollment progress when lesson is completed
   IF NEW.completed_at IS NOT NULL AND (OLD.completed_at IS NULL OR OLD.completed_at != NEW.completed_at) THEN
-    UPDATE course_enrollments 
+    UPDATE course_enrollments
     SET progress_percentage = (
       SELECT ROUND(
         (COUNT(CASE WHEN up.completed_at IS NOT NULL THEN 1 END)::DECIMAL / COUNT(*)::DECIMAL) * 100
@@ -337,7 +337,7 @@ BEGIN
     last_accessed_at = NEW.updated_at
     WHERE user_id = NEW.user_id AND course_id = NEW.course_id;
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -499,9 +499,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (controlsTimeoutRef.current) {
       clearTimeout(controlsTimeoutRef.current);
     }
-    
+
     setState(prev => ({ ...prev, showControls: true }));
-    
+
     if (state.playing) {
       controlsTimeoutRef.current = setTimeout(() => {
         setState(prev => ({ ...prev, showControls: false }));
@@ -534,18 +534,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     updateState({ showControls: true });
   };
 
-  const handleProgress = (progress: { 
-    played: number; 
-    playedSeconds: number; 
-    loaded: number; 
-    loadedSeconds: number; 
+  const handleProgress = (progress: {
+    played: number;
+    playedSeconds: number;
+    loaded: number;
+    loadedSeconds: number;
   }) => {
     if (!state.seeking) {
       updateState({ played: progress.played, loaded: progress.loaded });
-      
+
       const percentage = progress.played * 100;
       onProgress?.(progress.playedSeconds, percentage);
-      
+
       // Auto-complete at 95%
       if (percentage >= 95) {
         onComplete?.();
@@ -601,7 +601,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const hh = date.getUTCHours();
     const mm = date.getUTCMinutes();
     const ss = date.getUTCSeconds().toString().padStart(2, '0');
-    
+
     if (hh) {
       return `${hh}:${mm.toString().padStart(2, '0')}:${ss}`;
     }
@@ -636,7 +636,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={`relative bg-black rounded-lg overflow-hidden group ${
         state.fullscreen ? 'fixed inset-0 z-50' : 'aspect-video'
@@ -733,7 +733,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 }}
               />
               {/* Buffer Bar */}
-              <div 
+              <div
                 className="absolute top-0 h-2 bg-gray-400 rounded-lg pointer-events-none"
                 style={{ width: `${state.loaded * 100}%` }}
               />
@@ -840,9 +840,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
-import { 
-  AcademicCapIcon, 
-  ClockIcon, 
+import {
+  AcademicCapIcon,
+  ClockIcon,
   StarIcon,
   UserGroupIcon,
   PlayIcon
@@ -910,13 +910,13 @@ const CourseLibrary: React.FC = () => {
       }
 
       const { data, error } = await query;
-      
+
       if (error) throw error;
 
       // Process the data to add computed fields
       const processedCourses = data?.map(course => ({
         ...course,
-        rating: course.course_reviews?.length > 0 
+        rating: course.course_reviews?.length > 0
           ? course.course_reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / course.course_reviews.length
           : undefined,
         students: course.course_enrollments?.length || 0
@@ -965,20 +965,20 @@ const CourseLibrary: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-bold text-gray-900 mb-4"
         >
           🎓 Education Center
         </motion.h1>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="text-xl text-gray-600 max-w-3xl mx-auto"
         >
-          Master foreclosure prevention, credit repair, and financial recovery with our comprehensive video courses. 
+          Master foreclosure prevention, credit repair, and financial recovery with our comprehensive video courses.
           Learn from industry experts and take control of your financial future.
         </motion.p>
       </div>
@@ -1051,8 +1051,8 @@ const CourseLibrary: React.FC = () => {
             {/* Course Thumbnail */}
             <div className="relative aspect-video bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
               {course.thumbnail_url ? (
-                <img 
-                  src={course.thumbnail_url} 
+                <img
+                  src={course.thumbnail_url}
                   alt={course.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -1061,12 +1061,12 @@ const CourseLibrary: React.FC = () => {
                   <AcademicCapIcon className="w-16 h-16" />
                 </div>
               )}
-              
+
               {/* Play Overlay */}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all duration-300">
                 <PlayIcon className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              
+
               {/* Featured Badge */}
               {course.featured && (
                 <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
@@ -1074,7 +1074,7 @@ const CourseLibrary: React.FC = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Course Info */}
             <div className="p-6">
               <div className="flex items-center justify-between mb-2">
@@ -1094,15 +1094,15 @@ const CourseLibrary: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-2">
                 {course.title}
               </h3>
-              
+
               <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                 {course.description}
               </p>
-              
+
               {/* Learning Objectives Preview */}
               {course.learning_objectives && course.learning_objectives.length > 0 && (
                 <div className="mb-4">
@@ -1120,7 +1120,7 @@ const CourseLibrary: React.FC = () => {
                   </ul>
                 </div>
               )}
-              
+
               {/* Course Stats */}
               <div className="flex items-center justify-between mb-4 text-xs text-gray-500">
                 <div className="flex items-center space-x-1">
@@ -1129,7 +1129,7 @@ const CourseLibrary: React.FC = () => {
                 </div>
                 <span>By {course.instructor_name}</span>
               </div>
-              
+
               {/* Action Button */}
               <Link
                 to={`/education/course/${course.id}`}
@@ -1182,8 +1182,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import VideoPlayer from './video/VideoPlayer';
-import { 
-  CheckCircleIcon, 
+import {
+  CheckCircleIcon,
   PlayIcon,
   DocumentTextIcon,
   PencilSquareIcon,
@@ -1226,7 +1226,7 @@ interface UserProgress {
 const EnhancedCoursePlayer: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  
+
   const [course, setCourse] = useState<Course | null>(null);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [userProgress, setUserProgress] = useState<UserProgress>({});
@@ -1312,7 +1312,7 @@ const EnhancedCoursePlayer: React.FC = () => {
           notes: progress.notes
         };
       });
-      
+
       setUserProgress(progressMap);
     } catch (error) {
       console.error('Error fetching progress:', error);
@@ -1338,7 +1338,7 @@ const EnhancedCoursePlayer: React.FC = () => {
       if (error) throw error;
 
       setEnrollment({ enrolled_at: new Date().toISOString() });
-      
+
       // Show success message
       const successDiv = document.createElement('div');
       successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg z-50';
@@ -1526,7 +1526,7 @@ const EnhancedCoursePlayer: React.FC = () => {
             <span className="text-gray-900">{course.title}</span>
           </span>
         </nav>
-        
+
         <div className="flex flex-col lg:flex-row lg:items-center justify-between">
           <div className="mb-4 lg:mb-0">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.title}</h1>
@@ -1537,7 +1537,7 @@ const EnhancedCoursePlayer: React.FC = () => {
               <span>⏱️ {Math.ceil(course.lessons.reduce((sum, lesson) => sum + lesson.video_duration, 0) / 60)} min total</span>
             </div>
           </div>
-          
+
           {enrollment && (
             <div className="bg-white rounded-lg shadow-md p-4 min-w-[200px]">
               <div className="text-center">
@@ -1569,13 +1569,13 @@ const EnhancedCoursePlayer: React.FC = () => {
             <>
               <VideoPlayer
                 lesson={currentLesson}
-                onProgress={(watchTime, percentage) => 
+                onProgress={(watchTime, percentage) =>
                   updateProgress(currentLesson.id, watchTime, percentage)
                 }
                 onComplete={() => markLessonComplete(currentLesson.id)}
                 className="mb-6"
               />
-              
+
               {/* Lesson Info Card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -1601,7 +1601,7 @@ const EnhancedCoursePlayer: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className="flex space-x-2 ml-4">
                     <button
@@ -1611,7 +1611,7 @@ const EnhancedCoursePlayer: React.FC = () => {
                       <PencilSquareIcon className="w-4 h-4" />
                       <span>Notes</span>
                     </button>
-                    
+
                     {currentLesson.transcript && (
                       <button
                         onClick={() => setShowTranscript(!showTranscript)}
@@ -1621,7 +1621,7 @@ const EnhancedCoursePlayer: React.FC = () => {
                         <span>Transcript</span>
                       </button>
                     )}
-                    
+
                     <button
                       onClick={() => {
                         navigator.share?.({
@@ -1697,7 +1697,7 @@ const EnhancedCoursePlayer: React.FC = () => {
                     <span>←</span>
                     <span>Previous</span>
                   </button>
-                  
+
                   <div className="flex space-x-2">
                     <button
                       onClick={() => markLessonComplete(currentLesson.id)}
@@ -1709,7 +1709,7 @@ const EnhancedCoursePlayer: React.FC = () => {
                         {userProgress[currentLesson.id]?.completed ? 'Completed' : 'Mark Complete'}
                       </span>
                     </button>
-                    
+
                     <button
                       onClick={() => setCurrentLessonIndex(Math.min(course.lessons.length - 1, currentLessonIndex + 1))}
                       disabled={currentLessonIndex === course.lessons.length - 1}
@@ -1733,10 +1733,10 @@ const EnhancedCoursePlayer: React.FC = () => {
                 <div className="text-6xl mb-6">🔒</div>
                 <h3 className="text-2xl font-bold mb-4">Enroll to Access This Course</h3>
                 <p className="text-gray-300 mb-8">
-                  Get full access to all {course.lessons.length} lessons, downloadable resources, 
+                  Get full access to all {course.lessons.length} lessons, downloadable resources,
                   and earn a certificate upon completion.
                 </p>
-                
+
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center justify-center space-x-2 text-green-400">
                     <CheckCircleIcon className="w-5 h-5" />
@@ -1751,14 +1751,14 @@ const EnhancedCoursePlayer: React.FC = () => {
                     <span>Progress tracking and notes</span>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={handleEnroll}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg transition-colors text-lg"
                 >
                   🎓 Enroll Now - Free
                 </button>
-                
+
                 <p className="text-xs text-gray-400 mt-4">
                   No credit card required. Start learning immediately.
                 </p>
@@ -1766,19 +1766,19 @@ const EnhancedCoursePlayer: React.FC = () => {
             </motion.div>
           )}
         </div>
-        
+
         {/* Course Sidebar */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
             <h3 className="font-semibold text-lg mb-4">📚 Course Content</h3>
-            
+
             {/* Lessons List */}
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {course.lessons.map((lesson, index) => {
                 const progress = userProgress[lesson.id];
                 const isAccessible = lesson.is_preview || enrollment;
                 const isActive = index === currentLessonIndex;
-                
+
                 return (
                   <button
                     key={lesson.id}
@@ -1787,8 +1787,8 @@ const EnhancedCoursePlayer: React.FC = () => {
                     className={`w-full text-left p-3 rounded-lg transition-all ${
                       isActive
                         ? 'bg-blue-50 border-l-4 border-blue-600 shadow-sm'
-                        : isAccessible 
-                          ? 'hover:bg-gray-50 border border-transparent hover:border-gray-200' 
+                        : isAccessible
+                          ? 'hover:bg-gray-50 border border-transparent hover:border-gray-200'
                           : 'bg-gray-100 cursor-not-allowed opacity-60'
                     }`}
                   >
@@ -1798,26 +1798,26 @@ const EnhancedCoursePlayer: React.FC = () => {
                           <span className="text-xs text-gray-500 mr-2 font-mono">
                             {(index + 1).toString().padStart(2, '0')}.
                           </span>
-                          
+
                           {lesson.is_preview && (
                             <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded mr-2 font-medium">
                               FREE
                             </span>
                           )}
-                          
+
                           {!isAccessible && (
                             <span className="text-gray-400 mr-2">🔒</span>
                           )}
-                          
+
                           {progress?.completed && (
                             <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2" />
                           )}
                         </div>
-                        
+
                         <h4 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">
                           {lesson.title}
                         </h4>
-                        
+
                         <div className="flex items-center justify-between text-xs text-gray-500">
                           <span>{Math.ceil(lesson.video_duration / 60)} min</span>
                           {isAccessible && (
@@ -1826,11 +1826,11 @@ const EnhancedCoursePlayer: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Progress Bar */}
                     {progress?.completionPercentage > 0 && progress?.completionPercentage < 100 && (
                       <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
-                        <div 
+                        <div
                           className="bg-blue-600 h-1 rounded-full transition-all"
                           style={{ width: `${progress.completionPercentage}%` }}
                         />
@@ -1855,8 +1855,8 @@ const EnhancedCoursePlayer: React.FC = () => {
                       className="flex items-center p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
                     >
                       <span className="text-gray-500 mr-2">
-                        {resource.type === 'pdf' ? '📄' : 
-                         resource.type === 'link' ? '🔗' : 
+                        {resource.type === 'pdf' ? '📄' :
+                         resource.type === 'link' ? '🔗' :
                          resource.type === 'download' ? '📥' : '📄'}
                       </span>
                       <span className="text-sm text-gray-700 flex-1">{resource.title}</span>
@@ -1917,11 +1917,11 @@ function App() {
     <Router>
       <div className="App">
         {/* Your existing header/nav component */}
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             {/* Your existing routes */}
-            
+
             {/* Education Platform Routes */}
             <Route path="/education" element={<CourseLibrary />} />
             <Route path="/education/course/:courseId" element={<EnhancedCoursePlayer />} />
@@ -2000,9 +2000,9 @@ import {
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { supabase } from '../../../lib/supabase';
-import { 
-  ClockIcon, 
-  AcademicCapIcon, 
+import {
+  ClockIcon,
+  AcademicCapIcon,
   TrophyIcon,
   ChartBarIcon,
   CalendarIcon,
@@ -2061,7 +2061,7 @@ const LearningAnalytics: React.FC = () => {
 
   const fetchAnalytics = async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       const [
@@ -2100,7 +2100,7 @@ const LearningAnalytics: React.FC = () => {
 
   const fetchWatchTimeData = async () => {
     const dateFilter = getDateFilter();
-    
+
     const { data: progressData } = await supabase
       .from('user_progress')
       .select('watch_time, updated_at')
@@ -2220,12 +2220,12 @@ const LearningAnalytics: React.FC = () => {
   const generateWeeklyData = (progressData: any[]) => {
     const weeks = [];
     const now = new Date();
-    
+
     for (let i = 6; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
       const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
       const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
-      
+
       const weekData = progressData.filter(p => {
         const updateDate = new Date(p.updated_at);
         return updateDate >= weekStart && updateDate <= weekEnd;
@@ -2237,7 +2237,7 @@ const LearningAnalytics: React.FC = () => {
         lessons: weekData.length
       });
     }
-    
+
     return weeks;
   };
 
@@ -2276,7 +2276,7 @@ const LearningAnalytics: React.FC = () => {
   };
 
   const formatCategoryName = (category: string) => {
-    return category.split('-').map(word => 
+    return category.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };
@@ -2349,7 +2349,7 @@ const LearningAnalytics: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="text-3xl font-bold text-gray-900"
@@ -2358,7 +2358,7 @@ const LearningAnalytics: React.FC = () => {
           </motion.h1>
           <p className="text-gray-600 mt-2">Track your learning progress and achievements</p>
         </div>
-        
+
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
@@ -2444,7 +2444,7 @@ const LearningAnalytics: React.FC = () => {
             📈 Weekly Learning Progress
           </h3>
           <div className="h-64">
-            <Line 
+            <Line
               data={weeklyProgressData}
               options={{
                 responsive: true,
@@ -2474,7 +2474,7 @@ const LearningAnalytics: React.FC = () => {
             🎯 Course Completion Status
           </h3>
           <div className="h-64">
-            <Doughnut 
+            <Doughnut
               data={completionData}
               options={{
                 responsive: true,
@@ -2501,7 +2501,7 @@ const LearningAnalytics: React.FC = () => {
             📚 Progress by Category
           </h3>
           <div className="h-64">
-            <Bar 
+            <Bar
               data={categoryProgressData}
               options={{
                 responsive: true,
@@ -2535,16 +2535,16 @@ const LearningAnalytics: React.FC = () => {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           🕒 Recent Learning Activity
         </h3>
-        
+
         {analytics.recentActivity.length > 0 ? (
           <div className="space-y-4">
             {analytics.recentActivity.map((activity, index) => (
               <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    {activity.type === 'lesson_completed' ? '✅' : 
-                     activity.type === 'course_enrolled' ? '📚' : 
-                     activity.type === 'quiz_completed' ? '📝' : 
+                    {activity.type === 'lesson_completed' ? '✅' :
+                     activity.type === 'course_enrolled' ? '📚' :
+                     activity.type === 'quiz_completed' ? '📝' :
                      activity.type === 'certificate_earned' ? '🏆' : '📖'}
                   </div>
                 </div>
@@ -2611,9 +2611,9 @@ interface CertificateProps {
   onDownload?: () => void;
 }
 
-const CertificateGenerator: React.FC<CertificateProps> = ({ 
-  certificate, 
-  onDownload 
+const CertificateGenerator: React.FC<CertificateProps> = ({
+  certificate,
+  onDownload
 }) => {
   const certificateRef = useRef<HTMLDivElement>(null);
 
@@ -2651,7 +2651,7 @@ const CertificateGenerator: React.FC<CertificateProps> = ({
       );
 
       pdf.save(`RepMotivatedSeller-Certificate-${certificate.certificate_number}.pdf`);
-      
+
       onDownload?.();
     } catch (error) {
       console.error('Error generating certificate:', error);
@@ -2669,14 +2669,14 @@ const CertificateGenerator: React.FC<CertificateProps> = ({
   return (
     <div className="bg-white p-8">
       {/* Certificate Preview */}
-      <div 
+      <div
         ref={certificateRef}
         className="relative bg-gradient-to-br from-blue-50 to-indigo-100 p-12 rounded-lg shadow-lg border-8 border-blue-600"
         style={{ width: '800px', height: '600px', margin: '0 auto' }}
       >
         {/* Decorative Border */}
         <div className="absolute inset-4 border-4 border-gold-400 rounded-lg opacity-50"></div>
-        
+
         {/* Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🏆</div>
@@ -2696,7 +2696,7 @@ const CertificateGenerator: React.FC<CertificateProps> = ({
           <h3 className="text-2xl font-semibold text-blue-800 mb-6">
             "{certificate.course_title}"
           </h3>
-          
+
           <div className="flex justify-center space-x-8 mb-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
@@ -2724,13 +2724,13 @@ const CertificateGenerator: React.FC<CertificateProps> = ({
               {formatDate(certificate.issued_at)}
             </p>
           </div>
-          
+
           <div className="text-center">
             <div className="text-2xl mb-2">📜</div>
             <p className="text-xs text-gray-500">RepMotivatedSeller</p>
             <p className="text-xs text-gray-500">Education Platform</p>
           </div>
-          
+
           <div className="text-center">
             <div className="w-32 border-b-2 border-gray-400 mb-2"></div>
             <p className="text-sm text-gray-600">Verification Code</p>
@@ -2772,8 +2772,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../../lib/supabase';
 import CertificateGenerator from './CertificateGenerator';
-import { 
-  TrophyIcon, 
+import {
+  TrophyIcon,
   EyeIcon,
   ArrowDownTrayIcon,
   ShareIcon
@@ -2811,7 +2811,7 @@ const CertificateList: React.FC = () => {
         .select('*')
         .eq('id', user.id)
         .single();
-      
+
       setUserProfile(data || { full_name: user.email });
     }
   };
@@ -2841,7 +2841,7 @@ const CertificateList: React.FC = () => {
 
   const shareCertificate = async (certificate: Certificate) => {
     const shareUrl = `${window.location.origin}/certificate/verify/${certificate.verification_code}`;
-    
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -2878,7 +2878,7 @@ const CertificateList: React.FC = () => {
             ← Back to Certificates
           </button>
         </div>
-        
+
         <CertificateGenerator
           certificate={{
             ...selectedCertificate,
@@ -2901,7 +2901,7 @@ const CertificateList: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-12"
@@ -2925,7 +2925,7 @@ const CertificateList: React.FC = () => {
             No Certificates Yet
           </h3>
           <p className="text-gray-600 mb-8 max-w-md mx-auto">
-            Complete courses to earn certificates and showcase your learning achievements. 
+            Complete courses to earn certificates and showcase your learning achievements.
             Start your educational journey today!
           </p>
           <a
@@ -2953,7 +2953,7 @@ const CertificateList: React.FC = () => {
                 <TrophyIcon className="h-10 w-10 text-blue-200" />
               </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -2977,7 +2977,7 @@ const CertificateList: React.FC = () => {
                 <div className="text-4xl">📊</div>
               </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -3014,13 +3014,13 @@ const CertificateList: React.FC = () => {
                   </h3>
                   <p className="text-sm text-blue-600">OF COMPLETION</p>
                 </div>
-                
+
                 {/* Certificate Info */}
                 <div className="p-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                     {certificate.course.title}
                   </h4>
-                  
+
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Category:</span>
@@ -3028,21 +3028,21 @@ const CertificateList: React.FC = () => {
                         {certificate.course.category.replace('-', ' ')}
                       </span>
                     </div>
-                    
+
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Completed:</span>
                       <span className="font-medium">
                         {new Date(certificate.issued_at).toLocaleDateString()}
                       </span>
                     </div>
-                    
+
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Score:</span>
                       <span className="font-medium text-green-600">
                         {certificate.final_score ? `${certificate.final_score}/100` : 'Passed'}
                       </span>
                     </div>
-                    
+
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Verification:</span>
                       <span className="font-mono text-xs">
@@ -3050,7 +3050,7 @@ const CertificateList: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
                     <button
@@ -3060,7 +3060,7 @@ const CertificateList: React.FC = () => {
                       <EyeIcon className="h-4 w-4" />
                       <span>View</span>
                     </button>
-                    
+
                     <button
                       onClick={() => shareCertificate(certificate)}
                       className="flex items-center justify-center bg-gray-100 text-gray-700 py-2 px-3 rounded hover:bg-gray-200 transition-colors"
@@ -3160,21 +3160,21 @@ class EducationService {
     if (filters?.category) {
       query = query.eq('category', filters.category);
     }
-    
+
     if (filters?.difficulty) {
       query = query.eq('difficulty_level', filters.difficulty);
     }
-    
+
     if (filters?.featured) {
       query = query.eq('featured', true);
     }
-    
+
     if (filters?.search) {
       query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
     }
 
     const { data, error } = await query.order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data;
   }
@@ -3267,20 +3267,20 @@ class EducationService {
     if (progressData.watchTime !== undefined) {
       updateData.watch_time = progressData.watchTime;
     }
-    
+
     if (progressData.completionPercentage !== undefined) {
       updateData.completion_percentage = progressData.completionPercentage;
     }
-    
+
     if (progressData.completed) {
       updateData.completed_at = new Date().toISOString();
       updateData.completion_percentage = 100;
     }
-    
+
     if (progressData.quizScore !== undefined) {
       updateData.quiz_score = progressData.quizScore;
     }
-    
+
     if (progressData.notes !== undefined) {
       updateData.notes = progressData.notes;
     }
@@ -3506,7 +3506,7 @@ class EducationService {
 
     const totalWatchTime = data?.reduce((sum, p) => sum + (p.watch_time || 0), 0) || 0;
     const scores = data?.filter(p => p.quiz_score !== null);
-    const averageScore = scores && scores.length > 0 
+    const averageScore = scores && scores.length > 0
       ? Math.round(scores.reduce((sum, p) => sum + (p.quiz_score || 0), 0) / scores.length)
       : 0;
 
@@ -3607,12 +3607,12 @@ class EducationService {
   private generateWeeklyData(progressData: any[]) {
     const weeks = [];
     const now = new Date();
-    
+
     for (let i = 6; i >= 0; i--) {
       const date = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
       const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
       const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
-      
+
       const weekData = progressData.filter(p => {
         const updateDate = new Date(p.updated_at);
         return updateDate >= weekStart && updateDate <= weekEnd;
@@ -3624,13 +3624,13 @@ class EducationService {
         lessons: weekData.length
       });
     }
-    
+
     return weeks;
   }
 
   private generateCategoryProgress(progressData: any[]) {
     const categoryMap = new Map();
-    
+
     progressData.forEach(p => {
       if (p.course?.category) {
         const category = p.course.category;
@@ -3650,7 +3650,7 @@ class EducationService {
   }
 
   private formatCategoryName(category: string): string {
-    return category.split('-').map(word => 
+    return category.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   }
@@ -3666,7 +3666,7 @@ export const educationService = new EducationService();
 Now you have a **COMPLETE VIDEO LEARNING PLATFORM** with:
 
 1. ✅ **Advanced Video Player** with custom controls
-2. ✅ **Course Library** with search/filters  
+2. ✅ **Course Library** with search/filters
 3. ✅ **Learning Analytics** with charts
 4. ✅ **Certificate System** with PDF generation
 5. ✅ **Progress Tracking** and notes

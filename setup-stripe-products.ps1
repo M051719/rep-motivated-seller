@@ -151,7 +151,7 @@ STRIPE_BASIC_PRICE_ID=$basicPriceId
 STRIPE_PREMIUM_PRICE_ID=$premiumPriceId
 STRIPE_VIP_PRICE_ID=$vipPriceId
 "@
-    
+
     $output | Out-File -FilePath "stripe-ids.txt" -Encoding UTF8
     Write-Host "✓ Saved to stripe-ids.txt" -ForegroundColor Green
 }

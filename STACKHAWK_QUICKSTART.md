@@ -1,6 +1,6 @@
 # 🚀 STACKHAWK SECURITY - QUICK START (2 MINUTES)
 
-**Date:** January 8, 2026  
+**Date:** January 8, 2026
 **For:** RepMotivatedSeller Platform
 
 ---
@@ -21,6 +21,7 @@ Open browser: **http://localhost:5173/security**
 ### Step 3: Review Your Security Score ✅
 
 You'll see:
+
 - **Security Score:** 60-100%
 - **8 Security Checks:** Pass/Fail/Warning
 - **Recommendations:** How to fix issues
@@ -42,7 +43,7 @@ The Security Dashboard shows your current security status immediately.
 
 Security Score: 75%
 ✅ 5 passed
-⚠️ 2 warnings  
+⚠️ 2 warnings
 ❌ 1 failed
 
 Checks:

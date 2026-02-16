@@ -9,9 +9,9 @@ interface NavigationEnhancementProps {
   existingNavigation?: React.ComponentType<any>; // Your existing Navigation component
 }
 
-const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({ 
-  user, 
-  existingNavigation: ExistingNav 
+const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
+  user,
+  existingNavigation: ExistingNav
 }) => {
   const location = useLocation();
   const [notifications, setNotifications] = useState([]);
@@ -122,7 +122,7 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          🚨 URGENT: You have critical foreclosure deadlines approaching. 
+          🚨 URGENT: You have critical foreclosure deadlines approaching.
           <Link to="/foreclosure-help" className="underline ml-2 hover:text-red-200">
             Get Help Now →
           </Link>
@@ -162,18 +162,18 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
                     }`}
                   >
                     {item.label}
-                    
+
                     {/* Smart Badges */}
                     {item.badge && (
                       <span className={`ml-2 px-2 py-1 text-xs rounded-full font-medium ${
-                        item.badge === 'urgent' 
+                        item.badge === 'urgent'
                           ? 'bg-red-500 text-white animate-pulse'
                           : item.badge === 'new'
                             ? 'bg-green-500 text-white'
                             : 'bg-yellow-500 text-white'
                       }`}>
-                        {item.badge === 'urgent' ? '!' : 
-                         item.badge === 'new' ? 'NEW' : 
+                        {item.badge === 'urgent' ? '!' :
+                         item.badge === 'new' ? 'NEW' :
                          item.badge}
                       </span>
                     )}
@@ -192,7 +192,7 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
                             {subItem.label}
                           </Link>
                         ))}
-                        
+
                         {/* Progress Summary in Education Submenu */}
                         {item.path === '/education' && user && (
                           <div className="border-t border-gray-100 mt-2 pt-2 px-4">
@@ -241,7 +241,7 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
                         <div className="p-4 border-b border-gray-200">
                           <h3 className="font-semibold text-gray-900">Notifications</h3>
                         </div>
-                        
+
                         <div className="max-h-64 overflow-y-auto">
                           {notifications.map((notification) => (
                             <Link
@@ -297,7 +297,7 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
                           Progress: {userProgress.completedCourses} courses, {userProgress.certificates} certificates
                         </div>
                       </div>
-                      
+
                       <Link to="/education/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         📊 My Dashboard
                       </Link>
@@ -307,9 +307,9 @@ const NavigationEnhancement: React.FC<NavigationEnhancementProps> = ({
                       <Link to="/subscription" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         💳 Subscription
                       </Link>
-                      
+
                       <div className="border-t border-gray-100 mt-2 pt-2">
-                        <button 
+                        <button
                           onClick={() => supabase.auth.signOut()}
                           className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
@@ -361,7 +361,7 @@ const Navigation: React.FC = () => {
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setUser(user);
-    
+
     if (user) {
       // Check if user has professional access
       const { data } = await supabase
@@ -369,7 +369,7 @@ const Navigation: React.FC = () => {
         .select('subscription_tier')
         .eq('user_id', user.id)
         .single();
-      
+
       setIsProfessional(data?.subscription_tier === 'professional' || data?.subscription_tier === 'enterprise');
     }
   };
@@ -389,11 +389,11 @@ const Navigation: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/' 
-                  ? 'bg-blue-100 text-blue-700' 
+                location.pathname === '/'
+                  ? 'bg-blue-100 text-blue-700'
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
@@ -402,17 +402,17 @@ const Navigation: React.FC = () => {
 
             {/* Education Dropdown */}
             <div className="relative group">
-              <Link 
-                to="/education" 
+              <Link
+                to="/education"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/education') 
-                    ? 'bg-blue-100 text-blue-700' 
+                  isActive('/education')
+                    ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-700 hover:text-blue-600'
                 }`}
               >
                 🎓 Education
               </Link>
-              
+
               <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-1">
                   <Link to="/education" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -431,17 +431,17 @@ const Navigation: React.FC = () => {
             {/* Professional Tools - Only show if user has access */}
             {isProfessional && (
               <div className="relative group">
-                <Link 
-                  to="/pro" 
+                <Link
+                  to="/pro"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive('/pro') 
-                      ? 'bg-purple-100 text-purple-700' 
+                    isActive('/pro')
+                      ? 'bg-purple-100 text-purple-700'
                       : 'text-gray-700 hover:text-purple-600'
                   }`}
                 >
                   🏆 Pro Tools
                 </Link>
-                
+
                 <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-1">
                     <Link to="/pro/call-center" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -464,11 +464,11 @@ const Navigation: React.FC = () => {
               </div>
             )}
 
-            <Link 
-              to="/foreclosure-help" 
+            <Link
+              to="/foreclosure-help"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/foreclosure-help') 
-                  ? 'bg-red-100 text-red-700' 
+                isActive('/foreclosure-help')
+                  ? 'bg-red-100 text-red-700'
                   : 'text-gray-700 hover:text-red-600'
               }`}
             >
@@ -476,8 +476,8 @@ const Navigation: React.FC = () => {
             </Link>
 
             {!isProfessional && (
-              <Link 
-                to="/upgrade" 
+              <Link
+                to="/upgrade"
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:from-purple-700 hover:to-blue-700 transition-colors"
               >
                 ⚡ Upgrade to Pro
@@ -497,7 +497,7 @@ const Navigation: React.FC = () => {
                     <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       Settings
                     </Link>
-                    <button 
+                    <button
                       onClick={() => supabase.auth.signOut()}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
@@ -507,8 +507,8 @@ const Navigation: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <Link 
-                to="/auth" 
+              <Link
+                to="/auth"
                 className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 Sign In
@@ -581,58 +581,58 @@ const Navigation: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/' 
-                  ? 'bg-blue-100 text-blue-700' 
+                location.pathname === '/'
+                  ? 'bg-blue-100 text-blue-700'
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
               🏠 Home
             </Link>
-            
-            <Link 
-              to="/foreclosure-help" 
+
+            <Link
+              to="/foreclosure-help"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/foreclosure-help') 
-                  ? 'bg-blue-100 text-blue-700' 
+                isActive('/foreclosure-help')
+                  ? 'bg-blue-100 text-blue-700'
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
               🆘 Get Help
             </Link>
-            
+
             {/* Education Dropdown */}
             <div className="relative group">
-              <Link 
-                to="/education" 
+              <Link
+                to="/education"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/education') 
-                    ? 'bg-blue-100 text-blue-700' 
+                  isActive('/education')
+                    ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-700 hover:text-blue-600'
                 }`}
               >
                 🎓 Education
               </Link>
-              
+
               {/* Dropdown Menu */}
               <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-1">
-                  <Link 
-                    to="/education" 
+                  <Link
+                    to="/education"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     📚 Course Library
                   </Link>
-                  <Link 
-                    to="/education/dashboard" 
+                  <Link
+                    to="/education/dashboard"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     📊 My Dashboard
                   </Link>
-                  <Link 
-                    to="/education/analytics" 
+                  <Link
+                    to="/education/analytics"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     📈 Progress Analytics
@@ -640,20 +640,20 @@ const Navigation: React.FC = () => {
                 </div>
               </div>
             </div>
-            
-            <Link 
-              to="/marketing/direct-mail" 
+
+            <Link
+              to="/marketing/direct-mail"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/marketing') 
-                  ? 'bg-blue-100 text-blue-700' 
+                isActive('/marketing')
+                  ? 'bg-blue-100 text-blue-700'
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
               📬 Direct Mail
             </Link>
-            
-            <Link 
-              to="/contact" 
+
+            <Link
+              to="/contact"
               className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
             >
               📞 Contact

@@ -5,6 +5,7 @@ A comprehensive web platform offering credit repair services and pre-foreclosure
 ## 🎯 Features
 
 ### Credit Repair Services
+
 - Multi-bureau credit monitoring (Experian, TransUnion, Equifax)
 - Automated dispute letter generation
 - Credit score tracking and progress monitoring
@@ -12,6 +13,7 @@ A comprehensive web platform offering credit repair services and pre-foreclosure
 - Credit building strategies
 
 ### Pre-Foreclosure Property Analysis
+
 - Property search and lookup
 - Comparable property analysis (comps)
 - Buy/hold calculator with ROI analysis
@@ -19,6 +21,7 @@ A comprehensive web platform offering credit repair services and pre-foreclosure
 - Market analytics and trends
 
 ### AI-Powered Assistance
+
 - Property analysis and deal evaluation
 - Credit repair recommendations
 - Document generation
@@ -27,6 +30,7 @@ A comprehensive web platform offering credit repair services and pre-foreclosure
 ## 📊 Membership Tiers
 
 ### Basic (Free)
+
 - 10 property lookups/month
 - Basic property mapping
 - Credit repair tools
@@ -37,7 +41,9 @@ A comprehensive web platform offering credit repair services and pre-foreclosure
 - Ticket support (72hr response)
 
 ### Professional ($97/month or $970/year)
+
 **Everything in Basic, plus:**
+
 - 100 property lookups/month
 - Basic property comps (5 per property)
 - Buy/hold calculator
@@ -48,7 +54,9 @@ A comprehensive web platform offering credit repair services and pre-foreclosure
 - Email + chat support (24hr response)
 
 ### Elite ($297/month or $2,970/year)
+
 **Everything in Professional, plus:**
+
 - Unlimited property lookups
 - Advanced comps (unlimited)
 - Advanced deal analyzer
@@ -93,7 +101,8 @@ credit-repair-service/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 14+ 
+
+- Node.js 14+
 - PostgreSQL or MongoDB (for data storage)
 - API keys for:
   - Credit bureau APIs
@@ -103,17 +112,20 @@ credit-repair-service/
 ### Installation
 
 1. **Clone or navigate to the project directory:**
+
 ```bash
 cd credit-repair-service
 ```
 
 2. **Install dependencies:**
+
 ```bash
 npm install express cors dotenv
 ```
 
 3. **Set up environment variables:**
-Create a `.env` file in the root directory:
+   Create a `.env` file in the root directory:
+
 ```env
 NODE_ENV=development
 PORT=3000
@@ -139,12 +151,14 @@ SUPPORT_PHONE=1-800-ELITE-RE
 ```
 
 4. **Initialize the database:**
+
 ```bash
 npm run db:migrate
 npm run db:seed
 ```
 
 5. **Start the development server:**
+
 ```bash
 npm run dev
 ```
@@ -179,69 +193,75 @@ The application will be available at `http://localhost:3000`
 #### Using the API
 
 **Get Membership Tiers:**
+
 ```javascript
-fetch('/api/membership/tiers')
-  .then(res => res.json())
-  .then(data => console.log(data));
+fetch("/api/membership/tiers")
+  .then((res) => res.json())
+  .then((data) => console.log(data));
 ```
 
 **Search Properties:**
+
 ```javascript
-fetch('/api/property/search?query=Phoenix&status=pre-foreclosure')
-  .then(res => res.json())
-  .then(data => console.log(data.properties));
+fetch("/api/property/search?query=Phoenix&status=pre-foreclosure")
+  .then((res) => res.json())
+  .then((data) => console.log(data.properties));
 ```
 
 **Create Credit Dispute:**
+
 ```javascript
-fetch('/api/credit-repair/disputes', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+fetch("/api/credit-repair/disputes", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    type: 'Late Payment',
-    creditor: 'ABC Bank',
-    accountNumber: '1234',
-    reason: 'Not my account',
-    description: 'This late payment is incorrect...'
-  })
+    type: "Late Payment",
+    creditor: "ABC Bank",
+    accountNumber: "1234",
+    reason: "Not my account",
+    description: "This late payment is incorrect...",
+  }),
 })
-.then(res => res.json())
-.then(data => console.log(data));
+  .then((res) => res.json())
+  .then((data) => console.log(data));
 ```
 
 #### Using Components
 
 **Pricing Cards:**
-```javascript
-import { initPricingCards } from './components/pricing/PricingCard.js';
 
-initPricingCards('#pricing-container', {
+```javascript
+import { initPricingCards } from "./components/pricing/PricingCard.js";
+
+initPricingCards("#pricing-container", {
   showAnnual: true,
-  highlightPopular: true
+  highlightPopular: true,
 });
 ```
 
 **Property Search:**
-```javascript
-import PropertySearch from './components/property/PropertySearch.js';
 
-const search = new PropertySearch('searchContainer', {
-  userTier: 'PREMIUM',
+```javascript
+import PropertySearch from "./components/property/PropertySearch.js";
+
+const search = new PropertySearch("searchContainer", {
+  userTier: "PREMIUM",
   onSearch: async (filters) => {
     // Custom search logic
     return await mySearchFunction(filters);
-  }
+  },
 });
 ```
 
 **Credit Tracker:**
-```javascript
-import CreditScoreTracker from './components/credit/CreditScoreTracker.js';
 
-const tracker = new CreditScoreTracker('trackerContainer', {
+```javascript
+import CreditScoreTracker from "./components/credit/CreditScoreTracker.js";
+
+const tracker = new CreditScoreTracker("trackerContainer", {
   showHistory: true,
   showGoal: true,
-  userTier: 'ELITE'
+  userTier: "ELITE",
 });
 ```
 
@@ -250,6 +270,7 @@ const tracker = new CreditScoreTracker('trackerContainer', {
 ### Modifying Membership Tiers
 
 Edit `config/membership-tiers.js` to adjust:
+
 - Pricing
 - Feature limits
 - Access permissions
@@ -308,6 +329,7 @@ The platform implements a multi-page sales funnel:
 ## 📞 Support
 
 ### For Users
+
 - **Free Tier:** Ticket system (72hr response)
 - **Professional:** Email + chat (24hr response)
 - **Elite:** 24/7 phone + text support (1hr response)
@@ -316,6 +338,7 @@ The platform implements a multi-page sales funnel:
   - Email: support@yourservice.com
 
 ### For Developers
+
 - Documentation: `/docs`
 - API Reference: `/api-docs`
 - GitHub Issues: [Link to issues]
@@ -341,6 +364,7 @@ This is a proprietary platform. For partnership or collaboration inquiries, cont
 ## 📊 Analytics & Metrics
 
 Key metrics to track:
+
 - User acquisition by tier
 - Conversion rates (landing → signup → paid)
 - Credit score improvements

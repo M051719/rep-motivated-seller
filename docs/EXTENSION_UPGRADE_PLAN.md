@@ -5,12 +5,14 @@ This document outlines the exact sequence for upgrading critical extensions (Tim
 ## Pre-upgrade checklist
 
 1. Check current versions:
+
 ```sql
-SELECT extname, extversion FROM pg_extension 
+SELECT extname, extversion FROM pg_extension
 WHERE extname IN ('timescaledb', 'plv8');
 ```
 
 2. Document dependencies (run before making any changes):
+
 ```sql
 -- TimescaleDB hypertables
 SELECT format('%I.%I', schemaname, tablename) as hypertable,
@@ -63,9 +65,11 @@ DROP EXTENSION IF EXISTS plv8 CASCADE;
 ```
 
 ### Step 3: Postgres upgrade
+
 - Let Supabase perform the in-place upgrade
 - Or follow your upgrade process
 - Verify Postgres version after upgrade:
+
 ```sql
 SELECT version();
 ```
@@ -97,7 +101,7 @@ FROM timescaledb_information.hypertables;
 \i plv8_functions_backup.sql
 
 -- Verify plv8 functions
-SELECT nspname, proname, prosrc 
+SELECT nspname, proname, prosrc
 FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE p.prolang = (SELECT oid FROM pg_language WHERE lanname = 'plv8');
@@ -106,12 +110,14 @@ WHERE p.prolang = (SELECT oid FROM pg_language WHERE lanname = 'plv8');
 ## Version-specific notes
 
 ### TimescaleDB
+
 - 2.16.1+ required for Postgres 15+
 - Dropping CASCADE will remove hypertables - ensure backup
 - May need to run `timescaledb-tune` after upgrade
 - Check [TimescaleDB upgrade docs](https://docs.timescale.com/update-timescaledb/latest/) for version-specific steps
 
 ### plv8
+
 - 3.1.10+ required for Postgres 15+
 - Requires compatible V8 engine version
 - Functions need explicit recreation if extension dropped
@@ -122,18 +128,20 @@ WHERE p.prolang = (SELECT oid FROM pg_language WHERE lanname = 'plv8');
 If extension recreation fails:
 
 1. TimescaleDB:
+
 ```sql
 -- Try forcing specific version
 CREATE EXTENSION timescaledb VERSION '2.16.1';
 
 -- If still failing, check logs for
-SELECT * FROM pg_catalog.pg_depend 
+SELECT * FROM pg_catalog.pg_depend
 WHERE refobjid = (
     SELECT oid FROM pg_extension WHERE extname = 'timescaledb'
 );
 ```
 
 2. plv8:
+
 ```sql
 -- Check for binary compatibility
 SELECT plv8_version();
@@ -171,13 +179,13 @@ SELECT format('%I.%I', h.schema_name, h.table_name) as hypertable,
          format('%I.%I', c.schema_name, c.table_name)::regclass
        ))) as total_size,
        h.compression_state,
-       CASE 
-         WHEN h.compression_state = 'Compressed' 
+       CASE
+         WHEN h.compression_state = 'Compressed'
          THEN round(h.compression_ratio::numeric, 2)
          ELSE null
        END as compression_ratio
 FROM timescaledb_information.hypertables h
-LEFT JOIN timescaledb_information.chunks c 
+LEFT JOIN timescaledb_information.chunks c
   ON h.hypertable_id = c.hypertable_id
 GROUP BY h.schema_name, h.table_name, h.compression_state, h.compression_ratio;
 
@@ -213,9 +221,9 @@ SELECT format('%I.%I', ht.schema_name, ht.table_name) as hypertable,
        js.last_run_status,
        js.total_failures
 FROM timescaledb_information.policies p
-JOIN timescaledb_information.hypertables ht 
+JOIN timescaledb_information.hypertables ht
   ON p.hypertable_id = ht.hypertable_id
-LEFT JOIN timescaledb_information.job_stats js 
+LEFT JOIN timescaledb_information.job_stats js
   ON p.job_id = js.job_id;
 ```
 
@@ -223,7 +231,7 @@ LEFT JOIN timescaledb_information.job_stats js
 
 ```sql
 -- 1. Function details and validation
-SELECT 
+SELECT
     n.nspname as schema,
     p.proname as function,
     l.lanname as language,
@@ -262,7 +270,7 @@ SELECT DISTINCT
   n.nspname as function_schema,
   p.proname as function_name,
   dn.nspname as dependency_schema,
-  CASE 
+  CASE
     WHEN dp.proname IS NOT NULL THEN dp.proname
     WHEN dt.typname IS NOT NULL THEN dt.typname
     ELSE 'unknown'
@@ -278,7 +286,7 @@ WHERE fd.dep_oid != fd.func_oid
 ORDER BY function_schema, function_name, dependency_level;
 
 -- 3. plv8 memory usage
-SELECT 
+SELECT
     pid,
     usename,
     application_name,
@@ -294,7 +302,7 @@ WHERE backend_type = 'client backend'
 
 ```sql
 -- 1. Extension versions and locations
-SELECT 
+SELECT
     e.extname,
     e.extversion,
     n.nspname as schema,
@@ -307,7 +315,7 @@ ORDER BY e.extname;
 
 -- 2. Extension dependencies
 WITH RECURSIVE ext_deps AS (
-    SELECT 
+    SELECT
         e.extname as extension,
         r.objid as dep_id,
         r.refobjid as ref_id,
@@ -316,7 +324,7 @@ WITH RECURSIVE ext_deps AS (
     JOIN pg_extension e ON r.objid = e.oid
     WHERE r.deptype = 'e'
     UNION ALL
-    SELECT 
+    SELECT
         d.extension,
         r.objid,
         r.refobjid,
@@ -336,7 +344,7 @@ WHERE d.extension != e.extname
 ORDER BY d.extension, d.depth;
 
 -- 3. Extension-owned objects
-SELECT 
+SELECT
     e.extname as extension,
     n.nspname as schema,
     CASE c.relkind
@@ -357,7 +365,7 @@ WHERE d.deptype = 'e'
 ORDER BY e.extname, n.nspname, c.relkind, c.relname;
 
 -- 4. Invalid objects after upgrade
-SELECT 
+SELECT
     n.nspname as schema,
     c.relname as relation,
     CASE c.relkind
@@ -373,7 +381,7 @@ FROM pg_class c
 JOIN pg_namespace n ON n.oid = c.relnamespace
 LEFT JOIN pg_index i ON i.indexrelid = c.oid
 WHERE c.relkind IN ('i', 'v', 'm')
-    AND (not COALESCE(i.indisvalid, true) 
+    AND (not COALESCE(i.indisvalid, true)
          OR not COALESCE(c.relisvalid, true))
     AND n.nspname NOT LIKE 'pg_%'
 ORDER BY n.nspname, c.relname;
@@ -386,6 +394,7 @@ If upgrade fails:
 1. Document exact failure point and errors
 2. Restore database from pre-upgrade backup
 3. If partial extension recreation succeeded:
+
 ```sql
 -- Remove partially created extensions
 DROP EXTENSION IF EXISTS timescaledb CASCADE;
@@ -396,6 +405,7 @@ DROP EXTENSION IF EXISTS plv8 CASCADE;
 ```
 
 Contact support if:
+
 - Binary compatibility issues persist
 - Hypertable recreation fails
 - plv8 functions fail with V8 engine errors

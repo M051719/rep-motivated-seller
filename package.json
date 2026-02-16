@@ -89,7 +89,24 @@
     "analyze:open": "npm run analyze",
     "dev:network": "vite --host 0.0.0.0",
     "dev:debug": "cross-env DEBUG=true vite",
-    "test:build": "tsc && vite build --mode test"
+    "test:build": "tsc && vite build --mode test",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings 0",
+      "prettier --write"
+    ],
+    "*.{js,jsx}": [
+      "eslint --fix --max-warnings 0",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ],
+    ".env*": [
+      "node scripts/check-env-encrypted.js"
+    ]
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -140,6 +157,8 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^25.0.3",
@@ -158,6 +177,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.11",
     "jsdom": "^28.0.0",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
     "rollup-plugin-visualizer": "^6.0.5",

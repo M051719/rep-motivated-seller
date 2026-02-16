@@ -45,27 +45,27 @@ $totalFiles = 0
 foreach ($category in $toClean.Keys) {
     Write-Host $category -ForegroundColor Yellow
     $items = @()
-    
+
     foreach ($pattern in $toClean[$category]) {
         $found = Get-ChildItem $pattern -ErrorAction SilentlyContinue -Recurse:$false
         if ($found) {
             $items += $found
         }
     }
-    
+
     if ($items.Count -gt 0) {
         foreach ($item in $items) {
             $size = if ($item.PSIsContainer) {
-                (Get-ChildItem $item.FullName -Recurse -File -ErrorAction SilentlyContinue | 
+                (Get-ChildItem $item.FullName -Recurse -File -ErrorAction SilentlyContinue |
                  Measure-Object -Property Length -Sum).Sum / 1MB
             } else {
                 $item.Length / 1MB
             }
-            
+
             $sizeStr = if ($size -gt 1) { "{0:N1} MB" -f $size } else { "{0:N0} KB" -f ($size * 1024) }
             $totalSize += $size
             $totalFiles++
-            
+
             Write-Host ("  ├─ {0,-50} {1,10}" -f $item.Name, $sizeStr) -ForegroundColor Gray
         }
     } else {

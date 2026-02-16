@@ -1,36 +1,36 @@
 -- Create foreclosure_responses table
 CREATE TABLE IF NOT EXISTS foreclosure_responses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  
+
   -- Contact Information
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT NOT NULL,
-  
+
   -- Situation Assessment
   property_address TEXT,
   property_value NUMERIC,
   mortgage_balance NUMERIC,
   missed_payments INTEGER,
   received_nod BOOLEAN DEFAULT FALSE,
-  
+
   -- Problem Identification
   challenges TEXT,
   difficulties TEXT,
-  
+
   -- Impact Analysis
   family_impact TEXT,
   financial_impact TEXT,
-  
+
   -- Solution Planning
   preferred_solution TEXT,
   openness_to_options TEXT,
-  
+
   -- Status Tracking
   status TEXT DEFAULT 'new',
   notes TEXT,
   assigned_to UUID REFERENCES auth.users(id),
-  
+
   -- Metadata
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

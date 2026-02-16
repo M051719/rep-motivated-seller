@@ -44,43 +44,43 @@ Write-Host ""
 # Function to find and organize music files
 function Organize-MusicFiles {
     Write-Host "🎵 Searching for music files..." -ForegroundColor Yellow
-    
+
     $musicExtensions = @("*.mp3", "*.wav", "*.m4a", "*.aac", "*.flac")
     $searchLocations = @($SourceMusicFolder, $DownloadsFolder, $DesktopFolder)
-    
+
     $foundFiles = @()
     foreach ($location in $searchLocations) {
         if (Test-Path $location) {
             foreach ($ext in $musicExtensions) {
-                $files = Get-ChildItem -Path $location -Filter $ext -Recurse -ErrorAction SilentlyContinue | 
+                $files = Get-ChildItem -Path $location -Filter $ext -Recurse -ErrorAction SilentlyContinue |
                 Where-Object { $_.Length -gt 100KB } # Filter out very small files
                 $foundFiles += $files
             }
         }
     }
-    
+
     if ($foundFiles.Count -eq 0) {
         Write-Host "  ⚠ No music files found" -ForegroundColor Yellow
         return
     }
-    
+
     Write-Host "  Found $($foundFiles.Count) music files" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  Which files would you like to copy? (Type numbers separated by commas, or 'all')" -ForegroundColor Cyan
-    
+
     for ($i = 0; $i -lt [Math]::Min($foundFiles.Count, 20); $i++) {
         $file = $foundFiles[$i]
         $sizeMB = [math]::Round($file.Length / 1MB, 2)
         Write-Host "  [$($i+1)] $($file.Name) ($sizeMB MB)" -ForegroundColor White
     }
-    
+
     if ($foundFiles.Count -gt 20) {
         Write-Host "  ... and $($foundFiles.Count - 20) more files" -ForegroundColor Gray
     }
-    
+
     Write-Host ""
     $selection = Read-Host "  Selection"
-    
+
     $selectedFiles = @()
     if ($selection -eq "all") {
         $selectedFiles = $foundFiles
@@ -93,16 +93,16 @@ function Organize-MusicFiles {
             }
         }
     }
-    
+
     Write-Host ""
     Write-Host "  📂 Organizing selected music files..." -ForegroundColor Yellow
-    
+
     $musicRoot = Join-Path $assetsRoot "music"
     $categorized = 0
-    
+
     foreach ($file in $selectedFiles) {
         $fileName = $file.Name.ToLower()
-        
+
         # Determine category based on filename
         $targetFolder = $musicRoot
         if ($fileName -match "upbeat|happy|energetic|fast|dance|pop") {
@@ -114,9 +114,9 @@ function Organize-MusicFiles {
         elseif ($fileName -match "ambient|calm|chill|relaxing|soft") {
             $targetFolder = Join-Path $musicRoot "ambient"
         }
-        
+
         $destination = Join-Path $targetFolder $file.Name
-        
+
         if (-not (Test-Path $destination)) {
             Copy-Item -Path $file.FullName -Destination $destination -Force
             Write-Host "    ✓ Copied: $($file.Name) → $($targetFolder | Split-Path -Leaf)" -ForegroundColor Green
@@ -126,7 +126,7 @@ function Organize-MusicFiles {
             Write-Host "    → Exists: $($file.Name)" -ForegroundColor Gray
         }
     }
-    
+
     Write-Host ""
     Write-Host "  ✓ Organized $categorized music files" -ForegroundColor Green
 }
@@ -134,16 +134,16 @@ function Organize-MusicFiles {
 # Function to find and organize background images
 function Organize-BackgroundImages {
     Write-Host "🖼️  Searching for background images..." -ForegroundColor Yellow
-    
+
     $imageExtensions = @("*.png", "*.jpg", "*.jpeg")
     $searchLocations = @($DownloadsFolder, $DesktopFolder)
-    
+
     $foundImages = @()
     foreach ($location in $searchLocations) {
         if (Test-Path $location) {
             foreach ($ext in $imageExtensions) {
                 $files = Get-ChildItem -Path $location -Filter $ext -ErrorAction SilentlyContinue |
-                Where-Object { 
+                Where-Object {
                     $_.Name -match "background|gradient|bg-|wallpaper" -or
                     ($_.Length -gt 500KB -and $_.Length -lt 5MB)
                 }
@@ -151,38 +151,38 @@ function Organize-BackgroundImages {
             }
         }
     }
-    
+
     if ($foundImages.Count -eq 0) {
         Write-Host "  ⚠ No background images found in Downloads/Desktop" -ForegroundColor Yellow
         Write-Host "  💡 Tip: Create backgrounds in Canva first!" -ForegroundColor Cyan
         return
     }
-    
+
     Write-Host "  Found $($foundImages.Count) potential background images" -ForegroundColor Cyan
-    
+
     $backgroundsFolder = Join-Path $assetsRoot "backgrounds"
     $copied = 0
-    
+
     foreach ($file in $foundImages) {
         $destination = Join-Path $backgroundsFolder $file.Name
-        
+
         if (-not (Test-Path $destination)) {
             Copy-Item -Path $file.FullName -Destination $destination -Force
             Write-Host "    ✓ Copied: $($file.Name)" -ForegroundColor Green
             $copied++
         }
     }
-    
+
     Write-Host "  ✓ Organized $copied background images" -ForegroundColor Green
 }
 
 # Function to verify fonts
 function Verify-Fonts {
     Write-Host "✍️  Checking fonts..." -ForegroundColor Yellow
-    
+
     $fontsFolder = Join-Path $assetsRoot "fonts"
     $fontFiles = Get-ChildItem -Path $fontsFolder -Filter "*.ttf" -ErrorAction SilentlyContinue
-    
+
     if ($fontFiles.Count -gt 0) {
         Write-Host "  ✓ Found $($fontFiles.Count) font files" -ForegroundColor Green
         foreach ($font in $fontFiles) {

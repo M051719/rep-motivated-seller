@@ -10,7 +10,7 @@ echo Available Edge Functions:
 dir /b /ad "supabase\functions"
 
 echo.
-set /p FUNCTION_NAME=Enter function name to test: 
+set /p FUNCTION_NAME=Enter function name to test:
 
 if not exist "supabase\functions\%FUNCTION_NAME%" (
   echo Function %FUNCTION_NAME% not found!
@@ -20,8 +20,8 @@ if not exist "supabase\functions\%FUNCTION_NAME%" (
 
 echo.
 echo Enter your Supabase login credentials:
-set /p EMAIL=Email: 
-set /p PASSWORD=Password: 
+set /p EMAIL=Email:
+set /p PASSWORD=Password:
 
 echo.
 echo Logging in...

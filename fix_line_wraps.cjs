@@ -27,15 +27,15 @@ const FILES_TO_FIX = [
 
 function shouldJoinLines(line, nextLine) {
     if (!nextLine) return false;
-    
+
     const lineStripped = line.trimEnd();
     const nextStripped = nextLine.trimStart();
-    
+
     // Skip if next line starts with a clear statement
     if (/^\s*(const |let |var |function |class |import |export |return |if |else |for |while |switch |case |default |\/\/|\/\*)/.test(nextLine)) {
         return false;
     }
-    
+
     // Pattern 1: Template literal split (${...} not closed)
     if (lineStripped.includes('${')) {
         const lastDollar = lineStripped.lastIndexOf('${');
@@ -43,60 +43,60 @@ function shouldJoinLines(line, nextLine) {
             return true;
         }
     }
-    
+
     // Pattern 2: className or other attribute split
     if (/className="[^"]*$/.test(lineStripped) && /^\s*[^"]*"/.test(nextLine)) {
         return true;
     }
-    
+
     // Pattern 3: Template literal backtick split
     if ((lineStripped.match(/`/g) || []).length % 2 === 1) {
         return true;
     }
-    
+
     // Pattern 4: Regular string split
     const doubleQuotes = (lineStripped.match(/"/g) || []).length - (lineStripped.match(/\\"/g) || []).length;
     const singleQuotes = (lineStripped.match(/'/g) || []).length - (lineStripped.match(/\\'/g) || []).length;
-    
+
     if (doubleQuotes % 2 === 1 || singleQuotes % 2 === 1) {
         if (!/^\s*(const |let |var |function |import |export |return)/.test(nextLine)) {
             return true;
         }
     }
-    
+
     // Pattern 5: JSX attribute incomplete
     if (/\w+="[^"]*$/.test(lineStripped) || /\w+=\{[^}]*$/.test(lineStripped)) {
         return true;
     }
-    
+
     // Pattern 6: URL split
     if (/https?:\/\/[^\s"'`]*$/.test(lineStripped) && /^\s*[^\s"'`]*["']/.test(nextLine)) {
         return true;
     }
-    
+
     return false;
 }
 
 function fixFile(filepath) {
     const fullPath = path.join(PROJECT_ROOT, filepath);
-    
+
     if (!fs.existsSync(fullPath)) {
         console.log(`⏭️  Skipping ${filepath} (not found)`);
         return false;
     }
-    
+
     try {
         const content = fs.readFileSync(fullPath, 'utf8');
         const lines = content.split(/\r?\n/);
-        
+
         const fixedLines = [];
         let i = 0;
         let changesMade = 0;
-        
+
         while (i < lines.length) {
             const currentLine = lines[i];
             const nextLine = i + 1 < lines.length ? lines[i + 1] : null;
-            
+
             if (shouldJoinLines(currentLine, nextLine)) {
                 const joined = currentLine.trimEnd() + nextLine.trimStart();
                 fixedLines.push(joined);
@@ -107,7 +107,7 @@ function fixFile(filepath) {
                 i++;
             }
         }
-        
+
         if (changesMade > 0) {
             fs.writeFileSync(fullPath, fixedLines.join('\n'), 'utf8');
             console.log(`✅ Fixed ${filepath} (${changesMade} joins)`);
@@ -116,7 +116,7 @@ function fixFile(filepath) {
             console.log(`⚪ No changes needed for ${filepath}`);
             return false;
         }
-        
+
     } catch (error) {
         console.error(`❌ Error fixing ${filepath}:`, error.message);
         return false;

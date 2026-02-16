@@ -1,6 +1,7 @@
 # R2 Storage Analytics Code Review - RepMotivatedSeller
 
 ## Overview
+
 The R2 Storage Monitoring Dashboard code provides comprehensive analytics for tracking storage costs and lifecycle policy effectiveness for the RepMotivatedSeller R2 bucket.
 
 ## Code Analysis
@@ -8,18 +9,20 @@ The R2 Storage Monitoring Dashboard code provides comprehensive analytics for tr
 ### ⚠️ Security Issues Found
 
 **CRITICAL**: The code contains hardcoded API credentials:
+
 ```javascript
 accessKeyId: '7b8246e2cb12f6a24e2e7b8d4ddb4305',
 secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
 ```
 
 **Recommendation**: Move these to environment variables immediately:
+
 ```javascript
 const s3 = new AWS.S3({
-  endpoint: 'https://bccd49e5bf9293acb1fda48af89f2d72.r2.cloudflarestorage.com',
+  endpoint: "https://bccd49e5bf9293acb1fda48af89f2d72.r2.cloudflarestorage.com",
   accessKeyId: process.env.R2_ACCESS_KEY_ID,
   secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-  region: 'auto'
+  region: "auto",
 });
 ```
 
@@ -44,17 +47,18 @@ const s3 = new AWS.S3({
 ### 🔧 Recommended Improvements
 
 #### 1. Add Error Handling
+
 ```javascript
 async function getStorageAnalytics() {
   try {
     // Validate credentials first
     if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
-      throw new Error('R2 credentials not configured');
+      throw new Error("R2 credentials not configured");
     }
-    
+
     // ... rest of code
   } catch (error) {
-    console.error('❌ Storage Analytics Error:', error.message);
+    console.error("❌ Storage Analytics Error:", error.message);
     // Log to monitoring service
     await logToMonitoring(error);
     throw error;
@@ -63,39 +67,44 @@ async function getStorageAnalytics() {
 ```
 
 #### 2. Export Data to File
+
 ```javascript
 async function exportReportToFile(analytics, savings) {
   const report = {
     timestamp: new Date().toISOString(),
     analytics,
     savings,
-    recommendations: generateRecommendations(analytics, savings)
+    recommendations: generateRecommendations(analytics, savings),
   };
-  
+
   await fs.writeFile(
     `./reports/storage-report-${Date.now()}.json`,
-    JSON.stringify(report, null, 2)
+    JSON.stringify(report, null, 2),
   );
 }
 ```
 
 #### 3. Add Alerting
+
 ```javascript
 async function checkThresholds(analytics) {
   const totalSizeGB = analytics.totalSize / (1024 * 1024 * 1024);
-  
-  if (totalSizeGB > 1000) { // Alert if over 1TB
+
+  if (totalSizeGB > 1000) {
+    // Alert if over 1TB
     await sendAlert({
-      type: 'storage-threshold',
+      type: "storage-threshold",
       message: `Storage exceeded 1TB: ${totalSizeGB.toFixed(2)}GB`,
-      severity: 'warning'
+      severity: "warning",
     });
   }
 }
 ```
 
 #### 4. Schedule Regular Reports
+
 Create a cron job or scheduled function:
+
 ```javascript
 // In package.json
 {
@@ -109,23 +118,25 @@ Create a cron job or scheduled function:
 ### 📊 Integration with RepMotivatedSeller
 
 #### Dashboard Widget
+
 Create a React component to display storage metrics:
+
 ```tsx
 // src/components/admin/StorageAnalytics.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 export const StorageAnalytics: React.FC = () => {
   const [analytics, setAnalytics] = useState(null);
-  
+
   useEffect(() => {
     fetchStorageAnalytics();
   }, []);
-  
+
   async function fetchStorageAnalytics() {
-    const response = await fetch('/api/admin/storage-analytics');
+    const response = await fetch("/api/admin/storage-analytics");
     setAnalytics(await response.json());
   }
-  
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h3 className="text-lg font-semibold mb-4">R2 Storage Analytics</h3>
@@ -134,11 +145,15 @@ export const StorageAnalytics: React.FC = () => {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <div className="text-sm text-gray-500">Total Files</div>
-              <div className="text-2xl font-bold">{analytics.totalFiles.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                {analytics.totalFiles.toLocaleString()}
+              </div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Total Size</div>
-              <div className="text-2xl font-bold">{formatBytes(analytics.totalSize)}</div>
+              <div className="text-2xl font-bold">
+                {formatBytes(analytics.totalSize)}
+              </div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Monthly Savings</div>
@@ -157,6 +172,7 @@ export const StorageAnalytics: React.FC = () => {
 ### 🔐 Environment Setup
 
 Add to `.env`:
+
 ```bash
 # R2 Storage Configuration
 R2_ACCOUNT_ID=bccd49e5bf9293acb1fda48af89f2d72
@@ -205,6 +221,7 @@ Based on the code analysis:
 ## Summary
 
 The R2 storage analytics code is well-structured and provides valuable insights. Main priorities:
+
 1. **Fix security issue** (hardcoded credentials)
 2. **Add to admin dashboard** for real-time visibility
 3. **Automate reporting** for ongoing monitoring

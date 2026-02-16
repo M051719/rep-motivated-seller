@@ -37,9 +37,9 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Primary Route: /consultation
-Alternative Routes: 
+Alternative Routes:
   • Sitemap link: "Book Consultation"
-  • Help page: "Book Call"  
+  • Help page: "Book Call"
 
 EXISTING LINKS IN CODEBASE:
 ✓ /help page → Links to /consultation
@@ -95,7 +95,7 @@ Username: Your Calendly account
 
 Create Event Types:
 1. "Foreclosure Prevention Consultation" (60 min, FREE)
-2. "Real Estate Investment Consultation" (45 min, $97)  
+2. "Real Estate Investment Consultation" (45 min, $97)
 3. "Credit Repair Strategy Session" (30 min, $47)
 
 Configure:

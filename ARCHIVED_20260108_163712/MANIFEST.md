@@ -18,4 +18,3 @@ Files are organized by category for easy recovery.
 ## Safe to Delete:
 After verifying production is working correctly, this entire archive
 directory can be safely deleted to reclaim disk space.
-

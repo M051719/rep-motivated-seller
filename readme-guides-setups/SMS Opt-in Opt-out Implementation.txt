@@ -1,4 +1,4 @@
-FRONT END 
+FRONT END
 Schedule Regular Compliance Reviews:
 
 Set up weekly or monthly reviews of your compliance audit results
@@ -8,7 +8,7 @@ Keep records of all compliance audits and remediation actions COMPLIANCE SUMMARY
 Your **new TCPA-compliant SMS system**:
 
 ✅ **Express Written Consent** - Double opt-in with verification
-✅ **Optional Service** - SMS not required to use your platform  
+✅ **Optional Service** - SMS not required to use your platform
 ✅ **Clear Disclosures** - Full terms, frequency, and opt-out info
 ✅ **Easy Opt-Out** - STOP keyword and web-based unsubscribe
 ✅ **Record Keeping** - Complete audit trail with IP, timestamps
@@ -72,8 +72,8 @@ const SMSOptIn = () => {
             📱 Get Urgent Foreclosure Updates via Text
           </p>
           <p className="text-blue-700 mt-1">
-            By checking this box, you consent to receive text messages from RepMotivatedSeller.org 
-            about your foreclosure assistance request. Message frequency varies. Reply STOP to opt-out 
+            By checking this box, you consent to receive text messages from RepMotivatedSeller.org
+            about your foreclosure assistance request. Message frequency varies. Reply STOP to opt-out
             at any time. Standard message and data rates apply.
           </p>
           <p className="text-xs text-blue-600 mt-2">
@@ -133,33 +133,33 @@ import { saveSMSConsent } from '../utils/sms-consent-helper';
 // In your form submission handler:
 const handleSubmit = async (event) => {
   event.preventDefault();
-  
+
   // Your existing form submission logic...
   const { data: submission, error } = await supabase
     .from('foreclosure_submissions')
     .insert([formData])
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error submitting form:', error);
     return;
   }
-  
+
   // Handle SMS consent
   const smsOptIn = event.target.smsOptIn.checked;
   const phone = formData.phone; // Get phone from your form
-  
+
   if (smsOptIn && phone) {
     await saveSMSConsent(submission.id, phone, true);
-    
+
     // Optional: Send welcome SMS
     const { success, error } = await sendSMS(
       submission.id,
       phone,
       "Thank you for signing up for foreclosure assistance updates. Reply HELP for help, STOP to unsubscribe."
     );
-    
+
     if (error) {
       console.error('Error sending welcome SMS:', error);
     }
@@ -215,33 +215,33 @@ import { saveSMSConsent, sendSMS } from '../utils/sms-consent-helper';
 // In your form submission handler:
 const handleSubmit = async (event) => {
   event.preventDefault();
-  
+
   // Your existing form submission logic...
   const { data: submission, error } = await supabase
     .from('foreclosure_submissions')
     .insert([formData])
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error submitting form:', error);
     return;
   }
-  
+
   // Handle SMS consent
   const smsOptIn = event.target.smsOptIn.checked;
   const phone = formData.phone; // Get phone from your form
-  
+
   if (smsOptIn && phone) {
     await saveSMSConsent(submission.id, phone, true);
-    
+
     // Optional: Send welcome SMS
     const { success, error } = await sendSMS(
       submission.id,
       phone,
       "Thank you for signing up for foreclosure assistance updates. Reply HELP for help, STOP to unsubscribe."
     );
-    
+
     if (error) {
       console.error('Error sending welcome SMS:', error);
     }
@@ -296,14 +296,14 @@ export async function getUserIP(): Promise<string> {
 
 // Save SMS consent during form submission
 export async function saveSMSConsent(
-  submissionId: string, 
-  phoneNumber: string, 
+  submissionId: string,
+  phoneNumber: string,
   hasConsent: boolean
 ): Promise<boolean> {
   try {
     // Get user's IP for consent records (TCPA compliance)
     const ipAddress = await getUserIP();
-    
+
     // Update the submission record with consent information
     const { error } = await supabase
       .from('foreclosure_submissions')
@@ -313,12 +313,12 @@ export async function saveSMSConsent(
         sms_consent_timestamp: new Date().toISOString(),
       })
       .eq('id', submissionId);
-    
+
     if (error) {
       console.error('Error saving SMS consent:', error);
       return false;
     }
-    
+
     // If user consented, log the initial consent in sms_logs
     if (hasConsent) {
       const { error: logError } = await supabase
@@ -329,12 +329,12 @@ export async function saveSMSConsent(
           message_content: 'Initial SMS opt-in consent',
           status: 'consent_logged'
         });
-      
+
       if (logError) {
         console.error('Error logging consent:', logError);
       }
     }
-    
+
     return true;
   } catch (error) {
     console.error('Error in saveSMSConsent:', error);
@@ -351,11 +351,11 @@ export async function sendSMS(
   try {
     // Get current user session for authentication
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
-      return { 
-        success: false, 
-        error: 'Authentication required' 
+      return {
+        success: false,
+        error: 'Authentication required'
       };
     }
 
@@ -372,16 +372,16 @@ export async function sendSMS(
         message
       })
     });
-    
+
     const result = await response.json();
-    
+
     if (!response.ok) {
       return {
         success: false,
         error: result.error || 'Failed to send SMS'
       };
     }
-    
+
     return {
       success: true
     };

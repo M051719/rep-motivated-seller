@@ -1,11 +1,11 @@
 -- Add presentation builder fields to existing subscriptions table
 -- Only add columns if they don't exist
 
-DO $$ 
+DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                 WHERE table_schema = 'public' 
-                 AND table_name = 'subscriptions' 
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'public'
+                 AND table_name = 'subscriptions'
                  AND column_name = 'presentations_used') THEN
     ALTER TABLE public.subscriptions ADD COLUMN presentations_used INTEGER DEFAULT 0;
   END IF;
@@ -16,33 +16,33 @@ CREATE TABLE IF NOT EXISTS public.presentation_exports (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   subscription_id UUID,
-  
+
   -- Property Data
   property_address TEXT NOT NULL,
   property_city TEXT NOT NULL,
   property_state TEXT NOT NULL,
   property_zip TEXT NOT NULL,
   property_data JSONB NOT NULL,
-  
+
   -- Export Settings
   export_format TEXT NOT NULL CHECK (export_format IN ('pdf', 'pptx', 'email', 'directmail')),
   include_comparables BOOLEAN DEFAULT true,
   include_map BOOLEAN DEFAULT true,
   include_ai_content BOOLEAN DEFAULT true,
   include_calculations BOOLEAN DEFAULT true,
-  
+
   -- Generated Content
   comparables_data JSONB,
   ai_content JSONB,
   calculator_results JSONB,
-  
+
   -- Delivery Status
   status TEXT NOT NULL CHECK (status IN ('generating', 'completed', 'failed', 'sent')) DEFAULT 'generating',
   file_url TEXT,
   lob_letter_id TEXT,
   email_sent_at TIMESTAMPTZ,
   directmail_sent_at TIMESTAMPTZ,
-  
+
   -- Metadata
   tier_at_creation TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now(),
@@ -55,11 +55,11 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_presentation_exports_user_id') THEN
     CREATE INDEX idx_presentation_exports_user_id ON public.presentation_exports(user_id);
   END IF;
-  
+
   IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_presentation_exports_status') THEN
     CREATE INDEX idx_presentation_exports_status ON public.presentation_exports(status);
   END IF;
-  
+
   IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_presentation_exports_created_at') THEN
     CREATE INDEX idx_presentation_exports_created_at ON public.presentation_exports(created_at DESC);
   END IF;
@@ -91,7 +91,7 @@ CREATE OR REPLACE FUNCTION increment_presentation_count(p_user_id UUID)
 RETURNS void AS $$
 BEGIN
   UPDATE public.subscriptions
-  SET 
+  SET
     presentations_used = COALESCE(presentations_used, 0) + 1,
     updated_at = now()
   WHERE user_id = p_user_id
@@ -127,16 +127,16 @@ BEGIN
       FROM public.presentation_exports
       WHERE user_id = p_user_id
         AND created_at >= date_trunc('month', now());
-      
+
       IF v_this_month_count < 1 THEN
-        RETURN QUERY SELECT 
+        RETURN QUERY SELECT
           true,
           'basic'::TEXT,
           v_this_month_count,
           1,
           'Free basic tier'::TEXT;
       ELSE
-        RETURN QUERY SELECT 
+        RETURN QUERY SELECT
           false,
           'basic'::TEXT,
           v_this_month_count,
@@ -149,7 +149,7 @@ BEGIN
 
   -- Check limits based on tier
   IF v_subscription.tier = 'premium' THEN
-    RETURN QUERY SELECT 
+    RETURN QUERY SELECT
       true,
       v_subscription.tier,
       COALESCE(v_subscription.presentations_used, 0),
@@ -157,14 +157,14 @@ BEGIN
       'Premium unlimited access'::TEXT;
   ELSIF v_subscription.tier = 'pro' THEN
     IF COALESCE(v_subscription.presentations_used, 0) < 50 THEN
-      RETURN QUERY SELECT 
+      RETURN QUERY SELECT
         true,
         v_subscription.tier,
         COALESCE(v_subscription.presentations_used, 0),
         50,
         'Pro tier access'::TEXT;
     ELSE
-      RETURN QUERY SELECT 
+      RETURN QUERY SELECT
         false,
         v_subscription.tier,
         COALESCE(v_subscription.presentations_used, 0),
@@ -173,14 +173,14 @@ BEGIN
     END IF;
   ELSE -- basic with subscription
     IF COALESCE(v_subscription.presentations_used, 0) < 1 THEN
-      RETURN QUERY SELECT 
+      RETURN QUERY SELECT
         true,
         v_subscription.tier,
         COALESCE(v_subscription.presentations_used, 0),
         1,
         'Basic tier access'::TEXT;
     ELSE
-      RETURN QUERY SELECT 
+      RETURN QUERY SELECT
         false,
         v_subscription.tier,
         COALESCE(v_subscription.presentations_used, 0),

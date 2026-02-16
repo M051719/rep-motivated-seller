@@ -3,37 +3,41 @@
 ## 🎉 What's Been Built
 
 ### 1. **Full-Featured AI Chat Interface** (`src/pages/AIChatPage.tsx`)
-   - Real-time conversational UI with message history
-   - Suggested questions for quick start
-   - Tool call visualization (shows when AI uses calculators)
-   - Session management and persistence
-   - Responsive design with animations
-   - **Route**: `/ai-chat`
+
+- Real-time conversational UI with message history
+- Suggested questions for quick start
+- Tool call visualization (shows when AI uses calculators)
+- Session management and persistence
+- Responsive design with animations
+- **Route**: `/ai-chat`
 
 ### 2. **MCP (Model Context Protocol) Server** (`mcp-server/`)
-   - 5 specialized foreclosure tools:
-     * `calculate_mortgage` - Payment calculations
-     * `calculate_foreclosure_timeline` - State-specific timelines
-     * `calculate_equity` - Home equity analysis
-     * `analyze_short_sale` - Short sale vs foreclosure comparison
-     * `get_property_comparables` - Market value estimates
-   - TypeScript implementation with Zod validation
-   - Standalone server that can be used by any MCP client
+
+- 5 specialized foreclosure tools:
+  - `calculate_mortgage` - Payment calculations
+  - `calculate_foreclosure_timeline` - State-specific timelines
+  - `calculate_equity` - Home equity analysis
+  - `analyze_short_sale` - Short sale vs foreclosure comparison
+  - `get_property_comparables` - Market value estimates
+- TypeScript implementation with Zod validation
+- Standalone server that can be used by any MCP client
 
 ### 3. **AI Chat Edge Function** (`supabase/functions/ai-chat/`)
-   - OpenAI GPT-4 Turbo integration
-   - Automatic tool calling (uses MCP tools when needed)
-   - Chat history management
-   - Token usage tracking
-   - Conversational context retention
-   - **Endpoint**: `https://ltxqodqlexvojqqxquew.supabase.co/functions/v1/ai-chat`
+
+- OpenAI GPT-4 Turbo integration
+- Automatic tool calling (uses MCP tools when needed)
+- Chat history management
+- Token usage tracking
+- Conversational context retention
+- **Endpoint**: `https://ltxqodqlexvojqqxquew.supabase.co/functions/v1/ai-chat`
 
 ### 4. **Database Schema** (Migration: `20251211000002_create_chat_system.sql`)
-   - `chat_sessions` table - User chat sessions
-   - `chat_messages` table - Individual messages with tool calls
-   - Row Level Security (RLS) enabled
-   - Automatic timestamp updates
-   - Helper functions for context retrieval
+
+- `chat_sessions` table - User chat sessions
+- `chat_messages` table - Individual messages with tool calls
+- Row Level Security (RLS) enabled
+- Automatic timestamp updates
+- Helper functions for context retrieval
 
 ---
 
@@ -70,6 +74,7 @@ supabase secrets set OPENAI_API_KEY=your-openai-api-key-here
 ### Step 2: Test the AI Chat
 
 1. **Start your dev server**:
+
    ```powershell
    npm run dev
    ```
@@ -85,6 +90,7 @@ supabase secrets set OPENAI_API_KEY=your-openai-api-key-here
 ### Step 3: Verify Tool Usage
 
 When you ask calculation questions, you should see:
+
 - AI thinking indicator
 - Response with calculated numbers
 - Small "Used: calculate_mortgage" badges showing tool usage
@@ -112,6 +118,7 @@ When you ask calculation questions, you should see:
 **User**: "I have a $250,000 mortgage at 5.5% for 30 years. What's my monthly payment?"
 
 **Behind the scenes**:
+
 1. AI receives message
 2. AI calls `calculate_mortgage` tool with params: `{principal: 250000, annualRate: 5.5, years: 30}`
 3. Tool returns: `{monthlyPayment: 1419.47, totalPaid: 510984.23, totalInterest: 260984.23}`
@@ -120,6 +127,7 @@ When you ask calculation questions, you should see:
 **User**: "I'm in Florida and missed 3 payments on a conventional loan. How much time do I have?"
 
 **Behind the scenes**:
+
 1. AI calls `calculate_foreclosure_timeline` with: `{state: "FL", missedPayments: 3, loanType: "conventional"}`
 2. Tool returns timeline with stage: "Pre-Foreclosure", urgency: "Moderate", months remaining: ~6
 3. AI responds with empathetic explanation and next steps
@@ -129,6 +137,7 @@ When you ask calculation questions, you should see:
 ## 🎨 Features & Capabilities
 
 ### Chat Interface Features:
+
 - ✅ Persistent chat history across sessions
 - ✅ Real-time typing indicators
 - ✅ Suggested questions for new users
@@ -138,6 +147,7 @@ When you ask calculation questions, you should see:
 - ✅ "Start New Chat" functionality
 
 ### AI Capabilities:
+
 - ✅ Mortgage payment calculations
 - ✅ State-specific foreclosure timelines
 - ✅ Home equity analysis
@@ -148,6 +158,7 @@ When you ask calculation questions, you should see:
 - ✅ Automatic tool selection
 
 ### Security:
+
 - ✅ Row Level Security (users only see their chats)
 - ✅ Authentication required (via AuthContext)
 - ✅ Service role key for Edge Function (secure DB access)
@@ -158,6 +169,7 @@ When you ask calculation questions, you should see:
 ## 🧪 Testing Checklist
 
 ### Basic Functionality:
+
 - [ ] Can load `/ai-chat` page
 - [ ] Suggested questions appear for new users
 - [ ] Can type and send messages
@@ -165,12 +177,14 @@ When you ask calculation questions, you should see:
 - [ ] "Start New Chat" creates new session
 
 ### AI Responses:
+
 - [ ] Gets response from GPT-4
 - [ ] Responses are contextual and empathetic
 - [ ] Can handle follow-up questions
 - [ ] Maintains conversation context
 
 ### Tool Usage:
+
 - [ ] Mortgage calculator works
 - [ ] Foreclosure timeline calculator works
 - [ ] Equity calculator works
@@ -179,6 +193,7 @@ When you ask calculation questions, you should see:
 - [ ] Tool results visible in UI (badges)
 
 ### Edge Cases:
+
 - [ ] Handles errors gracefully
 - [ ] Works without auth (shows "Please sign in" message)
 - [ ] Long conversations load properly
@@ -189,26 +204,32 @@ When you ask calculation questions, you should see:
 ## 🔧 Troubleshooting
 
 ### "I apologize, but I encountered an error"
+
 **Cause**: OpenAI API key not set or invalid
 **Fix**: Set OPENAI_API_KEY secret in Supabase (see Step 1 above)
 
 ### No response from AI
+
 **Cause**: Edge Function not deployed or secrets missing
-**Fix**: 
+**Fix**:
+
 ```powershell
 supabase functions deploy ai-chat
 supabase secrets set OPENAI_API_KEY=your-key
 ```
 
 ### "Please sign in to use the AI assistant"
+
 **Cause**: User not authenticated
 **Fix**: This is expected behavior. User must be logged in.
 
 ### Tools not being called
+
 **Cause**: Question isn't specific enough or AI chose not to use tools
 **Fix**: Ask more specific questions like "Calculate payment for $300k at 6%" instead of "Tell me about mortgages"
 
 ### Chat history not loading
+
 **Cause**: RLS policies or database connection issue
 **Fix**: Check Supabase logs, verify user is authenticated
 
@@ -217,27 +238,33 @@ supabase secrets set OPENAI_API_KEY=your-key
 ## 💰 Cost Estimates
 
 ### OpenAI Costs (GPT-4 Turbo):
+
 - **Input**: $0.01 per 1K tokens (~750 words)
 - **Output**: $0.03 per 1K tokens (~750 words)
 - **Average conversation**: ~2,000 tokens = ~$0.05
 - **100 conversations/day**: ~$5/day = $150/month
 
 ### With Tool Usage (adds ~20%):
+
 - Tool calls add context but reduce overall tokens needed
 - More precise answers = fewer back-and-forth messages
 - **Estimated**: $150-200/month for moderate use
 
 ### Alternative: GPT-3.5 Turbo (10x cheaper):
+
 - Change model to `gpt-3.5-turbo` in Edge Function
 - **Cost**: ~$15-20/month
 - Quality: Still good but less nuanced
 
 ### To Switch to GPT-3.5:
+
 Edit `supabase/functions/ai-chat/index.ts`:
+
 ```typescript
 // Line ~315 and ~355
 model: "gpt-3.5-turbo", // was "gpt-4-turbo-preview"
 ```
+
 Redeploy: `supabase functions deploy ai-chat`
 
 ---
@@ -247,11 +274,13 @@ Redeploy: `supabase functions deploy ai-chat`
 The MCP server (`mcp-server/`) is built but **not required** for the chat to work. The Edge Function has all tools built-in.
 
 ### When to use the standalone MCP server:
+
 - Want to connect to Claude Desktop or other MCP clients
 - Need to share tools across multiple applications
 - Want centralized tool management
 
 ### To run MCP server locally:
+
 ```powershell
 cd "C:\Users\monte\Documents\cert api token keys ids\supabase project deployment\rep-motivated-seller\mcp-server"
 npm install
@@ -260,7 +289,9 @@ npm start
 ```
 
 ### To connect to Claude Desktop:
+
 Edit Claude config: `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
 {
   "mcpServers": {
@@ -281,12 +312,14 @@ Restart Claude Desktop → Tools available in conversations
 ## 🎯 Next Steps & Enhancements
 
 ### Immediate Priorities:
+
 1. ✅ Set OpenAI API key
 2. ✅ Test all 5 tools
 3. ✅ Verify chat history works
 4. ✅ Test on mobile
 
 ### Future Enhancements:
+
 - **Document Upload**: Allow users to upload foreclosure notices for analysis
 - **Voice Input**: Add speech-to-text for accessibility
 - **Multi-language**: Support Spanish, Mandarin, etc.
@@ -299,6 +332,7 @@ Restart Claude Desktop → Tools available in conversations
 - **SMS Notifications**: Text important deadlines from timeline calculator
 
 ### Premium Features (Tier-Gated):
+
 - **Unlimited Chat**: Free tier = 10 messages/day, Pro = unlimited
 - **Priority Support**: Pro users get faster responses
 - **Document Analysis**: Premium feature for uploaded docs
@@ -309,6 +343,7 @@ Restart Claude Desktop → Tools available in conversations
 ## 📝 Summary
 
 You now have a **production-ready AI chat assistant** that:
+
 - ✅ Provides empathetic foreclosure guidance
 - ✅ Uses 5 specialized calculation tools automatically
 - ✅ Maintains conversation history
@@ -323,6 +358,7 @@ You now have a **production-ready AI chat assistant** that:
 ## 🆘 Support
 
 If you encounter issues:
+
 1. Check Supabase logs: https://supabase.com/dashboard/project/ltxqodqlexvojqqxquew/logs/functions
 2. Check browser console for frontend errors
 3. Verify Edge Function deployed: `supabase functions list`

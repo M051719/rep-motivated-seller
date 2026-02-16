@@ -15,10 +15,10 @@ SELECT has_view('public', 'consultation_analytics', 'consultation_analytics view
 
 -- Test: Sample data insertion works
 INSERT INTO payments (
-    stripe_payment_intent_id, 
-    amount, 
-    currency, 
-    status, 
+    stripe_payment_intent_id,
+    amount,
+    currency,
+    status,
     customer_email
 ) VALUES (
     'pi_test_12345',
@@ -55,8 +55,8 @@ SELECT throws_ok(
 );
 
 -- Test: JSON fields work correctly
-UPDATE payments 
-SET metadata = '{"test": "data", "amount_dollars": 20.00}'::jsonb 
+UPDATE payments
+SET metadata = '{"test": "data", "amount_dollars": 20.00}'::jsonb
 WHERE stripe_payment_intent_id = 'pi_test_12345';
 
 SELECT ok(
@@ -101,7 +101,7 @@ SELECT is_empty(
 );
 
 SELECT is_empty(
-    'SELECT * FROM consultation_bookings', 
+    'SELECT * FROM consultation_bookings',
     'Anonymous users should not see any consultation bookings'
 );
 

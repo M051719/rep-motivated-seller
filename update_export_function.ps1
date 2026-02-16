@@ -20,7 +20,7 @@ $newPDF = @"
 
 $content = $content.Replace($oldPDF, $newPDF)
 
-# Replace the PPTX export placeholder  
+# Replace the PPTX export placeholder
 $oldPPTX = @"
       } else if (format === 'pptx') {
         // Generate PowerPoint using PptxGenJS or server-side
@@ -63,5 +63,5 @@ $content | Set-Content $file
 
 Write-Host "✅ Export functions updated successfully!" -ForegroundColor Green
 Write-Host "   - PDF generation implemented"
-Write-Host "   - PowerPoint generation implemented" 
+Write-Host "   - PowerPoint generation implemented"
 Write-Host "   - Email sending implemented"

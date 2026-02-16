@@ -130,7 +130,8 @@ const AdminStats: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Admin Stats</h1>
           <p className="text-sm text-gray-600">
-            Foreclosure submissions overview (lightweight view rebuilt to fix lint).
+            Foreclosure submissions overview (lightweight view rebuilt to fix
+            lint).
           </p>
         </div>
         <button
@@ -215,8 +216,12 @@ const AdminStats: React.FC = () => {
             {filtered.map((s) => (
               <tr key={s.id} className="border-t">
                 <td className="px-3 py-2">
-                  <div className="font-semibold">{s.contact_name || "Unknown"}</div>
-                  <div className="text-gray-500">{s.contact_email || "No email"}</div>
+                  <div className="font-semibold">
+                    {s.contact_name || "Unknown"}
+                  </div>
+                  <div className="text-gray-500">
+                    {s.contact_email || "No email"}
+                  </div>
                 </td>
                 <td className="px-3 py-2">{s.status || "n/a"}</td>
                 <td className="px-3 py-2">{getUrgencyLevel(s)}</td>

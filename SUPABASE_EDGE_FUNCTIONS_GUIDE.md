@@ -30,6 +30,7 @@ Supabase Edge Functions are serverless functions that run on Deno at the edge. I
 **Purpose**: Provides REST API endpoints for the admin dashboard.
 
 **Endpoints**:
+
 - `GET /admin-dashboard/submissions` - List property submissions with pagination and filtering
 - `GET /admin-dashboard/submissions/{id}` - Get a single property submission by ID
 - `GET /admin-dashboard/stats` - Get dashboard statistics
@@ -192,6 +193,7 @@ curl -X GET "https://ltxqodqlexvojqqxquew.supabase.co/functions/v1/admin-dashboa
 ### Viewing Logs
 
 To view function logs in the Supabase dashboard:
+
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/ltxqodqlexvojqqxquew/functions)
 2. Select the function
 3. Click on "Logs" tab
@@ -211,15 +213,18 @@ scripts\set-secrets.bat
 ### Required Environment Variables
 
 For all functions:
+
 - `SUPABASE_URL`: Your Supabase project URL
 - `SUPABASE_ANON_KEY`: Your Supabase anonymous key
 
 For email notifications:
+
 - `MAILERLITE_API_KEY`: MailerLite API key
 - `FROM_EMAIL`: Sender email address
 - `ADMIN_EMAIL`: Admin notification recipient
 
 For Twilio integration:
+
 - `TWILIO_ACCOUNT_SID`: Twilio account SID
 - `TWILIO_AUTH_TOKEN`: Twilio auth token
 - `TWILIO_PHONE_NUMBER`: Twilio phone number
@@ -253,20 +258,22 @@ supabase secrets list --project-ref ltxqodqlexvojqqxquew
 ### Debugging Tips
 
 1. Add console.log statements to your functions:
+
    ```typescript
    console.log("Request received:", JSON.stringify(req, null, 2));
    ```
 
 2. Create a test endpoint that returns environment information:
+
    ```typescript
-   if (path === 'debug') {
+   if (path === "debug") {
      return new Response(
-       JSON.stringify({ 
+       JSON.stringify({
          env: Object.keys(Deno.env.toObject()),
-         headers: Object.fromEntries(req.headers.entries())
+         headers: Object.fromEntries(req.headers.entries()),
        }),
-       { headers: { 'Content-Type': 'application/json' } }
-     )
+       { headers: { "Content-Type": "application/json" } },
+     );
    }
    ```
 

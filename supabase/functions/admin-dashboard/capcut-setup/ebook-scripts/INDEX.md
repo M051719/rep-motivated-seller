@@ -4,35 +4,36 @@
 
 ### E-Book 1: Finding Support Through Social Media During Foreclosure
 
-| # | Chapter Title | Video Focus | Duration | Status |
-|---|--------------|-------------|----------|--------|
-| 01 | Understanding Your Foreclosure Situation | What is foreclosure + timeline | 45s | ✅ Complete |
-| 02 | The Emotional Journey | Mental health support | 50s | ✅ Complete |
-| 03 | Finding Online Communities | Where to find support | 45s | ✅ Complete |
-| 04 | Using Social Media for Education | Learning resources | 40s | 📝 Template Ready |
-| 05 | Avoiding Foreclosure Scams | Red flags + safety | 50s | 📝 Template Ready |
-| 06 | Sharing Your Story Safely | Privacy + boundaries | 45s | 📝 Template Ready |
-| 07 | Connecting with Real Estate Professionals | Vetting experts | 40s | 📝 Template Ready |
-| 08 | Building Your Support Network | Community building | 45s | 📝 Template Ready |
+| #   | Chapter Title                             | Video Focus                    | Duration | Status            |
+| --- | ----------------------------------------- | ------------------------------ | -------- | ----------------- |
+| 01  | Understanding Your Foreclosure Situation  | What is foreclosure + timeline | 45s      | ✅ Complete       |
+| 02  | The Emotional Journey                     | Mental health support          | 50s      | ✅ Complete       |
+| 03  | Finding Online Communities                | Where to find support          | 45s      | ✅ Complete       |
+| 04  | Using Social Media for Education          | Learning resources             | 40s      | 📝 Template Ready |
+| 05  | Avoiding Foreclosure Scams                | Red flags + safety             | 50s      | 📝 Template Ready |
+| 06  | Sharing Your Story Safely                 | Privacy + boundaries           | 45s      | 📝 Template Ready |
+| 07  | Connecting with Real Estate Professionals | Vetting experts                | 40s      | 📝 Template Ready |
+| 08  | Building Your Support Network             | Community building             | 45s      | 📝 Template Ready |
 
 ### E-Book 2: Real Solutions for Overcoming Pre-Foreclosure Challenges
 
-| # | Chapter Title | Video Focus | Duration | Status |
-|---|--------------|-------------|----------|--------|
-| 01 | What is Pre-Foreclosure? | Timeline explanation | 50s | ✅ Complete |
-| 02 | Assessing Your Financial Situation | Can you keep the house? | 45s | 📝 Template Ready |
-| 03 | Communication with Your Lender | Negotiation strategies | 50s | 📝 Template Ready |
-| 04 | Loan Modification & Forbearance | Alternative options | 55s | 📝 Template Ready |
-| 05 | Short Sale vs. Foreclosure | Comparison chart | 55s | ✅ Complete |
-| 06 | Working with Cash Buyers | Process explanation | 50s | ✅ Complete |
-| 07 | Understanding Your Legal Rights | Protections available | 45s | 📝 Template Ready |
-| 08 | Rebuilding Your Financial Future | Post-foreclosure recovery | 50s | 📝 Template Ready |
+| #   | Chapter Title                      | Video Focus               | Duration | Status            |
+| --- | ---------------------------------- | ------------------------- | -------- | ----------------- |
+| 01  | What is Pre-Foreclosure?           | Timeline explanation      | 50s      | ✅ Complete       |
+| 02  | Assessing Your Financial Situation | Can you keep the house?   | 45s      | 📝 Template Ready |
+| 03  | Communication with Your Lender     | Negotiation strategies    | 50s      | 📝 Template Ready |
+| 04  | Loan Modification & Forbearance    | Alternative options       | 55s      | 📝 Template Ready |
+| 05  | Short Sale vs. Foreclosure         | Comparison chart          | 55s      | ✅ Complete       |
+| 06  | Working with Cash Buyers           | Process explanation       | 50s      | ✅ Complete       |
+| 07  | Understanding Your Legal Rights    | Protections available     | 45s      | 📝 Template Ready |
+| 08  | Rebuilding Your Financial Future   | Post-foreclosure recovery | 50s      | 📝 Template Ready |
 
 ---
 
 ## 🎬 Production Workflow
 
 ### Phase 1: Script Development (Week 1-2)
+
 ```powershell
 # Generate all chapter scripts at once
 .\generate-chapter-videos.ps1 -Action generate-all
@@ -42,17 +43,20 @@
 ```
 
 ### Phase 2: Asset Collection (Week 2-3)
+
 - Create 5 background templates in Canva
 - Collect stock footage/images for each chapter
 - Prepare logo and brand assets
 - Organize music tracks by mood
 
 ### Phase 3: Video Production (Week 3-6)
+
 - Produce 2-3 videos per week
 - Use batch production for efficiency
 - Follow series branding consistently
 
 ### Phase 4: Publishing (Week 6-8)
+
 - Post 3-4 videos per week
 - Cross-post to Instagram, TikTok, YouTube Shorts
 - Engage with comments daily
@@ -63,12 +67,14 @@
 ## 📊 Video Series Structure
 
 ### Series 1: Finding Support (8 episodes)
+
 **Theme:** Community + Emotional support
 **Tone:** Empathetic, supportive, community-focused
 **Colors:** Warm blues, purples, comforting tones
 **Music:** Calm, hopeful, uplifting
 
 **Content Arc:**
+
 1. Understanding the problem ← **START HERE**
 2. Emotional validation
 3. Finding community
@@ -79,12 +85,14 @@
 8. Building network ← **COMPLETE**
 
 ### Series 2: Real Solutions (8 episodes)
+
 **Theme:** Actionable strategies + Financial solutions
 **Tone:** Educational, clear, empowering
 **Colors:** Professional blues, greens (growth), gold (opportunity)
 **Music:** Confident, forward-moving, optimistic
 
 **Content Arc:**
+
 1. Pre-foreclosure basics ← **START HERE**
 2. Financial assessment
 3. Lender communication
@@ -99,6 +107,7 @@
 ## 🎯 Platform Strategy
 
 ### Instagram Reels
+
 - **Length:** 30-60 seconds (sweet spot: 45s)
 - **Format:** Vertical (9:16 or 1:1)
 - **Captions:** Always (80% watch without sound)
@@ -107,6 +116,7 @@
 - **Engagement:** Respond within 1 hour
 
 ### TikTok
+
 - **Length:** 30-60 seconds
 - **Format:** Vertical (9:16)
 - **Hook:** CRITICAL first 3 seconds
@@ -115,6 +125,7 @@
 - **Comments:** Pin most common question + answer
 
 ### YouTube Shorts
+
 - **Length:** Up to 60 seconds
 - **Format:** Vertical (9:16)
 - **Description:** Detailed with links
@@ -156,11 +167,12 @@ ebook-scripts/
 ## 🚀 Quick Start Commands
 
 ### Create video project from chapter template:
+
 ```powershell
 # Chapter 1
 .\content-workflow.ps1 new-video "Understanding Foreclosure" educational
 
-# Chapter 5  
+# Chapter 5
 .\content-workflow.ps1 new-video "Short Sale vs Foreclosure" educational
 
 # Chapter 6
@@ -168,11 +180,13 @@ ebook-scripts/
 ```
 
 ### Generate all missing templates:
+
 ```powershell
 .\generate-chapter-videos.ps1 -Action generate-remaining
 ```
 
 ### View production schedule:
+
 ```powershell
 .\generate-chapter-videos.ps1 -Action schedule
 ```
@@ -182,6 +196,7 @@ ebook-scripts/
 ## 📈 Success Metrics to Track
 
 ### Video Performance
+
 - Views (target: 5K+ per video)
 - Engagement rate (target: 5%+)
 - Completion rate (target: 70%+)
@@ -189,6 +204,7 @@ ebook-scripts/
 - Saves (high-value content indicator)
 
 ### Business Impact
+
 - Website clicks (track UTM parameters)
 - Consultation requests
 - DM inquiries
@@ -196,6 +212,7 @@ ebook-scripts/
 - Email signups
 
 ### Audience Growth
+
 - Follower growth rate
 - Audience demographics
 - Best performing content types
@@ -207,6 +224,7 @@ ebook-scripts/
 ## 🎨 Brand Consistency Checklist
 
 Every video must include:
+
 - [ ] RepMotivatedSeller logo
 - [ ] Brand colors (blues, purples, neutrals)
 - [ ] Poppins or Inter fonts only
@@ -223,26 +241,31 @@ Every video must include:
 ### After completing core 16 chapters:
 
 **Testimonial Series:**
+
 - Real homeowner success stories
 - Before/after case studies
 - "Where are they now?" follow-ups
 
 **FAQ Series:**
+
 - Top 10 foreclosure questions
 - Myth-busting common misconceptions
 - State-specific foreclosure laws
 
 **Behind-the-Scenes:**
+
 - A day in the life (home buying process)
 - Team introductions
 - Office tours / company culture
 
 **Seasonal Content:**
+
 - Tax implications of foreclosure
 - Holiday stress + financial pressure
 - New Year financial fresh start
 
 **Guest Expert Series:**
+
 - Real estate attorneys
 - Credit counselors
 - HUD-approved counselors
@@ -290,7 +313,7 @@ Each video script can become:
 **Content Strategist:** Analytics + optimization
 **Community Manager:** Comment moderation + DMs
 
-*For solo operation: Batch tasks by type for efficiency*
+_For solo operation: Batch tasks by type for efficiency_
 
 ---
 

@@ -31,61 +31,61 @@ Write-Host ""
 
 foreach ($file in $filesToFix) {
     $filePath = Join-Path $projectRoot $file
-    
+
     if (-not (Test-Path $filePath)) {
         Write-Host "⏭️  Skipping $file (not found)" -ForegroundColor Yellow
         continue
     }
-    
+
     try {
         $content = Get-Content $filePath -Raw
         $originalLength = $content.Length
-        
+
         # Strategy: Join lines that end mid-expression
         # Look for lines ending with patterns that suggest continuation:
         # - Open parenthesis/bracket/brace with no close
         # - Template literal ${...} split across lines
         # - String concatenation
         # - Incomplete JSX attributes
-        
+
         $lines = $content -split "`r?`n"
         $fixed = @()
         $i = 0
-        
+
         while ($i -lt $lines.Count) {
             $line = $lines[$i]
             $nextLine = if (($i + 1) -lt $lines.Count) { $lines[$i + 1] } else { $null }
-            
+
             # Check if this line should be joined with the next
             $shouldJoin = $false
-            
+
             if ($nextLine) {
                 # Pattern 1: Line ends with incomplete template literal
                 if ($line -match '\$\{[^}]*$' -and $nextLine -notmatch '^\s*(const |let |var |function |import |export|return |if |else |for |while)') {
                     $shouldJoin = $true
                 }
-                
+
                 # Pattern 2: Line ends with opening but next line starts with content (not new statement)
                 if ($line -match '[({[]$' -and $nextLine -match '^\s+[^/\s]' -and $nextLine -notmatch '^\s*(const |let |var |function)') {
                     $shouldJoin = $true
                 }
-                
+
                 # Pattern 3: JSX attribute split across lines
                 if ($line -match 'className="[^"]*$' -and $nextLine -match '^\s*[^"]*"') {
                     $shouldJoin = $true
                 }
-                
+
                 # Pattern 4: URL or long string split
                 if ($line -match 'https?://[^"''`\s]*$' -and $nextLine -match '^\s*[^"''`\s]+') {
                     $shouldJoin = $true
                 }
-                
+
                 # Pattern 5: Template literal backtick split
                 if ($line -match '`[^`]*$' -and $nextLine -match '^[^`]*`') {
                     $shouldJoin = $true
                 }
             }
-            
+
             if ($shouldJoin) {
                 # Join this line with next, preserving a single space
                 $fixed += $line + $nextLine.TrimStart()
@@ -96,9 +96,9 @@ foreach ($file in $filesToFix) {
                 $i++
             }
         }
-        
+
         $newContent = $fixed -join "`n"
-        
+
         if ($newContent -ne $content) {
             Set-Content $filePath -Value $newContent -Encoding UTF8 -NoNewline
             Write-Host "✅ Fixed $file" -ForegroundColor Green
@@ -106,7 +106,7 @@ foreach ($file in $filesToFix) {
         else {
             Write-Host "⚪ No changes needed for $file" -ForegroundColor Gray
         }
-        
+
     }
     catch {
         Write-Host "❌ Error fixing $file : $($_.Exception.Message)" -ForegroundColor Red

@@ -127,111 +127,111 @@
 <body>
   <div class="container">
     <h1>RepMotivatedSeller - Foreclosure Assistance</h1>
-    
+
     <div class="progress-bar">
       <div class="progress-bar-fill" style="width: 20%"></div>
     </div>
     <div class="step-indicator">Step 1 of 5</div>
-    
+
     <div id="step1" class="step">
       <h2>Contact Information</h2>
-      
+
       <div class="form-group">
         <label for="name">Full Name</label>
         <input type="text" id="name" name="name" required>
       </div>
-      
+
       <div class="form-group">
         <label for="email">Email Address</label>
         <input type="email" id="email" name="email" required>
       </div>
-      
+
       <div class="form-group">
         <label for="phone">Phone Number</label>
         <input type="tel" id="phone" name="phone" required>
       </div>
-      
+
       <div class="button-group">
         <div></div>
         <button onclick="nextStep(1)">Next</button>
       </div>
     </div>
-    
+
     <div id="step2" class="step" style="display: none;">
       <h2>Situation Assessment</h2>
-      
+
       <div class="form-group">
         <label for="property_address">Property Address</label>
         <input type="text" id="property_address" name="property_address">
       </div>
-      
+
       <div class="form-group">
         <label for="property_value">Estimated Property Value ($)</label>
         <input type="number" id="property_value" name="property_value">
       </div>
-      
+
       <div class="form-group">
         <label for="mortgage_balance">Mortgage Balance ($)</label>
         <input type="number" id="mortgage_balance" name="mortgage_balance">
       </div>
-      
+
       <div class="form-group">
         <label for="missed_payments">Number of Missed Payments</label>
         <input type="number" id="missed_payments" name="missed_payments">
       </div>
-      
+
       <div class="form-group">
         <input type="checkbox" id="received_nod" name="received_nod" style="width: auto;">
         <label for="received_nod" style="display: inline;">Have you received a Notice of Default (NOD)?</label>
       </div>
-      
+
       <div class="button-group">
         <button class="button-prev" onclick="prevStep(2)">Previous</button>
         <button onclick="nextStep(2)">Next</button>
       </div>
     </div>
-    
+
     <div id="step3" class="step" style="display: none;">
       <h2>Problem Identification</h2>
-      
+
       <div class="form-group">
         <label for="challenges">What challenges are you facing with your mortgage?</label>
         <textarea id="challenges" name="challenges" rows="3"></textarea>
       </div>
-      
+
       <div class="form-group">
         <label for="difficulties">What difficulties have you encountered when trying to resolve this situation?</label>
         <textarea id="difficulties" name="difficulties" rows="3"></textarea>
       </div>
-      
+
       <div class="button-group">
         <button class="button-prev" onclick="prevStep(3)">Previous</button>
         <button onclick="nextStep(3)">Next</button>
       </div>
     </div>
-    
+
     <div id="step4" class="step" style="display: none;">
       <h2>Impact Analysis</h2>
-      
+
       <div class="form-group">
         <label for="family_impact">How is this situation affecting you and your family?</label>
         <textarea id="family_impact" name="family_impact" rows="3"></textarea>
       </div>
-      
+
       <div class="form-group">
         <label for="financial_impact">What financial impact has this had on your situation?</label>
         <textarea id="financial_impact" name="financial_impact" rows="3"></textarea>
       </div>
-      
+
       <div class="button-group">
         <button class="button-prev" onclick="prevStep(4)">Previous</button>
         <button onclick="nextStep(4)">Next</button>
       </div>
     </div>
-    
+
     <div id="step5" class="step" style="display: none;">
       <h2>Solution Planning</h2>
-      
+
       <div class="form-group">
         <label for="preferred_solution">What solution would you prefer for your situation?</label>
         <select id="preferred_solution" name="preferred_solution">
@@ -245,20 +245,20 @@
           <option value="not_sure">Not Sure / Need Advice</option>
         </select>
       </div>
-      
+
       <div class="form-group">
         <label for="openness_to_options">How open are you to exploring different options?</label>
         <textarea id="openness_to_options" name="openness_to_options" rows="3"></textarea>
       </div>
-      
+
       <div id="error-message" class="error-message" style="display: none;"></div>
-      
+
       <div class="button-group">
         <button class="button-prev" onclick="prevStep(5)">Previous</button>
         <button id="submit-button" onclick="submitForm()">Submit</button>
       </div>
     </div>
-    
+
     <div id="success" class="step" style="display: none;">
       <div class="success-message">
         <h2>Thank You!</h2>
@@ -272,39 +272,39 @@
     // Supabase configuration
     const SUPABASE_URL = 'https://ltxqodqlexvojqqxquew.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg';
-    
+
     let currentStep = 1;
     const totalSteps = 5;
-    
+
     function nextStep(step) {
       document.getElementById(`step${step}`).style.display = 'none';
       document.getElementById(`step${step + 1}`).style.display = 'block';
       currentStep = step + 1;
       updateProgressBar();
     }
-    
+
     function prevStep(step) {
       document.getElementById(`step${step}`).style.display = 'none';
       document.getElementById(`step${step - 1}`).style.display = 'block';
       currentStep = step - 1;
       updateProgressBar();
     }
-    
+
     function updateProgressBar() {
       const progressPercent = (currentStep / totalSteps) * 100;
       document.querySelector('.progress-bar-fill').style.width = `${progressPercent}%`;
       document.querySelector('.step-indicator').textContent = `Step ${currentStep} of ${totalSteps}`;
     }
-    
+
     async function submitForm() {
       // Show loading state
       const submitButton = document.getElementById('submit-button');
       const errorMessage = document.getElementById('error-message');
-      
+
       submitButton.disabled = true;
       submitButton.innerHTML = 'Submitting... <span class="spinner"></span>';
       errorMessage.style.display = 'none';
-      
+
       // Collect form data
       const formData = {
         name: document.getElementById('name').value,
@@ -323,7 +323,7 @@
         openness_to_options: document.getElementById('openness_to_options').value,
         status: 'new'
       };
-      
+
       try {
         // Submit to Supabase
         const response = await fetch(`${SUPABASE_URL}/rest/v1/foreclosure_responses`, {
@@ -335,11 +335,11 @@
           },
           body: JSON.stringify(formData)
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to submit form');
         }
-        
+
         // Trigger the follow-up scheduler
         try {
           await fetch(`${SUPABASE_URL}/functions/v1/schedule-follow-ups`, {
@@ -353,13 +353,13 @@
           console.error('Error triggering follow-up scheduler:', error);
           // Continue even if this fails
         }
-        
+
         // Show success message
         document.getElementById('step5').style.display = 'none';
         document.getElementById('success').style.display = 'block';
         document.querySelector('.progress-bar-fill').style.width = '100%';
         document.querySelector('.step-indicator').textContent = 'Complete';
-        
+
       } catch (error) {
         console.error('Error submitting form:', error);
         errorMessage.textContent = 'There was an error submitting your information. Please try again.';

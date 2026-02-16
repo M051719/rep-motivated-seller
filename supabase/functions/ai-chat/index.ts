@@ -12,12 +12,16 @@ const AVAILABLE_TOOLS = [
     type: "function",
     function: {
       name: "calculate_mortgage",
-      description: "Calculate monthly mortgage payments, total interest, and payment schedule",
+      description:
+        "Calculate monthly mortgage payments, total interest, and payment schedule",
       parameters: {
         type: "object",
         properties: {
           principal: { type: "number", description: "Loan amount in dollars" },
-          annualRate: { type: "number", description: "Annual interest rate (e.g., 4.5 for 4.5%)" },
+          annualRate: {
+            type: "number",
+            description: "Annual interest rate (e.g., 4.5 for 4.5%)",
+          },
           years: { type: "number", description: "Loan term in years" },
         },
         required: ["principal", "annualRate", "years"],
@@ -28,13 +32,24 @@ const AVAILABLE_TOOLS = [
     type: "function",
     function: {
       name: "calculate_foreclosure_timeline",
-      description: "Estimate foreclosure timeline based on state laws and current status",
+      description:
+        "Estimate foreclosure timeline based on state laws and current status",
       parameters: {
         type: "object",
         properties: {
-          state: { type: "string", description: "State abbreviation (e.g., CA, TX, FL)" },
-          missedPayments: { type: "number", description: "Number of missed mortgage payments" },
-          loanType: { type: "string", enum: ["conventional", "fha", "va"], description: "Type of mortgage loan" },
+          state: {
+            type: "string",
+            description: "State abbreviation (e.g., CA, TX, FL)",
+          },
+          missedPayments: {
+            type: "number",
+            description: "Number of missed mortgage payments",
+          },
+          loanType: {
+            type: "string",
+            enum: ["conventional", "fha", "va"],
+            description: "Type of mortgage loan",
+          },
         },
         required: ["state", "missedPayments", "loanType"],
       },
@@ -44,12 +59,19 @@ const AVAILABLE_TOOLS = [
     type: "function",
     function: {
       name: "calculate_equity",
-      description: "Calculate home equity, loan-to-value ratio, and determine if underwater",
+      description:
+        "Calculate home equity, loan-to-value ratio, and determine if underwater",
       parameters: {
         type: "object",
         properties: {
-          propertyValue: { type: "number", description: "Current property market value" },
-          mortgageBalance: { type: "number", description: "Remaining mortgage balance" },
+          propertyValue: {
+            type: "number",
+            description: "Current property market value",
+          },
+          mortgageBalance: {
+            type: "number",
+            description: "Remaining mortgage balance",
+          },
         },
         required: ["propertyValue", "mortgageBalance"],
       },
@@ -59,16 +81,34 @@ const AVAILABLE_TOOLS = [
     type: "function",
     function: {
       name: "analyze_short_sale",
-      description: "Compare short sale vs foreclosure options with financial impact analysis",
+      description:
+        "Compare short sale vs foreclosure options with financial impact analysis",
       parameters: {
         type: "object",
         properties: {
-          propertyValue: { type: "number", description: "Current property value" },
-          mortgageBalance: { type: "number", description: "Total mortgage debt" },
-          monthlyPayment: { type: "number", description: "Current monthly mortgage payment" },
-          missedPayments: { type: "number", description: "Number of missed payments" },
+          propertyValue: {
+            type: "number",
+            description: "Current property value",
+          },
+          mortgageBalance: {
+            type: "number",
+            description: "Total mortgage debt",
+          },
+          monthlyPayment: {
+            type: "number",
+            description: "Current monthly mortgage payment",
+          },
+          missedPayments: {
+            type: "number",
+            description: "Number of missed payments",
+          },
         },
-        required: ["propertyValue", "mortgageBalance", "monthlyPayment", "missedPayments"],
+        required: [
+          "propertyValue",
+          "mortgageBalance",
+          "monthlyPayment",
+          "missedPayments",
+        ],
       },
     },
   },
@@ -76,7 +116,8 @@ const AVAILABLE_TOOLS = [
     type: "function",
     function: {
       name: "get_property_comparables",
-      description: "Get comparable property sales data for market value estimation",
+      description:
+        "Get comparable property sales data for market value estimation",
       parameters: {
         type: "object",
         properties: {
@@ -94,11 +135,16 @@ const AVAILABLE_TOOLS = [
     type: "function",
     function: {
       name: "get_real_time_market_data",
-      description: "Get real-time, licensed market data and foreclosure insights from Dappier",
+      description:
+        "Get real-time, licensed market data and foreclosure insights from Dappier",
       parameters: {
         type: "object",
         properties: {
-          query: { type: "string", description: "Market data query (e.g., 'foreclosure trends in California 2025')" },
+          query: {
+            type: "string",
+            description:
+              "Market data query (e.g., 'foreclosure trends in California 2025')",
+          },
           location: { type: "string", description: "City, state, or ZIP code" },
         },
         required: ["query"],
@@ -115,18 +161,21 @@ async function getDappierData(query: string, location?: string) {
 
   try {
     const searchQuery = location ? `${query} in ${location}` : query;
-    const response = await fetch(`https://mcp.dappier.com/sse?apiKey=${DAPPIER_API_KEY}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `https://mcp.dappier.com/sse?apiKey=${DAPPIER_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: searchQuery,
+          domains: ["real-estate", "legal", "finance"],
+          freshness: "recent", // Last 30 days
+          limit: 5,
+        }),
       },
-      body: JSON.stringify({
-        query: searchQuery,
-        domains: ["real-estate", "legal", "finance"],
-        freshness: "recent", // Last 30 days
-        limit: 5,
-      }),
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`Dappier API error: ${response.statusText}`);
@@ -150,14 +199,14 @@ function calculateMortgage(params: any) {
   const { principal, annualRate, years } = params;
   const monthlyRate = annualRate / 100 / 12;
   const numberOfPayments = years * 12;
-  
+
   const monthlyPayment =
     (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
     (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-  
+
   const totalPaid = monthlyPayment * numberOfPayments;
   const totalInterest = totalPaid - principal;
-  
+
   return {
     monthlyPayment: Math.round(monthlyPayment * 100) / 100,
     totalPaid: Math.round(totalPaid * 100) / 100,
@@ -170,24 +219,31 @@ function calculateMortgage(params: any) {
 
 function calculateForeclosureTimeline(params: any) {
   const { state, missedPayments, loanType } = params;
-  
-  const stateTimelines: Record<string, { judicial: number; nonJudicial: number }> = {
+
+  const stateTimelines: Record<
+    string,
+    { judicial: number; nonJudicial: number }
+  > = {
     CA: { judicial: 12, nonJudicial: 4 },
     FL: { judicial: 6, nonJudicial: 0 },
     TX: { judicial: 0, nonJudicial: 2 },
     NY: { judicial: 15, nonJudicial: 0 },
     AZ: { judicial: 3, nonJudicial: 3 },
   };
-  
-  const timeline = stateTimelines[state.toUpperCase()] || { judicial: 8, nonJudicial: 4 };
-  const isJudicial = state.toUpperCase() === "FL" || state.toUpperCase() === "NY";
+
+  const timeline = stateTimelines[state.toUpperCase()] || {
+    judicial: 8,
+    nonJudicial: 4,
+  };
+  const isJudicial =
+    state.toUpperCase() === "FL" || state.toUpperCase() === "NY";
   const timelineMonths = isJudicial ? timeline.judicial : timeline.nonJudicial;
-  
+
   const preForeclosure = 3;
   const foreclosureProcess = timelineMonths;
   const totalTimeline = preForeclosure + foreclosureProcess;
   const monthsRemaining = Math.max(0, totalTimeline - missedPayments);
-  
+
   return {
     state: state.toUpperCase(),
     loanType,
@@ -197,9 +253,18 @@ function calculateForeclosureTimeline(params: any) {
     foreclosureProcessMonths: foreclosureProcess,
     totalTimelineMonths: totalTimeline,
     monthsRemainingEstimate: monthsRemaining,
-    currentStage: missedPayments < 3 ? "Early Default" : 
-                  missedPayments < preForeclosure + 2 ? "Pre-Foreclosure" : "Foreclosure Process",
-    urgencyLevel: monthsRemaining < 2 ? "Critical" : monthsRemaining < 4 ? "High" : "Moderate",
+    currentStage:
+      missedPayments < 3
+        ? "Early Default"
+        : missedPayments < preForeclosure + 2
+          ? "Pre-Foreclosure"
+          : "Foreclosure Process",
+    urgencyLevel:
+      monthsRemaining < 2
+        ? "Critical"
+        : monthsRemaining < 4
+          ? "High"
+          : "Moderate",
     nextSteps: [
       "Contact lender immediately",
       "Explore loan modification options",
@@ -214,7 +279,7 @@ function calculateEquity(params: any) {
   const { propertyValue, mortgageBalance } = params;
   const equity = propertyValue - mortgageBalance;
   const equityPercentage = (equity / propertyValue) * 100;
-  
+
   return {
     propertyValue,
     mortgageBalance,
@@ -222,27 +287,30 @@ function calculateEquity(params: any) {
     equityPercentage: Math.round(equityPercentage * 100) / 100,
     hasPositiveEquity: equity > 0,
     isUnderwater: equity < 0,
-    loanToValue: Math.round((mortgageBalance / propertyValue) * 100 * 100) / 100,
-    recommendation: equity > 0 
-      ? "You have positive equity. Short sale may not be ideal. Consider selling traditionally or loan modification."
-      : "You're underwater. Short sale or deed in lieu may be better options than foreclosure.",
+    loanToValue:
+      Math.round((mortgageBalance / propertyValue) * 100 * 100) / 100,
+    recommendation:
+      equity > 0
+        ? "You have positive equity. Short sale may not be ideal. Consider selling traditionally or loan modification."
+        : "You're underwater. Short sale or deed in lieu may be better options than foreclosure.",
   };
 }
 
 function analyzeShortSale(params: any) {
-  const { propertyValue, mortgageBalance, monthlyPayment, missedPayments } = params;
-  
+  const { propertyValue, mortgageBalance, monthlyPayment, missedPayments } =
+    params;
+
   const deficit = mortgageBalance - propertyValue;
   const arrearsAmount = monthlyPayment * missedPayments;
   const totalOwed = mortgageBalance + arrearsAmount;
-  
+
   const foreclosureCosts = {
     legalFees: 2500,
     creditImpact: 150,
     timeDamage: 7,
     deficiencyJudgment: deficit > 0 ? deficit : 0,
   };
-  
+
   const shortSaleCosts = {
     realtorCommission: propertyValue * 0.06,
     closingCosts: propertyValue * 0.02,
@@ -250,7 +318,7 @@ function analyzeShortSale(params: any) {
     timeDamage: 2,
     potentialDeficiency: deficit * 0.3,
   };
-  
+
   return {
     propertyValue,
     mortgageBalance,
@@ -258,50 +326,68 @@ function analyzeShortSale(params: any) {
     arrearsAmount,
     totalOwed,
     foreclosureOption: {
-      estimatedCosts: foreclosureCosts.legalFees + foreclosureCosts.deficiencyJudgment,
+      estimatedCosts:
+        foreclosureCosts.legalFees + foreclosureCosts.deficiencyJudgment,
       creditScoreImpact: foreclosureCosts.creditImpact,
       creditReportYears: foreclosureCosts.timeDamage,
       deficiencyRisk: foreclosureCosts.deficiencyJudgment,
     },
     shortSaleOption: {
-      estimatedCosts: shortSaleCosts.realtorCommission + shortSaleCosts.closingCosts,
+      estimatedCosts:
+        shortSaleCosts.realtorCommission + shortSaleCosts.closingCosts,
       creditScoreImpact: shortSaleCosts.creditImpact,
       creditReportYears: shortSaleCosts.timeDamage,
       deficiencyRisk: shortSaleCosts.potentialDeficiency,
     },
-    recommendation: deficit < 0 
-      ? "Traditional sale recommended - you have equity"
-      : "Short sale is likely better than foreclosure. Less credit damage and potential deficiency forgiveness.",
+    recommendation:
+      deficit < 0
+        ? "Traditional sale recommended - you have equity"
+        : "Short sale is likely better than foreclosure. Less credit damage and potential deficiency forgiveness.",
     savings: {
-      creditScorePoints: foreclosureCosts.creditImpact - shortSaleCosts.creditImpact,
+      creditScorePoints:
+        foreclosureCosts.creditImpact - shortSaleCosts.creditImpact,
       yearsOnCredit: foreclosureCosts.timeDamage - shortSaleCosts.timeDamage,
-      financialSavings: (foreclosureCosts.deficiencyJudgment - shortSaleCosts.potentialDeficiency),
+      financialSavings:
+        foreclosureCosts.deficiencyJudgment -
+        shortSaleCosts.potentialDeficiency,
     },
   };
 }
 
 function getPropertyComparables(params: any) {
   const { address, bedrooms, bathrooms, squareFeet, zipCode } = params;
-  
+
   const baseValue = squareFeet * 200;
   const variance = 0.15;
-  
+
   const generateComp = (offset: number) => ({
     address: `${1000 + offset} Similar St, Same City, ${zipCode}`,
     bedrooms: bedrooms + (Math.random() > 0.5 ? 1 : 0),
     bathrooms: bathrooms + (Math.random() > 0.7 ? 0.5 : 0),
     squareFeet: Math.round(squareFeet * (0.9 + Math.random() * 0.2)),
     soldPrice: Math.round(baseValue * (1 + (Math.random() - 0.5) * variance)),
-    soldDate: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    soldDate: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
     daysOnMarket: Math.round(20 + Math.random() * 40),
     pricePerSqft: Math.round(200 * (1 + (Math.random() - 0.5) * variance)),
   });
-  
-  const comparables = [generateComp(1), generateComp(2), generateComp(3), generateComp(4), generateComp(5)];
-  
-  const avgPrice = comparables.reduce((sum: number, comp: any) => sum + comp.soldPrice, 0) / comparables.length;
-  const avgPricePerSqft = comparables.reduce((sum: number, comp: any) => sum + comp.pricePerSqft, 0) / comparables.length;
-  
+
+  const comparables = [
+    generateComp(1),
+    generateComp(2),
+    generateComp(3),
+    generateComp(4),
+    generateComp(5),
+  ];
+
+  const avgPrice =
+    comparables.reduce((sum: number, comp: any) => sum + comp.soldPrice, 0) /
+    comparables.length;
+  const avgPricePerSqft =
+    comparables.reduce((sum: number, comp: any) => sum + comp.pricePerSqft, 0) /
+    comparables.length;
+
   return {
     subject: { address, bedrooms, bathrooms, squareFeet, zipCode },
     comparables,
@@ -343,7 +429,8 @@ Deno.serve(async (req) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+        "Access-Control-Allow-Headers":
+          "authorization, x-client-info, apikey, content-type",
       },
     });
   }
@@ -400,10 +487,12 @@ When users ask about specific numbers or their situation, use the calculator too
 
     // Add chat history
     if (history && history.length > 0) {
-      messages.push(...history.map((msg: any) => ({
-        role: msg.role,
-        content: msg.content,
-      })));
+      messages.push(
+        ...history.map((msg: any) => ({
+          role: msg.role,
+          content: msg.content,
+        })),
+      );
     }
 
     // Add current user message
@@ -420,21 +509,24 @@ When users ask about specific numbers or their situation, use the calculator too
     });
 
     // Call OpenAI with tools
-    const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
+    const openaiResponse = await fetch(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4-turbo-preview",
+          messages,
+          tools: AVAILABLE_TOOLS,
+          tool_choice: "auto",
+          temperature: 0.7,
+          max_tokens: 1000,
+        }),
       },
-      body: JSON.stringify({
-        model: "gpt-4-turbo-preview",
-        messages,
-        tools: AVAILABLE_TOOLS,
-        tool_choice: "auto",
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
-    });
+    );
 
     if (!openaiResponse.ok) {
       const error = await openaiResponse.text();
@@ -452,12 +544,12 @@ When users ask about specific numbers or their situation, use the calculator too
           const toolName = toolCall.function.name;
           const toolParams = JSON.parse(toolCall.function.arguments);
           const result = await executeTool(toolName, toolParams);
-          
+
           return {
             name: toolName,
             result,
           };
-        })
+        }),
       );
 
       // Make a second call to OpenAI with tool results
@@ -471,19 +563,22 @@ When users ask about specific numbers or their situation, use the calculator too
         })),
       ];
 
-      const finalResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
+      const finalResponse = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-4-turbo-preview",
+            messages: toolMessages,
+            temperature: 0.7,
+            max_tokens: 1000,
+          }),
         },
-        body: JSON.stringify({
-          model: "gpt-4-turbo-preview",
-          messages: toolMessages,
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      });
+      );
 
       const finalCompletion = await finalResponse.json();
       assistantMessage.content = finalCompletion.choices[0].message.content;
@@ -513,19 +608,16 @@ When users ask about specific numbers or their situation, use the calculator too
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("Error in ai-chat function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   }
 });

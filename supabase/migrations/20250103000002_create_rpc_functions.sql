@@ -30,23 +30,23 @@ BEGIN
     IF auth.uid() IS NULL THEN
         RAISE EXCEPTION 'Authentication required';
     END IF;
-    
+
     -- Validate required fields
     IF p_name IS NULL OR p_name = '' THEN
         RAISE EXCEPTION 'Lead name is required';
     END IF;
-    
+
     IF p_email IS NULL OR p_email = '' THEN
         RAISE EXCEPTION 'Lead email is required';
     END IF;
-    
+
     -- Insert lead
     INSERT INTO api.leads (
         user_id, name, email, phone, property_address, lead_source, notes
     ) VALUES (
         auth.uid(), p_name, p_email, p_phone, p_property_address, p_lead_source, p_notes
     ) RETURNING id INTO lead_id;
-    
+
     RETURN lead_id;
 END;
 $$;
@@ -67,31 +67,31 @@ BEGIN
     IF auth.uid() IS NULL THEN
         RAISE EXCEPTION 'Authentication required';
     END IF;
-    
+
     -- Validate status
     IF p_status NOT IN ('new', 'contacted', 'qualified', 'converted', 'lost') THEN
         RAISE EXCEPTION 'Invalid status';
     END IF;
-    
+
     -- Update lead (RLS ensures user owns this lead)
-    UPDATE api.leads 
-    SET 
+    UPDATE api.leads
+    SET
         status = p_status,
         notes = COALESCE(p_notes, notes),
         updated_at = NOW()
     WHERE id = p_lead_id AND user_id = auth.uid();
-    
+
     -- Check if update was successful
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Lead not found or access denied';
     END IF;
-    
+
     RETURN true;
 END;
 $$;
 
 -- ============================================================================
--- CONSULTATION BOOKING FUNCTIONS  
+-- CONSULTATION BOOKING FUNCTIONS
 -- ============================================================================
 
 -- Book a consultation
@@ -115,33 +115,33 @@ BEGIN
     IF auth.uid() IS NULL THEN
         RAISE EXCEPTION 'Authentication required';
     END IF;
-    
+
     -- Validate consultation type
     IF p_consultation_type NOT IN ('basic', 'premium', 'enterprise') THEN
         RAISE EXCEPTION 'Invalid consultation type';
     END IF;
-    
+
     -- Set duration based on type
     duration_mins := CASE p_consultation_type
         WHEN 'basic' THEN 30
-        WHEN 'premium' THEN 60  
+        WHEN 'premium' THEN 60
         WHEN 'enterprise' THEN 90
     END;
-    
+
     -- Validate booking date (must be in future)
     IF p_booking_date <= NOW() THEN
         RAISE EXCEPTION 'Booking date must be in the future';
     END IF;
-    
+
     -- Insert booking
     INSERT INTO api.consultation_bookings (
-        user_id, consultation_type, invitee_name, invitee_email, 
+        user_id, consultation_type, invitee_name, invitee_email,
         booking_date, duration_minutes, notes
     ) VALUES (
         auth.uid(), p_consultation_type, p_invitee_name, p_invitee_email,
         p_booking_date, duration_mins, p_notes
     ) RETURNING id INTO booking_id;
-    
+
     RETURN booking_id;
 END;
 $$;
@@ -163,26 +163,26 @@ BEGIN
     IF auth.uid() IS NULL THEN
         RAISE EXCEPTION 'Authentication required';
     END IF;
-    
+
     -- Validate status
     IF p_status NOT IN ('scheduled', 'completed', 'cancelled', 'rescheduled') THEN
         RAISE EXCEPTION 'Invalid status';
     END IF;
-    
+
     -- Update consultation (RLS ensures user owns this booking)
-    UPDATE api.consultation_bookings 
-    SET 
+    UPDATE api.consultation_bookings
+    SET
         status = p_status,
         meeting_url = COALESCE(p_meeting_url, meeting_url),
         notes = COALESCE(p_notes, notes),
         updated_at = NOW()
     WHERE id = p_booking_id AND user_id = auth.uid();
-    
+
     -- Check if update was successful
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Consultation not found or access denied';
     END IF;
-    
+
     RETURN true;
 END;
 $$;
@@ -209,23 +209,23 @@ DECLARE
 BEGIN
     -- This function is typically called by service role (webhooks)
     -- Or by authenticated users for their own payments
-    
+
     -- Validate parameters
     IF p_user_id IS NULL THEN
         RAISE EXCEPTION 'User ID required';
     END IF;
-    
+
     IF p_amount <= 0 THEN
         RAISE EXCEPTION 'Amount must be positive';
     END IF;
-    
+
     -- Insert payment
     INSERT INTO api.payments (
         user_id, amount, currency, status, stripe_payment_id
     ) VALUES (
         p_user_id, p_amount, p_currency, p_status, p_stripe_payment_id
     ) RETURNING id INTO payment_id;
-    
+
     RETURN payment_id;
 END;
 $$;

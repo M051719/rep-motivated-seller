@@ -62,39 +62,39 @@ function App() {
       <div className="App min-h-screen bg-gray-50">
         {/* Your existing Navigation component enhanced */}
         <Navigation user={user} />
-        
+
         <main className="flex-1">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
               {/* Your existing routes - keeping all of them */}
               <Route path="/login" element={<Login />} />
               <Route path="/foreclosure-questionnaire" element={<ForeclosureQuestionnaire />} />
-              
+
               {/* Enhanced admin routes */}
               <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminDashboard />
                 </ProtectedRoute>
               } />
-              
+
               {/* Enhanced education routes - building on your existing */}
               <Route path="/education" element={<EnhancedEducationDashboard />} />
               <Route path="/education/video/:lessonId" element={<VideoLearningPlayer />} />
               <Route path="/education/analytics" element={<LearningAnalytics />} />
-              
+
               {/* Enhanced marketing routes */}
               <Route path="/marketing/direct-mail" element={<EnhancedDirectMail />} />
               <Route path="/marketing/analytics" element={<MarketingAnalytics />} />
 
               {/* Your other existing routes... */}
-              
+
             </Routes>
           </Suspense>
         </main>
-        
+
         {/* NEW: AI Assistant - Always available */}
         <AIAssistant />
-        
+
         {/* Your existing toast notifications */}
         <Toaster position="bottom-right" />
       </div>

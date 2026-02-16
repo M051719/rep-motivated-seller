@@ -10,9 +10,9 @@ import {
   CheckCircle,
   Building,
 } from "lucide-react";
-import { WholesaleContractForm } from "../components/Contracts/WholesaleContractForm";
-import { FixFlipContractForm } from "../components/Contracts/FixFlipContractForm";
-import { CashoutRefiForm } from "../components/Contracts/CashoutRefiForm";
+import { WholesaleContractForm } from "./WholesaleContractForm";
+import { FixFlipContractForm } from "./FixFlipContractForm";
+import { CashoutRefiForm } from "./CashoutRefiForm";
 
 type ContractType = "wholesale" | "fix-flip" | "cashout-refi";
 

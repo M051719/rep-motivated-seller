@@ -1,16 +1,16 @@
 // Cookie Banner Implementation
-(function() {
-    'use strict';
-    
-    // Check if user has already accepted cookies
-    if (localStorage.getItem('cookiesAccepted') === 'true') {
-        return;
-    }
-    
-    // Create cookie banner
-    const banner = document.createElement('div');
-    banner.id = 'cookie-banner';
-    banner.innerHTML = `
+(function () {
+  "use strict";
+
+  // Check if user has already accepted cookies
+  if (localStorage.getItem("cookiesAccepted") === "true") {
+    return;
+  }
+
+  // Create cookie banner
+  const banner = document.createElement("div");
+  banner.id = "cookie-banner";
+  banner.innerHTML = `
         <div style="
             position: fixed;
             bottom: 0;
@@ -28,7 +28,7 @@
             <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
                 <div style="flex: 1; min-width: 300px;">
                     <strong>🍪 We use cookies</strong><br>
-                    This website uses cookies to enhance your experience and provide personalized services. 
+                    This website uses cookies to enhance your experience and provide personalized services.
                     <a href="/cookies-policy.html" style="color: #3498db; text-decoration: underline;" target="_blank">Learn more about our cookie policy</a>
                 </div>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -55,46 +55,56 @@
             </div>
         </div>
     `;
-    
-    // Add banner to page
-    document.body.appendChild(banner);
-    
-    // Handle accept button
-    document.getElementById('accept-cookies').addEventListener('click', function() {
-        localStorage.setItem('cookiesAccepted', 'true');
-        localStorage.setItem('cookiePreferences', JSON.stringify({
-            necessary: true,
-            functional: true,
-            analytics: true,
-            advertising: true
-        }));
-        banner.remove();
-        
-        // Initialize analytics and other tracking
-        initializeTracking();
+
+  // Add banner to page
+  document.body.appendChild(banner);
+
+  // Handle accept button
+  document
+    .getElementById("accept-cookies")
+    .addEventListener("click", function () {
+      localStorage.setItem("cookiesAccepted", "true");
+      localStorage.setItem(
+        "cookiePreferences",
+        JSON.stringify({
+          necessary: true,
+          functional: true,
+          analytics: true,
+          advertising: true,
+        }),
+      );
+      banner.remove();
+
+      // Initialize analytics and other tracking
+      initializeTracking();
     });
-    
-    // Handle decline button
-    document.getElementById('decline-cookies').addEventListener('click', function() {
-        localStorage.setItem('cookiesAccepted', 'false');
-        localStorage.setItem('cookiePreferences', JSON.stringify({
-            necessary: true,
-            functional: false,
-            analytics: false,
-            advertising: false
-        }));
-        banner.remove();
+
+  // Handle decline button
+  document
+    .getElementById("decline-cookies")
+    .addEventListener("click", function () {
+      localStorage.setItem("cookiesAccepted", "false");
+      localStorage.setItem(
+        "cookiePreferences",
+        JSON.stringify({
+          necessary: true,
+          functional: false,
+          analytics: false,
+          advertising: false,
+        }),
+      );
+      banner.remove();
     });
-    
-    // Initialize tracking if cookies are accepted
-    function initializeTracking() {
-        // Add Google Analytics or other tracking code here
-        console.log('Tracking initialized - cookies accepted');
-        
-        // Example: Google Analytics
-        // gtag('config', 'GA_MEASUREMENT_ID');
-        
-        // Example: Facebook Pixel
-        // fbq('track', 'PageView');
-    }
+
+  // Initialize tracking if cookies are accepted
+  function initializeTracking() {
+    // Add Google Analytics or other tracking code here
+    console.log("Tracking initialized - cookies accepted");
+
+    // Example: Google Analytics
+    // gtag('config', 'GA_MEASUREMENT_ID');
+
+    // Example: Facebook Pixel
+    // fbq('track', 'PageView');
+  }
 })();

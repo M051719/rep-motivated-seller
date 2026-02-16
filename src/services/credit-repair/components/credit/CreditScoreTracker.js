@@ -9,10 +9,10 @@ class CreditScoreTracker {
     this.options = {
       showHistory: options.showHistory !== false,
       showGoal: options.showGoal !== false,
-      userTier: options.userTier || 'FREE',
-      ...options
+      userTier: options.userTier || "FREE",
+      ...options,
     };
-    
+
     this.data = null;
     this.init();
   }
@@ -25,11 +25,11 @@ class CreditScoreTracker {
 
   async loadData() {
     try {
-      const response = await fetch('/api/credit-repair/progress');
+      const response = await fetch("/api/credit-repair/progress");
       const result = await response.json();
       this.data = result.data;
     } catch (error) {
-      console.error('Error loading credit data:', error);
+      console.error("Error loading credit data:", error);
       this.data = { current: 0, history: [], improvement: 0 };
     }
   }
@@ -38,7 +38,7 @@ class CreditScoreTracker {
     if (!this.data) return;
 
     const { current, improvement, goal, estimatedTimeToGoal } = this.data;
-    
+
     this.container.innerHTML = `
       <div class="credit-tracker-component">
         <div class="tracker-header">
@@ -50,23 +50,27 @@ class CreditScoreTracker {
             <div class="score-number">${current}</div>
             <div class="score-label">Current Score</div>
           </div>
-          
+
           <div class="score-details">
-            <div class="score-change ${improvement >= 0 ? 'positive' : 'negative'}">
-              ${improvement >= 0 ? '↑' : '↓'} ${Math.abs(improvement)} points
+            <div class="score-change ${improvement >= 0 ? "positive" : "negative"}">
+              ${improvement >= 0 ? "↑" : "↓"} ${Math.abs(improvement)} points
               <span class="change-label">Overall Improvement</span>
             </div>
-            
-            ${this.options.showGoal && goal ? `
+
+            ${
+              this.options.showGoal && goal
+                ? `
               <div class="score-goal">
                 <strong>Goal: ${goal}</strong>
                 <p>Estimated: ${estimatedTimeToGoal}</p>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         </div>
 
-        ${this.options.showHistory ? this.renderHistory() : ''}
+        ${this.options.showHistory ? this.renderHistory() : ""}
 
         <div class="quick-actions">
           <h3>Improve Your Score</h3>
@@ -83,7 +87,7 @@ class CreditScoreTracker {
           </div>
         </div>
 
-        ${this.options.userTier === 'FREE' ? this.renderUpgradePrompt() : ''}
+        ${this.options.userTier === "FREE" ? this.renderUpgradePrompt() : ""}
       </div>
     `;
   }
@@ -93,23 +97,25 @@ class CreditScoreTracker {
       return '<p class="no-history">No history data available yet</p>';
     }
 
-    const maxScore = Math.max(...this.data.history.map(h => h.score));
-    const minScore = Math.min(...this.data.history.map(h => h.score));
+    const maxScore = Math.max(...this.data.history.map((h) => h.score));
+    const minScore = Math.min(...this.data.history.map((h) => h.score));
     const range = maxScore - minScore || 100;
 
     return `
       <div class="score-history">
         <h3>Score History</h3>
         <div class="history-chart">
-          ${this.data.history.map((point, index) => {
-            const height = ((point.score - minScore) / range) * 100;
-            return `
+          ${this.data.history
+            .map((point, index) => {
+              const height = ((point.score - minScore) / range) * 100;
+              return `
               <div class="history-point" style="height: ${height}%">
                 <div class="point-marker" data-score="${point.score}"></div>
                 <div class="point-label">${this.formatDate(point.date)}</div>
               </div>
             `;
-          }).join('')}
+            })
+            .join("")}
         </div>
         <div class="history-legend">
           <span>Score Range: ${minScore} - ${maxScore}</span>
@@ -128,16 +134,19 @@ class CreditScoreTracker {
   }
 
   getScoreClass(score) {
-    if (score >= 750) return 'excellent';
-    if (score >= 700) return 'good';
-    if (score >= 650) return 'fair';
-    if (score >= 600) return 'poor';
-    return 'very-poor';
+    if (score >= 750) return "excellent";
+    if (score >= 700) return "good";
+    if (score >= 650) return "fair";
+    if (score >= 600) return "poor";
+    return "very-poor";
   }
 
   formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
   }
 
   async refresh() {
@@ -147,6 +156,6 @@ class CreditScoreTracker {
 }
 
 // Export
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
   module.exports = CreditScoreTracker;
 }

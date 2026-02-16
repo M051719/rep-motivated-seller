@@ -1,6 +1,6 @@
 # 🔧 STACKHAWK VERIFICATION & TROUBLESHOOTING GUIDE
 
-**Created:** January 8, 2026  
+**Created:** January 8, 2026
 **For:** RepMotivatedSeller Platform Security Setup
 
 ---
@@ -94,6 +94,7 @@ npx hawk validate
 ```
 
 **Common YAML Issues:**
+
 - Indentation must be consistent (use 2 spaces, not tabs)
 - Strings with special characters need quotes
 - Environment variables must use correct syntax: `${VAR_NAME}`
@@ -132,6 +133,7 @@ STACKHAWK_HOST=http://localhost:5173
 ```
 
 **Get your StackHawk credentials:**
+
 1. Go to https://app.stackhawk.com
 2. Create account or log in
 3. Create new application
@@ -200,16 +202,18 @@ npm run security:hawk
 **SOLUTION: Verify test user credentials**
 
 1. **Create a test user in your app:**
+
    ```powershell
    # Start your dev server
    npm run dev
-   
+
    # Go to http://localhost:5173/auth
    # Create user: test@repmotivatedseller.org
    # Password: SecureTestPassword123!
    ```
 
 2. **Update .env.local with exact credentials:**
+
    ```bash
    STACKHAWK_TEST_EMAIL=test@repmotivatedseller.org
    STACKHAWK_TEST_PASSWORD=SecureTestPassword123!
@@ -233,6 +237,7 @@ npm run security:hawk
 2. **Settings → Secrets and variables → Actions**
 
 3. **Add these secrets:**
+
    ```
    STACKHAWK_API_KEY = hawk.your_api_key
    STACKHAWK_APP_ID = your_app_id
@@ -353,6 +358,7 @@ npm run dev
 ```
 
 **What you'll see:**
+
 - ✅ HTTPS Connection check
 - ✅ Content Security Policy status
 - ✅ XSS Protection headers
@@ -414,6 +420,7 @@ Your StackHawk integration is working correctly if:
 You don't need to install StackHawk CLI locally. GitHub Actions will run scans automatically when you push code.
 
 **To test:**
+
 1. Add GitHub Secrets (see above)
 2. Push code to GitHub
 3. Check Actions tab for scan results
@@ -452,6 +459,7 @@ Once verification is complete:
 **🛡️ Your RepMotivatedSeller platform is now significantly more secure!**
 
 Even without StackHawk CLI locally, you have:
+
 - ✅ Security headers implemented
 - ✅ Client-side security dashboard
 - ✅ Automated GitHub Actions scanning
@@ -459,6 +467,7 @@ Even without StackHawk CLI locally, you have:
 - ✅ Comprehensive security configuration
 
 The StackHawk CLI is optional for local development. The real value comes from:
+
 1. Security Dashboard (working now)
 2. GitHub Actions automation (working when secrets are added)
 3. Security headers (already implemented)

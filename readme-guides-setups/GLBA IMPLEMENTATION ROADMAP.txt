@@ -88,17 +88,17 @@ import { GLBAAccessControl } from './lib/security/glba-access-control'
 // Add route for document portal
 const ProtectedDocumentPortal = () => {
   const [hasAccess, setHasAccess] = useState(false)
-  
+
   useEffect(() => {
     checkGLBAAccess()
   }, [])
-  
+
   const checkGLBAAccess = async () => {
     const userRole = await RoleVerification.getCurrentUserRole()
-    setHasAccess(userRole.isAuthenticated && 
+    setHasAccess(userRole.isAuthenticated &&
                  ['admin', 'advisor', 'client'].includes(userRole.role))
   }
-  
+
   return hasAccess ? <GLBADocumentPortal /> : <AccessDenied />
 }
 ```
@@ -109,7 +109,7 @@ const ProtectedDocumentPortal = () => {
 npm run test:encryption
 
 # Test document upload/download
-npm run test:documents  
+npm run test:documents
 
 # Test access controls
 npm run test:access-control
@@ -129,7 +129,7 @@ server {
     listen 443 ssl http2;
     ssl_protocols TLSv1.3;
     ssl_ciphers TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256;
-    
+
     # HSTS for GLBA compliance
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 }
@@ -151,7 +151,7 @@ const scheduleKeyRotation = () => {
 // Add to your admin dashboard
 const ComplianceWidget = () => {
   const [status, setStatus] = useState(null)
-  
+
   useEffect(() => {
     const checkCompliance = async () => {
       const { data } = await supabase.rpc('check_glba_compliance')
@@ -159,7 +159,7 @@ const ComplianceWidget = () => {
     }
     checkCompliance()
   }, [])
-  
+
   return (
     <div className="compliance-status">
       <h3>GLBA Compliance Status</h3>
@@ -188,7 +188,7 @@ const monitorCompliance = async () => {
     new Date(Date.now() - 24*60*60*1000).toISOString(), // Last 24h
     new Date().toISOString()
   )
-  
+
   if (violations.complianceScore < 95) {
     // Send alert to compliance team
     await sendComplianceAlert(violations)
@@ -289,7 +289,7 @@ console.log('✅ Decrypted:', decrypted)
 **Pick ONE of these to start immediately:**
 
 1. **🔥 OPTION 1: Security First** - Implement encryption system
-2. **💼 OPTION 2: User Experience** - Build document portal interface  
+2. **💼 OPTION 2: User Experience** - Build document portal interface
 3. **📊 OPTION 3: Compliance** - Set up audit logging system
 
 **Which option resonates most with your immediate needs?** Let me know and I'll provide the detailed, step-by-step implementation guide for that specific path! 🚀

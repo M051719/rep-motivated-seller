@@ -5,6 +5,7 @@ This guide covers integrating your MCP API Gateway with Claude Desktop and using
 ## What is MCP?
 
 Model Context Protocol (MCP) allows AI assistants like Claude to access external tools and data sources. Your `mcp-api-gateway` exposes:
+
 - Dynamic API tools from Swagger/OpenAPI specs
 - Custom database health inspection (`db_health`)
 
@@ -26,16 +27,19 @@ Your Databases & APIs
 ### 1. Locate Your Config File
 
 **Windows:**
+
 ```
 %APPDATA%\Claude\claude_desktop_config.json
 ```
 
 **macOS:**
+
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
 **Linux:**
+
 ```
 ~/.config/Claude/claude_desktop_config.json
 ```
@@ -49,13 +53,7 @@ Edit `claude_desktop_config.json`:
   "mcpServers": {
     "mcp-api-gateway": {
       "command": "docker",
-      "args": [
-        "exec",
-        "-i",
-        "mcp-api-gateway",
-        "node",
-        "/app/index.js"
-      ]
+      "args": ["exec", "-i", "mcp-api-gateway", "node", "/app/index.js"]
     },
     "supabase": {
       "url": "https://mcp.usesupabase.com",
@@ -66,11 +64,7 @@ Edit `claude_desktop_config.json`:
     },
     "mcp-docker": {
       "command": "docker",
-      "args": [
-        "mcp",
-        "gateway",
-        "run"
-      ],
+      "args": ["mcp", "gateway", "run"],
       "cwd": "C:\\Users\\monte\\Documents\\cert api token keys ids\\GITHUB FOLDER\\GitHub\\mcp-api-gateway"
     }
   }
@@ -78,6 +72,7 @@ Edit `claude_desktop_config.json`:
 ```
 
 **Notes:**
+
 - Ensure Docker stack is running before starting Claude Desktop
 - Update `cwd` path to match your repository location
 - Replace `YOUR_SUPABASE_ACCESS_TOKEN` with actual token
@@ -85,6 +80,7 @@ Edit `claude_desktop_config.json`:
 ### 3. Restart Claude Desktop
 
 **Complete shutdown required:**
+
 1. Right-click Claude Desktop in system tray → Quit
 2. If still running: Open Task Manager → End "Claude Desktop" process
 3. Restart Claude Desktop
@@ -92,6 +88,7 @@ Edit `claude_desktop_config.json`:
 ### 4. Verify MCP Servers Connected
 
 In Claude Desktop:
+
 - Open Settings → Developer
 - Look for "Connected MCP Servers" section
 - Should see: mcp-api-gateway, supabase, mcp-docker
@@ -101,11 +98,13 @@ In Claude Desktop:
 ### Via Claude Desktop
 
 In a conversation with Claude, ask:
+
 ```
 Can you check the database health using the db_health tool?
 ```
 
 Claude will invoke the tool and return:
+
 - Postgres version
 - Current timestamp
 - List of installed extensions with versions
@@ -117,10 +116,10 @@ Claude will invoke the tool and return:
   "version": "PostgreSQL 15.1 on x86_64-pc-linux-gnu...",
   "current_time": "2025-11-10 18:30:45.123456+00",
   "extensions": [
-    {"name": "pg_graphql", "version": "1.2.3"},
-    {"name": "pgcrypto", "version": "1.3"},
-    {"name": "pgjwt", "version": "0.2.0"},
-    {"name": "uuid-ossp", "version": "1.1"}
+    { "name": "pg_graphql", "version": "1.2.3" },
+    { "name": "pgcrypto", "version": "1.3" },
+    { "name": "pgjwt", "version": "0.2.0" },
+    { "name": "uuid-ossp", "version": "1.1" }
   ]
 }
 ```
@@ -130,13 +129,15 @@ Claude will invoke the tool and return:
 ### Test the MCP Server Directly
 
 Run the gateway in stdio mode:
+
 ```powershell
 docker exec -i mcp-api-gateway node /app/index.js
 ```
 
 Send a test request (JSON-RPC 2.0 format):
+
 ```json
-{"jsonrpc":"2.0","id":1,"method":"tools/list"}
+{ "jsonrpc": "2.0", "id": 1, "method": "tools/list" }
 ```
 
 Expected response includes `db_health` tool definition.
@@ -144,6 +145,7 @@ Expected response includes `db_health` tool definition.
 ### Test db_health Tool
 
 Send tool call request:
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -171,13 +173,14 @@ app:
     - API_1_NAME=github
     - API_1_SWAGGER_URL=https://api.github.com/swagger.json
     - API_1_HEADER_AUTHORIZATION=token ghp_yourtoken
-    
+
     - API_2_NAME=petstore
     - API_2_SWAGGER_URL=https://petstore.swagger.io/v2/swagger.json
     - API_2_BASE_URL=https://petstore.swagger.io/v2
 ```
 
 Restart the app:
+
 ```powershell
 docker compose -f compose.yml restart app
 ```
@@ -185,11 +188,13 @@ docker compose -f compose.yml restart app
 ### Using Dynamic API Tools in Claude
 
 Ask Claude:
+
 ```
 What APIs are available through the MCP gateway?
 ```
 
 Then use them:
+
 ```
 Using the petstore API, list available pets
 ```
@@ -201,6 +206,7 @@ Claude will automatically discover and call the appropriate endpoint.
 ### MCP Server Not Appearing
 
 **Check logs:**
+
 ```powershell
 # Windows: Check Claude Desktop logs
 Get-Content "$env:APPDATA\Claude\logs\mcp*.log" -Tail 50
@@ -210,6 +216,7 @@ docker ps | Select-String mcp-api-gateway
 ```
 
 **Common issues:**
+
 1. Container not running: `docker compose -f compose.yml up -d`
 2. Config file syntax error: Validate JSON at jsonlint.com
 3. Path issues: Use absolute paths in `cwd` field
@@ -217,6 +224,7 @@ docker ps | Select-String mcp-api-gateway
 ### db_health Tool Returns Error
 
 **Check database connectivity:**
+
 ```powershell
 docker exec mcp-api-gateway node --input-type=module -e "import('./config/database.js').then(m=>m.default.authenticate()).then(()=>console.log('OK')).catch(e=>console.log('ERR:',e.message))"
 ```
@@ -224,6 +232,7 @@ docker exec mcp-api-gateway node --input-type=module -e "import('./config/databa
 **Expected output:** `OK`
 
 **If error:**
+
 1. Check DATABASE_URL in compose.yml
 2. Verify db container is healthy: `docker compose ps`
 3. Check app logs: `docker compose logs app`
@@ -233,6 +242,7 @@ docker exec mcp-api-gateway node --input-type=module -e "import('./config/databa
 **Error: "Failed to connect"**
 
 Ensure Docker Desktop has MCP gateway feature enabled:
+
 ```powershell
 docker mcp gateway --version
 ```
@@ -277,6 +287,7 @@ case 'run_migration':
 ```
 
 Rebuild and restart:
+
 ```powershell
 docker compose -f compose.yml up -d --build app
 ```
@@ -295,6 +306,7 @@ app:
 ```
 
 Set in `.env` file (add to .gitignore):
+
 ```
 GITHUB_TOKEN=ghp_yourtoken
 ```
@@ -306,6 +318,7 @@ Only expose tools Claude actually needs. Comment out unused API configurations.
 ### 3. Database Credentials
 
 For production:
+
 - Use read-only database user for health checks
 - Store passwords in Docker secrets or vault
 - Never expose DATABASE_URL with passwords in logs
@@ -327,6 +340,7 @@ case 'tools/call':
 ```
 
 View logs:
+
 ```powershell
 docker compose logs -f app | Select-String "\[MCP\]"
 ```
@@ -334,10 +348,11 @@ docker compose logs -f app | Select-String "\[MCP\]"
 ### Track Database Health Checks
 
 Query your usage logs (if you've implemented logging):
+
 ```sql
-SELECT * FROM usage_logs 
-WHERE tool_name = 'db_health' 
-ORDER BY created_at DESC 
+SELECT * FROM usage_logs
+WHERE tool_name = 'db_health'
+ORDER BY created_at DESC
 LIMIT 10;
 ```
 
@@ -356,17 +371,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Start stack
         run: docker compose up -d
-        
+
       - name: Wait for services
         run: sleep 30
-        
+
       - name: Test db_health tool
         run: |
           docker exec -i mcp-api-gateway node -e '
-          import("./config/database.js").then(m => 
+          import("./config/database.js").then(m =>
             m.default.authenticate()
           ).then(() => {
             console.log("Health check passed");

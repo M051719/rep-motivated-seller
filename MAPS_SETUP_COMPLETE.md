@@ -3,8 +3,9 @@
 ## What Was Built
 
 **PropertyMap Component** (`src/components/maps/PropertyMap.tsx`)
+
 - Interactive Mapbox GL map with property markers
-- Main property marker (blue, larger) 
+- Main property marker (blue, larger)
 - Comparable properties markers (green, numbered)
 - Popup tooltips on hover
 - Navigation controls (zoom, rotate, fullscreen)
@@ -13,6 +14,7 @@
 - Loading states
 
 **Integration with Presentation Builder**
+
 - Replaced "Coming Soon" placeholder with live map
 - Shows property + comparables on map
 - Tier-based features (Basic = no controls, Pro+ = full controls)
@@ -21,23 +23,27 @@
 ## Features
 
 ✅ **Interactive Navigation**
+
 - Pan, zoom, rotate the map
 - Fullscreen mode
 - Click markers for popups
 
 ✅ **Visual Markers**
+
 - Blue circle = Main property
 - Green numbered circles = Comparables
 - Legend in bottom-left
 - Property count badge in top-left
 
 ✅ **Smart Defaults**
+
 - Automatically fits all markers in view
 - 500px height
 - Street map style
 - Responsive design
 
 ✅ **Error Handling**
+
 - Shows friendly message if token missing
 - Provides setup instructions
 - Fallback UI if map fails to load
@@ -57,6 +63,7 @@
 6. Restart dev server: `npm run dev`
 
 **Free Tier Limits:**
+
 - 50,000 map loads/month
 - 100,000 geocode requests/month
 - Perfect for development & small production use
@@ -66,29 +73,31 @@
 Currently using mock coordinates. To get real locations:
 
 ### Option 1: Mapbox Geocoding API
+
 ```typescript
 async function geocodeAddress(address: string) {
   const response = await fetch(
-    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxToken}`
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxToken}`,
   );
   const data = await response.json();
   return {
     latitude: data.features[0].center[1],
-    longitude: data.features[0].center[0]
+    longitude: data.features[0].center[0],
   };
 }
 ```
 
 ### Option 2: Google Geocoding API
+
 ```typescript
 async function geocodeAddress(address: string) {
   const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${googleApiKey}`
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${googleApiKey}`,
   );
   const data = await response.json();
   return {
     latitude: data.results[0].geometry.location.lat,
-    longitude: data.results[0].geometry.location.lng
+    longitude: data.results[0].geometry.location.lng,
   };
 }
 ```
@@ -105,17 +114,19 @@ async function geocodeAddress(address: string) {
 ## Cost Estimate
 
 **Mapbox Free Tier:**
+
 - ✅ 50,000 map loads/month - FREE
 - ✅ 100,000 geocode requests/month - FREE
 
 **Paid Tiers (if needed):**
+
 - Pay-as-you-go: $0.01 per 1,000 map loads
 - Very affordable for real estate presentations
 
 ## Files Created/Modified
 
 ✅ `src/components/maps/PropertyMap.tsx` - New component (240 lines)
-✅ `src/pages/PresentationBuilderPage.tsx` - Added import & integration  
+✅ `src/pages/PresentationBuilderPage.tsx` - Added import & integration
 ✅ `.env.local` - Added VITE_MAPBOX_TOKEN placeholder
 ✅ `package.json` - Added mapbox-gl dependency
 
@@ -124,8 +135,9 @@ async function geocodeAddress(address: string) {
 🎉 **Interactive Maps - COMPLETE!**
 
 Map displays correctly with:
+
 - ✅ Property markers
-- ✅ Interactive controls  
+- ✅ Interactive controls
 - ✅ Responsive design
 - ✅ Error handling
 - ⏳ Geocoding API (next step)

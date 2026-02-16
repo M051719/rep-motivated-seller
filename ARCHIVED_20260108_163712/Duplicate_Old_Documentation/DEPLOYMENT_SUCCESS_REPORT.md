@@ -105,7 +105,7 @@ scripts\windows-deploy.bat
 - [x] Email integration ready
 - [x] AI voice handler ready
 
-### **Frontend Deployment** 
+### **Frontend Deployment**
 - [ ] Build production assets
 - [ ] Deploy to web server
 - [ ] Configure SSL/HTTPS

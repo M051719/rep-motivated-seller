@@ -117,19 +117,22 @@ Use the Edge Function to schedule follow-ups:
 
 ```javascript
 // Example API call
-fetch('https://ltxqodqlexvojqqxquew.supabase.co/functions/v1/schedule-property-followup', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+fetch(
+  "https://ltxqodqlexvojqqxquew.supabase.co/functions/v1/schedule-property-followup",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({
+      submissionId: 123,
+      scheduleType: "urgent", // 'urgent', 'standard', or 'relaxed'
+      notes: "High priority lead",
+      assignedTo: "agent-user-id",
+    }),
   },
-  body: JSON.stringify({
-    submissionId: 123,
-    scheduleType: 'urgent', // 'urgent', 'standard', or 'relaxed'
-    notes: 'High priority lead',
-    assignedTo: 'agent-user-id'
-  })
-});
+);
 ```
 
 ## Security Considerations

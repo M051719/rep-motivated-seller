@@ -90,14 +90,14 @@ $filesToUnstage = @($capcutFiles) + @($fixFiles) + @($tempFiles)
 
 if ($filesToUnstage.Count -gt 0) {
     Write-Host "Found $($filesToUnstage.Count) unnecessary staged files" -ForegroundColor Yellow
-    
+
     if (-not $DryRun) {
         Write-Host "Unstaging files..." -NoNewline
         foreach ($file in $filesToUnstage) {
             git reset HEAD $file 2>$null
         }
         Write-Host " ✅ Done" -ForegroundColor Green
-        
+
         # Update .gitignore
         $gitignoreEntries = @(
             "capcut-templates/",
@@ -110,10 +110,10 @@ if ($filesToUnstage.Count -gt 0) {
             "*.backup",
             "*.backup2"
         )
-        
+
         $gitignorePath = "$projectRoot\.gitignore"
         $existingIgnore = Get-Content $gitignorePath -ErrorAction SilentlyContinue
-        
+
         foreach ($entry in $gitignoreEntries) {
             if ($existingIgnore -notcontains $entry) {
                 Add-Content -Path $gitignorePath -Value $entry
@@ -155,14 +155,14 @@ Write-Host ""
 if (-not $SkipBuild) {
     Write-Host "🏗️  Step 4: Build Frontend" -ForegroundColor Green
     Write-Host "-------------------------" -ForegroundColor Green
-    
+
     if (-not $DryRun) {
         Write-Host "Running production build..."
         npm run build:production
-        
+
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Build successful ✅" -ForegroundColor Green
-            
+
             # Check bundle size
             $distSize = (Get-ChildItem "$projectRoot\dist" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
             Write-Host "Bundle size: $([math]::Round($distSize, 2)) MB" -ForegroundColor Cyan
@@ -186,7 +186,7 @@ Write-Host ""
 if (-not $SkipDatabase) {
     Write-Host "🗄️  Step 5: Database Migrations" -ForegroundColor Green
     Write-Host "-------------------------------" -ForegroundColor Green
-    
+
     if ($DryRun) {
         Write-Host "Checking migrations (dry run)..."
         supabase db push --linked --dry-run
@@ -195,10 +195,10 @@ if (-not $SkipDatabase) {
         Write-Host "Applying migrations to production..."
         Write-Host "⚠️  This will modify the production database!" -ForegroundColor Yellow
         $confirm = Read-Host "Continue? (yes/no)"
-        
+
         if ($confirm -eq "yes") {
             supabase db push --linked
-            
+
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "Migrations applied successfully ✅" -ForegroundColor Green
             }
@@ -222,7 +222,7 @@ Write-Host ""
 if (-not $SkipFunctions) {
     Write-Host "⚡ Step 6: Deploy Edge Functions" -ForegroundColor Green
     Write-Host "--------------------------------" -ForegroundColor Green
-    
+
     $functions = @(
         "admin-dashboard",
         "auth-test",
@@ -238,20 +238,20 @@ if (-not $SkipFunctions) {
         "capture-lead",
         "create-payment-intent"
     )
-    
+
     Write-Host "Found $($functions.Count) functions to deploy"
-    
+
     if (-not $DryRun) {
         Write-Host "⚠️  This will deploy functions to production!" -ForegroundColor Yellow
         $confirm = Read-Host "Continue? (yes/no)"
-        
+
         if ($confirm -eq "yes") {
             foreach ($func in $functions) {
                 $funcPath = "$projectRoot\supabase\functions\$func"
                 if (Test-Path $funcPath) {
                     Write-Host "Deploying $func..." -NoNewline
                     supabase functions deploy $func --linked 2>$null
-                    
+
                     if ($LASTEXITCODE -eq 0) {
                         Write-Host " ✅" -ForegroundColor Green
                     }

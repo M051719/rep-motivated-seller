@@ -5,20 +5,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Supabase CLI
         run: npm install -g supabase
-        
+
       - name: Configure PostgreSQL
         run: |
           mkdir -p supabase
           echo 'max_worker_processes = 8' > supabase/postgresql.conf
-          
+
       - name: Start Supabase
         run: |
           supabase start --debug
           supabase status
-          
+
       - name: Run Database Tests
         run: |
           supabase db diff

@@ -31,7 +31,7 @@ BEGIN
   FROM public.user_roles
   WHERE user_id = check_user_id
   LIMIT 1;
-  
+
   RETURN COALESCE(admin_status, FALSE);
 END;
 $$;

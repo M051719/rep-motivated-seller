@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  CheckCircle, 
-  AlertTriangle, 
-  XCircle, 
-  RefreshCw, 
-  Database, 
-  Mail, 
-  Settings, 
-  Globe, 
-  Key, 
+import {
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  RefreshCw,
+  Database,
+  Mail,
+  Settings,
+  Globe,
+  Key,
   Shield,
   Server,
   Smartphone,
@@ -42,7 +42,7 @@ export const ProjectVerification: React.FC = () => {
 
   const runVerificationChecks = async () => {
     setIsChecking(true);
-    
+
     const checks: VerificationItem[] = [
       // Database & Backend
       {
@@ -69,7 +69,7 @@ export const ProjectVerification: React.FC = () => {
         icon: Zap,
         category: 'Backend'
       },
-      
+
       // Email & Notifications
       {
         id: 'mailerlite-config',
@@ -87,7 +87,7 @@ export const ProjectVerification: React.FC = () => {
         icon: FileText,
         category: 'Email'
       },
-      
+
       // CRM Integration
       {
         id: 'crm-integration',
@@ -97,7 +97,7 @@ export const ProjectVerification: React.FC = () => {
         icon: Users,
         category: 'CRM'
       },
-      
+
       // Security & Authentication
       {
         id: 'auth-setup',
@@ -115,7 +115,7 @@ export const ProjectVerification: React.FC = () => {
         icon: Key,
         category: 'Security'
       },
-      
+
       // Environment & Configuration
       {
         id: 'env-variables',
@@ -133,7 +133,7 @@ export const ProjectVerification: React.FC = () => {
         icon: Globe,
         category: 'Configuration'
       },
-      
+
       // Optional Integrations
       {
         id: 'sms-integration',
@@ -167,15 +167,15 @@ export const ProjectVerification: React.FC = () => {
     for (let i = 0; i < checks.length; i++) {
       const check = checks[i];
       const result = await performVerificationCheck(check.id);
-      
-      setVerificationItems(prev => 
-        prev.map(item => 
-          item.id === check.id 
+
+      setVerificationItems(prev =>
+        prev.map(item =>
+          item.id === check.id
             ? { ...item, ...result }
             : item
         )
       );
-      
+
       // Small delay for visual effect
       await new Promise(resolve => setTimeout(resolve, 200));
     }
@@ -189,50 +189,50 @@ export const ProjectVerification: React.FC = () => {
       switch (checkId) {
         case 'supabase-connection':
           return await checkSupabaseConnection();
-        
+
         case 'database-schema':
           return await checkDatabaseSchema();
-        
+
         case 'edge-functions':
           return await checkEdgeFunctions();
-        
+
         case 'mailerlite-config':
           return checkMailerLiteConfig();
-        
+
         case 'email-templates':
           return checkEmailTemplates();
-        
+
         case 'crm-integration':
           return checkCRMIntegration();
-        
+
         case 'auth-setup':
           return await checkAuthSetup();
-        
+
         case 'admin-access':
           return checkAdminAccess();
-        
+
         case 'env-variables':
           return checkEnvironmentVariables();
-        
+
         case 'domain-setup':
           return checkDomainSetup();
-        
+
         case 'sms-integration':
           return checkSMSIntegration();
-        
+
         case 'slack-integration':
           return checkSlackIntegration();
-        
+
         case 'stripe-integration':
           return checkStripeIntegration();
-        
+
         default:
           return { status: 'error', details: 'Unknown check' };
       }
     } catch (error) {
-      return { 
-        status: 'error', 
-        details: `Check failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      return {
+        status: 'error',
+        details: `Check failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   };
@@ -241,7 +241,7 @@ export const ProjectVerification: React.FC = () => {
     try {
       const { data, error } = await supabase.from('foreclosure_responses').select('count').limit(1);
       if (error) throw error;
-      
+
       return {
         status: 'success',
         details: 'Successfully connected to Supabase database'
@@ -261,9 +261,9 @@ export const ProjectVerification: React.FC = () => {
         .from('foreclosure_responses')
         .select('id, contact_name, status, created_at')
         .limit(1);
-      
+
       if (error) throw error;
-      
+
       return {
         status: 'success',
         details: 'Database schema is properly configured with all required tables'
@@ -283,7 +283,7 @@ export const ProjectVerification: React.FC = () => {
       const { data, error } = await supabase.functions.invoke('send-notification-email', {
         body: { test: true }
       });
-      
+
       // Even if it returns an error, if the function exists, it's deployed
       return {
         status: 'success',
@@ -301,7 +301,7 @@ export const ProjectVerification: React.FC = () => {
   const checkMailerLiteConfig = (): Partial<VerificationItem> => {
     const hasApiKey = import.meta.env.VITE_MAILERLITE_API_KEY || process.env.MAILERLITE_API_KEY;
     const hasFromEmail = import.meta.env.VITE_FROM_EMAIL || process.env.FROM_EMAIL;
-    
+
     if (hasApiKey && hasFromEmail) {
       return {
         status: 'success',
@@ -335,7 +335,7 @@ export const ProjectVerification: React.FC = () => {
     const hasHubSpotKey = process.env.HUBSPOT_API_KEY;
     const hasSalesforceConfig = process.env.SALESFORCE_CLIENT_ID;
     const hasCustomCRM = process.env.CUSTOM_CRM_URL;
-    
+
     if (crmType === 'hubspot' && hasHubSpotKey) {
       return {
         status: 'success',
@@ -379,7 +379,7 @@ export const ProjectVerification: React.FC = () => {
   const checkAdminAccess = (): Partial<VerificationItem> => {
     // Check if admin access is properly configured
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@repmotivatedseller.org';
-    
+
     return {
       status: 'success',
       details: `Admin access configured for ${adminEmail}`
@@ -393,11 +393,11 @@ export const ProjectVerification: React.FC = () => {
       'ADMIN_EMAIL',
       'SITE_URL'
     ];
-    
-    const missingVars = requiredVars.filter(varName => 
+
+    const missingVars = requiredVars.filter(varName =>
       !import.meta.env[varName] && !process.env[varName]
     );
-    
+
     if (missingVars.length === 0) {
       return {
         status: 'success',
@@ -414,7 +414,7 @@ export const ProjectVerification: React.FC = () => {
 
   const checkDomainSetup = (): Partial<VerificationItem> => {
     const siteUrl = process.env.SITE_URL || import.meta.env.VITE_SITE_URL;
-    
+
     if (siteUrl && siteUrl !== 'https://your-domain.com') {
       return {
         status: 'success',
@@ -431,7 +431,7 @@ export const ProjectVerification: React.FC = () => {
 
   const checkSMSIntegration = (): Partial<VerificationItem> => {
     const hasTwilioConfig = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN;
-    
+
     if (hasTwilioConfig) {
       return {
         status: 'success',
@@ -448,7 +448,7 @@ export const ProjectVerification: React.FC = () => {
 
   const checkSlackIntegration = (): Partial<VerificationItem> => {
     const hasSlackWebhook = process.env.SLACK_WEBHOOK_URL;
-    
+
     if (hasSlackWebhook) {
       return {
         status: 'success',
@@ -465,7 +465,7 @@ export const ProjectVerification: React.FC = () => {
 
   const checkStripeIntegration = (): Partial<VerificationItem> => {
     const hasStripeKeys = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_SECRET_KEY;
-    
+
     if (hasStripeKeys) {
       return {
         status: 'success',
@@ -484,7 +484,7 @@ export const ProjectVerification: React.FC = () => {
     const items = verificationItems;
     const errorCount = items.filter(item => item.status === 'error').length;
     const warningCount = items.filter(item => item.status === 'warning').length;
-    
+
     if (errorCount > 0) {
       setOverallStatus('error');
     } else if (warningCount > 0) {
@@ -586,7 +586,7 @@ export const ProjectVerification: React.FC = () => {
                 <Server className="w-5 h-5 mr-2 text-gray-600" />
                 {category}
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {categoryItems.map(item => {
                   const Icon = item.icon;
@@ -602,13 +602,13 @@ export const ProjectVerification: React.FC = () => {
                         </div>
                         {getStatusIcon(item.status)}
                       </div>
-                      
+
                       <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                      
+
                       {item.details && (
                         <p className="text-sm text-gray-700 mb-2">{item.details}</p>
                       )}
-                      
+
                       {item.action && (
                         <p className="text-sm font-medium text-blue-600">{item.action}</p>
                       )}

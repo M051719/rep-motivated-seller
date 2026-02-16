@@ -7,8 +7,8 @@ set ANON_KEY=sb_publishable_wQE2WLlEvqE1RqWtNPcxGw_tSpNMwmg
 
 echo.
 echo Enter your Supabase login credentials:
-set /p EMAIL=Email: 
-set /p PASSWORD=Password: 
+set /p EMAIL=Email:
+set /p PASSWORD=Password:
 
 echo.
 echo Logging in...

@@ -172,7 +172,7 @@ CREATE POLICY encryption_keys_service_role ON encryption_keys
 CREATE POLICY encryption_keys_admin ON encryption_keys
     FOR SELECT USING (
         auth.uid() IN (
-            SELECT user_id FROM npi_access_permissions 
+            SELECT user_id FROM npi_access_permissions
             WHERE access_level = 'admin' AND is_active = true
         )
     );
@@ -182,8 +182,8 @@ CREATE POLICY secure_documents_owner ON secure_documents
     FOR ALL USING (
         auth.uid() = uploaded_by
         OR auth.uid() IN (
-            SELECT user_id FROM npi_access_permissions 
-            WHERE npi_type = 'document' 
+            SELECT user_id FROM npi_access_permissions
+            WHERE npi_type = 'document'
             AND (resource_id = id::text OR resource_id IS NULL)
             AND is_active = true
         )
@@ -196,7 +196,7 @@ CREATE POLICY npi_access_own ON npi_access_permissions
 CREATE POLICY npi_access_admin ON npi_access_permissions
     FOR ALL USING (
         auth.uid() IN (
-            SELECT user_id FROM npi_access_permissions 
+            SELECT user_id FROM npi_access_permissions
             WHERE access_level = 'admin' AND is_active = true
         )
     );
@@ -208,7 +208,7 @@ CREATE POLICY glba_audit_own ON glba_audit_log
 CREATE POLICY glba_audit_admin ON glba_audit_log
     FOR SELECT USING (
         auth.uid() IN (
-            SELECT user_id FROM npi_access_permissions 
+            SELECT user_id FROM npi_access_permissions
             WHERE access_level = 'admin' AND is_active = true
         )
     );
@@ -226,7 +226,7 @@ CREATE POLICY document_audit_own ON document_audit_log
 CREATE POLICY key_audit_admin ON key_audit_log
     FOR SELECT USING (
         auth.uid() IN (
-            SELECT user_id FROM npi_access_permissions 
+            SELECT user_id FROM npi_access_permissions
             WHERE access_level = 'admin' AND is_active = true
         )
     );
@@ -235,7 +235,7 @@ CREATE POLICY key_audit_admin ON key_audit_log
 CREATE POLICY compliance_metrics_admin ON compliance_metrics
     FOR SELECT USING (
         auth.uid() IN (
-            SELECT user_id FROM npi_access_permissions 
+            SELECT user_id FROM npi_access_permissions
             WHERE access_level = 'admin' AND is_active = true
         )
     );
@@ -251,13 +251,13 @@ DECLARE
 BEGIN
     DELETE FROM glba_audit_log
     WHERE timestamp < NOW() - (retention_days || ' days')::INTERVAL;
-    
+
     GET DIAGNOSTICS deleted_count = ROW_COUNT;
-    
+
     INSERT INTO compliance_metrics (metric_name, metric_value, category, metadata)
-    VALUES ('logs_cleaned_up', deleted_count, 'audit', 
+    VALUES ('logs_cleaned_up', deleted_count, 'audit',
             jsonb_build_object('retention_days', retention_days, 'timestamp', NOW()));
-    
+
     RETURN deleted_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -272,7 +272,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         ek.id,
         ek.key_id,
         EXTRACT(DAY FROM NOW() - ek.created_at)::INTEGER,
@@ -296,7 +296,7 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         (SELECT COUNT(*) FROM glba_audit_log WHERE timestamp > NOW() - (days_back || ' days')::INTERVAL),
         (SELECT COUNT(*) FROM glba_audit_log WHERE granted = true AND timestamp > NOW() - (days_back || ' days')::INTERVAL),
         (SELECT COUNT(*) FROM glba_audit_log WHERE granted = false AND timestamp > NOW() - (days_back || ' days')::INTERVAL),
@@ -318,7 +318,7 @@ COMMENT ON TABLE compliance_metrics IS 'GLBA Compliance: Real-time compliance mo
 
 -- Insert initial compliance metrics
 INSERT INTO compliance_metrics (metric_name, metric_value, category, metadata)
-VALUES 
+VALUES
     ('glba_compliance_enabled', 1, 'general', '{"timestamp": "now"}'::jsonb),
     ('encryption_algorithm', 256, 'encryption', '{"algorithm": "AES-256-GCM"}'::jsonb),
     ('audit_retention_days', 2555, 'audit', '{"years": 7}'::jsonb),

@@ -1,4 +1,5 @@
 # Chapter 1: What is Pre-Foreclosure? Understanding the Timeline
+
 ## Video Script - "The Pre-Foreclosure Timeline Explained" (50 seconds)
 
 **Series:** Real Solutions for Real Estate | Episode 1
@@ -9,57 +10,69 @@
 ---
 
 ## Hook (0-3 seconds)
+
 **Visual:** Calendar with red warning dates marked
 **Text Overlay:** "Pre-Foreclosure Timeline"
 **Animation:** Clock ticking, calendar pages flipping
 
 **Voiceover/Caption:**
+
 > "What happens after you miss a mortgage payment? Here's the exact timeline."
 
 ---
 
 ## Timeline Breakdown (3-40 seconds)
+
 **Visual:** Animated timeline with key milestones
 **Background:** Clean, professional gradient (blue)
 
 ### Day 1-30 (5 seconds)
+
 **Text Overlay:** "Month 1: Grace Period"
 **Visual:** Calendar showing day 1-30
 **Voiceover:** "After one missed payment, you're in the grace period. Late fees apply, but you're not in foreclosure yet."
 
 ### Day 31-90 (8 seconds)
+
 **Text Overlay:** "Month 2-3: Default Status"
 **Visual:** Warning letter appearing
 **Voiceover:** "By month two, you're officially in default. Your lender will start sending notices and may report to credit bureaus."
 
 ### Day 91-120 (8 seconds)
+
 **Text Overlay:** "Month 4: Notice of Default (NOD)"
 **Visual:** Official document stamped
 **Voiceover:** "At 90 days, the lender files a Notice of Default - this is when pre-foreclosure officially begins. You still have options!"
 
 ### Day 121-150 (8 seconds)
+
 **Text Overlay:** "Month 5: Foreclosure Sale Scheduled"
 **Visual:** Courthouse, auction gavel
 **Voiceover:** "Around month 5, a foreclosure sale date gets scheduled. But even now, you can stop the process."
 
 ### The Window (8 seconds)
+
 **Visual:** Opportunity window opening (light beam)
-**Text Overlay:** 
+**Text Overlay:**
+
 - "Your Action Window:"
 - "90-120 Days"
 - "MAXIMUM OPTIONS"
-**Voiceover:** "This 90-120 day window is critical - you have the MOST options during pre-foreclosure."
+  **Voiceover:** "This 90-120 day window is critical - you have the MOST options during pre-foreclosure."
 
 ---
 
 ## Call to Action (40-50 seconds)
+
 **Visual:** RepMotivatedSeller logo with phone icon
 **Text Overlay:**
+
 - "Don't Wait Until Day 120"
 - "Free Consultation Today"
 - "RepMotivatedSeller.com"
 
 **Voiceover/Caption:**
+
 > "The earlier you act, the more options you have. Get a free consultation now."
 
 ---
@@ -67,6 +80,7 @@
 ## Production Assets
 
 ### Required Files:
+
 - [ ] calendar-with-red-dates.jpg
 - [ ] timeline-graphic-animated.png
 - [ ] warning-letter.jpg
@@ -76,11 +90,13 @@
 - [ ] repmotivatedseller-logo.png
 
 ### Music:
+
 - **Track:** Steady, educational, not rushed
 - **Mood:** Professional, clear, empowering
 - **Volume:** 25%
 
 ### Color Coding:
+
 - **Day 1-30:** Yellow (#fbbf24) - Caution
 - **Day 31-90:** Orange (#f97316) - Warning
 - **Day 91-120:** Red (#ef4444) - Critical
@@ -88,6 +104,7 @@
 - **Opportunity:** Green (#10b981) - Action
 
 ### Text Style:
+
 - **Hook:** Poppins Bold, 72pt, White
 - **Timeline Headers:** Poppins SemiBold, 56pt, White
 - **Timeline Details:** Inter Regular, 40pt, White
@@ -185,9 +202,9 @@ Missed a mortgage payment? Here's EXACTLY what happens next:
 📅 Month 4: Notice of Default filed (pre-foreclosure begins)
 📅 Month 5: Foreclosure sale scheduled
 
-But here's what most people DON'T know: 
+But here's what most people DON'T know:
 
-🎯 The 90-120 day window after your first missed payment is when you have the MOST OPTIONS. 
+🎯 The 90-120 day window after your first missed payment is when you have the MOST OPTIONS.
 
 Wait until month 5? Your choices are limited.
 Act in month 2-3? You have time to:
@@ -207,6 +224,7 @@ Have questions about pre-foreclosure? Ask below! ⬇️
 **Hashtags:** #PreForeclosure #ForeclosureTimeline #HomeownerEducation #MortgageHelp #RealEstateSolutions #KnowYourOptions
 
 **Best Posting Times:**
+
 - Early morning (6-8 AM) when people check finances
 - Lunch (12-1 PM) for informational content
 - Sunday evenings for planning ahead
@@ -232,6 +250,7 @@ Questions? Drop them below or DM for a free consultation 📞"
 ## Follow-Up Content
 
 **Next in series:**
+
 - Chapter 2: Assessing Your Financial Situation (can you keep the house?)
 - Chapter 3: Communication with Your Lender (negotiation strategies)
 
@@ -244,6 +263,7 @@ Questions? Drop them below or DM for a free consultation 📞"
 
 **Create a downloadable PDF:**
 "Pre-Foreclosure Timeline Checklist"
+
 - What to do at each stage
 - Documents to gather
 - Questions to ask professionals
@@ -251,6 +271,7 @@ Questions? Drop them below or DM for a free consultation 📞"
 
 **Story Series:**
 Break this into 5 Stories (one per timeline phase) with:
+
 - Phase details
 - Action items
 - "Swipe up" for full consultation

@@ -73,28 +73,28 @@ insert into auth.users (
 -- Insert corresponding profiles
 insert into public.profiles (id, user_id, email, full_name, role, phone, bio) values
     (
-        '550e8400-e29b-41d4-a716-446655440001', 
-        '550e8400-e29b-41d4-a716-446655440001', 
-        'admin@example.com', 
-        'Admin User', 
+        '550e8400-e29b-41d4-a716-446655440001',
+        '550e8400-e29b-41d4-a716-446655440001',
+        'admin@example.com',
+        'Admin User',
         'admin',
         '+1-555-0101',
         'System administrator with full access to manage the platform.'
     ),
     (
-        '550e8400-e29b-41d4-a716-446655440002', 
-        '550e8400-e29b-41d4-a716-446655440002', 
-        'user@example.com', 
-        'Regular User', 
+        '550e8400-e29b-41d4-a716-446655440002',
+        '550e8400-e29b-41d4-a716-446655440002',
+        'user@example.com',
+        'Regular User',
         'user',
         '+1-555-0102',
         'Regular user looking for the perfect home.'
     ),
     (
-        '550e8400-e29b-41d4-a716-446655440003', 
-        '550e8400-e29b-41d4-a716-446655440003', 
-        'agent@example.com', 
-        'Real Estate Agent', 
+        '550e8400-e29b-41d4-a716-446655440003',
+        '550e8400-e29b-41d4-a716-446655440003',
+        'agent@example.com',
+        'Real Estate Agent',
         'user',
         '+1-555-0103',
         'Licensed real estate agent with 10+ years experience.'
@@ -104,7 +104,7 @@ on conflict (email) do nothing;
 -- Insert sample properties
 insert into public.properties (
     owner_id, title, description, property_type, address, city, state, zip_code,
-    latitude, longitude, price, bedrooms, bathrooms, square_feet, lot_size, 
+    latitude, longitude, price, bedrooms, bathrooms, square_feet, lot_size,
     year_built, status, amenities, features
 ) values
     (
@@ -215,23 +215,23 @@ insert into public.properties (
 on conflict do nothing;
 
 -- Insert sample property images
-insert into public.property_images (property_id, url, caption, alt_text, sort_order, is_primary) 
-select 
+insert into public.property_images (property_id, url, caption, alt_text, sort_order, is_primary)
+select
     p.id,
-    'https://images.unsplash.com/photo-' || 
-    case 
+    'https://images.unsplash.com/photo-' ||
+    case
         when row_number() over (partition by p.id) = 1 then '1568605114456-8f4c5f4e6dbb'
         when row_number() over (partition by p.id) = 2 then '1570129477492-45c003edd2be'
         when row_number() over (partition by p.id) = 3 then '1586023492125-27b2c045d58b'
         else '1583608805892-70715d82d007'
     end || '?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    case 
+    case
         when row_number() over (partition by p.id) = 1 then 'Front exterior view'
         when row_number() over (partition by p.id) = 2 then 'Living room interior'
         when row_number() over (partition by p.id) = 3 then 'Kitchen area'
         else 'Additional view'
     end,
-    case 
+    case
         when row_number() over (partition by p.id) = 1 then 'Exterior view of ' || p.title
         when row_number() over (partition by p.id) = 2 then 'Living room of ' || p.title
         when row_number() over (partition by p.id) = 3 then 'Kitchen of ' || p.title
@@ -244,16 +244,16 @@ from public.properties p,
 
 -- Insert sample favorites
 insert into public.favorites (user_id, property_id)
-select 
+select
     '550e8400-e29b-41d4-a716-446655440002',
     id
-from public.properties 
+from public.properties
 where title in ('Stunning Modern Family Home', 'Luxury Penthouse Suite')
 on conflict (user_id, property_id) do nothing;
 
 -- Insert sample property views
 insert into public.property_views (property_id, viewer_id, ip_address, user_agent, viewed_at)
-select 
+select
     p.id,
     case when random() > 0.5 then '550e8400-e29b-41d4-a716-446655440002' else null end,
     ('192.168.1.' || floor(random() * 255)::int)::inet,
@@ -279,8 +279,8 @@ values
     );
 
 -- Update property counts after inserting data
-update public.properties 
-set 
+update public.properties
+set
     views_count = (select count(*) from public.property_views where property_id = properties.id),
     favorites_count = (select count(*) from public.favorites where property_id = properties.id);
 

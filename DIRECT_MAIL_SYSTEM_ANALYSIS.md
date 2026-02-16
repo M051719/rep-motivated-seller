@@ -1,7 +1,7 @@
 # 📬 Direct Mail System - Complete Analysis & Integration Plan
 
-**Date:** December 12, 2025  
-**Project:** rep-motivated-seller  
+**Date:** December 12, 2025
+**Project:** rep-motivated-seller
 **Status:** 🟡 80% Complete - Needs Database Deployment & Lob API Key
 
 ---
@@ -32,7 +32,7 @@ Your direct mail marketing system is **extensively built** and nearly ready for 
 5. **4 Professional Templates:**
    - Foreclosure Prevention
    - Cash Offer (24hr)
-   - Land Acquisition  
+   - Land Acquisition
    - Loan Modification
 
 ---
@@ -42,11 +42,13 @@ Your direct mail marketing system is **extensively built** and nearly ready for 
 ### Frontend Components
 
 #### 1. DirectMailPage.tsx
-**Location:** `src/pages/DirectMailPage.tsx`  
-**Status:** ✅ Complete & Routed  
+
+**Location:** `src/pages/DirectMailPage.tsx`
+**Status:** ✅ Complete & Routed
 **Route:** `/direct-mail`
 
 **Features:**
+
 - Template selection (postcards & letters)
 - Address input form with validation
 - Preview before sending
@@ -54,16 +56,19 @@ Your direct mail marketing system is **extensively built** and nearly ready for 
 - Toast notifications
 
 **Usage:**
+
 ```typescript
 // Already routed in App.tsx:
 <Route path="/direct-mail" element={<DirectMailPage />} />
 ```
 
 #### 2. EnhancedDirectMail.tsx
-**Location:** `src/components/marketing/EnhancedDirectMail.tsx`  
+
+**Location:** `src/components/marketing/EnhancedDirectMail.tsx`
 **Status:** ✅ Complete - Needs Integration
 
 **Features:**
+
 - Real-time campaign statistics dashboard
 - 4-stat overview: Sent, Delivered, Responses, Cost
 - Campaign history list
@@ -71,33 +76,38 @@ Your direct mail marketing system is **extensively built** and nearly ready for 
 - Integration with `mail_campaigns` table
 
 **Key Code:**
+
 ```typescript
 const loadCampaignData = async () => {
   const { data: campaignData } = await supabase
-    .from('mail_campaigns')
-    .select('*')
-    .order('created_at', { ascending: false });
-    
+    .from("mail_campaigns")
+    .select("*")
+    .order("created_at", { ascending: false });
+
   setCampaigns(campaignData || []);
-  
+
   // Calculate stats
-  const totalSent = campaignData?.reduce((acc, c) => acc + c.sent_count, 0) || 0;
-  const totalCost = campaignData?.reduce((acc, c) => acc + c.total_cost, 0) || 0;
-  
+  const totalSent =
+    campaignData?.reduce((acc, c) => acc + c.sent_count, 0) || 0;
+  const totalCost =
+    campaignData?.reduce((acc, c) => acc + c.total_cost, 0) || 0;
+
   setStats({
     totalSent,
     delivered: Math.floor(totalSent * 0.95),
     responses: Math.floor(totalSent * 0.02),
-    cost: totalCost
+    cost: totalCost,
   });
 };
 ```
 
 #### 3. MailCampaignManager.tsx
-**Location:** `src/components/marketing/direct-mail/MailCampaignManager.tsx`  
+
+**Location:** `src/components/marketing/direct-mail/MailCampaignManager.tsx`
 **Status:** ✅ Complete - Needs Integration
 
 **Features:**
+
 - 4-step wizard: Campaign Name → Template Upload → Mailing List → Review & Send
 - Canva template uploader integration
 - Bulk address sending
@@ -106,6 +116,7 @@ const loadCampaignData = async () => {
 - Success/failure reporting
 
 **Workflow:**
+
 1. **Step 1:** Enter campaign name
 2. **Step 2:** Upload Canva template or use existing
 3. **Step 3:** Select mailing list (pre-configured addresses)
@@ -116,11 +127,13 @@ const loadCampaignData = async () => {
 ### Backend Infrastructure
 
 #### Edge Function #1: direct-mail-sender
-**Location:** `supabase/functions/direct-mail-sender/index.ts`  
-**Status:** ✅ Complete - Ready for Deployment  
+
+**Location:** `supabase/functions/direct-mail-sender/index.ts`
+**Status:** ✅ Complete - Ready for Deployment
 **Size:** ~300 lines
 
 **Features:**
+
 - Lob API integration with authentication
 - Batch sending with rate limiting (200ms delay between sends)
 - Campaign tracking in `mail_campaigns` table
@@ -131,6 +144,7 @@ const loadCampaignData = async () => {
 - CORS support
 
 **Template Example:**
+
 ```typescript
 const htmlTemplate = `
   <html>
@@ -153,6 +167,7 @@ const htmlTemplate = `
 ```
 
 **API Endpoint:**
+
 ```
 POST /functions/v1/direct-mail-sender
 
@@ -193,8 +208,9 @@ Response:
 ```
 
 #### Edge Function #2: send-direct-mail
-**Location:** `supabase/functions/send-direct-mail/`  
-**Status:** ⚠️ To Be Verified  
+
+**Location:** `supabase/functions/send-direct-mail/`
+**Status:** ⚠️ To Be Verified
 **Purpose:** Alternative/enhanced implementation
 
 ---
@@ -202,7 +218,8 @@ Response:
 ### Database Schema
 
 #### Table: direct_mail_campaigns
-**Migration:** `20251210124144_create_direct_mail_and_legal_tables.sql`  
+
+**Migration:** `20251210124144_create_direct_mail_and_legal_tables.sql`
 **Status:** ⏳ Ready for Deployment
 
 ```sql
@@ -211,11 +228,11 @@ CREATE TABLE public.direct_mail_campaigns (
   lob_letter_id TEXT UNIQUE NOT NULL,
   recipient_name TEXT NOT NULL,
   recipient_address TEXT NOT NULL,
-  template_type TEXT CHECK (template_type IN 
+  template_type TEXT CHECK (template_type IN
     ('foreclosure_prevention', 'cash_offer', 'land_acquisition', 'loan_modification')),
   campaign_id TEXT,
   property_address TEXT,
-  status TEXT CHECK (status IN 
+  status TEXT CHECK (status IN
     ('sent', 'in_transit', 'delivered', 'returned', 'cancelled')),
   lob_tracking_url TEXT,
   expected_delivery DATE,
@@ -234,11 +251,13 @@ CREATE INDEX direct_mail_campaigns_created_at_idx ON direct_mail_campaigns(creat
 ```
 
 #### Related Tables (Already Exist):
+
 - `mail_campaigns` - Campaign-level tracking
 - `mail_records` - Individual mail piece tracking
 - `legal_notice_acceptances` - User legal compliance
 
 **RLS Policies:**
+
 - ✅ Service role has full access
 - ✅ Authenticated admins can view campaigns
 - ✅ Row-level security enabled
@@ -248,45 +267,48 @@ CREATE INDEX direct_mail_campaigns_created_at_idx ON direct_mail_campaigns(creat
 ### Lob API Service
 
 #### LobService.ts
-**Location:** `src/services/mail/LobService.ts`  
+
+**Location:** `src/services/mail/LobService.ts`
 **Status:** ✅ Complete TypeScript Wrapper
 
 **Methods:**
+
 ```typescript
 class LobService {
   // Address verification before sending
-  async verifyAddress(address): Promise<{valid, standardized, deliverable}>
-  
+  async verifyAddress(address): Promise<{ valid; standardized; deliverable }>;
+
   // Send single postcard
-  async sendPostcard(postcardData): Promise<{success, mailId, error}>
-  
+  async sendPostcard(postcardData): Promise<{ success; mailId; error }>;
+
   // Send bulk campaign
-  async sendBulkMail(addresses, templateUrl, campaignName): Promise<results>
-  
+  async sendBulkMail(addresses, templateUrl, campaignName): Promise<results>;
+
   // Calculate cost estimates
   static calculateCost(quantity: number): {
-    totalCost: number,
-    perPieceCost: number,
-    estimatedDelivery: string
-  }
-  
+    totalCost: number;
+    perPieceCost: number;
+    estimatedDelivery: string;
+  };
+
   // Get default sender address
-  private getDefaultFromAddress(): LobAddress
+  private getDefaultFromAddress(): LobAddress;
 }
 ```
 
 **Usage Example:**
+
 ```typescript
-import LobService from '../services/mail/LobService';
+import LobService from "../services/mail/LobService";
 
 const lobService = new LobService();
 
 // Verify address first
 const verification = await lobService.verifyAddress({
-  address_line1: '123 Main St',
-  address_city: 'Anytown',
-  address_state: 'CA',
-  address_zip: '90210'
+  address_line1: "123 Main St",
+  address_city: "Anytown",
+  address_state: "CA",
+  address_zip: "90210",
 });
 
 if (verification.valid && verification.deliverable) {
@@ -294,17 +316,18 @@ if (verification.valid && verification.deliverable) {
   const result = await lobService.sendPostcard({
     to: recipientAddress,
     from: lobService.getDefaultFromAddress(),
-    front: 'https://your-template-url.com/template.pdf',
-    description: 'Q1 Foreclosure Campaign'
+    front: "https://your-template-url.com/template.pdf",
+    description: "Q1 Foreclosure Campaign",
   });
-  
+
   if (result.success) {
-    console.log('Mail sent! ID:', result.mailId);
+    console.log("Mail sent! ID:", result.mailId);
   }
 }
 ```
 
 **Cost Structure:**
+
 - Base cost: $0.50/postcard (USPS First Class)
 - Bulk discount at 500+ pieces
 - Estimated delivery: 5-7 business days
@@ -314,15 +337,18 @@ if (verification.valid && verification.deliverable) {
 ## 🎯 Template Types
 
 ### 1. Foreclosure Prevention
-**Template Type:** `foreclosure_prevention`  
-**Target:** Homeowners in pre-foreclosure or foreclosure  
+
+**Template Type:** `foreclosure_prevention`
+**Target:** Homeowners in pre-foreclosure or foreclosure
 **Key Message:**
+
 - "Stop Foreclosure - We Can Help"
 - In-house loan processing, no bank middlemen
 - 100% confidential service
 - 7 business day response
 
 **Design Elements:**
+
 - 🏠 Home icon
 - Urgent but professional tone
 - Clear call-to-action: Phone + Website
@@ -331,15 +357,18 @@ if (verification.valid && verification.deliverable) {
 ---
 
 ### 2. Cash Offer (24hr)
-**Template Type:** `cash_offer`  
-**Target:** Distressed property owners  
+
+**Template Type:** `cash_offer`
+**Target:** Distressed property owners
 **Key Message:**
+
 - "Fast Cash Offer - 24 Hour Response"
 - No commissions, no hidden fees
 - Cash in hand quickly
 - Fair market value
 
 **Design Elements:**
+
 - 💰 Money icon
 - Speed emphasis
 - No obligation language
@@ -348,15 +377,18 @@ if (verification.valid && verification.deliverable) {
 ---
 
 ### 3. Land Acquisition
-**Template Type:** `land_acquisition`  
-**Target:** Vacant land owners  
+
+**Template Type:** `land_acquisition`
+**Target:** Vacant land owners
 **Key Message:**
+
 - "We Buy Land Directly"
 - No agents, no fees, no hassle
 - Fast closing
 - Any condition accepted
 
 **Design Elements:**
+
 - 🌳 Land/nature icon
 - Simplicity focus
 - Flexible terms highlighted
@@ -365,15 +397,18 @@ if (verification.valid && verification.deliverable) {
 ---
 
 ### 4. Loan Modification
-**Template Type:** `loan_modification`  
-**Target:** Struggling mortgage holders  
+
+**Template Type:** `loan_modification`
+**Target:** Struggling mortgage holders
 **Key Message:**
+
 - "Reduce Your Monthly Payments"
 - Professional loan modification service
 - Lower interest rates
 - Extend payment terms
 
 **Design Elements:**
+
 - 📋 Document icon
 - Relief/solution positioning
 - Expert service emphasis
@@ -384,6 +419,7 @@ if (verification.valid && verification.deliverable) {
 ## 🚀 Integration Status & Action Items
 
 ### ✅ COMPLETED:
+
 1. Frontend pages created (DirectMailPage, EnhancedDirectMail, MailCampaignManager)
 2. Routing configured in App.tsx (`/direct-mail`)
 3. Edge Functions written (direct-mail-sender, send-direct-mail)
@@ -395,6 +431,7 @@ if (verification.valid && verification.deliverable) {
 ### ⏳ PENDING DEPLOYMENT:
 
 #### Priority 1: Database Migration (10 minutes)
+
 ```bash
 # Option A: Via Supabase Dashboard
 1. Open https://supabase.com/dashboard
@@ -409,6 +446,7 @@ supabase db push
 ```
 
 **Expected Result:**
+
 - ✅ `direct_mail_campaigns` table created
 - ✅ Indexes created for performance
 - ✅ RLS policies applied
@@ -417,6 +455,7 @@ supabase db push
 ---
 
 #### Priority 2: Lob API Key Setup (5 minutes)
+
 ```bash
 # 1. Get API Key
 Visit: https://dashboard.lob.com
@@ -437,6 +476,7 @@ VITE_LOB_API_KEY=live_your_key_here
 ---
 
 #### Priority 3: Deploy Edge Functions (15 minutes)
+
 ```bash
 cd "C:\Users\monte\Documents\cert api token keys ids\supabase project deployment\rep-motivated-seller"
 
@@ -466,6 +506,7 @@ curl -X POST \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "success": true,
@@ -484,20 +525,22 @@ curl -X POST \
 #### Priority 4: Integration Testing (30 minutes)
 
 **Test 1: Address Verification**
+
 ```typescript
 // Test in browser console on /direct-mail page
 const lobService = new LobService();
 const result = await lobService.verifyAddress({
-  address_line1: '123 Main St',
-  address_city: 'Anytown',
-  address_state: 'CA',
-  address_zip: '90210'
+  address_line1: "123 Main St",
+  address_city: "Anytown",
+  address_state: "CA",
+  address_zip: "90210",
 });
-console.log('Verification:', result);
+console.log("Verification:", result);
 // Expected: {valid: true, deliverable: true, standardized: {...}}
 ```
 
 **Test 2: Single Postcard Send**
+
 ```typescript
 // Via DirectMailPage UI
 1. Navigate to /direct-mail
@@ -517,6 +560,7 @@ console.log('Verification:', result);
 ```
 
 **Test 3: Bulk Campaign**
+
 ```typescript
 // Via MailCampaignManager
 1. Import MailCampaignManager component into a test route
@@ -531,6 +575,7 @@ console.log('Verification:', result);
 ```
 
 **Test 4: Campaign Dashboard**
+
 ```typescript
 // Via EnhancedDirectMail component
 1. Navigate to page with EnhancedDirectMail
@@ -548,18 +593,19 @@ console.log('Verification:', result);
 ## 📈 Advanced Features Already Built
 
 ### 1. Cost Calculator
+
 **Location:** `LobService.calculateCost()`
 
 ```typescript
 // Automatic bulk discounts
 static calculateCost(quantity: number) {
   let perPieceCost = 0.50; // Base USPS First Class
-  
+
   // Bulk discounts
   if (quantity >= 5000) perPieceCost = 0.42;
   else if (quantity >= 1000) perPieceCost = 0.45;
   else if (quantity >= 500) perPieceCost = 0.47;
-  
+
   return {
     totalCost: quantity * perPieceCost,
     perPieceCost,
@@ -569,6 +615,7 @@ static calculateCost(quantity: number) {
 ```
 
 **Usage in UI:**
+
 - Real-time cost preview during campaign creation
 - Shows per-piece and total costs
 - Displays estimated delivery timeframe
@@ -576,13 +623,16 @@ static calculateCost(quantity: number) {
 ---
 
 ### 2. Address Verification
+
 **Why It Matters:**
+
 - Prevents undeliverable mail
 - Saves money on failed deliveries
 - USPS-standardizes addresses
 - Improves delivery rates
 
 **How It Works:**
+
 ```typescript
 // Automatic verification before sending
 const verification = await lobService.verifyAddress(address);
@@ -609,9 +659,11 @@ const sendResult = await lobService.sendPostcard({
 ---
 
 ### 3. Campaign Tracking
+
 **Database Tables:**
 
 **mail_campaigns:**
+
 ```typescript
 {
   id: uuid,
@@ -628,6 +680,7 @@ const sendResult = await lobService.sendPostcard({
 ```
 
 **mail_records:**
+
 ```typescript
 {
   id: uuid,
@@ -644,9 +697,10 @@ const sendResult = await lobService.sendPostcard({
 ```
 
 **Query Examples:**
+
 ```sql
 -- Campaign performance
-SELECT 
+SELECT
   name,
   sent_count,
   failed_count,
@@ -657,7 +711,7 @@ WHERE status = 'completed'
 ORDER BY created_at DESC;
 
 -- Individual mail status
-SELECT 
+SELECT
   mc.name as campaign,
   mr.recipient_name,
   mr.status,
@@ -669,7 +723,7 @@ WHERE mc.id = 'campaign-uuid'
 ORDER BY mr.created_at DESC;
 
 -- Cost analysis
-SELECT 
+SELECT
   template_type,
   COUNT(*) as total_sent,
   SUM(cost) as total_cost,
@@ -682,10 +736,12 @@ GROUP BY template_type;
 ---
 
 ### 4. Canva Integration
-**Component:** `CanvaUploader.tsx`  
+
+**Component:** `CanvaUploader.tsx`
 **Purpose:** Upload custom-designed templates from Canva
 
 **Workflow:**
+
 1. User designs postcard/letter in Canva
 2. Downloads as PDF (4x6, 6x9, or 6x11)
 3. Uploads via CanvaUploader component
@@ -693,6 +749,7 @@ GROUP BY template_type;
 5. Returns public URL for Lob API
 
 **Code Integration:**
+
 ```typescript
 // In MailCampaignManager.tsx
 const handleFileUploaded = (fileUrl: string, fileName: string) => {
@@ -702,7 +759,7 @@ const handleFileUploaded = (fileUrl: string, fileName: string) => {
 };
 
 // Render
-<CanvaUploader 
+<CanvaUploader
   onFileUploaded={handleFileUploaded}
   acceptedFormats={['pdf', 'png', 'jpg']}
   maxSizeMB={10}
@@ -710,6 +767,7 @@ const handleFileUploaded = (fileUrl: string, fileName: string) => {
 ```
 
 **File Requirements:**
+
 - Format: PDF (preferred), PNG, or JPG
 - Size: 4x6" (postcard) or 8.5x11" (letter)
 - Resolution: 300 DPI minimum
@@ -720,10 +778,12 @@ const handleFileUploaded = (fileUrl: string, fileName: string) => {
 ## 🎨 UI Component Locations
 
 ### Admin Dashboard Integration
-**File:** `src/components/AdminDashboard.enhanced.tsx`  
+
+**File:** `src/components/AdminDashboard.enhanced.tsx`
 **Lines:** 346-354
 
 Already has direct mail button:
+
 ```typescript
 <motion.button
   className="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg"
@@ -740,6 +800,7 @@ Already has direct mail button:
 ---
 
 ### Navigation Menu
+
 **Suggested Addition:**
 
 ```typescript
@@ -754,9 +815,11 @@ Already has direct mail button:
 ## 🔐 Security & Compliance
 
 ### Legal Protection ✅
+
 **Status:** Already integrated into homepage
 
 **What's Active:**
+
 - LegalNoticeModal displays on first visit
 - 5-section disclosure (services, attorney relationship, warranty, marketing consent, acknowledgment)
 - LocalStorage tracking of acceptance
@@ -764,6 +827,7 @@ Already has direct mail button:
 - Database tracking ready (legal_notice_acceptances table)
 
 **Direct Mail Specific:**
+
 - All templates include FTC-compliant disclaimers
 - Opt-out language included in footer
 - Marketing consent obtained via legal modal
@@ -772,9 +836,11 @@ Already has direct mail button:
 ---
 
 ### Data Privacy
+
 **GDPR/CCPA Compliance:**
 
 **PrivacyPolicy.tsx Integration:**
+
 ```typescript
 // Section 3: Direct Mail Marketing (lines 48-60)
 <section className="bg-blue-50 p-6 rounded-lg">
@@ -787,7 +853,7 @@ Already has direct mail button:
     <li>Educational resources and workshops</li>
     <li>Time-sensitive assistance programs</li>
   </ul>
-  
+
   <h3>3.2 Opting Out</h3>
   <p>
     To stop receiving direct mail: Visit repmotivatedseller.org/unsubscribe
@@ -797,6 +863,7 @@ Already has direct mail button:
 ```
 
 **Required Actions:**
+
 - ✅ Privacy policy updated
 - ✅ Opt-out mechanism exists (/unsubscribe page)
 - ⏳ Add opt-out tracking to database
@@ -805,32 +872,34 @@ Already has direct mail button:
 ---
 
 ### Lob API Security
+
 **Best Practices Already Implemented:**
 
 ```typescript
 // 1. API Key in Environment (not in code)
-const lobApiKey = Deno.env.get('LOB_API_KEY');
+const lobApiKey = Deno.env.get("LOB_API_KEY");
 
 // 2. CORS Protection
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // Tighten in production
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  "Access-Control-Allow-Origin": "*", // Tighten in production
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 // 3. Authentication Required
 const supabaseClient = createClient(
-  Deno.env.get('SUPABASE_URL'),
-  Deno.env.get('SUPABASE_ANON_KEY'),
-  { auth: { persistSession: false } }
+  Deno.env.get("SUPABASE_URL"),
+  Deno.env.get("SUPABASE_ANON_KEY"),
+  { auth: { persistSession: false } },
 );
 
 // 4. Rate Limiting (200ms delay between sends)
-await new Promise(resolve => setTimeout(resolve, 200));
+await new Promise((resolve) => setTimeout(resolve, 200));
 
 // 5. Input Validation
 if (!campaignName || !recipients || recipients.length === 0) {
-  throw new Error('Missing required fields');
+  throw new Error("Missing required fields");
 }
 ```
 
@@ -839,6 +908,7 @@ if (!campaignName || !recipients || recipients.length === 0) {
 ## 📊 Analytics & ROI Tracking
 
 ### EnhancedDirectMail Dashboard
+
 **Metrics Displayed:**
 
 1. **Total Sent**
@@ -860,11 +930,12 @@ if (!campaignName || !recipients || recipients.length === 0) {
    - Source: `SUM(total_cost)` from `mail_campaigns`
 
 **ROI Calculation:**
+
 ```typescript
 // Current formula in code
 const avgDealValue = 5000; // Estimated average deal value
 const revenue = responses * avgDealValue;
-const roi = ((revenue - totalCost) / totalCost * 100).toFixed(1);
+const roi = (((revenue - totalCost) / totalCost) * 100).toFixed(1);
 
 // Example:
 // 1000 sent × $0.50 = $500 cost
@@ -874,6 +945,7 @@ const roi = ((revenue - totalCost) / totalCost * 100).toFixed(1);
 ```
 
 **Improvements Needed:**
+
 - ⏳ Add actual response tracking (not just estimates)
 - ⏳ Link to lead capture system
 - ⏳ Track conversion to closed deals
@@ -882,9 +954,11 @@ const roi = ((revenue - totalCost) / totalCost * 100).toFixed(1);
 ---
 
 ### Lob Webhook Integration (Future Enhancement)
+
 **Purpose:** Get real-time delivery status updates
 
 **Webhooks Available:**
+
 - `postcard.created` - Mail piece created
 - `postcard.in_transit` - In USPS network
 - `postcard.in_local_area` - Near delivery
@@ -893,27 +967,28 @@ const roi = ((revenue - totalCost) / totalCost * 100).toFixed(1);
 - `postcard.returned_to_sender` - Undeliverable
 
 **Implementation Plan:**
+
 ```typescript
 // Create new Edge Function: lob-webhook-handler
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 serve(async (req) => {
   const webhook = await req.json();
-  
+
   // Verify webhook signature (Lob provides this)
-  const isValid = verifyLobSignature(webhook, req.headers.get('lob-signature'));
-  if (!isValid) return new Response('Unauthorized', { status: 401 });
-  
+  const isValid = verifyLobSignature(webhook, req.headers.get("lob-signature"));
+  if (!isValid) return new Response("Unauthorized", { status: 401 });
+
   // Update database with real status
   await supabase
-    .from('direct_mail_campaigns')
+    .from("direct_mail_campaigns")
     .update({
       status: webhook.data.status,
-      actual_delivery: webhook.data.delivered_at
+      actual_delivery: webhook.data.delivered_at,
     })
-    .eq('lob_letter_id', webhook.data.id);
-    
-  return new Response('OK', { status: 200 });
+    .eq("lob_letter_id", webhook.data.id);
+
+  return new Response("OK", { status: 200 });
 });
 ```
 
@@ -922,6 +997,7 @@ serve(async (req) => {
 ## 🚀 Production Deployment Checklist
 
 ### Phase 1: Core Deployment (Required - 30 minutes)
+
 - [ ] Deploy database migration (10 min)
   ```bash
   supabase db push --project-ref ltxqodqlexvojqqxquew
@@ -943,6 +1019,7 @@ serve(async (req) => {
 ---
 
 ### Phase 2: UI Integration (Optional - 60 minutes)
+
 - [ ] Add DirectMail dashboard to admin panel
 - [ ] Update AdminDashboard button route to /direct-mail
 - [ ] Add navigation menu item for Direct Mail
@@ -953,6 +1030,7 @@ serve(async (req) => {
 ---
 
 ### Phase 3: Advanced Features (Optional - 2-4 hours)
+
 - [ ] Implement Lob webhook handler for real-time status
 - [ ] Add response tracking (phone, form, QR code)
 - [ ] Build mailing list management UI
@@ -965,6 +1043,7 @@ serve(async (req) => {
 ---
 
 ### Phase 4: Optimization (Ongoing)
+
 - [ ] Monitor delivery rates (target: 95%+)
 - [ ] Track response rates by template
 - [ ] Optimize templates based on performance
@@ -978,6 +1057,7 @@ serve(async (req) => {
 ## 💰 Cost Analysis
 
 ### Lob Pricing (As of 2025)
+
 - **Free Tier:** 300 pieces/month
 - **Standard:** $0.50/postcard (4x6", USPS First Class)
 - **Large Postcard:** $0.75/piece (6x9")
@@ -985,32 +1065,36 @@ serve(async (req) => {
 - **Certified Mail:** +$5.50/piece
 
 ### Bulk Discounts
-| Quantity | Per-Piece Cost | Discount |
-|----------|---------------|----------|
-| 1-499    | $0.50         | 0%       |
-| 500-999  | $0.47         | 6%       |
-| 1000-4999| $0.45         | 10%      |
-| 5000+    | $0.42         | 16%      |
+
+| Quantity  | Per-Piece Cost | Discount |
+| --------- | -------------- | -------- |
+| 1-499     | $0.50          | 0%       |
+| 500-999   | $0.47          | 6%       |
+| 1000-4999 | $0.45          | 10%      |
+| 5000+     | $0.42          | 16%      |
 
 ### Example Campaign Costs
+
 | Campaign Size | Template | Total Cost | Per Lead | Expected Responses (2%) | Cost Per Response |
-|--------------|----------|------------|----------|------------------------|-------------------|
-| 100          | Postcard | $50        | $0.50    | 2                      | $25               |
-| 500          | Postcard | $235       | $0.47    | 10                     | $23.50            |
-| 1000         | Postcard | $450       | $0.45    | 20                     | $22.50            |
-| 5000         | Postcard | $2,100     | $0.42    | 100                    | $21               |
+| ------------- | -------- | ---------- | -------- | ----------------------- | ----------------- |
+| 100           | Postcard | $50        | $0.50    | 2                       | $25               |
+| 500           | Postcard | $235       | $0.47    | 10                      | $23.50            |
+| 1000          | Postcard | $450       | $0.45    | 20                      | $22.50            |
+| 5000          | Postcard | $2,100     | $0.42    | 100                     | $21               |
 
 ### ROI Scenarios
+
 **Assumption:** Average deal value = $5,000 commission/profit
 
-| Sent | Cost   | Responses (2%) | Revenue   | Profit    | ROI     |
-|------|--------|----------------|-----------|-----------|---------|
-| 100  | $50    | 2              | $10,000   | $9,950    | +199x   |
-| 500  | $235   | 10             | $50,000   | $49,765   | +212x   |
-| 1000 | $450   | 20             | $100,000  | $99,550   | +221x   |
-| 5000 | $2,100 | 100            | $500,000  | $497,900  | +237x   |
+| Sent | Cost   | Responses (2%) | Revenue  | Profit   | ROI   |
+| ---- | ------ | -------------- | -------- | -------- | ----- |
+| 100  | $50    | 2              | $10,000  | $9,950   | +199x |
+| 500  | $235   | 10             | $50,000  | $49,765  | +212x |
+| 1000 | $450   | 20             | $100,000 | $99,550  | +221x |
+| 5000 | $2,100 | 100            | $500,000 | $497,900 | +237x |
 
 **Note:** These are theoretical. Actual response rates vary by:
+
 - Target audience quality
 - Message/offer strength
 - Design effectiveness
@@ -1018,6 +1102,7 @@ serve(async (req) => {
 - Follow-up process
 
 **Industry Benchmarks:**
+
 - Real estate direct mail: 0.5% - 3% response rate
 - Foreclosure assistance: 1% - 5% (higher urgency)
 - Land acquisition: 0.3% - 2%
@@ -1028,7 +1113,9 @@ serve(async (req) => {
 ## 🎯 Recommended Next Steps
 
 ### Immediate (Today - 30 minutes)
+
 1. ✅ **Deploy Database Migration**
+
    ```bash
    cd "C:\Users\monte\Documents\cert api token keys ids\supabase project deployment\rep-motivated-seller"
    supabase db push --project-ref ltxqodqlexvojqqxquew
@@ -1040,16 +1127,19 @@ serve(async (req) => {
    - Copy Live Secret Key
 
 3. ✅ **Configure Secrets**
+
    ```bash
    supabase secrets set LOB_API_KEY=live_your_key_here --project-ref ltxqodqlexvojqqxquew
    ```
-   
+
    Add to `.env.local`:
+
    ```
    VITE_LOB_API_KEY=live_your_key_here
    ```
 
 4. ✅ **Deploy Edge Function**
+
    ```bash
    supabase functions deploy direct-mail-sender --project-ref ltxqodqlexvojqqxquew
    ```
@@ -1063,6 +1153,7 @@ serve(async (req) => {
 ---
 
 ### Short-term (This Week - 2-3 hours)
+
 1. **Add Dashboard Integration**
    - Update AdminDashboard button route
    - Add navigation menu item
@@ -1087,6 +1178,7 @@ serve(async (req) => {
 ---
 
 ### Medium-term (Next Month - 1-2 weeks)
+
 1. **Build Lead Pipeline**
    - Connect direct mail to CRM
    - Add response tracking codes
@@ -1116,17 +1208,20 @@ serve(async (req) => {
 ## 📞 Support & Resources
 
 ### Lob Documentation
+
 - **Main Docs:** https://docs.lob.com
 - **API Reference:** https://docs.lob.com/api
 - **Dashboard:** https://dashboard.lob.com
 - **Support:** support@lob.com
 
 ### Supabase Edge Functions
+
 - **Docs:** https://supabase.com/docs/guides/functions
 - **Deploy Guide:** https://supabase.com/docs/guides/functions/deploy
 - **Secrets:** https://supabase.com/docs/guides/functions/secrets
 
 ### Direct Mail Best Practices
+
 - **USPS Guidelines:** https://postalpro.usps.com/
 - **FTC Compliance:** https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business
 - **GDPR/CCPA:** Already covered in PrivacyPolicy.tsx
@@ -1138,6 +1233,7 @@ serve(async (req) => {
 Your direct mail system is **nearly complete** and extremely well-architected! Here's what you have:
 
 ### ✅ **Strengths:**
+
 1. **Complete Tech Stack:** Frontend UI → API Service → Edge Functions → Lob API
 2. **Professional Templates:** 4 industry-specific designs ready
 3. **Cost Optimization:** Bulk discounts, cost calculator built-in
@@ -1147,6 +1243,7 @@ Your direct mail system is **nearly complete** and extremely well-architected! H
 7. **Scalability:** Handles 1 to 10,000+ pieces per campaign
 
 ### 🎯 **Final Steps:**
+
 1. Deploy database (10 min)
 2. Get Lob API key (5 min)
 3. Deploy Edge Function (5 min)
@@ -1155,6 +1252,7 @@ Your direct mail system is **nearly complete** and extremely well-architected! H
 **Total time to production:** ~25 minutes
 
 Then you'll have a **fully operational direct mail marketing system** capable of:
+
 - Sending professional postcards nationwide
 - Tracking delivery and response
 - Calculating ROI automatically
@@ -1162,6 +1260,7 @@ Then you'll have a **fully operational direct mail marketing system** capable of
 - Complying with all legal requirements
 
 **Estimated ROI:** If you achieve even 1% response rate with $5,000 average deal value:
+
 - 1000 pieces × $0.45 = $450 cost
 - 10 responses × $5,000 = $50,000 revenue
 - **Profit: $49,550** (110x ROI)
@@ -1171,6 +1270,7 @@ This is one of the most complete direct mail systems I've seen in a real estate 
 ---
 
 **Need Help?** Review the specific sections above for:
+
 - Deployment commands
 - Test procedures
 - Integration examples

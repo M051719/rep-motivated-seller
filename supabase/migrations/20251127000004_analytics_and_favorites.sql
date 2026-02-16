@@ -2,12 +2,12 @@
 
 -- Add new subcategories (these can be used in the category dropdowns)
 -- Marketing subcategories
--- Investment subcategories  
+-- Investment subcategories
 -- Analysis subcategories
 
 -- Create analytics view for most downloaded templates
 CREATE OR REPLACE VIEW public.template_analytics AS
-SELECT 
+SELECT
     id,
     name,
     category,
@@ -16,7 +16,7 @@ SELECT
     is_featured,
     created_at,
     updated_at,
-    CASE 
+    CASE
         WHEN created_at > NOW() - INTERVAL '7 days' THEN 'new'
         WHEN download_count > 100 THEN 'popular'
         WHEN download_count > 50 THEN 'trending'
@@ -113,7 +113,7 @@ SECURITY DEFINER
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         tf.id,
         tf.name,
         tf.description,
@@ -174,7 +174,7 @@ SECURITY DEFINER
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         tf.id,
         tf.name,
         tf.category,
@@ -182,8 +182,8 @@ BEGIN
         COUNT(tds.id) as recent_downloads,
         tf.download_count as total_downloads
     FROM public.templates_forms tf
-    LEFT JOIN public.template_download_stats tds 
-        ON tf.id = tds.template_id 
+    LEFT JOIN public.template_download_stats tds
+        ON tf.id = tds.template_id
         AND tds.downloaded_at > NOW() - (days_back || ' days')::INTERVAL
     WHERE tf.is_active = true
     GROUP BY tf.id, tf.name, tf.category, tf.subcategory, tf.download_count
@@ -207,7 +207,7 @@ SECURITY DEFINER
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         tf.category,
         tf.subcategory,
         COUNT(tf.id) as template_count,

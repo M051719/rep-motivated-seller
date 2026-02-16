@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 
 # Project definition with metadata
-project(WSL 
+project(WSL
     VERSION 2.0.0
     DESCRIPTION "Windows Subsystem for Linux"
     HOMEPAGE_URL "https://docs.microsoft.com/en-us/windows/wsl/"
@@ -69,18 +69,18 @@ if(MSVC)
         /GR-                   # Disable RTTI (not needed)
         /EHsc                  # Exception handling model
     )
-    
+
     # Release optimizations
     add_compile_options($<$<CONFIG:Release>:/O2 /Ob2 /DNDEBUG>)
-    
+
     # Debug information
     add_compile_options($<$<CONFIG:Debug>:/Od /Zi /RTC1>)
     add_link_options($<$<CONFIG:Debug>:/DEBUG>)
-    
+
     # Security enhancements
     add_compile_options(/GS /guard:cf)
     add_link_options(/GUARD:CF /DYNAMICBASE /NXCOMPAT)
-    
+
 endif()
 
 # Global definitions
@@ -96,7 +96,7 @@ add_definitions(
 )
 
 # Find required tools and libraries
-find_program(MIDL_COMPILER midl REQUIRED 
+find_program(MIDL_COMPILER midl REQUIRED
     HINTS "C:/Program Files (x86)/Windows Kits/10/bin/*/x64"
     DOC "Microsoft Interface Definition Language compiler"
 )
@@ -156,11 +156,11 @@ foreach(IDL_FILE ${IDL_FILES})
     set(IDL_OUTPUT_H "${CMAKE_CURRENT_BINARY_DIR}/${IDL_NAME}.h")
     set(IDL_OUTPUT_C "${CMAKE_CURRENT_BINARY_DIR}/${IDL_NAME}_i.c")
     set(IDL_OUTPUT_TLB "${CMAKE_CURRENT_BINARY_DIR}/${IDL_NAME}.tlb")
-    
+
     add_custom_command(
         OUTPUT ${IDL_OUTPUT_H} ${IDL_OUTPUT_C} ${IDL_OUTPUT_TLB}
         COMMAND ${MIDL_COMPILER}
-        ARGS /nologo 
+        ARGS /nologo
              /target NT60
              /out ${CMAKE_CURRENT_BINARY_DIR}
              /h ${IDL_NAME}.h
@@ -171,7 +171,7 @@ foreach(IDL_FILE ${IDL_FILES})
         COMMENT "Processing IDL file: ${IDL_NAME}"
         VERBATIM
     )
-    
+
     list(APPEND IDL_OUTPUTS ${IDL_OUTPUT_H} ${IDL_OUTPUT_C})
 endforeach()
 
@@ -183,37 +183,37 @@ endif()
 # Function to create WSL executables with consistent settings
 function(add_wsl_executable TARGET_NAME)
     cmake_parse_arguments(WSL_EXE "WIN32_APP" "SUBSYSTEM" "SOURCES;LIBS;DEFINITIONS" ${ARGN})
-    
+
     if(WSL_EXE_WIN32_APP)
         add_executable(${TARGET_NAME} WIN32 ${WSL_EXE_SOURCES})
     else()
         add_executable(${TARGET_NAME} ${WSL_EXE_SOURCES})
     endif()
-    
-    target_link_libraries(${TARGET_NAME} PRIVATE 
-        WSLCommon 
+
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        WSLCommon
         ${WINDOWS_LIBS}
         ${WSL_EXE_LIBS}
     )
-    
+
     if(WSL_EXE_DEFINITIONS)
         target_compile_definitions(${TARGET_NAME} PRIVATE ${WSL_EXE_DEFINITIONS})
     endif()
-    
+
     # Set target properties
     set_target_properties(${TARGET_NAME} PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
         DEBUG_POSTFIX "_d"
         PDB_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
     )
-    
+
     # Set subsystem
     if(WSL_EXE_SUBSYSTEM)
         set_target_properties(${TARGET_NAME} PROPERTIES
             LINK_FLAGS "/SUBSYSTEM:${WSL_EXE_SUBSYSTEM}"
         )
     endif()
-    
+
     # Copy to output directory
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -221,12 +221,12 @@ function(add_wsl_executable TARGET_NAME)
         "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.exe"
         COMMENT "Copying ${TARGET_NAME} to output directory"
     )
-    
+
     message(STATUS "Added executable: ${TARGET_NAME}")
 endfunction()
 
 # Create all WSL executables
-add_wsl_executable(wsl 
+add_wsl_executable(wsl
     SOURCES src/windows/wsl/main.cpp src/windows/wsl/commands.cpp
     SUBSYSTEM CONSOLE
 )
@@ -255,8 +255,8 @@ add_wsl_executable(wslrelay
 )
 
 add_wsl_executable(wslservice
-    SOURCES 
-        src/windows/service/main.cpp 
+    SOURCES
+        src/windows/service/main.cpp
         src/windows/service/LxssUserSession.cpp
         src/windows/service/WslCoreVm.cpp
         src/windows/service/DistributionManager.cpp
@@ -270,7 +270,7 @@ option(BUILD_TESTING "Build unit tests" OFF)
 if(BUILD_TESTING)
     enable_testing()
     message(STATUS "Building tests enabled")
-    
+
     # Find or fetch Google Test
     find_package(GTest QUIET)
     if(NOT GTest_FOUND)
@@ -283,23 +283,23 @@ if(BUILD_TESTING)
         )
         FetchContent_MakeAvailable(googletest)
     endif()
-    
+
     add_executable(wsl_tests
         tests/unit/test_main.cpp
         tests/unit/config_tests.cpp
         tests/unit/relay_tests.cpp
         tests/unit/service_tests.cpp
     )
-    
+
     target_link_libraries(wsl_tests PRIVATE
         WSLCommon
         GTest::gtest_main
         ${WINDOWS_LIBS}
     )
-    
+
     include(GoogleTest)
     gtest_discover_tests(wsl_tests)
-    
+
     message(STATUS "Added test target: wsl_tests")
 endif()
 
@@ -307,7 +307,7 @@ endif()
 option(BUILD_BUNDLE "Create installation packages" OFF)
 if(BUILD_BUNDLE)
     message(STATUS "Package generation enabled")
-    
+
     # MSI package using WiX
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_UPGRADE_GUID "12345678-1234-1234-1234-123456789ABC")
@@ -316,25 +316,25 @@ if(BUILD_BUNDLE)
     set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Windows Subsystem for Linux Implementation")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "WSL")
-    
+
     # Install targets
     install(TARGETS wsl wslg wslconfig wslhost wslrelay wslservice
         DESTINATION bin
         COMPONENT Runtime
     )
-    
+
     # Install configuration templates
     install(DIRECTORY templates/
         DESTINATION templates
         COMPONENT Configuration
     )
-    
+
     # Install documentation
     install(FILES README.md docs/BUILDING.md docs/ARCHITECTURE.md
         DESTINATION docs
         COMPONENT Documentation
     )
-    
+
     include(CPack)
 endif()
 

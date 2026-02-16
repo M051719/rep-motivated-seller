@@ -1,14 +1,15 @@
 # 🚀 Final Deployment Steps for RepMotivatedSeller
 
 ## Current Status
-✅ TypeScript build errors fixed  
-✅ CSP configuration updated  
-✅ Multiple Supabase client instances consolidated  
-✅ RLS migration created  
-✅ Production bundle built (4.79 MB)  
-⏳ Database migrations need manual application  
-⏳ Need to restart dev server  
-⏳ Need to deploy to production hosting  
+
+✅ TypeScript build errors fixed
+✅ CSP configuration updated
+✅ Multiple Supabase client instances consolidated
+✅ RLS migration created
+✅ Production bundle built (4.79 MB)
+⏳ Database migrations need manual application
+⏳ Need to restart dev server
+⏳ Need to deploy to production hosting
 
 ## 🔴 CRITICAL: Apply Database Migrations
 
@@ -17,11 +18,13 @@ The Supabase CLI `db push` command is failing due to connection issues. Follow t
 ### Option 1: Supabase Dashboard (RECOMMENDED)
 
 1. **Open Supabase Dashboard SQL Editor:**
+
    ```
    https://supabase.com/dashboard/project/ltxqodqlexvojqqxquew/sql/new
    ```
 
 2. **Copy and paste the entire content of this file:**
+
    ```
    APPLY_CRITICAL_MIGRATIONS.sql
    ```
@@ -52,10 +55,11 @@ The Supabase CLI `db push` command is failing due to connection issues. Follow t
 ### Option 3: Supabase Studio
 
 1. **Start Supabase Studio locally:**
+
    ```powershell
    npx supabase start
    ```
-   
+
 2. **Apply migrations through the UI**
 
 ## 🧪 Test Database Changes
@@ -65,12 +69,13 @@ After applying migrations, test in the browser console:
 1. **Open browser DevTools** (F12)
 
 2. **Test profile loading:**
+
    ```javascript
    const { data, error } = await window.supabase
-     .from('profiles')
-     .select('*')
+     .from("profiles")
+     .select("*")
      .single();
-   console.log('Profile:', data, error);
+   console.log("Profile:", data, error);
    ```
 
 3. **Expected result:**
@@ -91,30 +96,38 @@ npm run dev
 Visit these URLs and verify no console errors:
 
 1. **Home Page:**
+
    ```
    http://localhost:5173
    ```
+
    - ✅ No CSP errors
    - ✅ Stripe widget loads
    - ✅ Images/videos load
 
 2. **Deal Analyzer:**
+
    ```
    http://localhost:5173/deal-analyzer
    ```
+
    - ✅ Mapbox loads
    - ✅ Calculator functions work
 
 3. **Blog:**
+
    ```
    http://localhost:5173/blog
    ```
+
    - ✅ Posts load without RLS errors
 
 4. **Admin Dashboard:**
+
    ```
    http://localhost:5173/admin
    ```
+
    - ✅ Auth works
    - ✅ Profile data loads
 
@@ -127,6 +140,7 @@ npm run build
 ```
 
 **Expected output:**
+
 - Build completes in ~5 minutes
 - Creates `dist/` folder
 - Bundle size: ~4.79 MB (1.03 MB gzipped)
@@ -134,6 +148,7 @@ npm run build
 ### Step 2: Configure Hosting (Cloudflare Pages)
 
 1. **Copy CSP headers:**
+
    ```powershell
    # The file public/_headers will be deployed automatically
    # Verify it contains the CSP policy
@@ -141,6 +156,7 @@ npm run build
    ```
 
 2. **Deploy to Cloudflare Pages:**
+
    ```powershell
    # Option A: Via Cloudflare Dashboard
    # 1. Go to https://dash.cloudflare.com
@@ -160,6 +176,7 @@ npm run build
 ### Step 3: Configure Environment Variables
 
 In Cloudflare Pages settings, add:
+
 ```
 VITE_SUPABASE_URL=https://ltxqodqlexvojqqxquew.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -170,6 +187,7 @@ VITE_MAPBOX_TOKEN=pk.eyJ1...
 ### Step 4: Verify Production Deployment
 
 1. **Visit production URL:**
+
    ```
    https://repmotivatedseller.shoprealestatespace.org
    ```
@@ -197,11 +215,13 @@ VITE_MAPBOX_TOKEN=pk.eyJ1...
 ## 📊 Monitor Production
 
 1. **Supabase Logs:**
+
    ```
    https://supabase.com/dashboard/project/ltxqodqlexvojqqxquew/logs/edge-logs
    ```
 
 2. **Cloudflare Analytics:**
+
    ```
    https://dash.cloudflare.com > Analytics
    ```
@@ -213,22 +233,29 @@ VITE_MAPBOX_TOKEN=pk.eyJ1...
 ## 🆘 Troubleshooting
 
 ### Issue: CSP blocks resources
-**Solution:** Update [public/_headers](public/_headers) and redeploy
+
+**Solution:** Update [public/\_headers](public/_headers) and redeploy
 
 ### Issue: Supabase 400 errors
+
 **Solution:** Verify RLS policies applied correctly:
+
 ```sql
 SELECT * FROM pg_policies WHERE tablename = 'profiles';
 ```
 
 ### Issue: Multiple GoTrueClient warnings
+
 **Solution:** Ensure all imports use:
+
 ```typescript
-import { supabase } from './lib/supabase';
+import { supabase } from "./lib/supabase";
 ```
 
 ### Issue: Build fails
+
 **Solution:** Clear cache and rebuild:
+
 ```powershell
 Remove-Item -Recurse -Force node_modules, .vite, dist
 npm install
@@ -262,6 +289,7 @@ After successful deployment:
 ## 🎉 Completion Criteria
 
 Deployment is complete when:
+
 - ✅ All migrations applied without errors
 - ✅ Dev server runs without console errors
 - ✅ Production build succeeds
@@ -272,7 +300,7 @@ Deployment is complete when:
 
 ---
 
-**Project:** RepMotivatedSeller  
-**Supabase Project:** ltxqodqlexvojqqxquew  
-**Production URL:** https://repmotivatedseller.shoprealestatespace.org  
+**Project:** RepMotivatedSeller
+**Supabase Project:** ltxqodqlexvojqqxquew
+**Production URL:** https://repmotivatedseller.shoprealestatespace.org
 **Last Updated:** January 5, 2026

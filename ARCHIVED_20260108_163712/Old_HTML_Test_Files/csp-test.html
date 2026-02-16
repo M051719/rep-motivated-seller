@@ -20,7 +20,7 @@
 </head>
 <body>
     <h1>Content Security Policy Test</h1>
-    
+
     <div id="status">
         <p>This page tests if your Content Security Policy is working correctly.</p>
     </div>
@@ -40,7 +40,7 @@
         // Check if CSP is present
         function checkCSP() {
             const resultDiv = document.getElementById('cspResult');
-            
+
             // Try to detect CSP
             fetch('/non-existent-page')
                 .catch(error => {
@@ -65,14 +65,14 @@
                     }
                 });
         }
-        
+
         // Test loading various resources
         document.getElementById('testResources').addEventListener('click', async () => {
             const resultDiv = document.getElementById('resourceResult');
             resultDiv.innerHTML = 'Testing resource loading...';
-            
+
             const results = [];
-            
+
             // Test image loading
             try {
                 const img = new Image();
@@ -86,7 +86,7 @@
             } catch (error) {
                 results.push('❌ External image failed to load');
             }
-            
+
             // Test script loading
             try {
                 const script = document.createElement('script');
@@ -108,7 +108,7 @@
             } catch (error) {
                 results.push('❌ External script failed to load');
             }
-            
+
             // Test inline script
             try {
                 const testFunc = new Function('return "test";');
@@ -121,11 +121,11 @@
             } catch (error) {
                 results.push('❌ Inline script blocked by CSP');
             }
-            
+
             // Display results
             resultDiv.innerHTML = results.join('<br>');
         });
-        
+
         // Run CSP check on page load
         checkCSP();
     </script>

@@ -59,7 +59,7 @@ if (Test-Path $sourceConfig) {
         Write-Host "  Backed up existing config to:" -ForegroundColor Cyan
         Write-Host "  $backupFile" -ForegroundColor Gray
     }
-    
+
     # Copy new config
     Copy-Item $sourceConfig $mcpConfigFile -Force
     Write-Host "  MCP configuration installed" -ForegroundColor Green

@@ -3,21 +3,21 @@ CREATE TABLE IF NOT EXISTS fsbo_listings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
-  
+
   -- Owner Contact Information
   owner_name TEXT NOT NULL,
   owner_phone TEXT NOT NULL,
-  
+
   -- Property Location
   address TEXT NOT NULL,
   city TEXT NOT NULL DEFAULT 'Los Angeles',
   state TEXT NOT NULL DEFAULT 'CA',
   zip_code TEXT NOT NULL,
-  
+
   -- Pricing
   asking_price NUMERIC(12, 2) NOT NULL,
   property_tax NUMERIC(10, 2),
-  
+
   -- Basic Property Information
   bedrooms INTEGER NOT NULL,
   bathrooms NUMERIC(3, 1) NOT NULL,
@@ -26,12 +26,12 @@ CREATE TABLE IF NOT EXISTS fsbo_listings (
   year_built INTEGER NOT NULL,
   property_condition TEXT NOT NULL DEFAULT 'good',
   year_remodeled INTEGER,
-  
+
   -- Property Structure
   home_style TEXT NOT NULL DEFAULT 'single-family',
   garage_spaces INTEGER DEFAULT 0,
   garage_attached BOOLEAN DEFAULT false,
-  
+
   -- Additional Rooms
   has_den BOOLEAN DEFAULT false,
   has_dining_room BOOLEAN DEFAULT false,
@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS fsbo_listings (
   has_office BOOLEAN DEFAULT false,
   has_loft BOOLEAN DEFAULT false,
   has_sun_room BOOLEAN DEFAULT false,
-  
+
   -- Outside Buildings
   has_shed BOOLEAN DEFAULT false,
   has_barn BOOLEAN DEFAULT false,
   has_dog_pen BOOLEAN DEFAULT false,
-  
+
   -- Utilities & Systems
   water_type TEXT DEFAULT 'city',
   electricity_type TEXT DEFAULT 'standard',
@@ -52,26 +52,26 @@ CREATE TABLE IF NOT EXISTS fsbo_listings (
   ac_type TEXT DEFAULT 'central',
   heating_type TEXT DEFAULT 'central',
   hot_water_type TEXT DEFAULT 'tank',
-  
+
   -- Basement
   has_basement BOOLEAN DEFAULT false,
   basement_type TEXT,
   basement_sqft INTEGER,
-  
+
   -- ADU (Accessory Dwelling Unit)
   has_adu BOOLEAN DEFAULT false,
-  
+
   -- Financing Information
   is_free_and_clear BOOLEAN DEFAULT false,
   existing_loans TEXT,
-  
+
   -- Images
   featured_image_url TEXT,
   images TEXT[] DEFAULT '{}',
-  
+
   -- Listing Status
   status TEXT NOT NULL DEFAULT 'active',
-  
+
   -- User Association (optional - for authenticated users)
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL
 );

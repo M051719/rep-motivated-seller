@@ -1,0 +1,21 @@
+﻿# Build artifacts
+dist/
+build/
+coverage/
+*.min.js
+*.min.css
+node_modules/
+
+# Invalid files
+package (2).json
+deno.json
+fix-line-wraps.js
+*uzLeWeu5.js
+
+# Logs
+*.log
+
+# OS/IDE
+.DS_Store
+.vscode/
+.idea/

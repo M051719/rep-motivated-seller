@@ -6,8 +6,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  BookOpen, Search, Filter, Lock, TrendingUp, 
+import {
+  BookOpen, Search, Filter, Lock, TrendingUp,
   DollarSign, Home, FileText, Calculator, Mail,
   ChevronRight, Star, ThumbsUp, Eye, Clock,
   CheckCircle, AlertCircle, Zap, Link2
@@ -99,7 +99,7 @@ const KnowledgeBasePage: React.FC = () => {
           .select('tier')
           .eq('id', user.id)
           .single();
-        
+
         if (profile?.tier) {
           setUserTier(profile.tier);
         }
@@ -120,7 +120,7 @@ const KnowledgeBasePage: React.FC = () => {
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(article => 
+      filtered = filtered.filter(article =>
         article.title.toLowerCase().includes(query) ||
         article.excerpt.toLowerCase().includes(query) ||
         article.keywords.some(kw => kw.toLowerCase().includes(query)) ||
@@ -175,7 +175,7 @@ const KnowledgeBasePage: React.FC = () => {
       await supabase.rpc('increment_kb_helpful', { article_id: articleId });
 
       toast.success('Thanks for your feedback!');
-      
+
       // Refresh articles to update count
       fetchArticles();
     } catch (error) {
@@ -280,7 +280,7 @@ const KnowledgeBasePage: React.FC = () => {
             )}
 
             {/* Article Content */}
-            <div 
+            <div
               className="prose prose-lg max-w-none"
               dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
             />
@@ -317,7 +317,7 @@ const KnowledgeBasePage: React.FC = () => {
             <h1 className="text-5xl font-bold text-gray-900">Knowledge Base</h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive guides and tutorials on real estate investing, financing, 
+            Comprehensive guides and tutorials on real estate investing, financing,
             property analysis, and more. Learn from industry experts.
           </p>
           <div className="mt-4 flex items-center justify-center gap-3">

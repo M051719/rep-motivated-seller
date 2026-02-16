@@ -25,7 +25,7 @@ public:
     void ParseArguments() {
         for (size_t i = 0; i < args.size(); ++i) {
             const auto& arg = args[i];
-            
+
             if (arg == L"--help" || arg == L"-h") {
                 isHelp = true;
             }
@@ -58,24 +58,24 @@ public:
 
 int wmain(int argc, wchar_t* argv[]) {
     WSLCommandLineParser parser(argc, argv);
-    
+
     if (parser.IsHelp()) {
         ShowHelp();
         return 0;
     }
-    
+
     if (parser.IsVersion()) {
         ShowVersion();
         return 0;
     }
-    
+
     try {
         WSLServiceCommunicator service;
-        
+
         if (parser.IsShutdown()) {
             return service.Shutdown();
         }
-        
+
         // Create instance and execute command
         return service.CreateInstanceAndExecute(
             parser.GetDistributionName(),

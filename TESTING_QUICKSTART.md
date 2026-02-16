@@ -13,22 +13,26 @@ node scripts/run-integration-tests.js
 ## 📋 Test Coverage Summary
 
 ### ✅ Phase 1: Core Services (30 min)
+
 - **FreeAttomAlternative** - Property details, parcel data, sales history, mortgages, neighborhood analysis
-- **FreePropertyDataService** - Google Maps, Census, OpenStreetMap, market analysis  
+- **FreePropertyDataService** - Google Maps, Census, OpenStreetMap, market analysis
 - **HubSpotService** - Connection validation, lead sync, contact retrieval
 - **FreePropertyIntelligence** - Foreclosure listings, absentee owners
 
 ### ✅ Phase 2: Enhanced Features (45 min)
+
 - **AI Assistant** - Crisis response, 24/7 expertise, context awareness
 - **Education Platform** - Video learning, progress tracking, certificates
 - **Marketing Automation** - Lob direct mail, Canva designs, Twilio SMS, email workflows
 - **Analytics** - Dashboards, HubSpot integration, revenue tracking, AI insights
 
 ### ✅ Phase 3: End-to-End Flows (30 min)
+
 - Lead capture → CRM sync → Marketing automation
 - Property research → Owner verification → Direct mail campaign
 
 ### ✅ Phase 4: Performance (15 min)
+
 - Response time validation (<10s)
 - Error handling verification
 - Concurrent request testing
@@ -36,6 +40,7 @@ node scripts/run-integration-tests.js
 ## 📊 Expected Results
 
 ### Without API Keys (Test Mode)
+
 ```
 ✅ 45/50 tests passing
 ⚠️ 5 warnings (API keys not configured)
@@ -43,6 +48,7 @@ node scripts/run-integration-tests.js
 ```
 
 ### With All API Keys Configured
+
 ```
 ✅ 50/50 tests passing
 ⏱️ Total time: ~3 minutes
@@ -70,18 +76,21 @@ VITE_TWILIO_PHONE_NUMBER=+15555551234
 ## 🎯 What Gets Tested
 
 ### Service Functionality
+
 - ✅ API endpoint connectivity
 - ✅ Data retrieval accuracy
 - ✅ Error handling robustness
 - ✅ Response time performance
 
 ### Integration Flows
+
 - ✅ Lead capture to CRM pipeline
 - ✅ Property research to marketing
 - ✅ Multi-service data aggregation
 - ✅ Real-time analytics updates
 
 ### Platform Features
+
 - ✅ AI assistant responsiveness
 - ✅ Education system functionality
 - ✅ Marketing automation triggers
@@ -90,14 +99,17 @@ VITE_TWILIO_PHONE_NUMBER=+15555551234
 ## 🛠️ Troubleshooting
 
 ### Tests Running Slow
+
 - **Cause**: Network latency or API rate limits
 - **Solution**: Tests have 60s timeout, check internet connection
 
 ### API Key Warnings
+
 - **Expected**: Services run in test/simulation mode
 - **Optional**: Add real API keys for full validation
 
 ### Permission Errors
+
 - **Windows**: Run PowerShell as Administrator
 - **Check**: File permissions in `src/tests/` directory
 

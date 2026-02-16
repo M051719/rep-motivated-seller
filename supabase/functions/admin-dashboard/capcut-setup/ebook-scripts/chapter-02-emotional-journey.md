@@ -1,4 +1,5 @@
 # Chapter 2: The Emotional Journey of Foreclosure
+
 ## Video Script - "You're Not Alone" (50 seconds)
 
 **Series:** Finding Support Through Social Media | Episode 2
@@ -9,31 +10,38 @@
 ---
 
 ## Hook (0-3 seconds)
+
 **Visual:** Person sitting alone, looking stressed (dimly lit)
 **Text Overlay:** "Foreclosure Feels Isolating"
 **Background:** Dark gray with subtle vignette
 
 **Voiceover/Caption:**
+
 > "Feeling alone in your foreclosure journey? You're NOT alone - and help is available RIGHT NOW."
 
 ---
 
 ## Problem Acknowledgment (3-15 seconds)
+
 **Visual:** Montage of emotions - stress, worry, sleepless nights
-**Text Overlay:** 
+**Text Overlay:**
+
 - "Shame" (appears briefly)
 - "Anxiety" (appears briefly)
 - "Fear" (appears briefly)
 - "But here's the truth..."
 
 **Voiceover/Caption:**
+
 > "The emotional toll is real: shame, anxiety, fear of judgment. But you're NOT alone - and you can TAKE ACTION today to get support. Thousands are facing this WITH you."
 
 ---
 
 ## Reality Check (15-30 seconds)
+
 **Visual:** Statistics appearing with uplifting graphics
 **Text Overlay:**
+
 - "1 in 200 homes face foreclosure"
 - "That's 650,000+ families yearly"
 - "You Are NOT Alone"
@@ -41,40 +49,49 @@
 **Visual Transition:** Dark to light background (dawn breaking)
 
 **Voiceover/Caption:**
+
 > "Over 650,000 families face foreclosure every year in the US. This isn't a personal failure - it's a financial challenge with REAL SOLUTIONS available NOW. An entire community is ready to support you TODAY."
 
 ---
 
 ## Solution - Support Systems (30-43 seconds)
+
 **Visual:** People connecting online (social media icons, support groups)
 **Text Overlay:** "Find Your Support:"
 
 **Frame 1:**
+
 - Icon: Chat bubbles
 - Text: "Online Communities"
 
 **Frame 2:**
+
 - Icon: HUD logo/Phone
 - Text: "FREE HUD Counselors: 1-800-569-4287"
 
 **Frame 3:**
+
 - Icon: Phone
 - Text: "24/7 Resources"
 
 **Voiceover/Caption:**
+
 > "TAKE ACTION FOR YOUR WELLBEING: Join online support groups TODAY, call FREE HUD counselors at 1-800-569-4287 NOW, and access 24/7 resources. Your mental health matters - reach out TODAY."
 
 ---
 
 ## Call to Action (43-50 seconds)
+
 **Visual:** Sunrise/hope imagery with RepMotivatedSeller logo
 **Text Overlay:**
+
 - "Start Your Journey to Relief"
 - "Free Consultation - No Judgment"
 - "📞 Call: 1-877-806-4677"
 - "🌐 Visit: RepMotivatedSeller.com"
 
 **Voiceover/Caption:**
+
 > "TAKE THE FIRST STEP RIGHT NOW. Call 1-877-806-4677 TODAY or visit our website. Free, confidential consultation with people who truly care. Don't face this alone - ACT NOW."
 
 ---
@@ -82,6 +99,7 @@
 ## Production Assets
 
 ### Required Files:
+
 - [ ] stressed-person-alone.jpg
 - [ ] emotions-montage (3-4 images)
 - [ ] statistics-graphics.png
@@ -90,6 +108,7 @@
 - [ ] repmotivatedseller-logo.png
 
 ### Music:
+
 - **Track:** Emotional, building to hopeful
 - **Start:** Somber piano
 - **Middle:** Add strings
@@ -97,6 +116,7 @@
 - **Volume:** 30%
 
 ### Color Progression:
+
 - **Hook:** Dark gray (#374151)
 - **Problem:** Gray (#6b7280)
 - **Reality:** Transitioning to light
@@ -104,6 +124,7 @@
 - **CTA:** Gold/sunrise (#f59e0b)
 
 ### Text Style:
+
 - **Hook:** Inter Regular, 56pt, White
 - **Problems:** Inter Medium, 48pt, White with shadow
 - **Statistics:** Poppins Bold, 64pt, White
@@ -178,6 +199,7 @@
 
 ⚠️ **EMOTIONAL VULNERABILITY WARNING:**
 During times of stress, you may be targeted by scammers who prey on desperation:
+
 - NEVER pay upfront fees for emotional or financial counseling
 - Legitimate crisis counselors are FREE (988, 741741)
 - Legitimate HUD counselors are FREE (1-800-569-4287)
@@ -212,13 +234,15 @@ You're stronger than you know, and you don't have to do this alone.
 #ForeclosureSupport #MentalHealthMatters #YoureNotAlone #HomeownerSupport #FinancialStress #EmotionalWellness #RepMotivatedSeller #RealHelp #NoJudgment
 
 ---
+
 **DISCLAIMER:** We are not associated with HUD in any way, shape, or form. This is educational content, not mental health or financial advice. Please consult licensed professionals."
 
 **Hashtags:** #ForeclosureSupport #MentalHealthMatters #YoureNotAlone #HomeownerSupport #EmotionalWellness #RealHelp
 
 **Trigger Warning:** Consider adding "TW: Financial stress, mental health" in comments
 
-**Best Posting Times:** 
+**Best Posting Times:**
+
 - Evening posts (7-9 PM) when people are reflecting
 - Sunday evenings for emotional content
 
@@ -230,6 +254,7 @@ You're stronger than you know, and you don't have to do this alone.
 "💬 If you're going through this, share how you're coping in the comments. This is a judgment-free zone. Let's support each other. ⬇️"
 
 **Respond to comments with:**
+
 - Empathy and validation
 - Resource links
 - Encouragement to DM for confidential help
@@ -239,6 +264,7 @@ You're stronger than you know, and you don't have to do this alone.
 ## Follow-Up Content
 
 **Next in series:**
+
 - Chapter 3: Finding Online Communities (where to connect)
 - Chapter 4: Social Media for Education (learning resources)
 
@@ -250,6 +276,7 @@ You're stronger than you know, and you don't have to do this alone.
 ## Sensitivity Notes
 
 ⚠️ **Important:**
+
 - Avoid language that blames or shames
 - Emphasize this is a financial situation, not character flaw
 - Provide crisis resources if someone needs immediate help
@@ -257,6 +284,7 @@ You're stronger than you know, and you don't have to do this alone.
 - Be prepared with mental health resources
 
 **Crisis Resources to Include:**
+
 - National Suicide Prevention Lifeline: 988
 - Crisis Text Line: Text HOME to 741741
 - HUD Housing Counseling: 1-800-569-4287

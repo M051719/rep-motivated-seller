@@ -1,4 +1,5 @@
 # Migration Automation Scripts
+
 ## RepMotivatedSeller Netlify to Supabase Migration
 
 This document contains PowerShell and batch scripts to automate the migration process.
@@ -26,7 +27,7 @@ Write-Host ""
 # Create directory structure
 function Create-DirectoryStructure {
     Write-Host "Creating directory structure..." -ForegroundColor Yellow
-    
+
     $directories = @(
         "src/components/Admin",
         "src/components/Auth",
@@ -44,7 +45,7 @@ function Create-DirectoryStructure {
         "supabase/functions/create-checkout-session",
         "supabase/functions/stripe-webhook"
     )
-    
+
     foreach ($dir in $directories) {
         $fullPath = Join-Path $TargetDir $dir
         if (-not (Test-Path $fullPath)) {
@@ -65,28 +66,28 @@ $fileMappings = @{
     "type AuthMode = login signup reset-password.txt" = "src/pages/AuthPage.tsx"
     "type ContractType = wholesale fix-flip cashout-refi.txt" = "src/pages/ContractsPage.tsx"
     "types membership= PricingCard SubscriptionManager.txt" = "src/pages/PricingPage.tsx"
-    
+
     # Layout Components
     "export const Header.txt" = "src/components/Layout/Header.tsx"
     "export const Footer.txt" = "src/components/Layout/Footer.tsx"
     "export const FinancingBanner.txt" = "src/components/Layout/FinancingBanner.tsx"
     "NEED TO CREATE FILEsrc-components-Layout.txt" = "src/components/Layout/Layout.tsx"
-    
+
     # Admin Components
     "AdminStats.txt" = "src/components/Admin/AdminStats.tsx"
     "CallRecord.txt" = "src/components/Admin/CallRecord.tsx"
     "ForeclosureResponse.txt" = "src/components/Admin/ForeclosureResponse.tsx"
     "USER.txt" = "src/components/Admin/UserManagement.tsx"
     "PROPERTY.txt" = "src/components/Admin/PropertyManagement.tsx"
-    
+
     # Form Components
     "interface FormData.txt" = "src/components/Foreclosure/ForeclosureQuestionnaire.tsx"
     "interface FixFlipFormData.txt" = "src/components/Contracts/FixFlipContractForm.tsx"
     "interface CashoutRefiFormData.txt" = "src/components/Contracts/CashoutRefiForm.tsx"
-    
+
     # Types
     "MEMBERSHIP TIERS.txt" = "src/types/membership.ts"
-    
+
     # Services
     "createCheckoutSession.txt" = "src/lib/stripe.ts"
 }
@@ -94,21 +95,21 @@ $fileMappings = @{
 function Copy-AndConvertFiles {
     Write-Host ""
     Write-Host "Converting and copying files..." -ForegroundColor Yellow
-    
+
     $converted = 0
     $skipped = 0
-    
+
     foreach ($sourceFile in $fileMappings.Keys) {
         $sourcePath = Join-Path $SourceDir $sourceFile
         $targetPath = Join-Path $TargetDir $fileMappings[$sourceFile]
-        
+
         if (Test-Path $sourcePath) {
             # Create target directory if needed
             $targetDir = Split-Path $targetPath -Parent
             if (-not (Test-Path $targetDir)) {
                 New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
             }
-            
+
             # Copy file
             Copy-Item -Path $sourcePath -Destination $targetPath -Force
             Write-Host "  ✓ $sourceFile → $($fileMappings[$sourceFile])" -ForegroundColor Green
@@ -118,7 +119,7 @@ function Copy-AndConvertFiles {
             $skipped++
         }
     }
-    
+
     Write-Host ""
     Write-Host "Converted: $converted files" -ForegroundColor Green
     Write-Host "Skipped: $skipped files" -ForegroundColor Yellow
@@ -127,7 +128,7 @@ function Copy-AndConvertFiles {
 function Create-TypeDefinitions {
     Write-Host ""
     Write-Host "Creating type definition files..." -ForegroundColor Yellow
-    
+
     # Create auth types
     $authTypes = @"
 // Authentication types
@@ -156,10 +157,10 @@ export interface ResetPasswordFormProps {
   onBack: () => void;
 }
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "src/types/auth.ts") -Value $authTypes
     Write-Host "  ✓ Created: src/types/auth.ts" -ForegroundColor Green
-    
+
     # Create contract types
     $contractTypes = @"
 // Contract types
@@ -173,10 +174,10 @@ export interface ContractData {
   updatedAt: string;
 }
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "src/types/contracts.ts") -Value $contractTypes
     Write-Host "  ✓ Created: src/types/contracts.ts" -ForegroundColor Green
-    
+
     # Create foreclosure types
     $foreclosureTypes = @"
 // Foreclosure questionnaire types
@@ -185,7 +186,7 @@ export interface ForeclosureFormData {
   contact_name: string;
   contact_email: string;
   contact_phone: string;
-  
+
   // Situation Assessment
   situation_length: string;
   payment_difficulty_date: string;
@@ -198,7 +199,7 @@ export interface ForeclosureFormData {
   home_value: string;
   mortgage_balance: string;
   liens: string;
-  
+
   // Problem Identification
   challenge: string;
   lender_issue: string;
@@ -206,7 +207,7 @@ export interface ForeclosureFormData {
   options_narrowing: string;
   third_party_help: string;
   overwhelmed: string;
-  
+
   // Impact Analysis
   implication_credit: string;
   implication_loss: string;
@@ -214,7 +215,7 @@ export interface ForeclosureFormData {
   legal_concerns: string;
   future_impact: string;
   financial_risk: string;
-  
+
   // Solution Planning
   interested_solution: string;
   negotiation_help: string;
@@ -224,7 +225,7 @@ export interface ForeclosureFormData {
   open_options: string;
 }
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "src/types/foreclosure.ts") -Value $foreclosureTypes
     Write-Host "  ✓ Created: src/types/foreclosure.ts" -ForegroundColor Green
 }
@@ -232,7 +233,7 @@ export interface ForeclosureFormData {
 function Create-SupabaseMigrations {
     Write-Host ""
     Write-Host "Creating Supabase migration files..." -ForegroundColor Yellow
-    
+
     # Migration 1: Profiles
     $migration1 = @"
 -- Create profiles table
@@ -289,22 +290,22 @@ CREATE TRIGGER update_profiles_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "supabase/migrations/20251111000001_create_profiles.sql") -Value $migration1
     Write-Host "  ✓ Created: migration for profiles table" -ForegroundColor Green
-    
+
     # Migration 2: Foreclosure responses
     $migration2 = @"
 -- Create foreclosure_responses table
 CREATE TABLE IF NOT EXISTS foreclosure_responses (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  
+
   -- Contact Information
   contact_name TEXT,
   contact_email TEXT,
   contact_phone TEXT,
-  
+
   -- Situation Assessment
   situation_length TEXT,
   payment_difficulty_date DATE,
@@ -317,7 +318,7 @@ CREATE TABLE IF NOT EXISTS foreclosure_responses (
   home_value NUMERIC,
   mortgage_balance NUMERIC,
   liens TEXT,
-  
+
   -- Problem Identification
   challenge TEXT,
   lender_issue TEXT,
@@ -325,7 +326,7 @@ CREATE TABLE IF NOT EXISTS foreclosure_responses (
   options_narrowing TEXT,
   third_party_help TEXT,
   overwhelmed TEXT,
-  
+
   -- Impact Analysis
   implication_credit TEXT,
   implication_loss TEXT,
@@ -333,7 +334,7 @@ CREATE TABLE IF NOT EXISTS foreclosure_responses (
   legal_concerns TEXT,
   future_impact TEXT,
   financial_risk TEXT,
-  
+
   -- Solution Planning
   interested_solution TEXT,
   negotiation_help TEXT,
@@ -341,7 +342,7 @@ CREATE TABLE IF NOT EXISTS foreclosure_responses (
   credit_importance TEXT,
   resolution_peace TEXT,
   open_options TEXT,
-  
+
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -375,10 +376,10 @@ CREATE TRIGGER update_foreclosure_responses_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "supabase/migrations/20251111000002_create_foreclosure_responses.sql") -Value $migration2
     Write-Host "  ✓ Created: migration for foreclosure_responses table" -ForegroundColor Green
-    
+
     # Migration 3: Contracts
     $migration3 = @"
 -- Create contracts table
@@ -431,7 +432,7 @@ CREATE INDEX idx_contracts_user_id ON contracts(user_id);
 CREATE INDEX idx_contracts_type ON contracts(contract_type);
 CREATE INDEX idx_contracts_created_at ON contracts(created_at DESC);
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "supabase/migrations/20251111000003_create_contracts.sql") -Value $migration3
     Write-Host "  ✓ Created: migration for contracts table" -ForegroundColor Green
 }
@@ -439,7 +440,7 @@ CREATE INDEX idx_contracts_created_at ON contracts(created_at DESC);
 function Create-EdgeFunctions {
     Write-Host ""
     Write-Host "Creating Supabase Edge Functions..." -ForegroundColor Yellow
-    
+
     # Email notification function
     $emailFunction = @"
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
@@ -457,29 +458,29 @@ serve(async (req) => {
 
   try {
     const { submissionId, type } = await req.json()
-    
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-    
+
     // Fetch submission details
     const { data: submission, error } = await supabase
       .from('foreclosure_responses')
       .select('*, profiles(*)')
       .eq('id', submissionId)
       .single()
-    
+
     if (error) throw error
-    
+
     // Determine if urgent
     const isUrgent = submission.nod === 'yes' || submission.missed_payments >= 3
-    
+
     // Send email (integrate with your email service)
     // For now, just log
     console.log(`Sending ${type} notification for submission ${submissionId}`)
     console.log(`Urgent: ${isUrgent}`)
-    
+
     return new Response(
       JSON.stringify({ success: true, urgent: isUrgent }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -492,10 +493,10 @@ serve(async (req) => {
   }
 })
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "supabase/functions/send-notification-email/index.ts") -Value $emailFunction
     Write-Host "  ✓ Created: send-notification-email Edge Function" -ForegroundColor Green
-    
+
     # Stripe checkout function
     $stripeFunction = @"
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
@@ -513,11 +514,11 @@ serve(async (req) => {
 
   try {
     const { priceId, customerId } = await req.json()
-    
+
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
     })
-    
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
@@ -525,7 +526,7 @@ serve(async (req) => {
       success_url: `${req.headers.get('origin')}/success`,
       cancel_url: `${req.headers.get('origin')}/pricing`,
     })
-    
+
     return new Response(
       JSON.stringify({ sessionId: session.id, url: session.url }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -538,7 +539,7 @@ serve(async (req) => {
   }
 })
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "supabase/functions/create-checkout-session/index.ts") -Value $stripeFunction
     Write-Host "  ✓ Created: create-checkout-session Edge Function" -ForegroundColor Green
 }
@@ -546,7 +547,7 @@ serve(async (req) => {
 function Create-ConfigFiles {
     Write-Host ""
     Write-Host "Creating configuration files..." -ForegroundColor Yellow
-    
+
     # package.json
     $packageJson = @"
 {
@@ -583,10 +584,10 @@ function Create-ConfigFiles {
   }
 }
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir "package.json") -Value $packageJson
     Write-Host "  ✓ Created: package.json" -ForegroundColor Green
-    
+
     # .env.example
     $envExample = @"
 # Supabase
@@ -604,7 +605,7 @@ STRIPE_PRICE_PRO_YEARLY=price_xxx
 STRIPE_PRICE_ENTERPRISE_MONTHLY=price_xxx
 STRIPE_PRICE_ENTERPRISE_YEARLY=price_xxx
 "@
-    
+
     Set-Content -Path (Join-Path $TargetDir ".env.example") -Value $envExample
     Write-Host "  ✓ Created: .env.example" -ForegroundColor Green
 }
@@ -791,6 +792,7 @@ If migration fails:
 ## Support
 
 For issues during migration:
+
 - Check Supabase logs: `supabase functions logs`
 - Verify environment variables
 - Test database connections

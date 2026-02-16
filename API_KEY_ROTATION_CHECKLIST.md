@@ -1,6 +1,6 @@
 # 🔐 API KEY ROTATION CHECKLIST
 
-**Date:** January 8, 2026  
+**Date:** January 8, 2026
 **Status:** 🔴 URGENT - Keys exposed in git history + HubSpot token auto-expired
 
 ---
@@ -14,6 +14,7 @@ Your `.env.development` AND `env.production` files were in git history and publi
 ## 📋 Rotation Checklist
 
 ### 1. Supabase 🗄️
+
 - [ ] **Login to Supabase Dashboard**: https://app.supabase.com
 - [ ] Navigate to: Project Settings → API
 - [ ] **Rotate `anon` key** (public key)
@@ -23,6 +24,7 @@ Your `.env.development` AND `env.production` files were in git history and publi
 - [ ] Redeploy application
 
 **Environment Variables:**
+
 ```bash
 VITE_SUPABASE_URL=https://[your-project].supabase.co
 VITE_SUPABASE_ANON_KEY=[new-anon-key]
@@ -32,6 +34,7 @@ SUPABASE_SERVICE_ROLE_KEY=[new-service-role-key]
 ---
 
 ### 2. Calendly 📅
+
 - [ ] **Login to Calendly**: https://calendly.com
 - [ ] Navigate to: Integrations → API & Webhooks
 - [ ] **Delete old personal access token**
@@ -39,6 +42,7 @@ SUPABASE_SERVICE_ROLE_KEY=[new-service-role-key]
 - [ ] Update `.env.local` with new token
 
 **Environment Variables:**
+
 ```bash
 VITE_CALENDLY_API_KEY=[new-api-key]
 VITE_CALENDLY_ACCESS_TOKEN=[new-access-token]
@@ -47,6 +51,7 @@ VITE_CALENDLY_ACCESS_TOKEN=[new-access-token]
 ---
 
 ### 3. Dappier AI 🤖
+
 - [ ] **Login to Dappier Dashboard**: https://dappier.com
 - [ ] Navigate to: API Keys
 - [ ] **Revoke old API key**
@@ -54,6 +59,7 @@ VITE_CALENDLY_ACCESS_TOKEN=[new-access-token]
 - [ ] Update `.env.local` with new key
 
 **Environment Variables:**
+
 ```bash
 VITE_DAPPIER_API_KEY=[new-api-key]
 VITE_DAPPIER_AI_MODEL_ID=[keep-same]
@@ -62,6 +68,7 @@ VITE_DAPPIER_AI_MODEL_ID=[keep-same]
 ---
 
 ### 4. Stripe 💳
+
 - [ ] **Login to Stripe Dashboard**: https://dashboard.stripe.com
 - [ ] Navigate to: Developers → API keys
 - [ ] **Roll publishable key**
@@ -71,6 +78,7 @@ VITE_DAPPIER_AI_MODEL_ID=[keep-same]
 - [ ] Update webhook endpoint if needed
 
 **Environment Variables:**
+
 ```bash
 VITE_STRIPE_PUBLISHABLE_KEY=[new-publishable-key]
 STRIPE_SECRET_KEY=[new-secret-key]
@@ -80,6 +88,7 @@ STRIPE_WEBHOOK_SECRET=[new-webhook-secret]
 ---
 
 ### 5. YouTube Data API 📺
+
 - [ ] **Login to Google Cloud Console**: https://console.cloud.google.com
 - [ ] Navigate to: APIs & Services → Credentials
 - [ ] **Delete old YouTube API key**
@@ -89,12 +98,14 @@ STRIPE_WEBHOOK_SECRET=[new-webhook-secret]
 - [ ] Update GitHub Secrets (if deployed)
 
 **Environment Variables:**
+
 ```bash
 VITE_YOUTUBE_API_KEY=[new-api-key]
 VITE_YOUTUBE_CHANNEL_ID=[your-channel-id]
 ```
 
 **Steps to Rotate:**
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Select your project
 3. Navigate to: APIs & Services → Credentials
@@ -109,6 +120,7 @@ VITE_YOUTUBE_CHANNEL_ID=[your-channel-id]
 9. Restart development server: `npm run dev`
 
 **Verify it works:**
+
 - Navigate to `/videos` page
 - Check browser console for errors
 - Videos should load from your YouTube channel
@@ -116,6 +128,7 @@ VITE_YOUTUBE_CHANNEL_ID=[your-channel-id]
 ---
 
 ### 6. PayPal 💰
+
 - [ ] **Login to PayPal Developer**: https://developer.paypal.com
 - [ ] Navigate to: My Apps & Credentials
 - [ ] **Delete old REST API app**
@@ -123,6 +136,7 @@ VITE_YOUTUBE_CHANNEL_ID=[your-channel-id]
 - [ ] Update `.env.local` with new credentials
 
 **Environment Variables:**
+
 ```bash
 VITE_PAYPAL_CLIENT_ID=[new-client-id]
 PAYPAL_CLIENT_SECRET=[new-client-secret]
@@ -131,6 +145,7 @@ PAYPAL_CLIENT_SECRET=[new-client-secret]
 ---
 
 ### 7. Cloudflare ☁️
+
 - [ ] **Login to Cloudflare**: https://dash.cloudflare.com
 - [ ] Navigate to: My Profile → API Tokens
 - [ ] **Revoke old API tokens**
@@ -139,6 +154,7 @@ PAYPAL_CLIENT_SECRET=[new-client-secret]
 - [ ] Update `.env.local` with new token
 
 **Environment Variables:**
+
 ```bash
 CLOUDFLARE_API_TOKEN=[new-api-token]
 CLOUDFLARE_ZONE_ID=[keep-same]
@@ -147,6 +163,7 @@ CLOUDFLARE_ZONE_ID=[keep-same]
 ---
 
 ### 8. GitHub 🐙
+
 - [ ] **Login to GitHub**: https://github.com/settings/tokens
 - [ ] Navigate to: Settings → Developer settings → Personal access tokens
 - [ ] **Delete old tokens**
@@ -154,6 +171,7 @@ CLOUDFLARE_ZONE_ID=[keep-same]
 - [ ] Update Snyk GitHub Actions with new token
 
 **Environment Variables:**
+
 ```bash
 GITHUB_TOKEN=[new-token]
 SNYK_TOKEN=[rotate-in-snyk-dashboard]
@@ -162,6 +180,7 @@ SNYK_TOKEN=[rotate-in-snyk-dashboard]
 ---
 
 ### 9. HubSpot 📧
+
 - [ ] **Login to HubSpot**: https://app.hubspot.com
 - [ ] Navigate to: Settings → Integrations → Private Apps
 - [ ] **⚠️ TOKEN AUTO-EXPIRED** (discovered in public GitHub repo)
@@ -172,6 +191,7 @@ SNYK_TOKEN=[rotate-in-snyk-dashboard]
 - [ ] Remove from `env.production` (already exposed in git history)
 
 **Environment Variables:**
+
 ```bash
 VITE_HUBSPOT_ACCESS_TOKEN=[new-access-token]
 VITE_HUBSPOT_PORTAL_ID=243491083
@@ -183,12 +203,14 @@ VITE_HUBSPOT_PORTAL_ID=243491083
 ---
 
 ### 10. Google Analytics 📊
+
 - [ ] **Login to Google Analytics**: https://analytics.google.com
 - [ ] Verify measurement ID (no rotation needed)
 - [ ] Check if Measurement Protocol API key exists
 - [ ] If yes, rotate in Google Cloud Console
 
 **Environment Variables:**
+
 ```bash
 VITE_GA_MEASUREMENT_ID=[keep-same-unless-compromised]
 ```
@@ -198,6 +220,7 @@ VITE_GA_MEASUREMENT_ID=[keep-same-unless-compromised]
 ## 🔒 Security Best Practices After Rotation
 
 ### 1. Never Commit Secrets Again
+
 ```bash
 # Add to .gitignore (already done)
 .env
@@ -209,13 +232,16 @@ VITE_GA_MEASUREMENT_ID=[keep-same-unless-compromised]
 ```
 
 ### 2. Use Secret Management
+
 Choose one:
+
 - **Azure Key Vault** (recommended for Azure deployments)
 - **AWS Secrets Manager** (recommended for AWS deployments)
 - **1Password** (recommended for local development)
 - **Doppler** (good for team collaboration)
 
 ### 3. Update Your `.env.example`
+
 ```bash
 # Copy structure only (no real values)
 cp .env.local .env.example
@@ -226,19 +252,23 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 ### 4. Set Up Environment Variable Injection
+
 For production deployments:
 
 **Netlify:**
+
 ```bash
 # In Netlify UI: Site settings → Environment variables
 ```
 
 **Vercel:**
+
 ```bash
 # In Vercel UI: Project → Settings → Environment Variables
 ```
 
 **Azure Static Web Apps:**
+
 ```bash
 # In Azure Portal: Configuration → Application settings
 ```
@@ -250,6 +280,7 @@ For production deployments:
 After rotating all keys:
 
 1. **Test locally:**
+
    ```bash
    npm run dev
    ```
@@ -291,13 +322,14 @@ Once all items are checked:
 - [ ] Monitoring enabled for 48 hours
 - [ ] `env.production` removed from repository
 
-**Completed by:** _______________  
-**Date:** _______________  
-**Verified by:** _______________
+**Completed by:** **\*\***\_\_\_**\*\***
+**Date:** **\*\***\_\_\_**\*\***
+**Verified by:** **\*\***\_\_\_**\*\***
 
 ---
 
 **🔴 Remember:** Your git history was rewritten. All team members must:
+
 ```bash
 git fetch origin
 git reset --hard origin/main  # or your branch name

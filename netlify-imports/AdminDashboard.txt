@@ -7,7 +7,7 @@ export const AdminPage: React.FC = () => {
   const { user, isAuthenticated } = useAuthStore();
 
   // Check if user is admin (you can modify this logic based on your admin setup)
-  const isAdmin = user?.email === 'admin@repmotivatedseller.org' || 
+  const isAdmin = user?.email === 'admin@repmotivatedseller.org' ||
                   user?.name?.toLowerCase().includes('admin');
 
   if (!isAuthenticated) {

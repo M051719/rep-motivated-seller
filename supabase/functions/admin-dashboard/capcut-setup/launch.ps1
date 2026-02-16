@@ -109,7 +109,7 @@ switch ($Action) {
 while ($true) {
     Show-Menu
     $choice = Read-Host "Select an option (0-9)"
-    
+
     switch ($choice) {
         '1' { Open-Guide $guides.index }
         '2' { Open-Guide $guides.readme }
@@ -120,22 +120,22 @@ while ($true) {
         '7' { Run-Script $scripts.organize }
         '8' { Run-Script $scripts.verify }
         '9' { Run-Script $scripts.figma -Args @('-ConfigureOnly') }
-        '0' { 
+        '0' {
             Write-Host ""
             Write-Host "Good luck with your video creation! 🎬" -ForegroundColor Green
             Write-Host ""
-            exit 
+            exit
         }
         default {
             Write-Host ""
             Write-Host "Invalid option. Please select 0-9." -ForegroundColor Yellow
         }
     }
-    
+
     if ($choice -eq '6') {
         break
     }
-    
+
     Write-Host ""
     Read-Host "Press Enter to continue"
 }

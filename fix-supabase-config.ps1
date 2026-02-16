@@ -18,7 +18,7 @@ if (Test-Path $configPath) {
 if (Test-Path $configPath) {
     $content = Get-Content $configPath -Raw
     $updatedContent = $content -replace 'project_id = "rep-motivated-seller"', "project_id = `"$ProjectId`""
-    
+
     # Remove unsupported config sections
     $unsupportedSections = @(
         'db\.migrations\].*?(?=\[|\z)',
@@ -28,11 +28,11 @@ if (Test-Path $configPath) {
         'auth\.third_party\.(clerk|firebase|auth0|aws_cognito)\].*?(?=\[|\z)',
         'auth\.oauth_server\].*?(?=\[|\z)'
     )
-    
+
     foreach ($section in $unsupportedSections) {
         $updatedContent = $updatedContent -replace "(?ms)\[$section", ""
     }
-    
+
     Set-Content -Path $configPath -Value $updatedContent -Encoding UTF8
     Write-Host "✅ Configuration updated successfully!" -ForegroundColor Green
 } else {

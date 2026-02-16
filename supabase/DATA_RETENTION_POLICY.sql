@@ -80,13 +80,13 @@ BEGIN
     INSERT INTO compliance.compliance_log (
         event_type, resource_type, action, pci_dss_relevant, glba_relevant, compliance_notes
     ) VALUES (
-        'data_retention', 'automated_cleanup', 'cleanup_started', true, true, 
+        'data_retention', 'automated_cleanup', 'cleanup_started', true, true,
         'Automated data retention cleanup started'
     );
 
     -- Process each retention rule
-    FOR rule_record IN 
-        SELECT * FROM compliance.data_retention_rules 
+    FOR rule_record IN
+        SELECT * FROM compliance.data_retention_rules
         WHERE last_cleanup < NOW() - INTERVAL '1 day' OR last_cleanup IS NULL
     LOOP
         -- Execute cleanup based on retention period
@@ -96,24 +96,24 @@ BEGIN
             rule_record.table_name,
             rule_record.retention_period
         );
-        
+
         GET DIAGNOSTICS deleted_count = ROW_COUNT;
-        
+
         -- Update last cleanup timestamp
-        UPDATE compliance.data_retention_rules 
-        SET last_cleanup = NOW() 
+        UPDATE compliance.data_retention_rules
+        SET last_cleanup = NOW()
         WHERE id = rule_record.id;
-        
+
         -- Return results
         table_cleaned := rule_record.schema_name || '.' || rule_record.table_name;
         records_deleted := deleted_count;
         regulation := rule_record.regulation;
         RETURN NEXT;
-        
+
         -- Log each cleanup operation
         INSERT INTO compliance.compliance_log (
-            event_type, resource_type, action, 
-            pci_dss_relevant, glba_relevant, 
+            event_type, resource_type, action,
+            pci_dss_relevant, glba_relevant,
             metadata, compliance_notes
         ) VALUES (
             'data_retention', rule_record.table_name, 'records_deleted',
@@ -131,7 +131,7 @@ BEGIN
         'data_retention', 'automated_cleanup', 'cleanup_completed', true, true,
         'Automated data retention cleanup completed successfully'
     );
-    
+
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
@@ -165,7 +165,7 @@ CREATE POLICY "Admin access to compliance logs" ON compliance.compliance_log FOR
 );
 
 CREATE POLICY "Users can view their own privacy requests" ON compliance.privacy_requests FOR SELECT USING (
-    auth.jwt() ->> 'email' = email OR 
+    auth.jwt() ->> 'email' = email OR
     EXISTS (SELECT 1 FROM auth.users WHERE auth.users.id = auth.uid() AND auth.users.email LIKE '%@repmotivatedseller.org')
 );
 
@@ -178,7 +178,7 @@ GRANT SELECT ON compliance.data_retention_rules TO authenticated;
 
 -- Create a view for compliance reporting
 CREATE OR REPLACE VIEW compliance.compliance_summary AS
-SELECT 
+SELECT
     DATE_TRUNC('day', timestamp) as date,
     event_type,
     COUNT(*) as event_count,

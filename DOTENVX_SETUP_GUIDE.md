@@ -1,7 +1,7 @@
 # 🔐 DOTENVX ENCRYPTED ENVIRONMENT SETUP
 
-**Date:** January 8, 2026  
-**For:** RepMotivatedSeller Platform  
+**Date:** January 8, 2026
+**For:** RepMotivatedSeller Platform
 **Purpose:** Replace plaintext .env files with encrypted, version-controlled environment management
 
 ---
@@ -111,6 +111,7 @@ dotenvx encrypt -f .env.staging
 ```
 
 **What happens:**
+
 - ✅ `.env` is encrypted in place
 - ✅ `.env.production` is encrypted in place
 - ✅ `.env.keys` file created with decryption keys
@@ -184,28 +185,28 @@ Add these scripts to your `package.json`:
     "dev": "vite",
     "dev:secure": "dotenvx run -- vite",
     "dev:encrypted": "dotenvx run -f .env -- vite",
-    
+
     "build": "tsc && vite build",
     "build:production": "dotenvx run -f .env.production -- npm run build",
     "build:staging": "dotenvx run -f .env.staging -- npm run build",
-    
+
     "preview": "vite preview",
     "preview:production": "dotenvx run -f .env.production -- vite preview",
-    
+
     "env:encrypt": "dotenvx encrypt",
     "env:encrypt:production": "dotenvx encrypt -f .env.production",
     "env:encrypt:staging": "dotenvx encrypt -f .env.staging",
     "env:encrypt:all": "dotenvx encrypt && dotenvx encrypt -f .env.production && dotenvx encrypt -f .env.staging",
-    
+
     "env:decrypt": "dotenvx decrypt",
     "env:decrypt:production": "dotenvx decrypt -f .env.production",
-    
+
     "env:get": "dotenvx get",
     "env:set": "dotenvx set",
-    
+
     "env:keypair": "dotenvx keypair",
     "env:rotate": "dotenvx rotate",
-    
+
     "env:ls": "dotenvx ls"
   }
 }
@@ -259,27 +260,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
+          node-version: "18"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build with encrypted production env
         env:
           DOTENV_PRIVATE_KEY_PRODUCTION: ${{ secrets.DOTENV_PRIVATE_KEY_PRODUCTION }}
         run: |
           npm install -g @dotenvx/dotenvx
           dotenvx run -f .env.production -- npm run build
-      
+
       - name: Deploy
         run: npm run deploy
 ```
 
 **Add to GitHub Secrets:**
+
 1. Go to: https://github.com/M051719/rep-motivated-seller/settings/secrets/actions
 2. Add: `DOTENV_PRIVATE_KEY_PRODUCTION` = `your_private_key_from_dotenvx_keypair`
 
@@ -571,6 +573,7 @@ After implementing dotenvx, you'll have:
 ---
 
 **Next Steps:**
+
 1. Install dotenvx
 2. Encrypt your environment files
 3. Commit encrypted files to git

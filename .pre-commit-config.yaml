@@ -1,16 +1,53 @@
-default_stages: [pre-commit]
-
-exclude: |
-  ^(dist/|dist-ssr/|build/|out/|\.next/|node_modules/|RepDeploy/|deploy/|deployment/|DLLs/|SECURE_BACKUP.*/|.*_BACKUP.*/|backup/|backups/|evaluation/|\.supabase/)
-
+﻿# Pre-commit configuration for RepMotivatedSeller (Windows-compatible)
 repos:
+  # Basic file checks (no npm needed)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v4.5.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=5000']
+      - id: detect-private-key
       - id: check-merge-conflict
       - id: mixed-line-ending
-        args: ["--fix=auto"]
-      - id: check-added-large-files
-        args: ["--maxkb=500"]
+        args: ['--fix=lf']
+      # Skip these for now to avoid mass edits
+      # - id: trailing-whitespace
+      # - id: end-of-file-fixer
+
+  # Prettier (simpler approach - no npm hook)
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        types_or: [javascript, jsx, ts, tsx, json, markdown, yaml]
+        exclude: |
+          (?x)^(\
+            dist/.*|\
+            build/.*|\
+            coverage/.*|\
+            node_modules/.*|\
+            .*\.min\.(js|css)|\
+            package\ \(2\)\.json|\
+            fix-line-wraps\.js|\
+            deno\.json|\
+            .*uzLeWeu5\.js\
+          )$
+
+  # Custom local hooks (Windows-compatible)
+  - repo: local
+    hooks:
+      # Check .env files are encrypted
+      - id: check-dotenvx-encryption
+        name: Verify .env files are encrypted
+        entry: powershell.exe -NoProfile -Command "Get-ChildItem .env,.env.production,.env.staging -ErrorAction SilentlyContinue | Where-Object { -not (Select-String -Path $_.FullName -Pattern 'DOTENVX' -Quiet) } | ForEach-Object { Write-Error \"ERROR: $($_.Name) must be encrypted!\"; exit 1 }"
+        language: system
+        pass_filenames: false
+
+      # Ensure .env.keys not committed
+      - id: prevent-env-keys
+        name: Prevent .env.keys from being committed
+        entry: powershell.exe -NoProfile -Command "if (git diff --cached --name-only | Select-String '\\.env\\.keys') { Write-Error 'ERROR: .env.keys should not be committed!'; exit 1 }"
+        language: system
+        pass_filenames: false

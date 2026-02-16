@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
-import { 
-  FileText, 
-  Download, 
-  Save, 
-  User, 
-  Home, 
-  DollarSign, 
-  Calendar, 
-  Shield, 
+import {
+  FileText,
+  Download,
+  Save,
+  User,
+  Home,
+  DollarSign,
+  Calendar,
+  Shield,
   AlertTriangle,
   CheckCircle,
   Mail,
@@ -29,7 +29,7 @@ interface ContractData {
   sellerZip: string;
   sellerPhone: string;
   sellerEmail: string;
-  
+
   // Buyer/Wholesaler Information
   buyerName: string;
   buyerAddress: string;
@@ -38,7 +38,7 @@ interface ContractData {
   buyerZip: string;
   buyerPhone: string;
   buyerEmail: string;
-  
+
   // Property Information
   propertyAddress: string;
   propertyCity: string;
@@ -47,24 +47,24 @@ interface ContractData {
   propertyType: string;
   legalDescription: string;
   parcelNumber: string;
-  
+
   // Financial Terms
   purchasePrice: string;
   earnestMoney: string;
   wholesaleFee: string;
   feeType: 'fixed' | 'percentage';
   feePercentage: string;
-  
+
   // Contract Terms
   inspectionPeriod: string;
   closingDate: string;
   contingencies: string[];
   additionalTerms: string;
-  
+
   // Assignment Information
   assignmentFee: string;
   assigneeRights: boolean;
-  
+
   // Legal Protections
   disclosures: string[];
   warranties: string[];
@@ -129,7 +129,7 @@ export const WholesaleContractForm: React.FC = () => {
   const handleContingencyChange = (contingency: string, checked: boolean) => {
     setContractData(prev => ({
       ...prev,
-      contingencies: checked 
+      contingencies: checked
         ? [...prev.contingencies, contingency]
         : prev.contingencies.filter(c => c !== contingency)
     }));
@@ -138,7 +138,7 @@ export const WholesaleContractForm: React.FC = () => {
   const handleDisclosureChange = (disclosure: string, checked: boolean) => {
     setContractData(prev => ({
       ...prev,
-      disclosures: checked 
+      disclosures: checked
         ? [...prev.disclosures, disclosure]
         : prev.disclosures.filter(d => d !== disclosure)
     }));
@@ -156,10 +156,10 @@ export const WholesaleContractForm: React.FC = () => {
 
   const generateContract = async () => {
     setIsGenerating(true);
-    
+
     // Simulate contract generation
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     setIsGenerating(false);
     setShowPreview(true);
   };
@@ -178,7 +178,7 @@ export const WholesaleContractForm: React.FC = () => {
 
   const generateContractHTML = () => {
     const finalWholesaleFee = calculateWholesaleFee();
-    
+
     return `
 <!DOCTYPE html>
 <html>
@@ -214,7 +214,7 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">1. PARTIES TO THE CONTRACT</div>
-        
+
         <div class="clause">
             <strong>SELLER:</strong><br>
             Name: ${contractData.sellerName}<br>
@@ -234,19 +234,19 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">2. PROPERTY DESCRIPTION</div>
-        
+
         <div class="clause">
             <strong>Property Address:</strong> ${contractData.propertyAddress}, ${contractData.propertyCity}, ${contractData.propertyState} ${contractData.propertyZip}
         </div>
-        
+
         <div class="clause">
             <strong>Property Type:</strong> ${contractData.propertyType}
         </div>
-        
+
         <div class="clause">
             <strong>Legal Description:</strong> ${contractData.legalDescription || 'To be provided by title company'}
         </div>
-        
+
         <div class="clause">
             <strong>Parcel Number:</strong> ${contractData.parcelNumber || 'To be verified'}
         </div>
@@ -254,7 +254,7 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">3. PURCHASE PRICE AND FINANCIAL TERMS</div>
-        
+
         <table>
             <tr>
                 <th>Financial Component</th>
@@ -285,19 +285,19 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">4. ASSIGNMENT RIGHTS AND WHOLESALE PROVISIONS</div>
-        
+
         <div class="clause">
             <strong>4.1 ASSIGNMENT RIGHTS:</strong> Buyer expressly reserves the right to assign this contract, in whole or in part, to any individual, corporation, LLC, partnership, or other entity without the consent of Seller. This assignment right is a material term of this agreement.
         </div>
-        
+
         <div class="clause">
             <strong>4.2 WHOLESALE DISCLOSURE:</strong> Seller acknowledges and agrees that Buyer is acting as a wholesale investor and may assign this contract to an end buyer for a profit. Seller has been informed of Buyer's wholesale intentions and agrees to cooperate with any assignment.
         </div>
-        
+
         <div class="clause">
             <strong>4.3 ASSIGNMENT PROCEDURE:</strong> Upon assignment, the assignee shall assume all rights and obligations of the original Buyer under this contract. Original Buyer shall remain liable for performance unless expressly released by Seller in writing.
         </div>
-        
+
         <div class="clause">
             <strong>4.4 ASSIGNMENT FEE:</strong> Any assignment fee paid to Buyer by assignee is separate from and in addition to the purchase price and shall not reduce the amount due to Seller.
         </div>
@@ -305,19 +305,19 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">5. CONTINGENCIES AND CONDITIONS</div>
-        
+
         <div class="clause">
             <strong>5.1 INSPECTION PERIOD:</strong> Buyer shall have ${contractData.inspectionPeriod} days from the execution of this contract to inspect the property and approve its condition. This inspection period is for Buyer's sole benefit and may be waived by Buyer.
         </div>
-        
+
         <div class="clause">
             <strong>5.2 FINANCING CONTINGENCY:</strong> This contract is contingent upon Buyer or Buyer's assignee obtaining suitable financing within 30 days of contract execution, if financing is required.
         </div>
-        
+
         <div class="clause">
             <strong>5.3 TITLE CONTINGENCY:</strong> This sale is contingent upon Seller providing marketable title, free and clear of all liens and encumbrances except those specifically accepted by Buyer.
         </div>
-        
+
         ${contractData.contingencies.length > 0 ? `
         <div class="clause">
             <strong>5.4 ADDITIONAL CONTINGENCIES:</strong>
@@ -330,19 +330,19 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">6. CLOSING PROVISIONS</div>
-        
+
         <div class="clause">
             <strong>6.1 CLOSING DATE:</strong> Closing shall occur on or before ${contractData.closingDate || '[DATE TO BE DETERMINED]'}, or such other date as mutually agreed upon by the parties.
         </div>
-        
+
         <div class="clause">
             <strong>6.2 CLOSING LOCATION:</strong> Closing shall take place at a title company or attorney's office mutually agreed upon by the parties, or such other location as the parties may agree.
         </div>
-        
+
         <div class="clause">
             <strong>6.3 CLOSING COSTS:</strong> Each party shall pay their own closing costs unless otherwise specified. Seller shall pay for title insurance policy, transfer taxes, and recording fees for deed. Buyer shall pay for loan-related costs, if any.
         </div>
-        
+
         <div class="clause">
             <strong>6.4 PRORATIONS:</strong> Property taxes, HOA fees, utilities, and other property-related expenses shall be prorated as of the closing date.
         </div>
@@ -350,19 +350,19 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">7. SELLER REPRESENTATIONS AND WARRANTIES</div>
-        
+
         <div class="clause">
             <strong>7.1 OWNERSHIP:</strong> Seller represents that they are the legal owner of the property and have the right to sell the property.
         </div>
-        
+
         <div class="clause">
             <strong>7.2 LIENS AND ENCUMBRANCES:</strong> Seller warrants that there are no liens, judgments, or other encumbrances against the property except as disclosed in writing.
         </div>
-        
+
         <div class="clause">
             <strong>7.3 CONDITION:</strong> Seller makes no warranties as to the condition of the property. Property is sold "AS IS" with all faults.
         </div>
-        
+
         <div class="clause">
             <strong>7.4 LEGAL COMPLIANCE:</strong> Seller warrants that the property complies with all applicable zoning laws and building codes, or discloses any known violations.
         </div>
@@ -370,15 +370,15 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">8. BUYER ACKNOWLEDGMENTS</div>
-        
+
         <div class="clause">
             <strong>8.1 PROPERTY CONDITION:</strong> Buyer acknowledges purchasing the property "AS IS" and has been advised to conduct independent inspections.
         </div>
-        
+
         <div class="clause">
             <strong>8.2 WHOLESALE NATURE:</strong> Buyer acknowledges this is a wholesale transaction and that Buyer intends to assign this contract or resell the property for a profit.
         </div>
-        
+
         <div class="clause">
             <strong>8.3 INDEPENDENT ADVICE:</strong> Buyer acknowledges being advised to seek independent legal and financial counsel regarding this transaction.
         </div>
@@ -386,15 +386,15 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">9. DEFAULT AND REMEDIES</div>
-        
+
         <div class="clause">
             <strong>9.1 SELLER DEFAULT:</strong> If Seller defaults, Buyer may: (a) terminate this contract and receive return of earnest money, (b) seek specific performance, or (c) pursue other legal remedies.
         </div>
-        
+
         <div class="clause">
             <strong>9.2 BUYER DEFAULT:</strong> If Buyer defaults, Seller may retain earnest money as liquidated damages, unless Seller elects to pursue other legal remedies.
         </div>
-        
+
         <div class="clause">
             <strong>9.3 WHOLESALE FEE PROTECTION:</strong> In the event of Seller default after contract execution, Buyer shall be entitled to the wholesale fee as compensation for time and effort invested.
         </div>
@@ -402,19 +402,19 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">10. DISCLOSURES AND REGULATORY COMPLIANCE</div>
-        
+
         <div class="clause">
             <strong>10.1 LEAD-BASED PAINT:</strong> For properties built before 1978, Seller shall provide required lead-based paint disclosures and allow inspection period.
         </div>
-        
+
         <div class="clause">
             <strong>10.2 PROPERTY CONDITION DISCLOSURE:</strong> Seller shall provide any required property condition disclosure statements as mandated by state law.
         </div>
-        
+
         <div class="clause">
             <strong>10.3 WHOLESALE BUSINESS DISCLOSURE:</strong> Buyer discloses that they are engaged in the business of wholesaling real estate and may profit from this transaction through assignment or resale.
         </div>
-        
+
         ${contractData.disclosures.length > 0 ? `
         <div class="clause">
             <strong>10.4 ADDITIONAL DISCLOSURES:</strong>
@@ -427,27 +427,27 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="section">
         <div class="section-title">11. GENERAL PROVISIONS</div>
-        
+
         <div class="clause">
             <strong>11.1 TIME IS OF THE ESSENCE:</strong> Time is of the essence in this contract. All deadlines are strictly enforced.
         </div>
-        
+
         <div class="clause">
             <strong>11.2 GOVERNING LAW:</strong> This contract shall be governed by the laws of the state where the property is located.
         </div>
-        
+
         <div class="clause">
             <strong>11.3 ENTIRE AGREEMENT:</strong> This contract constitutes the entire agreement between the parties and supersedes all prior negotiations and agreements.
         </div>
-        
+
         <div class="clause">
             <strong>11.4 AMENDMENTS:</strong> This contract may only be amended in writing signed by all parties.
         </div>
-        
+
         <div class="clause">
             <strong>11.5 SEVERABILITY:</strong> If any provision of this contract is deemed invalid, the remaining provisions shall remain in full force and effect.
         </div>
-        
+
         <div class="clause">
             <strong>11.6 DISPUTE RESOLUTION:</strong> Any disputes arising from this contract shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association.
         </div>
@@ -468,27 +468,27 @@ export const WholesaleContractForm: React.FC = () => {
 
     <div class="signature-section">
         <div class="section-title">SIGNATURES</div>
-        
+
         <p><strong>SELLER ACKNOWLEDGMENT:</strong></p>
         <p>By signing below, Seller acknowledges reading and understanding this contract, including the wholesale provisions and assignment rights granted to Buyer.</p>
-        
+
         <br><br>
         <div class="signature-line"></div> &nbsp;&nbsp;&nbsp; Date: <div class="date-line"></div><br>
         <strong>Seller Signature: ${contractData.sellerName}</strong>
-        
+
         <br><br><br>
         <p><strong>BUYER/WHOLESALER ACKNOWLEDGMENT:</strong></p>
         <p>By signing below, Buyer acknowledges their wholesale intentions and agrees to all terms and conditions of this contract.</p>
-        
+
         <br><br>
         <div class="signature-line"></div> &nbsp;&nbsp;&nbsp; Date: <div class="date-line"></div><br>
         <strong>Buyer Signature: ${contractData.buyerName}</strong>
-        
+
         <br><br><br>
         <p><strong>NOTARIZATION:</strong></p>
         <p>State of: _________________ County of: _________________</p>
         <p>On this _____ day of _________, 20__, before me personally appeared the above-named parties, who proved to me on the basis of satisfactory evidence to be the persons whose names are subscribed to the within instrument.</p>
-        
+
         <br><br>
         <div class="signature-line"></div><br>
         <strong>Notary Public Signature</strong><br>
@@ -499,15 +499,15 @@ export const WholesaleContractForm: React.FC = () => {
         <div class="header">
             <h2>ADDENDUM A: WHOLESALE TRANSACTION DISCLOSURE</h2>
         </div>
-        
+
         <div class="legal-notice">
             <p><strong>WHOLESALE TRANSACTION NOTICE:</strong> This addendum provides additional disclosure regarding the wholesale nature of this real estate transaction.</p>
         </div>
-        
+
         <div class="clause">
             <strong>WHOLESALE DEFINITION:</strong> A wholesale real estate transaction is one where the Buyer contracts to purchase property with the intention of assigning the contract or reselling the property to another party for a profit, typically without taking title to the property.
         </div>
-        
+
         <div class="clause">
             <strong>SELLER ACKNOWLEDGMENT:</strong> Seller acknowledges and understands that:
             <ul>
@@ -518,7 +518,7 @@ export const WholesaleContractForm: React.FC = () => {
                 <li>Seller has been advised to seek independent legal counsel</li>
             </ul>
         </div>
-        
+
         <div class="clause">
             <strong>ASSIGNMENT PROCESS:</strong> If Buyer assigns this contract:
             <ul>
@@ -528,15 +528,15 @@ export const WholesaleContractForm: React.FC = () => {
                 <li>Purchase price to Seller remains unchanged</li>
             </ul>
         </div>
-        
+
         <div class="clause">
             <strong>REGULATORY COMPLIANCE:</strong> This transaction complies with all applicable real estate laws and regulations. Buyer is not acting as a licensed real estate agent unless separately disclosed.
         </div>
-        
+
         <br><br>
         <div class="signature-line"></div> &nbsp;&nbsp;&nbsp; Date: <div class="date-line"></div><br>
         <strong>Seller Signature (Addendum A)</strong>
-        
+
         <br><br>
         <div class="signature-line"></div> &nbsp;&nbsp;&nbsp; Date: <div class="date-line"></div><br>
         <strong>Buyer Signature (Addendum A)</strong>
@@ -590,7 +590,7 @@ export const WholesaleContractForm: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div
@@ -1366,34 +1366,34 @@ export const WholesaleContractForm: React.FC = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="text-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-900">WHOLESALE REAL ESTATE PURCHASE AGREEMENT</h2>
                     <p className="text-gray-600 mt-2">Contract Date: {new Date().toLocaleDateString()}</p>
                   </div>
-                  
+
                   <div className="space-y-4 text-sm">
                     <div className="bg-white p-4 rounded border">
                       <h3 className="font-semibold text-gray-900 mb-2">PARTIES</h3>
                       <p><strong>Seller:</strong> {contractData.sellerName}</p>
                       <p><strong>Buyer/Wholesaler:</strong> {contractData.buyerName}</p>
                     </div>
-                    
+
                     <div className="bg-white p-4 rounded border">
                       <h3 className="font-semibold text-gray-900 mb-2">PROPERTY</h3>
                       <p>{contractData.propertyAddress}, {contractData.propertyCity}, {contractData.propertyState} {contractData.propertyZip}</p>
                       <p><strong>Type:</strong> {contractData.propertyType}</p>
                     </div>
-                    
+
                     <div className="bg-white p-4 rounded border">
                       <h3 className="font-semibold text-gray-900 mb-2">FINANCIAL TERMS</h3>
                       <p><strong>Purchase Price:</strong> ${parseFloat(contractData.purchasePrice.replace(/[,$]/g, '')).toLocaleString()}</p>
                       <p><strong>Earnest Money:</strong> ${parseFloat(contractData.earnestMoney.replace(/[,$]/g, '')).toLocaleString()}</p>
                       <p><strong>Wholesale Fee:</strong> ${calculateWholesaleFee().toLocaleString()}</p>
                     </div>
-                    
+
                     <div className="bg-yellow-50 border border-yellow-200 p-4 rounded">
                       <h3 className="font-semibold text-yellow-900 mb-2">ASSIGNMENT RIGHTS</h3>
                       <p className="text-yellow-800 text-xs">

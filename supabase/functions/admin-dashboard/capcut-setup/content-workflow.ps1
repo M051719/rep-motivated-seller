@@ -5,10 +5,10 @@ param(
     [Parameter(Position = 0)]
     [ValidateSet('new-video', 'generate-script', 'create-storyboard', 'list-scripts', 'review-video', 'help')]
     [string]$Action = 'help',
-    
+
     [Parameter(Position = 1)]
     [string]$VideoName = "",
-    
+
     [Parameter(Position = 2)]
     [string]$Template = "educational"
 )
@@ -63,55 +63,55 @@ function New-VideoProject {
         [string]$Name,
         [string]$Template
     )
-    
+
     if ([string]::IsNullOrWhiteSpace($Name)) {
         Write-Host "Error: Video name required" -ForegroundColor Red
         Write-Host "Usage: .\content-workflow.ps1 new-video <name> [template]" -ForegroundColor Yellow
         return
     }
-    
+
     $safeName = $Name -replace '[^\w\s-]', '' -replace '\s+', '-'
     $timestamp = Get-Date -Format "yyyyMMdd"
     $projectName = "$timestamp-$safeName"
-    
+
     Write-Host ""
     Write-Host "Creating video project: $Name" -ForegroundColor Cyan
     Write-Host "Project ID: $projectName" -ForegroundColor Gray
     Write-Host "Template: $Template" -ForegroundColor Gray
     Write-Host ""
-    
+
     # Create project structure
     $projectPath = Join-Path $contentCreationPath $projectName
     $folders = @("Script", "Storyboard", "Assets", "Shot-List", "Review")
-    
+
     foreach ($folder in $folders) {
         $folderPath = Join-Path $projectPath $folder
         New-Item -ItemType Directory -Path $folderPath -Force | Out-Null
     }
-    
+
     Write-Host "Created project structure" -ForegroundColor Green
-    
+
     # Generate script template
     $scriptContent = Generate-ScriptTemplate -Name $Name -Template $Template
     $scriptFile = Join-Path $projectPath "Script\$projectName-script.md"
     $scriptContent | Set-Content $scriptFile
-    
+
     Write-Host "Generated script template" -ForegroundColor Green
-    
+
     # Generate storyboard template
     $storyboardContent = Generate-StoryboardTemplate -Name $Name -Template $Template
     $storyboardFile = Join-Path $projectPath "Storyboard\$projectName-storyboard.md"
     $storyboardContent | Set-Content $storyboardFile
-    
+
     Write-Host "Generated storyboard template" -ForegroundColor Green
-    
+
     # Generate shot list
     $shotListContent = Generate-ShotListTemplate -Name $Name -Template $Template
     $shotListFile = Join-Path $projectPath "Shot-List\$projectName-shots.md"
     $shotListContent | Set-Content $shotListFile
-    
+
     Write-Host "Generated shot list" -ForegroundColor Green
-    
+
     # Create README
     $readmeContent = @"
 # $Name
@@ -154,10 +154,10 @@ function New-VideoProject {
 - [ ] Export and review
 - [ ] Publish to platforms
 "@
-    
+
     $readmeFile = Join-Path $projectPath "README.md"
     $readmeContent | Set-Content $readmeFile
-    
+
     Write-Host "Created README" -ForegroundColor Green
     Write-Host ""
     Write-Host "========================================" -ForegroundColor Cyan
@@ -178,7 +178,7 @@ function New-VideoProject {
     Write-Host "  3. Collect assets" -ForegroundColor Cyan
     Write-Host "  4. Create video in CapCut" -ForegroundColor Cyan
     Write-Host ""
-    
+
     $openFolder = Read-Host "Open project folder? (Y/n)"
     if ($openFolder -ne "n") {
         Start-Process "explorer.exe" -ArgumentList $projectPath
@@ -187,7 +187,7 @@ function New-VideoProject {
 
 function Generate-ScriptTemplate {
     param([string]$Name, [string]$Template)
-    
+
     $templates = @{
         "educational" = @"
 # $Name - Video Script
@@ -215,7 +215,7 @@ function Generate-ScriptTemplate {
 **Text Overlay:** [Solution points]
 **Voiceover/Caption:**
 > [Explain how RepMotivatedSeller helps]
-> 
+>
 > Key benefits:
 > - [Benefit 1]
 > - [Benefit 2]
@@ -359,18 +359,18 @@ function Generate-ScriptTemplate {
 - [ ] Upbeat music
 "@
     }
-    
+
     $templateContent = $templates[$Template]
     if ($null -eq $templateContent) {
         $templateContent = $templates["educational"]
     }
-    
+
     return $templateContent
 }
 
 function Generate-StoryboardTemplate {
     param([string]$Name, [string]$Template)
-    
+
     return @"
 # $Name - Storyboard
 
@@ -435,7 +435,7 @@ function Generate-StoryboardTemplate {
 
 function Generate-ShotListTemplate {
     param([string]$Name, [string]$Template)
-    
+
     return @"
 # $Name - Shot List
 
@@ -523,7 +523,7 @@ switch ($Action) {
     "new-video" {
         New-VideoProject -Name $VideoName -Template $Template
     }
-    
+
     "generate-script" {
         if ([string]::IsNullOrWhiteSpace($VideoName)) {
             Write-Host "Error: Video name required" -ForegroundColor Red
@@ -533,16 +533,16 @@ switch ($Action) {
         $script = Generate-ScriptTemplate -Name $VideoName -Template $Template
         Write-Host $script
     }
-    
+
     "list-scripts" {
         Write-Host ""
         Write-Host "Video Projects" -ForegroundColor Cyan
         Write-Host "==============" -ForegroundColor Gray
         Write-Host ""
-        
-        $projects = Get-ChildItem $contentCreationPath -Directory -ErrorAction SilentlyContinue | 
+
+        $projects = Get-ChildItem $contentCreationPath -Directory -ErrorAction SilentlyContinue |
         Where-Object { $_.Name -match '^\d{8}-' }
-        
+
         if ($projects.Count -eq 0) {
             Write-Host "No video projects found" -ForegroundColor Yellow
             Write-Host "Create one with: .\content-workflow.ps1 new-video <name>" -ForegroundColor Cyan
@@ -559,11 +559,11 @@ switch ($Action) {
             }
         }
     }
-    
+
     "help" {
         Show-Help
     }
-    
+
     default {
         Show-Help
     }

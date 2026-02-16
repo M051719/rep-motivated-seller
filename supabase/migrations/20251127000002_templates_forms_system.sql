@@ -74,7 +74,7 @@ USING (bucket_id = 'templates-forms');
 CREATE POLICY "Admins can upload template files"
 ON storage.objects FOR INSERT
 WITH CHECK (
-    bucket_id = 'templates-forms' 
+    bucket_id = 'templates-forms'
     AND public.check_is_admin(auth.uid()) = TRUE
 );
 
@@ -82,7 +82,7 @@ WITH CHECK (
 CREATE POLICY "Admins can update template files"
 ON storage.objects FOR UPDATE
 USING (
-    bucket_id = 'templates-forms' 
+    bucket_id = 'templates-forms'
     AND public.check_is_admin(auth.uid()) = TRUE
 );
 
@@ -90,7 +90,7 @@ USING (
 CREATE POLICY "Admins can delete template files"
 ON storage.objects FOR DELETE
 USING (
-    bucket_id = 'templates-forms' 
+    bucket_id = 'templates-forms'
     AND public.check_is_admin(auth.uid()) = TRUE
 );
 

@@ -109,5 +109,3 @@ DO $$
 BEGIN
     RAISE NOTICE 'User roles RLS policies fixed - infinite recursion resolved';
 END $$;
-
-

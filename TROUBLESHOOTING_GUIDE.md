@@ -17,17 +17,20 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: esbuild errors during npm install or build
 
 **Symptoms:**
+
 - Error messages related to esbuild
 - Build process fails with dependency errors
 
 **Solutions:**
 
 1. Run the fix-install script:
+
    ```bash
    scripts\fix-install.bat
    ```
 
 2. Try clearing npm cache:
+
    ```bash
    npm cache clean --force
    npm install
@@ -41,12 +44,14 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: "Cannot find module" errors
 
 **Symptoms:**
+
 - Error messages indicating missing modules
 - Build fails with import errors
 
 **Solutions:**
 
 1. Check package.json for the missing dependency and install it:
+
    ```bash
    npm install missing-package-name
    ```
@@ -62,6 +67,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Function deployment fails
 
 **Symptoms:**
+
 - Error messages during function deployment
 - Function doesn't appear in Supabase dashboard
 
@@ -77,6 +83,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Function returns 500 Internal Server Error
 
 **Symptoms:**
+
 - Function calls return 500 error
 - No useful error message in response
 
@@ -92,6 +99,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Function times out
 
 **Symptoms:**
+
 - Function calls take too long and eventually time out
 - Inconsistent responses
 
@@ -106,6 +114,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: JWT token authentication fails
 
 **Symptoms:**
+
 - "Unauthorized" or "Invalid JWT token" errors
 - 401 status codes from Edge Functions
 
@@ -118,6 +127,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Service role key not working
 
 **Symptoms:**
+
 - Authentication fails even with service role key
 - "Forbidden" errors
 
@@ -132,6 +142,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: 502 Bad Gateway
 
 **Symptoms:**
+
 - Browser shows 502 Bad Gateway error
 - Site is unreachable
 
@@ -147,6 +158,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: SSL certificate problems
 
 **Symptoms:**
+
 - Browser shows certificate warnings
 - HTTPS doesn't work properly
 
@@ -164,6 +176,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: "Error connecting to database" messages
 
 **Symptoms:**
+
 - Functions fail with database connection errors
 - Queries return errors instead of data
 
@@ -176,6 +189,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Missing tables or columns
 
 **Symptoms:**
+
 - "Table does not exist" errors
 - "Column does not exist" errors
 
@@ -193,6 +207,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Emails not being sent
 
 **Symptoms:**
+
 - No emails received when expected
 - No error messages in logs
 
@@ -208,6 +223,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: SMS notifications not working
 
 **Symptoms:**
+
 - SMS messages not being sent
 - Twilio-related errors in logs
 
@@ -225,6 +241,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Path-related errors
 
 **Symptoms:**
+
 - "Cannot find path" errors
 - File operations fail
 
@@ -237,6 +254,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Nginx doesn't start on Windows
 
 **Symptoms:**
+
 - Nginx fails to start
 - Error messages about ports or configuration
 
@@ -255,6 +273,7 @@ This guide provides solutions for common issues you might encounter when working
 ### Issue: Batch scripts fail to run
 
 **Symptoms:**
+
 - Scripts exit immediately
 - Error messages about commands not found
 
@@ -276,6 +295,7 @@ If you're still experiencing issues after trying these solutions:
 4. Contact the development team for assistance
 
 Remember to include detailed information about the issue when seeking help:
+
 - Exact error messages
 - Steps to reproduce the problem
 - Environment details (OS, Node.js version, etc.)

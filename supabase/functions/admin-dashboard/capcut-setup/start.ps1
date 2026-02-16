@@ -82,7 +82,7 @@ switch ($choice) {
         Write-Host "  - Create 5 backgrounds (1920x1080 PNG)" -ForegroundColor White
         Write-Host "  - Save to: capcut-templates\assets\backgrounds\" -ForegroundColor White
         Write-Host ""
-        
+
         $openGuide = Read-Host "Open Canva guide now? (Y/n)"
         if ($openGuide -ne "n") {
             $guidePath = Join-Path $PSScriptRoot "canva-background-guide.md"
@@ -90,30 +90,30 @@ switch ($choice) {
                 notepad.exe $guidePath
             }
         }
-        
+
         Write-Host ""
         Write-Host "Step 2: Organize Music Files" -ForegroundColor Cyan
         Write-Host "  - Copy music files to: capcut-templates\assets\music\" -ForegroundColor White
         Write-Host ""
-        
+
         $capCutRoot = Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent
         $musicFolder = Join-Path $capCutRoot "capcut-templates\assets\music"
-        
+
         if (-not (Test-Path $musicFolder)) {
             New-Item -ItemType Directory -Path $musicFolder -Force | Out-Null
             Write-Host "  Created music folder: $musicFolder" -ForegroundColor Green
         }
-        
+
         $openFolder = Read-Host "Open music folder now? (Y/n)"
         if ($openFolder -ne "n") {
             Start-Process "explorer.exe" -ArgumentList $musicFolder
         }
-        
+
         Write-Host ""
         Write-Host "Step 3: Install CapCut" -ForegroundColor Cyan
         Write-Host "  - Download from: capcut.com" -ForegroundColor White
         Write-Host ""
-        
+
         Write-Host "Step 4: Create Your First Video!" -ForegroundColor Cyan
         Write-Host "  - Open CapCut Desktop" -ForegroundColor White
         Write-Host "  - New Project -> 1920x1080" -ForegroundColor White

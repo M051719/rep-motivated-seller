@@ -87,50 +87,49 @@ FRONTEND_URL=http://localhost:5173
 ### Frontend Integration
 
 ```jsx
-import MembershipPlans from './components/MembershipPlans';
+import MembershipPlans from "./components/MembershipPlans";
 
 function App() {
-  return (
-    <MembershipPlans 
-      userId="user_123"
-      userEmail="user@example.com"
-    />
-  );
+  return <MembershipPlans userId="user_123" userEmail="user@example.com" />;
 }
 ```
 
 ### Backend Integration (Express)
 
 ```javascript
-import express from 'express';
-import { 
-  createPaymentIntent, 
+import express from "express";
+import {
+  createPaymentIntent,
   createSubscription,
   handleStripeWebhook,
   cancelSubscription,
-  createCustomerPortalSession
-} from './components/api/stripe.js';
+  createCustomerPortalSession,
+} from "./components/api/stripe.js";
 import {
   savePayPalSubscription,
   handlePayPalWebhook,
   cancelPayPalSubscription,
-  getPayPalSubscription
-} from './components/api/paypal.js';
+  getPayPalSubscription,
+} from "./components/api/paypal.js";
 
 const app = express();
 
 // Stripe routes
-app.post('/api/create-payment-intent', createPaymentIntent);
-app.post('/api/create-subscription', createSubscription);
-app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
-app.post('/api/cancel-subscription', cancelSubscription);
-app.post('/api/customer-portal', createCustomerPortalSession);
+app.post("/api/create-payment-intent", createPaymentIntent);
+app.post("/api/create-subscription", createSubscription);
+app.post(
+  "/api/stripe-webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook,
+);
+app.post("/api/cancel-subscription", cancelSubscription);
+app.post("/api/customer-portal", createCustomerPortalSession);
 
 // PayPal routes
-app.post('/api/paypal-subscription', savePayPalSubscription);
-app.post('/api/paypal-webhook', handlePayPalWebhook);
-app.post('/api/cancel-paypal-subscription', cancelPayPalSubscription);
-app.get('/api/paypal-subscription/:subscriptionId', getPayPalSubscription);
+app.post("/api/paypal-subscription", savePayPalSubscription);
+app.post("/api/paypal-webhook", handlePayPalWebhook);
+app.post("/api/cancel-paypal-subscription", cancelPayPalSubscription);
+app.get("/api/paypal-subscription/:subscriptionId", getPayPalSubscription);
 ```
 
 ## Webhook Setup
@@ -224,6 +223,7 @@ CREATE INDEX idx_subscription_id ON subscriptions(subscription_id);
 ## Support
 
 For more information, see:
+
 - [docs/stripe-integration-guide.md](../docs/stripe-integration-guide.md)
 - [docs/paypal-integration-guide.md](../docs/paypal-integration-guide.md)
 - [docs/PAYMENT-INTEGRATION-MASTER-GUIDE.md](../docs/PAYMENT-INTEGRATION-MASTER-GUIDE.md)

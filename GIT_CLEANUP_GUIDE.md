@@ -12,12 +12,14 @@ fatal: No url found for submodule path 'scripts' in .gitmodules
 ```
 
 **Evidence:**
+
 - SHA: `734e71d38a34dcc4c51d30276ed887530ca2345b`
 - Type: `file`
 - Size: `0`
 - HTML URL: `null` (indicates orphaned/broken object)
 
 This orphaned object in the git index is blocking:
+
 - ✗ GitHub Actions workflows
 - ✗ Normal git operations
 - ✗ Submodule commands
@@ -80,6 +82,7 @@ if (Test-Path .gitmodules) {
 The `scripts/` directory has already been added to `.gitignore` to prevent re-adding.
 
 Verify:
+
 ```powershell
 # Check if scripts/ is ignored
 git check-ignore scripts/
@@ -116,13 +119,14 @@ After pushing, verify the workflows run successfully:
    - Verify workflows complete without git submodule errors
 
 2. **Verify locally:**
+
    ```powershell
    # Should show nothing (scripts removed from index)
    git ls-files scripts
-   
+
    # Should show scripts is ignored
    git check-ignore scripts/
-   
+
    # Should complete without errors
    git status
    ```
@@ -163,6 +167,7 @@ git push origin main
 ### Error: "fatal: pathspec 'scripts' did not match any files"
 
 This means `scripts` is not currently in the git index. Check if:
+
 - The issue was already fixed
 - The orphaned object is only visible on GitHub (sync your local repo)
 
@@ -230,6 +235,7 @@ scripts/
 If you encounter issues during cleanup:
 
 1. **Check git logs:**
+
    ```powershell
    git log --all --full-history -- scripts
    ```

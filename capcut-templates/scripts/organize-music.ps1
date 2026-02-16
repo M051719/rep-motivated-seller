@@ -36,7 +36,7 @@ foreach ($file in $musicFiles) {
     # Determine category
     $category = "uncategorized"
     $fileName = $file.Name.ToLower()
-    
+
     foreach ($cat in $categories.Keys) {
         foreach ($keyword in $categories[$cat]) {
             if ($fileName -like "*$keyword*") {
@@ -46,16 +46,16 @@ foreach ($file in $musicFiles) {
         }
         if ($category -ne "uncategorized") { break }
     }
-    
+
     # Get duration (estimate from file size)
     $durationMB = [math]::Round($file.Length / 1MB, 2)
     $estimatedMinutes = [math]::Round($durationMB / 1, 1)
-    
+
     # Check if name contains duration
     if ($fileName -match '(\d+)\s*min') {
         $estimatedMinutes = [int]$matches[1]
     }
-    
+
     # Create catalog entry
     $entry = [PSCustomObject]@{
         "fileName"          = $file.Name
@@ -67,9 +67,9 @@ foreach ($file in $musicFiles) {
         "bpm"               = $null  # To be filled manually
         "mood"              = $null  # To be filled manually
     }
-    
+
     $catalog += $entry
-    
+
     # Copy file (only if not already there or if source is newer)
     $destPath = Join-Path $MusicDestination $file.Name
     if (-not (Test-Path $destPath) -or $file.LastWriteTime -gt (Get-Item $destPath).LastWriteTime) {

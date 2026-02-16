@@ -25,16 +25,16 @@ SET search_path = ''
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         'RLS Enforcement' AS check_name,
         'FAIL' AS status,
         'Table "' || t.tablename || '" does not have Row Level Security enabled.' AS details,
         'Enable RLS using: ALTER TABLE public.' || t.tablename || ' ENABLE ROW LEVEL SECURITY;' AS recommendation
-    FROM 
+    FROM
         pg_tables t
-    JOIN 
+    JOIN
         pg_class c ON t.tablename = c.relname AND t.schemaname = c.relnamespace::regnamespace::text
-    WHERE 
+    WHERE
         t.schemaname = 'public'
         AND c.relrowsecurity = false
         -- Exclude common managed tables that don't typically use RLS
@@ -53,25 +53,25 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         'Weak RLS Policies' AS check_name,
         'WARN' AS status,
-        'Table: ' || p.tablename || ', Policy: ' || p.policyname || ' - Issue: ' || 
-        CASE 
+        'Table: ' || p.tablename || ', Policy: ' || p.policyname || ' - Issue: ' ||
+        CASE
             WHEN p.qual = 'true' OR p.with_check = 'true' THEN 'Policy uses a permissive "true" expression, potentially allowing broad access.'
             WHEN p.cmd = 'ALL' THEN 'Policy applies to ALL commands. Consider creating specific policies for SELECT, INSERT, UPDATE, DELETE.'
             WHEN p.roles = '{public}' THEN 'Policy applies to the "public" role, granting access to all users, including unauthenticated ones.'
             WHEN p.cmd = 'UPDATE' AND p.with_check IS NULL THEN 'UPDATE policy is missing a WITH CHECK clause, which could allow data to be updated in a way that it is no longer visible to the user.'
             ELSE 'Unknown issue.'        END AS details,
         'Review the policy logic to ensure it enforces the principle of least privilege. Avoid overly permissive rules.' AS recommendation
-    FROM 
+    FROM
         pg_policies p
-    WHERE 
+    WHERE
         p.schemaname = 'public'
         AND (
-            p.qual = 'true' OR 
-            p.with_check = 'true' OR 
-            p.cmd = 'ALL' OR 
+            p.qual = 'true' OR
+            p.with_check = 'true' OR
+            p.cmd = 'ALL' OR
             p.roles = '{public}' OR
             (p.cmd = 'UPDATE' AND p.with_check IS NULL)
         );
@@ -91,21 +91,21 @@ SET search_path = ''
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         'Primary Key Presence' AS check_name,
         'FAIL' AS status,
         'Table "' || t.tablename || '" is missing a primary key.' AS details,
         'Add a primary key to ensure data integrity and proper relationships. Example: ALTER TABLE public.' || t.tablename || ' ADD PRIMARY KEY (id);' AS recommendation
-    FROM 
+    FROM
         pg_tables t
-    WHERE 
+    WHERE
         t.schemaname = 'public'
         AND NOT EXISTS (
-            SELECT 1             FROM pg_constraint c 
-            JOIN pg_class cl ON c.conrelid = cl.oid 
-            JOIN pg_namespace n ON cl.relnamespace = n.oid 
-            WHERE c.contype = 'p' 
-            AND cl.relname = t.tablename 
+            SELECT 1             FROM pg_constraint c
+            JOIN pg_class cl ON c.conrelid = cl.oid
+            JOIN pg_namespace n ON cl.relnamespace = n.oid
+            WHERE c.contype = 'p'
+            AND cl.relname = t.tablename
             AND n.nspname = t.schemaname
         );
 
@@ -125,28 +125,28 @@ AS $$
 BEGIN
     RETURN QUERY
     WITH sensitive_patterns AS (
-        SELECT 'password' AS pattern, 'High' AS level UNION ALL 
+        SELECT 'password' AS pattern, 'High' AS level UNION ALL
         SELECT 'passwd', 'High' UNION ALL
-        SELECT 'secret', 'High' UNION ALL 
+        SELECT 'secret', 'High' UNION ALL
         SELECT 'token', 'High' UNION ALL
-        SELECT 'api_key', 'High' UNION ALL 
+        SELECT 'api_key', 'High' UNION ALL
         SELECT 'credit_card', 'High' UNION ALL
-        SELECT 'card_number', 'High' UNION ALL 
-        SELECT 'ssn', 'High' UNION ALL        SELECT 'tax_id', 'High' UNION ALL 
+        SELECT 'card_number', 'High' UNION ALL
+        SELECT 'ssn', 'High' UNION ALL        SELECT 'tax_id', 'High' UNION ALL
         SELECT 'address', 'Medium' UNION ALL
-        SELECT 'email', 'Medium' UNION ALL 
-        SELECT 'phone', 'Medium' UNION ALL        SELECT 'dob', 'Medium' UNION ALL 
+        SELECT 'email', 'Medium' UNION ALL
+        SELECT 'phone', 'Medium' UNION ALL        SELECT 'dob', 'Medium' UNION ALL
         SELECT 'birth', 'Medium'
-    )    SELECT 
+    )    SELECT
         'Sensitive Data Exposure' AS check_name,
-        'WARN' AS status,        'Column "' || c.column_name || '" in table "' || c.table_name || '" may contain sensitive ' || 
+        'WARN' AS status,        'Column "' || c.column_name || '" in table "' || c.table_name || '" may contain sensitive ' ||
         sp.level || ' risk data based on its name.' AS details,
         'Ensure this column has appropriate access controls and consider encryption for sensitive data at rest.' AS recommendation
-    FROM 
+    FROM
         information_schema.columns c
-    JOIN 
+    JOIN
         sensitive_patterns sp ON c.column_name ILIKE '%' || sp.pattern || '%'
-    WHERE 
+    WHERE
         c.table_schema = 'public';
 
     IF NOT FOUND THEN
@@ -196,7 +196,7 @@ BEGIN
     -- Log the audit execution with findings
     INSERT INTO public.security_audit_logs (executed_by, findings)
     VALUES (auth.uid(), to_jsonb(results));
-    
+
     -- Return all results
     FOREACH current_result IN ARRAY results
     LOOP
@@ -209,4 +209,3 @@ COMMENT ON FUNCTION public.check_rls_enabled() IS 'Checks for tables without Row
 COMMENT ON FUNCTION public.check_weak_rls_policies() IS 'Identifies potentially weak or overly permissive RLS policies.';
 COMMENT ON FUNCTION public.check_missing_primary_keys() IS 'Finds tables without primary keys.';
 COMMENT ON FUNCTION public.check_sensitive_data_exposure() IS 'Detects columns that might contain sensitive data based on naming patterns.';
-

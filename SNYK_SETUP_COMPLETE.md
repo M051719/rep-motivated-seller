@@ -1,7 +1,7 @@
 # ✅ Snyk Security Integration - VERIFIED & ACTIVE 🛡️
 
-> **Status**: Fully operational in `rep-motivated-seller` project  
-> **Last Verified**: January 6, 2026  
+> **Status**: Fully operational in `rep-motivated-seller` project
+> **Last Verified**: January 6, 2026
 > **Snyk Version**: 1.1301.2
 
 ---
@@ -9,13 +9,15 @@
 ## 📋 Implementation Summary
 
 ### 1. Snyk CLI Installed
+
 - **Version**: 1.1301.2 ✅
 - **Location**: `devDependencies` in [package.json](package.json)
 - **Purpose**: Automated security scanning for vulnerabilities and code analysis
 
 ### 2. GitHub Workflow
+
 - **File**: `.github/workflows/snyk.yml`
-- **Triggers**: 
+- **Triggers**:
   - Push to `main` or `develop` branches
   - Pull requests to `main` or `develop`
   - Weekly schedule: Mondays at 9 AM UTC
@@ -27,6 +29,7 @@
   - Automatic SARIF upload for security alerts
 
 ### 3. Snyk Policy File
+
 - **File**: `.snyk`
 - **Configuration**:
   - Excludes test files, docs, backups from scanning
@@ -34,7 +37,9 @@
   - Language-specific settings for JavaScript/TypeScript
 
 ### 4. Security Scripts
+
 Added to `package.json`:
+
 ```json
 "snyk:test": "snyk test --all-projects",
 "snyk:monitor": "snyk monitor --all-projects",
@@ -44,6 +49,7 @@ Added to `package.json`:
 ```
 
 ### 5. Security Policy
+
 - **File**: `.github/SECURITY.md`
 - **Contains**:
   - Vulnerability reporting process
@@ -56,6 +62,7 @@ Added to `package.json`:
 ## 🚀 Quick Start
 
 ### Run Security Scan Locally
+
 ```bash
 # Full security scan (dependencies + code)
 npm run security:scan
@@ -73,11 +80,13 @@ npm run snyk:monitor
 ### First Time Setup
 
 1. **Authenticate Snyk CLI** (if you have the token):
+
 ```bash
 npx snyk auth YOUR_SNYK_TOKEN
 ```
 
 2. **Run Initial Scan**:
+
 ```bash
 npm run security:scan
 ```
@@ -94,12 +103,14 @@ npm run security:scan
 ## 📊 GitHub Integration
 
 ### Automated Scans
+
 - ✅ Every push to `main`/`develop` triggers security scan
 - ✅ Every PR shows security check status
 - ✅ Weekly automated scans on Mondays
 - ✅ Results appear in GitHub Security tab
 
 ### View Results
+
 1. **In GitHub**: Navigate to `Security` → `Code scanning alerts`
 2. **In Snyk Dashboard**: Visit `https://app.snyk.io`
 
@@ -108,9 +119,11 @@ npm run security:scan
 ## 🔧 Configuration Files
 
 ### `.snyk` Policy
+
 Controls what gets scanned and severity thresholds:
+
 ```yaml
-fail-on: high  # Options: low | medium | high | critical
+fail-on: high # Options: low | medium | high | critical
 exclude:
   - test/**
   - docs/**
@@ -118,7 +131,9 @@ exclude:
 ```
 
 ### `.github/workflows/snyk.yml`
+
 Two jobs:
+
 1. **snyk-security**: Dependency vulnerabilities
 2. **snyk-code**: Static code analysis (SAST)
 
@@ -127,12 +142,14 @@ Two jobs:
 ## 🎯 What Gets Scanned
 
 ### Dependency Scanning
+
 - ✅ `package.json` dependencies
 - ✅ `package-lock.json` lock file
 - ✅ Transitive dependencies
 - ✅ Known CVEs and security advisories
 
 ### Code Scanning (SAST)
+
 - ✅ SQL injection vulnerabilities
 - ✅ XSS (Cross-Site Scripting)
 - ✅ Authentication/authorization issues
@@ -146,26 +163,29 @@ Two jobs:
 
 Security scans complement your updated response times:
 
-| Service Area | Response Time | Security Check |
-|--------------|--------------|----------------|
-| Loan decisions | 7 business days | Automated on every commit |
-| Application review | 7 business days | Weekly scheduled scans |
-| Urgent cases | 3-5 business days | Manual workflow dispatch |
-| Email support | 7 business days | Continuous monitoring |
+| Service Area       | Response Time     | Security Check            |
+| ------------------ | ----------------- | ------------------------- |
+| Loan decisions     | 7 business days   | Automated on every commit |
+| Application review | 7 business days   | Weekly scheduled scans    |
+| Urgent cases       | 3-5 business days | Manual workflow dispatch  |
+| Email support      | 7 business days   | Continuous monitoring     |
 
 ---
 
 ## 🛠️ Troubleshooting
 
 ### "SNYK_TOKEN not found"
+
 - Run locally: `npx snyk auth YOUR_TOKEN`
 - GitHub Actions: Add secret in repository settings
 
 ### "Too many vulnerabilities"
+
 - Review `.snyk` file to adjust `fail-on` threshold
 - Add specific vulnerabilities to ignore list (with expiration)
 
 ### Scan takes too long
+
 - Check `.snyk` exclude list
 - Ensure test files are excluded
 - Consider scanning only production dependencies

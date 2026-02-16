@@ -32,45 +32,45 @@ console.log('🔧 Fixing line-wrap issues in TypeScript files...\n');
 
 files.forEach(file => {
   const filePath = path.join(__dirname, file);
-  
+
   if (!fs.existsSync(filePath)) {
     console.log(`⏭️  Skipping ${file} (not found)`);
     return;
   }
-  
+
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     let fixed = false;
-    
+
     // Fix 1: Join lines broken in the middle of template literals
     // Pattern: line ending without closing backtick, next line starts mid-string
     content = content.replace(/`([^`\n]*)\n\s*([^`]*)`/g, '`$1$2`');
-    
+
     // Fix 2: Join lines broken in className attributes
     // Pattern: className=" text on one line
     //          more text on next line"
     content = content.replace(/className="([^"\n]*)\n\s*([^"]*)"/ g, 'className="$1 $2"');
-    
+
     // Fix 3: Join lines broken in regular strings
     // Pattern: "text on one line
     //          more text on next line"
     const lines = content.split('\n');
     const fixedLines = [];
     let i = 0;
-    
+
     while (i < lines.length) {
       const line = lines[i];
-      
+
       // Check if line has unclosed string that continues on next line
       const doubleQuotes = (line.match(/"/g) || []).length;
       const singleQuotes = (line.match(/'/g) || []).length;
-      
+
       // If odd number of quotes, string is likely broken
       if ((doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0) && i < lines.length - 1) {
         // Join with next line
         const nextLine = lines[i + 1];
         const trimmedNext = nextLine.trimStart();
-        
+
         // Only join if next line doesn't start with common code patterns
         if (!trimmedNext.match(/^(const |let |var |function |class |import |export |return |if |else |for |while |switch |case |default)/)) {
           fixedLines.push(line + trimmedNext);
@@ -79,17 +79,17 @@ files.forEach(file => {
           continue;
         }
       }
-      
+
       fixedLines.push(line);
       i++;
     }
-    
+
     content = fixedLines.join('\n');
-    
+
     // Write back if changes were made
     fs.writeFileSync(filePath, content, 'utf8');
     console.log(`✅ Fixed ${file}`);
-    
+
   } catch (error) {
     console.error(`❌ Error fixing ${file}:`, error.message);
   }

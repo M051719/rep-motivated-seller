@@ -5,6 +5,7 @@ Quick commands, test cards, and troubleshooting for Stripe and PayPal integratio
 ## 🔑 Essential Commands
 
 ### Supabase Secrets
+
 ```bash
 # Set secrets
 supabase secrets set STRIPE_SECRET_KEY=sk_test_xxxxx
@@ -18,6 +19,7 @@ supabase secrets unset SECRET_NAME
 ```
 
 ### Edge Functions
+
 ```bash
 # Deploy all
 supabase functions deploy
@@ -35,6 +37,7 @@ supabase functions logs stripe-webhook -n 100
 ```
 
 ### Development
+
 ```bash
 # Start dev server with env
 npm run dev
@@ -51,6 +54,7 @@ npm run preview
 ## 💳 Stripe Test Cards
 
 ### Successful Payments
+
 ```
 Card: 4242 4242 4242 4242
 Expiry: Any future date
@@ -61,6 +65,7 @@ Result: Payment succeeds
 ```
 
 ### Declined Payments
+
 ```
 Card: 4000 0000 0000 0002
 Result: Card declined (generic)
@@ -76,6 +81,7 @@ Result: Stolen card
 ```
 
 ### Authentication Required (3D Secure)
+
 ```
 Card: 4000 0025 0000 3155
 Result: Requires authentication
@@ -86,6 +92,7 @@ Result: Authentication fails
 ```
 
 ### Special Test Cases
+
 ```
 Card: 4000 0000 0000 0077
 Result: Charge succeeds but card is about to expire
@@ -104,6 +111,7 @@ Result: Charge succeeds but triggers dispute (fraudulent)
 ## 💰 PayPal Sandbox Accounts
 
 ### Create Test Accounts
+
 1. Go to [developer.paypal.com/dashboard](https://developer.paypal.com/dashboard)
 2. Navigate to "Sandbox > Accounts"
 3. Create "Personal" account (buyer)
@@ -111,6 +119,7 @@ Result: Charge succeeds but triggers dispute (fraudulent)
 5. Fund accounts with test money
 
 ### Test Credentials
+
 ```
 Buyer Account:
 Email: [auto-generated]@personal.example.com
@@ -122,6 +131,7 @@ Password: [auto-generated]
 ```
 
 ### Test Subscription
+
 ```
 1. Use buyer account to subscribe
 2. Verify subscription in seller account
@@ -134,6 +144,7 @@ Password: [auto-generated]
 ## 🔍 Debugging Tools
 
 ### Stripe Dashboard
+
 ```
 Logs: https://dashboard.stripe.com/logs
 Webhooks: https://dashboard.stripe.com/webhooks
@@ -142,6 +153,7 @@ Subscriptions: https://dashboard.stripe.com/subscriptions
 ```
 
 ### PayPal Dashboard
+
 ```
 Dashboard: https://developer.paypal.com/dashboard
 Sandbox: https://www.sandbox.paypal.com
@@ -149,6 +161,7 @@ IPN Simulator: https://developer.paypal.com/dashboard/tools/ipn-simulator
 ```
 
 ### Supabase Dashboard
+
 ```
 Database: https://supabase.com/dashboard/project/YOUR_PROJECT/editor
 Edge Functions: https://supabase.com/dashboard/project/YOUR_PROJECT/functions
@@ -156,6 +169,7 @@ Logs: https://supabase.com/dashboard/project/YOUR_PROJECT/logs
 ```
 
 ### Test Webhooks Locally
+
 ```bash
 # Install Stripe CLI
 stripe listen --forward-to localhost:54321/functions/v1/stripe-webhook
@@ -169,8 +183,9 @@ stripe trigger payment_intent.succeeded
 ## 🛠️ Common SQL Queries
 
 ### Check User Subscription
+
 ```sql
-SELECT 
+SELECT
   s.*,
   u.email
 FROM subscriptions s
@@ -179,8 +194,9 @@ WHERE u.email = 'user@example.com';
 ```
 
 ### Get Active Subscriptions
+
 ```sql
-SELECT 
+SELECT
   COUNT(*) as total_active,
   tier,
   COUNT(*) as count
@@ -190,8 +206,9 @@ GROUP BY tier;
 ```
 
 ### Find Expired Subscriptions
+
 ```sql
-SELECT 
+SELECT
   s.*,
   u.email
 FROM subscriptions s
@@ -201,11 +218,12 @@ WHERE s.current_period_end < NOW()
 ```
 
 ### Monthly Recurring Revenue (MRR)
+
 ```sql
-SELECT 
+SELECT
   tier,
   COUNT(*) as subscribers,
-  CASE 
+  CASE
     WHEN tier = 'premium' THEN COUNT(*) * 97
     WHEN tier = 'elite' THEN COUNT(*) * 297
     ELSE 0
@@ -216,8 +234,9 @@ GROUP BY tier;
 ```
 
 ### Failed Payments Last 7 Days
+
 ```sql
-SELECT 
+SELECT
   created_at,
   user_id,
   tier,
@@ -233,6 +252,7 @@ ORDER BY created_at DESC;
 ## 🚨 Troubleshooting
 
 ### "Publishable key not found"
+
 ```bash
 # Check .env.development
 cat .env.development | grep STRIPE
@@ -242,6 +262,7 @@ npm run dev
 ```
 
 ### "Webhook signature verification failed"
+
 ```bash
 # Check webhook secret
 supabase secrets list | grep WEBHOOK
@@ -254,6 +275,7 @@ supabase functions deploy stripe-webhook
 ```
 
 ### "Payment succeeded but tier not updated"
+
 ```bash
 # Check webhook logs
 supabase functions logs stripe-webhook --tail
@@ -263,6 +285,7 @@ supabase db pull
 ```
 
 ### "Edge Function timeout"
+
 ```bash
 # Check function logs
 supabase functions logs create-payment-intent
@@ -272,13 +295,15 @@ supabase functions logs create-payment-intent
 ```
 
 ### "CORS error in browser"
+
 ```typescript
 // Ensure your Edge Function has CORS headers:
 return new Response(JSON.stringify(data), {
   headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type",
   },
 });
 ```
@@ -288,18 +313,21 @@ return new Response(JSON.stringify(data), {
 ## 📊 Monitoring Checklist
 
 ### Daily Checks
+
 - [ ] Payment success rate > 95%
 - [ ] No Edge Function errors
 - [ ] Webhooks delivering successfully
 - [ ] No stuck subscriptions
 
 ### Weekly Checks
+
 - [ ] Review failed payments
 - [ ] Check churn rate
 - [ ] Monitor MRR growth
 - [ ] Review support tickets
 
 ### Monthly Checks
+
 - [ ] Audit subscription status
 - [ ] Review payment trends
 - [ ] Check for fraud patterns
@@ -323,18 +351,21 @@ return new Response(JSON.stringify(data), {
 ## 📞 Support Resources
 
 ### Stripe
+
 - Docs: [stripe.com/docs](https://stripe.com/docs)
 - Support: [support.stripe.com](https://support.stripe.com)
 - Status: [status.stripe.com](https://status.stripe.com)
 - Community: [support.stripe.com/questions](https://support.stripe.com/questions)
 
 ### PayPal
+
 - Docs: [developer.paypal.com/docs](https://developer.paypal.com/docs)
 - Support: [developer.paypal.com/support](https://developer.paypal.com/support)
 - Status: [status.paypal.com](https://status.paypal.com)
 - Forums: [community.paypal.com](https://community.paypal.com)
 
 ### Supabase
+
 - Docs: [supabase.com/docs](https://supabase.com/docs)
 - Support: [supabase.com/support](https://supabase.com/support)
 - Status: [status.supabase.com](https://status.supabase.com)
@@ -345,28 +376,33 @@ return new Response(JSON.stringify(data), {
 ## 💡 Pro Tips
 
 **Faster Debugging:**
+
 ```bash
 # Watch all logs simultaneously
 supabase functions logs --tail | grep -i error
 ```
 
 **Test Webhook Locally:**
+
 ```bash
 # Forward Stripe webhooks to localhost
 stripe listen --forward-to http://localhost:54321/functions/v1/stripe-webhook
 ```
 
 **Quick Database Reset (Development Only):**
+
 ```bash
 supabase db reset
 ```
 
 **Export Production Data:**
+
 ```bash
 supabase db dump -f backup.sql
 ```
 
 **Test Card in One Command:**
+
 ```bash
 stripe payment_intents create \
   --amount=9700 \
@@ -376,6 +412,6 @@ stripe payment_intents create \
 
 ---
 
-**Last Updated**: 2025-01-11  
-**Version**: 1.0.0  
+**Last Updated**: 2025-01-11
+**Version**: 1.0.0
 **Maintainer**: Development Team

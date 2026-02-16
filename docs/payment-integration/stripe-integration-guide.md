@@ -63,17 +63,21 @@ Stripe is a payment processing platform that handles credit/debit card payments 
 2. Find two keys:
 
 **Publishable Key (Frontend)**
+
 ```
 pk_test_51QrVNcH2rnPeJ...
 ```
+
 - Safe to expose in client-side code
 - Used to initialize Stripe.js
 - Starts with `pk_test_` in test mode
 
 **Secret Key (Backend)**
+
 ```
 sk_test_51QrVNcH2rnPeJ...
 ```
+
 - ⚠️ **NEVER expose to clients**
 - Used in server/Edge Functions
 - Starts with `sk_test_` in test mode
@@ -133,6 +137,7 @@ stripe login
 ### Product Settings
 
 Enable these for both products:
+
 - ✅ **Require customer's billing address**
 - ✅ **Require email address**
 - ✅ **Send invoice emails automatically**
@@ -151,6 +156,7 @@ npm install @stripe/stripe-js @stripe/react-stripe-js
 ### 2. Configure Environment
 
 Create `.env.development`:
+
 ```env
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51QrVNcH2rnPeJ...
 STRIPE_SECRET_KEY=sk_test_51QrVNcH2rnPeJ...
@@ -163,7 +169,7 @@ STRIPE_ELITE_PRICE_ID=price_0987654321
 The `StripeCheckout.tsx` component is already created. Use it like this:
 
 ```tsx
-import StripeCheckout from '../components/payments/StripeCheckout';
+import StripeCheckout from "../components/payments/StripeCheckout";
 
 function PricingPage() {
   return (
@@ -173,8 +179,8 @@ function PricingPage() {
         planId="premium"
         planName="Premium Tier"
         planPrice={97}
-        onSuccess={() => navigate('/dashboard')}
-        onCancel={() => navigate('/pricing')}
+        onSuccess={() => navigate("/dashboard")}
+        onCancel={() => navigate("/pricing")}
       />
 
       {/* Elite Tier */}
@@ -182,8 +188,8 @@ function PricingPage() {
         planId="elite"
         planName="Elite Tier"
         planPrice={297}
-        onSuccess={() => navigate('/dashboard')}
-        onCancel={() => navigate('/pricing')}
+        onSuccess={() => navigate("/dashboard")}
+        onCancel={() => navigate("/pricing")}
       />
     </div>
   );
@@ -193,7 +199,7 @@ function PricingPage() {
 ### 4. Component Flow
 
 ```
-User clicks "Subscribe" 
+User clicks "Subscribe"
   → StripeCheckout calls create-payment-intent Edge Function
   → Edge Function creates PaymentIntent with Stripe API
   → Returns clientSecret to frontend
@@ -214,23 +220,24 @@ User clicks "Subscribe"
 Create `supabase/functions/create-payment-intent/index.ts`:
 
 ```typescript
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import Stripe from 'https://esm.sh/stripe@14.21.0';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@14.21.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
-  apiVersion: '2024-11-20.acacia',
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+  apiVersion: "2024-11-20.acacia",
   httpClient: Stripe.createFetchHttpClient(),
 });
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -239,13 +246,13 @@ serve(async (req) => {
 
     // Validate input
     if (!planId || !planPrice || !userId) {
-      throw new Error('Missing required fields');
+      throw new Error("Missing required fields");
     }
 
     // Create PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: planPrice, // Amount in cents
-      currency: 'usd',
+      currency: "usd",
       metadata: {
         user_id: userId,
         plan_id: planId,
@@ -258,19 +265,16 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ clientSecret: paymentIntent.client_secret }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
   } catch (error) {
-    console.error('Error creating payment intent:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      }
-    );
+    console.error("Error creating payment intent:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });
 ```
@@ -301,6 +305,7 @@ curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/create-payment-intent
 ```
 
 Expected response:
+
 ```json
 {
   "clientSecret": "pi_xxxxx_secret_xxxxx"
@@ -320,84 +325,90 @@ Webhooks notify your backend when payments succeed, subscriptions are created/up
 Create `supabase/functions/stripe-webhook/index.ts`:
 
 ```typescript
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import Stripe from 'https://esm.sh/stripe@14.21.0';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@14.21.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
-  apiVersion: '2024-11-20.acacia',
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+  apiVersion: "2024-11-20.acacia",
   httpClient: Stripe.createFetchHttpClient(),
 });
 
 const supabase = createClient(
-  Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
 
 serve(async (req) => {
-  const signature = req.headers.get('stripe-signature');
-  const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+  const signature = req.headers.get("stripe-signature");
+  const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
 
   if (!signature || !webhookSecret) {
-    return new Response('Missing signature or secret', { status: 400 });
+    return new Response("Missing signature or secret", { status: 400 });
   }
 
   try {
     const body = await req.text();
-    const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    const event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      webhookSecret,
+    );
 
-    console.log('Received event:', event.type);
+    console.log("Received event:", event.type);
 
     switch (event.type) {
-      case 'payment_intent.succeeded': {
+      case "payment_intent.succeeded": {
         const paymentIntent = event.data.object;
         const userId = paymentIntent.metadata.user_id;
         const planId = paymentIntent.metadata.plan_id;
 
         // Update subscription in database
-        await supabase
-          .from('subscriptions')
-          .upsert({
-            user_id: userId,
-            tier: planId,
-            status: 'active',
-            stripe_subscription_id: paymentIntent.id,
-            current_period_start: new Date().toISOString(),
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          });
+        await supabase.from("subscriptions").upsert({
+          user_id: userId,
+          tier: planId,
+          status: "active",
+          stripe_subscription_id: paymentIntent.id,
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+          ).toISOString(),
+        });
 
         console.log(`Updated subscription for user ${userId} to ${planId}`);
         break;
       }
 
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated': {
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
         const subscription = event.data.object;
         const userId = subscription.metadata.user_id;
 
-        await supabase
-          .from('subscriptions')
-          .upsert({
-            user_id: userId,
-            stripe_subscription_id: subscription.id,
-            status: subscription.status,
-            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-            cancel_at_period_end: subscription.cancel_at_period_end,
-          });
+        await supabase.from("subscriptions").upsert({
+          user_id: userId,
+          stripe_subscription_id: subscription.id,
+          status: subscription.status,
+          current_period_start: new Date(
+            subscription.current_period_start * 1000,
+          ).toISOString(),
+          current_period_end: new Date(
+            subscription.current_period_end * 1000,
+          ).toISOString(),
+          cancel_at_period_end: subscription.cancel_at_period_end,
+        });
 
         console.log(`Subscription ${subscription.status} for user ${userId}`);
         break;
       }
 
-      case 'customer.subscription.deleted': {
+      case "customer.subscription.deleted": {
         const subscription = event.data.object;
         const userId = subscription.metadata.user_id;
 
         await supabase
-          .from('subscriptions')
-          .update({ status: 'canceled', tier: 'free' })
-          .eq('user_id', userId);
+          .from("subscriptions")
+          .update({ status: "canceled", tier: "free" })
+          .eq("user_id", userId);
 
         console.log(`Canceled subscription for user ${userId}`);
         break;
@@ -408,13 +419,13 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ received: true }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error("Webhook error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
       status: 400,
     });
   }
@@ -454,6 +465,7 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 ### 5. Test Webhook
 
 In Stripe Dashboard:
+
 1. Go to **Developers > Webhooks**
 2. Click on your webhook
 3. Click **Send test webhook**
@@ -461,11 +473,13 @@ In Stripe Dashboard:
 5. Click **Send test webhook**
 
 Check logs:
+
 ```bash
 supabase functions logs stripe-webhook --tail
 ```
 
 You should see:
+
 ```
 Received event: payment_intent.succeeded
 Updated subscription for user test-user to premium
@@ -478,6 +492,7 @@ Updated subscription for user test-user to premium
 ### Test Cards
 
 **Success**
+
 ```
 Card: 4242 4242 4242 4242
 Expiry: 12/34
@@ -486,16 +501,19 @@ ZIP: 12345
 ```
 
 **Decline (Generic)**
+
 ```
 Card: 4000 0000 0000 0002
 ```
 
 **Insufficient Funds**
+
 ```
 Card: 4000 0000 0000 9995
 ```
 
 **3D Secure Required**
+
 ```
 Card: 4000 0025 0000 3155
 (Enter any code in test mode)
@@ -512,7 +530,7 @@ Card: 4000 0025 0000 3155
 7. ✅ Payment should succeed
 8. Check database:
    ```sql
-   SELECT * FROM subscriptions 
+   SELECT * FROM subscriptions
    WHERE user_id = 'your-user-id';
    ```
 9. Verify `tier = 'premium'` and `status = 'active'`
@@ -537,6 +555,7 @@ Card: 4000 0025 0000 3155
 ### 1. Switch to Live Mode
 
 In Stripe Dashboard:
+
 1. Complete business verification
 2. Add bank account for payouts
 3. Toggle "Live Mode" ON
@@ -550,11 +569,13 @@ In Stripe Dashboard:
 ### 3. Update Production Environment
 
 Update `.env.production`:
+
 ```env
 VITE_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxx
 ```
 
 Set Supabase production secrets:
+
 ```bash
 supabase secrets set STRIPE_SECRET_KEY=sk_live_xxxxx --project-ref YOUR_PROD_PROJECT
 ```
@@ -600,6 +621,7 @@ supabase secrets set STRIPE_SECRET_KEY=sk_live_xxxxx --project-ref YOUR_PROD_PRO
 **Problem**: Wrong API key or key not set
 
 **Solution**:
+
 ```bash
 # Check key is set
 echo $VITE_STRIPE_PUBLISHABLE_KEY
@@ -613,6 +635,7 @@ npm run dev
 **Problem**: Webhook secret doesn't match
 
 **Solution**:
+
 ```bash
 # Get webhook secret from Stripe Dashboard
 # Set in Supabase
@@ -627,6 +650,7 @@ supabase functions deploy stripe-webhook
 **Problem**: Webhook not processing correctly
 
 **Solution**:
+
 ```bash
 # Check webhook logs
 supabase functions logs stripe-webhook
@@ -640,6 +664,7 @@ supabase functions logs stripe-webhook
 **Problem**: Not in test mode or wrong card format
 
 **Solution**:
+
 - Verify dashboard shows "Test Mode"
 - Use exact card: `4242 4242 4242 4242`
 - Use future expiry (any year > current)
@@ -650,6 +675,7 @@ supabase functions logs stripe-webhook
 **Problem**: Test environment or browser blocking popup
 
 **Solution**:
+
 - Disable popup blocker
 - Use card: `4000 0025 0000 3155`
 - In test mode, any code works
@@ -664,8 +690,8 @@ supabase functions logs stripe-webhook
 ```typescript
 const paymentIntent = await stripe.paymentIntents.create({
   amount: 9700,
-  currency: 'usd',
-  metadata: { coupon: 'SAVE20' },
+  currency: "usd",
+  metadata: { coupon: "SAVE20" },
   // Apply 20% discount
   amount: 7760, // $97 - 20% = $77.60
 });
@@ -686,17 +712,18 @@ const subscription = await stripe.subscriptions.create({
 ```typescript
 const subscription = await stripe.subscriptions.update(subscriptionId, {
   items: [{ id: itemId, price: newPriceId }],
-  proration_behavior: 'create_prorations',
+  proration_behavior: "create_prorations",
 });
 ```
 
 ### Multiple Payment Methods
 
 Allow users to save cards:
+
 ```typescript
 const setupIntent = await stripe.setupIntents.create({
   customer: customerId,
-  payment_method_types: ['card'],
+  payment_method_types: ["card"],
 });
 ```
 
@@ -727,6 +754,7 @@ const setupIntent = await stripe.setupIntents.create({
 **Integration Complete!** 🎉
 
 You now have a fully functional Stripe payment system with:
+
 - ✅ Credit card processing
 - ✅ Subscription management
 - ✅ Webhook handling

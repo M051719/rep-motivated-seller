@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  Home, 
-  DollarSign, 
-  Calendar, 
-  FileText, 
-  Download, 
-  Printer, 
-  CheckCircle, 
+import {
+  Home,
+  DollarSign,
+  Calendar,
+  FileText,
+  Download,
+  Printer,
+  CheckCircle,
   AlertTriangle,
   User,
   MapPin,
@@ -28,14 +28,14 @@ interface FixFlipFormData {
   bathrooms: string;
   lotSize: string;
   zoning: string;
-  
+
   // Seller Information
   sellerName: string;
   sellerAddress: string;
   sellerPhone: string;
   sellerEmail: string;
   sellerEntityType: string;
-  
+
   // Buyer/Flipper Information
   buyerName: string;
   buyerAddress: string;
@@ -43,7 +43,7 @@ interface FixFlipFormData {
   buyerEmail: string;
   buyerEntityType: string;
   buyerLicense: string;
-  
+
   // Financial Terms
   purchasePrice: string;
   earnestMoney: string;
@@ -52,31 +52,31 @@ interface FixFlipFormData {
   loanAmount: string;
   interestRate: string;
   loanTerm: string;
-  
+
   // Renovation Details
   estimatedRehabCost: string;
   rehabTimeline: string;
   contractorLicense: string;
   permitRequired: string;
   renovationScope: string;
-  
+
   // Market Analysis
   afterRepairValue: string;
   comparableSales: string;
   marketConditions: string;
   holdingPeriod: string;
-  
+
   // Contingencies
   inspectionPeriod: string;
   financingContingency: string;
   appraisalContingency: string;
   titleContingency: string;
-  
+
   // Closing Details
   closingDate: string;
   closingLocation: string;
   titleCompany: string;
-  
+
   // Legal Protections
   disclosures: string[];
   warranties: string[];
@@ -164,10 +164,10 @@ export const FixFlipContractForm: React.FC = () => {
 
   const generateContract = async () => {
     setIsGenerating(true);
-    
+
     // Simulate contract generation
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     const contract = generateFixFlipContract(formData);
     setGeneratedContract(contract);
     setIsGenerating(false);
@@ -175,7 +175,7 @@ export const FixFlipContractForm: React.FC = () => {
 
   const downloadContract = () => {
     if (!generatedContract) return;
-    
+
     const blob = new Blob([generatedContract], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -187,7 +187,7 @@ export const FixFlipContractForm: React.FC = () => {
 
   const printContract = () => {
     if (!generatedContract) return;
-    
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(generatedContract);
@@ -286,7 +286,7 @@ export const FixFlipContractForm: React.FC = () => {
               const Icon = section.icon;
               const isActive = index === currentSection;
               const isCompleted = index < currentSection;
-              
+
               return (
                 <div key={index} className="flex items-center">
                   <div
@@ -1375,8 +1375,8 @@ function generateFixFlipContract(data: FixFlipFormData): string {
         </div>
         <div class="clause">
             <div class="clause-title">Lead-Based Paint Disclosure:</div>
-            ${data.yearBuilt && parseInt(data.yearBuilt) < 1978 ? 
-                'Property was built before 1978. Federal law requires disclosure of known lead-based paint hazards. Seller has provided required disclosures and Buyer acknowledges receipt.' : 
+            ${data.yearBuilt && parseInt(data.yearBuilt) < 1978 ?
+                'Property was built before 1978. Federal law requires disclosure of known lead-based paint hazards. Seller has provided required disclosures and Buyer acknowledges receipt.' :
                 'Property was built in 1978 or later; lead-based paint disclosure not required.'}
         </div>
         <div class="clause">
@@ -1421,7 +1421,7 @@ function generateFixFlipContract(data: FixFlipFormData): string {
 
     <div class="signature-section">
         <div class="section-title">10. SIGNATURES</div>
-        
+
         <div style="margin: 40px 0;">
             <strong>SELLER:</strong><br><br>
             <div class="signature-line"></div>
