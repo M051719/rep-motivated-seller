@@ -1,17 +1,52 @@
-import { Pool } from "pg";
+import { Pool, type PoolConfig } from "pg";
+
+export type DatabasePoolInitOptions = {
+  connectionString?: string;
+  ssl?: PoolConfig["ssl"];
+  max?: number;
+  idleTimeoutMillis?: number;
+  connectionTimeoutMillis?: number;
+  statement_timeout?: number;
+  query_timeout?: number;
+};
 
 class DatabasePool {
-  private static instance: DatabasePool;
+  private static instance: DatabasePool | undefined;
+  private static initOptions: DatabasePoolInitOptions | undefined;
+
   private pool: Pool;
 
-  private constructor() {
+  private constructor(options?: DatabasePoolInitOptions) {
+    const opts = options ?? DatabasePool.initOptions;
+
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      max: 20, // Maximum number of connections
-      min: 5, // Minimum number of connections
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
+      connectionString: opts?.connectionString ?? process.env.DATABASE_URL,
+      max: opts?.max ?? 20,
+      idleTimeoutMillis: opts?.idleTimeoutMillis ?? 30000,
+      connectionTimeoutMillis: opts?.connectionTimeoutMillis ?? 2000,
+      statement_timeout: opts?.statement_timeout,
+      query_timeout: opts?.query_timeout,
+      ssl: opts?.ssl,
     });
+  }
+
+  /** Configure and (if already created) rebuild the singleton pool. */
+  static init(options: DatabasePoolInitOptions) {
+    DatabasePool.initOptions = options;
+
+    if (DatabasePool.instance) {
+      DatabasePool.instance.pool.end().catch(() => {});
+      DatabasePool.instance = new DatabasePool(options);
+    }
+  }
+
+  /** Dispose the singleton pool and clear init options. */
+  static async reset() {
+    if (DatabasePool.instance) {
+      await DatabasePool.instance.pool.end().catch(() => {});
+    }
+    DatabasePool.instance = undefined;
+    DatabasePool.initOptions = undefined;
   }
 
   static getInstance(): DatabasePool {
@@ -40,3 +75,4 @@ class DatabasePool {
 }
 
 export default DatabasePool.getInstance();
+export { DatabasePool };
