@@ -35,10 +35,15 @@ class DatabasePool {
     DatabasePool.initOptions = options;
 
     if (DatabasePool.instance) {
+<<<<<<< HEAD
       // Ignore errors when closing the existing pool to allow graceful recreation
       DatabasePool.instance.pool.end().catch((error) => {
         console.warn("Failed to close existing database pool during reinitialization", error);
       });
+=======
+      // best-effort shutdown of old pool, then rebuild immediately
+      DatabasePool.instance.pool.end().catch(() => {});
+>>>>>>> origin/main
       DatabasePool.instance = new DatabasePool(options);
     }
   }
@@ -77,5 +82,12 @@ class DatabasePool {
   }
 }
 
+// Keep existing behavior for current imports:
 export default DatabasePool.getInstance();
+<<<<<<< HEAD
 export { DatabasePool };
+=======
+
+// Add named export for scripts/CI tooling:
+export { DatabasePool };
+>>>>>>> origin/main
