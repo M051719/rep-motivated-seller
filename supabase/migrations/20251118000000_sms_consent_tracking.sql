@@ -138,7 +138,12 @@ CREATE INDEX IF NOT EXISTS idx_sms_consent_audit_phone ON public.sms_consent_aud
 CREATE INDEX IF NOT EXISTS idx_sms_consent_audit_created ON public.sms_consent_audit(created_at DESC);
 
 -- Index for admin policy checks (improves RLS performance)
-CREATE INDEX IF NOT EXISTS idx_profiles_id_is_admin ON public.profiles(id, is_admin) WHERE is_admin = true;
+DO $$
+BEGIN
+  IF to_regclass('public.profiles') IS NOT NULL THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_profiles_id_is_admin ON public.profiles(id, is_admin) WHERE is_admin = true';
+  END IF;
+END $$;
 
 -- =====================================================
 -- 6. Automatic Updated_At Trigger

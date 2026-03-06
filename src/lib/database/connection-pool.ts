@@ -35,7 +35,10 @@ class DatabasePool {
     DatabasePool.initOptions = options;
 
     if (DatabasePool.instance) {
-      DatabasePool.instance.pool.end().catch(() => {});
+      // Ignore errors when closing the existing pool to allow graceful recreation
+      DatabasePool.instance.pool.end().catch((error) => {
+        console.warn("Failed to close existing database pool during reinitialization", error);
+      });
       DatabasePool.instance = new DatabasePool(options);
     }
   }
