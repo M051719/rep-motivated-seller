@@ -24,9 +24,18 @@ jobs:
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
 
-      - name: Run Database Tests
+      - name: Link Supabase project
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: DB precheck (ping before migrations)
+        run: npm run db:ping
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Apply migrations + run DB tests
         run: |
-          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
           supabase db push
           supabase test db
         env:
