@@ -77,7 +77,7 @@
     "db:status": "echo 'SELECT current_database(), current_user, version();' | supabase db execute",
     "db:migrate": "supabase db push",
     "db:backup": "supabase db dump --file backup_$(date +%Y%m%d_%H%M%S).sql",
-    "db:ping": "TS_NODE_PROJECT=tsconfig.scripts.json node --loader ts-node/esm scripts/db-connection-test.ts",
+    "db:ping": "cross-env TS_NODE_PROJECT=tsconfig.scripts.json node --loader ts-node/esm scripts/db-connection-test.ts",
     "policy:health": "bash scripts/policy-manager.sh health",
     "policy:audit": "bash scripts/policy-manager.sh audit",
     "policy:consolidate-dry": "bash scripts/policy-manager.sh consolidate-dry",
