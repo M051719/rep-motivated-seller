@@ -41,13 +41,18 @@ repos:
       # Check .env files are encrypted
       - id: check-dotenvx-encryption
         name: Verify .env files are encrypted
-        entry: powershell.exe -NoProfile -Command "Get-ChildItem .env,.env.production,.env.staging -ErrorAction SilentlyContinue | Where-Object { -not (Select-String -Path $_.FullName -Pattern 'DOTENVX' -Quiet) } | ForEach-Object { Write-Error \"ERROR: $($_.Name) must be encrypted!\"; exit 1 }"
+        entry: >-
+          powershell.exe -NoProfile -Command "Get-ChildItem .env,.env.production,.env.staging -ErrorAction SilentlyContinue
+          | Where-Object { -not (Select-String -Path $_.FullName -Pattern 'DOTENVX' -Quiet) }
+          | ForEach-Object { Write-Error \"ERROR: $($_.Name) must be encrypted!\"; exit 1 }"
         language: system
         pass_filenames: false
 
       # Ensure .env.keys not committed
       - id: prevent-env-keys
         name: Prevent .env.keys from being committed
-        entry: powershell.exe -NoProfile -Command "if (git diff --cached --name-only | Select-String '\\.env\\.keys') { Write-Error 'ERROR: .env.keys should not be committed!'; exit 1 }"
+        entry: >-
+          powershell.exe -NoProfile -Command "if (git diff --cached --name-only | Select-String '\\.env\\.keys')
+          { Write-Error 'ERROR: .env.keys should not be committed!'; exit 1 }"
         language: system
         pass_filenames: false
